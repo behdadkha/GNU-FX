@@ -1,0 +1,21 @@
+.image{
+    margin-top: 2%;
+    width: 100%;
+}
+.box{
+    background-color: #085dce;
+}
+.boxHeading{
+    padding-top: 10%;
+    color: white;
+}
+
+.boxDescription{
+    color: white;
+}
+.boxDescriptionDiv{
+    text-align: left;
+    padding-right: 10%;
+    padding-left: 10%;
+    min-height: 200px;
+}

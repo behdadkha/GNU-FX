@@ -18,9 +18,9 @@ export default class FirstPage extends Component {
                             <div className="box">
                                 <h6 className="boxHeading">About ToeFX</h6>
                                 <div className="boxDescriptionDiv">
-                                    <h10 className="boxDescription">
+                                    <h6 className="boxDescription">
                                         ToeFX Inc. is a Canadian medical device company that has created a safe, fast  solution for the treatment of toenail fungus (onychomycosis). The solution is based on photodynamic therapy.  Visit our online store at www.drtoe.com.
-                                    </h10>
+                                    </h6>
                                 </div>
                             </div>
                         </Col>
@@ -28,9 +28,9 @@ export default class FirstPage extends Component {
                             <div className="box">
                                 <h6 className="boxHeading">Online Diagnosis</h6>
                                 <div className="boxDescriptionDiv">
-                                    <h10 className="boxDescription">
+                                    <h6 className="boxDescription">
                                         With two easy steps find out if you have fungal toenails.
-                                    </h10>
+                                    </h6>
                                 </div>
                             </div>
                         </Col>
@@ -38,9 +38,9 @@ export default class FirstPage extends Component {
                             <div className="box">
                                 <h6 className="boxHeading">Create Storyline</h6>
                                 <div className="boxDescriptionDiv">
-                                    <h10 className="boxDescription">
+                                    <h6 className="boxDescription">
                                          Take pictures from your toenail during the course of your treatment and get a storyline showing the treatment progress.
-                                    </h10>
+                                    </h6>
                                 </div>
                             </div>
                         </Col>

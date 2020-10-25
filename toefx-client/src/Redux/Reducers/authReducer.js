@@ -12,6 +12,7 @@ export default function(state = initialState , action) {
               isAuth : (action.payload.length !== 0),
               user : action.payload
             };
+
         default:
             return state;
     }

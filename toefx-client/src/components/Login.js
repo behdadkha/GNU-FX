@@ -4,6 +4,8 @@ import '../componentsStyle/Login.css';
 import store from '../Redux/store';
 import { connect } from 'react-redux';
 import { setCurrentUser } from '../Redux/Actions/authAction';
+import jwt_decode from 'jwt-decode';
+import setAuthHeader from '../utils/setAuthHeader';
 
 
 export default class Login extends Component {
@@ -22,7 +24,6 @@ export default class Login extends Component {
 
     handleLogin = async (e)=>{
         e.preventDefault();
-        console.log("here");
         const response = await fetch("http://localhost:3001/login", {
             method : "POST",
             headers: {
@@ -37,8 +38,17 @@ export default class Login extends Component {
             this.setState({
                 user : body
             });
-            //add the user data to the store
-            store.dispatch(setCurrentUser(body));
+
+            //extract the token from the respnse
+            const {token} = body;
+            //save the token in localstorage
+            localStorage.setItem("jwt", token);
+
+            //set the token to header for feature requests
+            setAuthHeader(token);
+
+            //add the user data to the store(decoded)
+            store.dispatch(setCurrentUser(jwt_decode(token)));
 
             //redirect to User page
             this.props.history.push('/User');

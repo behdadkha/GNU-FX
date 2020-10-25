@@ -1,8 +1,21 @@
 import React, { Component } from 'react'
 import {Navbar, Nav, NavDropdown, Form, FormControl,  Button} from 'react-bootstrap' 
+import { connect } from 'react-redux'
+import { logOutUser } from '../Redux/Actions/authAction'
+import store from '../Redux/store'
 
-export default class NavigationBar extends Component {
+class NavigationBar extends Component {
     render() {
+        var loginSignup = <Nav>
+                                <Nav.Link href="/signup">Signup</Nav.Link> 
+                                <Nav.Link href="/login">Login</Nav.Link>
+                          </Nav>
+        if(this.props.auth.isAuth){
+            loginSignup = <Nav>
+                                <Nav.Link onClick={() => { store.dispatch(logOutUser()); window.location.href = "./"; }} >LogOut</Nav.Link> 
+                        </Nav>
+        }
+
         return (
             <div>
                <Navbar bg="light" expand="md">
@@ -13,10 +26,7 @@ export default class NavigationBar extends Component {
                     <Nav.Link href="/">Home</Nav.Link>
                     </Nav>
                     
-                <Nav>
-                    <Nav.Link href="/signup">Signup</Nav.Link>
-                    <Nav.Link href="/login">Login</Nav.Link>
-                </Nav>
+                {loginSignup}
                 </Navbar.Collapse>
                 </Navbar> 
                 
@@ -24,3 +34,9 @@ export default class NavigationBar extends Component {
         )
     }
 }
+
+const mapStateToProps = state => ({
+    auth: state.auth
+});
+
+export default connect(mapStateToProps)(NavigationBar);

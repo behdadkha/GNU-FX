@@ -4,6 +4,9 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const fileUpload = require('express-fileupload');
 const { stderr } = require('process');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+
 
 app.use(cors());
 app.use(fileUpload());
@@ -14,11 +17,35 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.post('/login', (req,res) =>{
     const {email, password} = req.body;
 
-    if (email === "behdad@gmail.com" && password === "behdad"){
+    bcrypt.compare(password, "$2a$10$A1ZabqaQUvpqL.SUSUrfkO6Xw9zrYnq1ykV6w/RwLbcNEMIfkaoOW").then(valid => {
+        if(valid){
+            const payload = {
+                id : 1,
+                name: "Behdad"
+            };
+
+            jwt.sign(payload, "secretKey", {expiresIn : 31556926} , 
+                (err,token) => {
+                    res.json({
+                        success: true,
+                        token : "Bearer " + token
+                    });
+                }
+            );
+        }else{
+            return res.status(400).json(undefined);
+        }
+    });
+
+
+
+
+
+    /*if (email === "behdad@gmail.com" && password === "behdad"){
         res.json({"name" : "behdad"});
     }else{
         res.status(401).json(undefined);
-    }
+    }*/
 });
 
 app.post('/upload',(req,res)=>{

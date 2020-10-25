@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
 import {Col, Row, Container, Form, FormControl, Button} from 'react-bootstrap';
-import User from './User';
 import '../componentsStyle/Login.css';
+import store from '../Redux/store';
+import { connect } from 'react-redux';
+import { setCurrentUser } from '../Redux/Actions/authAction';
+
 
 export default class Login extends Component {
 
@@ -14,6 +17,8 @@ export default class Login extends Component {
             invalidUser : false
         };
     }
+
+    
 
     handleLogin = async (e)=>{
         e.preventDefault();
@@ -32,8 +37,12 @@ export default class Login extends Component {
             this.setState({
                 user : body
             });
-            window.history.pushState("","","/user");
-            window.location.href = "/user";
+            //add the user data to the store
+            store.dispatch(setCurrentUser(body));
+
+            //redirect to User page
+            this.props.history.push('/User');
+
         }else{
             this.setState({
                 invalidUser : true
@@ -56,7 +65,7 @@ export default class Login extends Component {
                 <Row>
                     <Col>
                             {IfInvalid}
-                            <Form className="form" onSubmit={this.handleLogin}>
+                            <Form className="form" onSubmit={this.handleLogin.bind(this)}>
                                 <Form.Group controlId="formBasicEmail">
                                     <Form.Label>Email address</Form.Label>
                                     <Form.Control type="email" placeholder="Enter email" value={this.state.email} onChange={(e) => this.setState({email : e.target.value})}/>

@@ -24,7 +24,7 @@ app.post('/login', (req,res) =>{
                 name: "Behdad"
             };
 
-            jwt.sign(payload, "secretKey", {expiresIn : 31556926} , 
+            jwt.sign(payload, "secretKey", {expiresIn : "120"} , //31556926
                 (err,token) => {
                     res.json({
                         success: true,

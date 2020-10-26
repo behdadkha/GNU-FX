@@ -9,12 +9,13 @@ import Navbar from './components/NavigationBar';
 import FirstPage from './components/FirstPage';
 import Login from './components/Login';
 import Signup from './components/Signup';
-import {Switch, Route, BrowserRouter as Router} from 'react-router-dom';
-import Diagnosis from './components/Diagnosis';
-import User from './components/User';
+import {Route, BrowserRouter as Router} from 'react-router-dom';
+import User from './components/user/User';
 import jwt_decode from 'jwt-decode'
 import setAuthHeader from './utils/setAuthHeader';
 import { logOutUser, setCurrentUser } from './Redux/Actions/authAction';
+import Storyline from './components/user/Storyline';
+import Diagnosis from './components/user/Diagnosis';
 
 
 
@@ -32,10 +33,8 @@ if(localStorage.jwt){
     //if the jwt is expired
     if(decodedData.exp < time){
       store.dispatch(logOutUser()); //remove the user
-      window.location.href = "./User";
     }else{
       store.dispatch(setCurrentUser(decodedData));
-      window.location.href = "./";
     }
 
   } catch (error) {
@@ -61,6 +60,7 @@ function App() {
               <Route path="/signup" component={Signup} exact />
               <Route path="/User" component={User} exact/>
               <Route path="/Diagnosis" component={Diagnosis} exact/>
+              <Route path="/Storyline" component={Storyline} exact/>
           </div>
         </Router>
     </Provider>

@@ -1,5 +1,6 @@
 import React, {Component} from "react";
 import {Button, Carousel, Col, Container, Row} from "react-bootstrap";
+import "../../componentsStyle/Storyline.css";
 import {connect} from "react-redux";
 import axios from "axios";
 
@@ -7,7 +8,7 @@ class Storyline extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            input: "Choose",
+            input: "Upload Image",
             uploaded: false,
             files: [], //currently uploaded files
             uploadProgress: 0,
@@ -29,7 +30,7 @@ class Storyline extends Component {
                 {url: URL.createObjectURL(file), name: file.name},
             ],
             uploaded: true,
-            input: file.name,
+            //input: file.name, //Keep as Upload
         });
 
         const formData = new FormData();
@@ -55,11 +56,6 @@ class Storyline extends Component {
                     <Col>
                         {/*uploadfile*/}
                         <div className="input-group">
-                            <div className="input-group-prepend">
-                                <span className="input-group-text" id="inputGroupFileAddon01">
-                                    Upload
-                                </span>
-                            </div>
                             <div className="custom-file">
                                 <input
                                     type="file"
@@ -68,7 +64,7 @@ class Storyline extends Component {
                                     aria-describedby="inputGroupFileAddon01"
                                     onChange={this.handleUpload.bind(this)}
                                 />
-                                <label className="custom-file-label" htmlFor="inputGroupFile01" >
+                                <label className="upload-image" htmlFor="inputGroupFile01" >
                                     <div>
                                         <h6 style={{display: "inline"}}>
                                             {this.state.input}

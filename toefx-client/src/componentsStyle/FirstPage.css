@@ -1,21 +1,55 @@
-.image{
+.image {
     margin-top: 2%;
-    width: 100%;
-}
-.box{
-    background-color: #085dce;
-}
-.boxHeading{
-    padding-top: 10%;
-    color: white;
+	display: block !important;
+    position: relative !important;
+    width: 100% !important;
+	height: auto;
 }
 
-.boxDescription{
-    color: white;
+.box {
+    background-color: #085dce;
+	width: 410px;
+	min-height: 280px;
+	position: relative;
+    text-align: justify;
+	float: left;
+	margin-bottom: 20px;
 }
-.boxDescriptionDiv{
+
+.col-lg-4 {
+	padding: 0px; /* Remove bootstrap default to mimic real ToeFX website */
+}
+
+.boxHeading {
+    padding-top: 10%;
+    color: white;
+    font-size: 18px;
+    font-weight: 400;
+	padding-left: 35px;
+}
+
+.boxDescription {
+    color: white;
+    font-size: 13px;
+    font-family: "PT Sans", Sans-Serif;
+	opacity: 0.8;
+}
+
+.boxDescriptionDiv {
     text-align: left;
     padding-right: 10%;
     padding-left: 10%;
     min-height: 200px;
+}
+
+.box1 {
+    background-color: #085dce;
+}
+
+.box2 {
+    background-color: #0051bb
+}
+
+.box3 {
+    background-color: #004bad;
 }

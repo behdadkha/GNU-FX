@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import {Button, Container, Form, Col, Row} from "react-bootstrap";
-import "../../componentsStyle/User.css";
+import "../../componentsStyle/Storyline.css";
 import axios from "axios";
 import {connect} from "react-redux";
 
@@ -9,7 +9,7 @@ class Diagnosis extends Component {
         super(props);
 
         this.state = {
-            input: "Choose",
+            input: "Upload",
             uploaded: false,
             files: [], //currently uploaded files
             diagnosis: [], //[{image: 0, text:""}]
@@ -75,11 +75,6 @@ class Diagnosis extends Component {
                     <Col>
                         {/*uploadfile*/}
                         <div className="input-group">
-                            <div className="input-group-prepend">
-                                <span className="input-group-text" id="inputGroupFileAddon01">
-                                    Upload
-                                </span>
-                            </div>
                             <div className="custom-file">
                                 <input
                                     type="file"
@@ -88,7 +83,7 @@ class Diagnosis extends Component {
                                     aria-describedby="inputGroupFileAddon01"
                                     onChange={this.handleUpload.bind(this)}
                                 />
-                                <label className="custom-file-label" htmlFor="inputGroupFile01">
+                                <label className="upload-image" htmlFor="inputGroupFile01">
                                     <div>
                                         <h6 style={{display: "inline"}}>
                                             {this.state.input}
@@ -108,13 +103,13 @@ class Diagnosis extends Component {
                             </div>
                         </div>
                     </Col>
-                </Row>
+                </Row>    
                 <Row>
                     {this.state.files.map((source, index) => (
                         <Col key={`col-${index}`}>
                             <Row>
                                 <Col>
-                                    <img key={index} id="images" src={source.url} />
+                                    <img key={index} id="images" src={source.url} className="diagnose-img" />
                                 </Col>
                             </Row>
                             <Row>

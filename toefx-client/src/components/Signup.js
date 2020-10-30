@@ -10,10 +10,10 @@ export default class Signup extends Component {
                     <Col>
                         <Form className="form">
                             <Form.Group controlId="formBasicEmail">
-                                <Form.Label>Email address</Form.Label>
+                                <Form.Label>Email Address</Form.Label>
                                 <Form.Control
                                     type="email"
-                                    placeholder="Enter email"
+                                    placeholder="Email"
                                 />
                                 <Form.Text className="text-muted">
                                     We'll never share it with anyone else.
@@ -27,17 +27,24 @@ export default class Signup extends Component {
                                     placeholder="Password"
                                 />
                             </Form.Group>
+                            <Form.Group controlId="formBasicPassword">
+                                <Form.Label>Confirm Password</Form.Label>
+                                <Form.Control
+                                    type="password"
+                                    placeholder="Password"
+                                />
+                            </Form.Group>
                             <Form.Group controlId="formName">
-                                <Form.Label>Full Name:</Form.Label>
-                                <Form.Control type="text" placeholder="name" />
+                                <Form.Label>Full Name</Form.Label>
+                                <Form.Control type="text" placeholder="Name" />
                             </Form.Group>
                             <Form.Group controlId="formAge">
-                                <Form.Label>Age:</Form.Label>
-                                <Form.Control type="number" placeholder="age" />
+                                <Form.Label>Age</Form.Label>
+                                <Form.Control type="number" placeholder="Age" />
                             </Form.Group>
 
                             <Button variant="primary" type="submit">
-                                Create account
+                                Sign Up
                             </Button>
                         </Form>
                     </Col>

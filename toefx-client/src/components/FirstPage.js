@@ -16,7 +16,7 @@ export default class FirstPage extends Component {
                 <Container>
                     <Row>
                         <Col lg={4}>
-                            <div className="box">
+                            <div className="box box1">
                                 <h6 className="boxHeading">About ToeFX</h6>
                                 <div className="boxDescriptionDiv">
                                     <h6 className="boxDescription">
@@ -31,7 +31,7 @@ export default class FirstPage extends Component {
                             </div>
                         </Col>
                         <Col lg={4}>
-                            <div className="box">
+                            <div className="box box2">
                                 <h6 className="boxHeading">Online Diagnosis</h6>
                                 <div className="boxDescriptionDiv">
                                     <h6 className="boxDescription">
@@ -42,8 +42,8 @@ export default class FirstPage extends Component {
                             </div>
                         </Col>
                         <Col lg={4}>
-                            <div className="box">
-                                <h6 className="boxHeading">Create Storyline</h6>
+                            <div className="box box3">
+                                <h6 className="boxHeading">Create Your Storyline</h6>
                                 <div className="boxDescriptionDiv">
                                     <h6 className="boxDescription">
                                         Take pictures of your toenails during

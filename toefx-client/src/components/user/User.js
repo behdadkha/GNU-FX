@@ -3,6 +3,7 @@ import {Col, Row, Container, Button} from "react-bootstrap";
 import {connect} from "react-redux";
 import storylineImage from "../../storyline.png";
 import diagnosisImage from "../../diagnosis.png";
+import '../../componentsStyle/User.css';
 
 /*TODO: Change "Create a Storyline" to "My Images"*/
 
@@ -33,7 +34,7 @@ class User extends Component {
                     </Col>
 
                     <Col className="shadow option"
-                         onClick={() => this.props.history.push("./Storyline")}
+                         onClick={() => this.props.history.push("./diagnosis")}
                     >
                         <h6 class="options-headers">Diagnosis</h6>
                         <img

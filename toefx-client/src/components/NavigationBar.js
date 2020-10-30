@@ -18,12 +18,12 @@ class NavigationBar extends Component {
         console.log(window.location.pathname);
         if(window.location.pathname !== "/login" && window.location.pathname !== "/signup"){
             loginSignup =   <Nav>
-                                    <Nav.Link href="/signup">Signup</Nav.Link>
+                                    <Nav.Link href="/signup">Sign Up</Nav.Link>
                                     <Nav.Link href="/login">Login</Nav.Link>
                             </Nav>;
         }else if(window.location.pathname === "/login"){
             loginSignup =   <Nav>
-                                    <Nav.Link href="/signup">Signup</Nav.Link>
+                                    <Nav.Link href="/signup">Sign Up</Nav.Link>
                             </Nav>;
         }else if(window.location.pathname === "/signup"){
             loginSignup =   <Nav>
@@ -34,8 +34,8 @@ class NavigationBar extends Component {
         //show logout if user is logged in
         if(this.props.auth.isAuth){
             loginSignup = <Nav>
-                                <Nav.Link onClick={() => { store.dispatch(logOutUser()); window.location.href = "./"; }} >LogOut</Nav.Link>
-                                {(window.location.pathname !== "/user" && window.location.pathname !== "/login") && <Nav.Link href="./user">User</Nav.Link>}
+                                <Nav.Link onClick={() => { store.dispatch(logOutUser()); window.location.href = "./"; }} >Log Out</Nav.Link>
+                                {(window.location.pathname !== "/user" && window.location.pathname !== "/login") && <Nav.Link href="./user">Dashboard</Nav.Link>}
                           </Nav>
         }
 

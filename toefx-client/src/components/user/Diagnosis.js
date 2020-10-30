@@ -86,7 +86,7 @@ class Diagnosis extends Component {
                                 <label className="upload-image" htmlFor="inputGroupFile01">
                                     <div>
                                         <h6 style={{display: "inline"}}>
-                                            {this.state.input}
+                                            Upload
                                         </h6>
                                         {this.state.uploadProgress !== 0 && (
                                             <h6
@@ -109,7 +109,7 @@ class Diagnosis extends Component {
                         <Col key={`col-${index}`}>
                             <Row>
                                 <Col>
-                                    <img key={index} id="images" src={source.url} className="diagnose-img" />
+                                    <img key={index} src={source.url} style={{width : "40%"}}/>
                                 </Col>
                             </Row>
                             <Row>
@@ -128,12 +128,12 @@ class Diagnosis extends Component {
                                                     Results
                                                 </h5>
                                                 <p className="card-text">
-                                                {
-                                                    this.state.diagnosis[
-                                                        this.state.diagnosis.findIndex(
-                                                            ({image}) => image === index)
-                                                    ].text
-                                                }
+                                                    {
+                                                        this.state.diagnosis[
+                                                            this.state.diagnosis.findIndex(
+                                                                ({image}) => image === index)
+                                                        ].text
+                                                    }
                                                 </p>
                                             </div>
                                         </div>

@@ -64,6 +64,12 @@ export default class Signup extends Component {
                                     <Form.Label>Password</Form.Label>
                                     <Form.Control type="password" placeholder="Password" value={this.state.password} onChange={(e) => this.setState({password : e.target.value})} />
                                 </Form.Group>
+
+                                <Form.Group controlId="formBasicConfirmPassword">
+                                    <Form.Label>Confirm Password</Form.Label>
+                                    <Form.Control type="password" placeholder="Password" />
+                                </Form.Group>
+
                                 <Form.Group controlId="formName">
                                     <Form.Label>Full Name:</Form.Label>
                                     <Form.Control type="text" placeholder="Name" value={this.state.name} onChange={(e) => this.setState({name : e.target.value})} />

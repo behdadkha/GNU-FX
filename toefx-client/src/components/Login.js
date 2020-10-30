@@ -1,100 +1,114 @@
-import React, { Component } from 'react';
-import {Col, Row, Container, Form, FormControl, Button} from 'react-bootstrap';
-import '../componentsStyle/Login.css';
-import store from '../Redux/store';
-import { connect } from 'react-redux';
-import { setCurrentUser } from '../Redux/Actions/authAction';
-import jwt_decode from 'jwt-decode';
-import setAuthHeader from '../utils/setAuthHeader';
-
+import React, {Component} from "react";
+import {Col, Row, Container, Form, FormControl, Button} from "react-bootstrap";
+import "../componentsStyle/Login.css";
+import store from "../Redux/store";
+import {connect} from "react-redux";
+import {setCurrentUser} from "../Redux/Actions/authAction";
+import jwt_decode from "jwt-decode";
+import setAuthHeader from "../utils/setAuthHeader";
 
 export default class Login extends Component {
-
-    constructor(props){
+    constructor(props) {
         super(props);
         this.state = {
-            email : "",
-            password : "",
-            user : null,
-            invalidUser : false
+            email: "",
+            password: "",
+            user: null,
+            invalidUser: false,
         };
     }
 
-    
-
-    handleLogin = async (e)=>{
+    handleLogin = async (e) => {
         e.preventDefault();
         const response = await fetch("http://localhost:3001/login", {
-            method : "POST",
+            method: "POST",
             headers: {
-                'Accept': 'application/json',
-                'Content-Type' : 'application/json'
+                Accept: "application/json",
+                "Content-Type": "application/json",
             },
-            body:JSON.stringify({ "email" : this.state.email, "password" : this.state.password})
+            body: JSON.stringify({
+                email: this.state.email,
+                password: this.state.password,
+            }),
         });
 
-        if(response.status === 200){
+        if (response.status === 200) {
             let body = await response.json();
             this.setState({
-                user : body
+                user: body,
             });
 
-            //extract the token from the respnse
-            const {token} = body;
-            //save the token in localstorage
-            localStorage.setItem("jwt", token);
-
-            //set the token to header for feature requests
-            setAuthHeader(token);
-
-            //add the user data to the store(decoded)
-            store.dispatch(setCurrentUser(jwt_decode(token)));
+            
+            const {token} = body; //extract the token from the respnse
+            localStorage.setItem("jwt", token); //save the token in localstorage
+            setAuthHeader(token); //set the token to header for feature requests
+            store.dispatch(setCurrentUser(jwt_decode(token))); //add the user data to the store (decoded)
 
             //redirect to User page
-            this.props.history.push('/User');
-
-        }else{
+            this.props.history.push("/User");
+        }
+        else {
             this.setState({
-                invalidUser : true
+                invalidUser: true,
             });
         }
-        
-
-    }
+    };
 
     render() {
         let IfInvalid;
-        if (this.state.invalidUser){
-            IfInvalid = 
+        if (this.state.invalidUser) {
+            IfInvalid = (
                 <div>
                     <h6>Invalid email or passowrd</h6>
                 </div>
+            );
         }
+
         return (
-            <Container >
+            <Container>
                 <Row>
                     <Col>
-                            {IfInvalid}
-                            <Form className="form" onSubmit={this.handleLogin.bind(this)}>
-                                <Form.Group controlId="formBasicEmail">
-                                    <Form.Label>Email address</Form.Label>
-                                    <Form.Control type="email" placeholder="Enter email" value={this.state.email} onChange={(e) => this.setState({email : e.target.value})}/>
-                                    <Form.Text className="text-muted">
-                                        We'll never share your email with anyone else.
-                                    </Form.Text>
-                                </Form.Group>
+                        {IfInvalid}
+                        <Form
+                            className="form"
+                            onSubmit={this.handleLogin.bind(this)}
+                        >
+                            <Form.Group controlId="formBasicEmail">
+                                <Form.Label>Email address</Form.Label>
+                                <Form.Control
+                                    type="email"
+                                    placeholder="Enter email"
+                                    value={this.state.email}
+                                    onChange={(e) =>
+                                        this.setState({email: e.target.value})
+                                    }
+                                />
+                                <Form.Text className="text-muted">
+                                    We'll never share your email with anyone.
+                                    else.
+                                </Form.Text>
+                            </Form.Group>
 
-                                <Form.Group controlId="formBasicPassword">
-                                    <Form.Label>Password</Form.Label>
-                                    <Form.Control value={this.state.password} onChange={(e) => this.setState({password : e.target.value})} type="password" placeholder="Password" />
-                                </Form.Group>
-                                <Button variant="primary" type="submit">
-                                    Login
-                                </Button>
-                            </Form>
+                            <Form.Group controlId="formBasicPassword">
+                                <Form.Label>Password</Form.Label>
+                                <Form.Control
+                                    value={this.state.password}
+                                    onChange={(e) =>
+                                        this.setState({
+                                            password: e.target.value,
+                                        })
+                                    }
+                                    type="password"
+                                    placeholder="Password"
+                                />
+                            </Form.Group>
+                            <Button variant="primary" type="submit">
+                                Login
+                            </Button>
+                        </Form>
                     </Col>
                 </Row>
             </Container>
-        )
+        );
     }
 }

@@ -1,9 +1,31 @@
-.input-group{
+.input-group {
     padding-top: 10%;
     margin: auto;
     width: 50%;
     text-align: left;
 }
-#images{
+
+.welcome {
+    font-size: 24px;
+    padding-top: 20px;
+}
+
+.options-headers {
+    padding-top: 20px;
+    font-size: 24px;
+}
+
+.option {
+    max-height: inherit;
+    padding: 15px;
+}
+
+.option:hover {
+    border: 3px solid;
+    cursor: pointer;
+    padding: 12px; /* Counteract border */
+}
+
+#images {
     width : 50%;
 }

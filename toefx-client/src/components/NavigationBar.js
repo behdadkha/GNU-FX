@@ -1,8 +1,15 @@
-import React, { Component } from 'react'
-import {Navbar, Nav, NavDropdown, Form, FormControl,  Button} from 'react-bootstrap' 
-import { connect } from 'react-redux'
-import { logOutUser } from '../Redux/Actions/authAction'
-import store from '../Redux/store'
+import React, {Component} from "react";
+import {
+    Navbar,
+    Nav,
+    NavDropdown,
+    Form,
+    FormControl,
+    Button,
+} from "react-bootstrap";
+import {connect} from "react-redux";
+import {logOutUser} from "../Redux/Actions/authAction";
+import store from "../Redux/store";
 
 class NavigationBar extends Component {
     render() {
@@ -34,25 +41,26 @@ class NavigationBar extends Component {
 
         return (
             <div>
-               <Navbar bg="light" expand="md">
-                <Navbar.Brand href="https://www.toefx.com/">ToeFX</Navbar.Brand>
-                <Navbar.Toggle aria-controls="basic-navbar-nav" />
-                <Navbar.Collapse id="basic-navbar-nav">
-                    <Nav className="mr-auto">
-                    <Nav.Link href="/">Home</Nav.Link>
-                    </Nav>
-                    
-                {loginSignup}
-                </Navbar.Collapse>
-                </Navbar> 
-                
+                <Navbar bg="light" expand="md">
+                    <Navbar.Brand href="https://www.toefx.com/">
+                        ToeFX
+                    </Navbar.Brand>
+                    <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                    <Navbar.Collapse id="basic-navbar-nav">
+                        <Nav className="mr-auto">
+                            <Nav.Link href="/">Home</Nav.Link>
+                        </Nav>
+
+                        {loginSignup}
+                    </Navbar.Collapse>
+                </Navbar>
             </div>
-        )
+        );
     }
 }
 
-const mapStateToProps = state => ({
-    auth: state.auth
+const mapStateToProps = (state) => ({
+    auth: state.auth,
 });
 
 export default connect(mapStateToProps)(NavigationBar);

@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
-import {Col, Row, Container, Form, FormControl, Button} from 'react-bootstrap';
-import '../componentsStyle/Login.css';
+import React, {Component} from "react";
+import {Col, Row, Container, Form, FormControl, Button} from "react-bootstrap";
+import "../componentsStyle/Login.css";
 
 export default class Signup extends Component {
 
@@ -43,7 +43,7 @@ export default class Signup extends Component {
 
     render() {
         return (
-            <Container >
+            <Container>
                 <Row>
                     <Col>
                         {this.state.accountExists && <h6>Account already exists</h6>}
@@ -80,6 +80,6 @@ export default class Signup extends Component {
                     </Col>
                 </Row>
             </Container>
-        )
+        );
     }
 }

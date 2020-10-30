@@ -58,7 +58,7 @@ function App() {
               
               <Route path="/login" component={Login} exact/> 
               <Route path="/signup" component={Signup} exact />
-              <Route path="/User" component={User} exact/>
+              <Route path="/user" component={User} exact/>
               <Route path="/Diagnosis" component={Diagnosis} exact/>
               <Route path="/Storyline" component={Storyline} exact/>
           </div>

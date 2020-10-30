@@ -4,9 +4,10 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const fileUpload = require('express-fileupload');
 const { stderr } = require('process');
+const {MongoClient} = require('mongodb');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-
+const config = require('./config');
 
 app.use(cors());
 app.use(fileUpload());
@@ -14,38 +15,86 @@ app.use(express.static('./images'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+
+const mongoose = require('mongoose');
+//user schema
+const userSchema = require("./database/userSchema");
+
+
+
+//database Connection
+(async () => {
+    try{
+        await mongoose.connect(config.database, {useNewUrlParser : true, useUnifiedTopology : true});
+    }catch(e){
+        throw e;
+    }
+})()
+
+
 app.post('/login', (req,res) =>{
     const {email, password} = req.body;
 
-    bcrypt.compare(password, "$2a$10$A1ZabqaQUvpqL.SUSUrfkO6Xw9zrYnq1ykV6w/RwLbcNEMIfkaoOW").then(valid => {
-        if(valid){
-            const payload = {
-                id : 1,
-                name: "Behdad"
-            };
-
-            jwt.sign(payload, "secretKey", {expiresIn : "120"} , //31556926
-                (err,token) => {
-                    res.json({
-                        success: true,
-                        token : "Bearer " + token
-                    });
+    //search for the provided email in the database
+    userSchema.findOne({email : email}).then(user => {
+        if(user){
+            bcrypt.compare(password, user.password).then(valid => {
+                if(valid){
+                    const payload = {
+                        id : user.id,
+                        name: user.name
+                    };
+        
+                    jwt.sign(payload, config.secretKey, {expiresIn : "1 day"} , //31556926
+                        (err,token) => {
+                            res.json({
+                                success: true,
+                                token : "Bearer " + token
+                            });
+                        }
+                    );
+                }else{
+                    return res.status(400).json(undefined);
                 }
-            );
-        }else{
-            return res.status(400).json(undefined);
+            });
+
+        }else{//the email address is not found
+            res.status(400).json(undefined);
         }
     });
 
+    
+});
 
+app.post('/signup', (req,res) => {
+    const {name, email, password, age} = req.body;
+    
+    userSchema.findOne({email : email}).then(user => {
+        //the email address already exists
+        if(user){
+            return res.status(400).json({msg: "Account already exists"});
+        }else{
+            //user does not exist
+            //hash rounds
+            const rounds = 10
+            //hash the password
+            bcrypt.genSalt(rounds, (err,salt) => {
+                bcrypt.hash(password, salt, (err,hash) => {
+                    if (err) throw err;
 
+                    //creating a new user with the hashed password
+                    const newUser = new userSchema({email : email, name : name, password : hash, age: age});
+                    newUser.save().then(() => {
+                        console.log("new user added to db")
+                        res.status(200).json({});
+                    }).catch(err => console.log(err));
+                });
+            });
+        }
+    });
+    
+    
 
-
-    /*if (email === "behdad@gmail.com" && password === "behdad"){
-        res.json({"name" : "behdad"});
-    }else{
-        res.status(401).json(undefined);
-    }*/
 });
 
 app.post('/upload',(req,res)=>{

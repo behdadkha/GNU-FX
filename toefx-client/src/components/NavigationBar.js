@@ -6,14 +6,30 @@ import store from '../Redux/store'
 
 class NavigationBar extends Component {
     render() {
-        var loginSignup = <Nav>
-                                <Nav.Link href="/signup">Signup</Nav.Link> 
-                                <Nav.Link href="/login">Login</Nav.Link>
-                          </Nav>
+        //console.log(window.location.pathname);
+        var loginSignup;
+        console.log(window.location.pathname);
+        if(window.location.pathname !== "/login" && window.location.pathname !== "/signup"){
+            loginSignup =   <Nav>
+                                    <Nav.Link href="/signup">Signup</Nav.Link>
+                                    <Nav.Link href="/login">Login</Nav.Link>
+                            </Nav>;
+        }else if(window.location.pathname === "/login"){
+            loginSignup =   <Nav>
+                                    <Nav.Link href="/signup">Signup</Nav.Link>
+                            </Nav>;
+        }else if(window.location.pathname === "/signup"){
+            loginSignup =   <Nav>
+                                    <Nav.Link href="/login">Login</Nav.Link>
+                            </Nav>;
+        }
+        
+        //show logout if user is logged in
         if(this.props.auth.isAuth){
             loginSignup = <Nav>
-                                <Nav.Link onClick={() => { store.dispatch(logOutUser()); window.location.href = "./"; }} >LogOut</Nav.Link> 
-                        </Nav>
+                                <Nav.Link onClick={() => { store.dispatch(logOutUser()); window.location.href = "./"; }} >LogOut</Nav.Link>
+                                {(window.location.pathname !== "/user" && window.location.pathname !== "/login") && <Nav.Link href="./user">User</Nav.Link>}
+                          </Nav>
         }
 
         return (

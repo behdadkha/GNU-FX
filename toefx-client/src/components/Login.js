@@ -51,7 +51,7 @@ export default class Login extends Component {
             store.dispatch(setCurrentUser(jwt_decode(token)));
 
             //redirect to User page
-            this.props.history.push('/User');
+            this.props.history.push('/user');
 
         }else{
             this.setState({

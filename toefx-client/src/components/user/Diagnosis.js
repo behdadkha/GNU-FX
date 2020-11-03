@@ -1,8 +1,8 @@
-import React, {Component} from "react";
-import {Button, Container, Form, Col, Row} from "react-bootstrap";
+import React, { Component } from "react";
+import { Button, Container, Form, Col, Row } from "react-bootstrap";
 import "../../componentsStyle/Storyline.css";
 import axios from "axios";
-import {connect} from "react-redux";
+import { connect } from "react-redux";
 
 class Diagnosis extends Component {
     constructor(props) {
@@ -29,22 +29,47 @@ class Diagnosis extends Component {
         this.setState({
             files: [
                 ...this.state.files,
-                {url: URL.createObjectURL(file), name: file.name},
+                { url: URL.createObjectURL(file), name: file.name, valid: false, text: 'Processing your image...' },
             ],
             uploaded: true,
             input: file.name,
         });
 
+        let currentImageIndex = this.state.files.length;
         const formData = new FormData();
         formData.append("file", e.target.files[0]);
         axios.post("http://localhost:3001/upload", formData, {
-                onUploadProgress: (ProgressEvent) => {
-                    let progress = Math.round((ProgressEvent.loaded / ProgressEvent.total) * 100) + "%";
-                    this.setState({uploadProgress: progress});
-                },
-            })
+            onUploadProgress: (ProgressEvent) => {
+                let progress = Math.round((ProgressEvent.loaded / ProgressEvent.total) * 100) + "%";
+                this.setState({ uploadProgress: progress });
+            },
+        })
             .then((res) => {
                 console.log(res);
+            });
+
+        axios.get(`http://localhost:3001/imagevalidation/?imageName=${file.name}`)
+            .then(res => {
+                var response = res.data;
+                response = response.trim();
+                var valid, text;
+                if (response === "toe") {
+                    valid = true;
+                    text = "Toe detected"
+                }
+                else {
+                    valid = false;
+                    text = "It doesn't look like a toe"
+                }
+                let tempFiles = this.state.files;
+                tempFiles[currentImageIndex].valid = valid;
+                tempFiles[currentImageIndex].text = text;
+                this.setState({
+                    files: tempFiles
+                });
+            })
+            .catch((err) => {
+                console.log(err)
             });
     }
 
@@ -53,7 +78,7 @@ class Diagnosis extends Component {
     handleDiagnose = async (index) => {
         let imageName = this.state.files[index].name;
         const response = await fetch(
-            `http://localhost:3001/diagnose?imageName=${imageName}`,
+            `http://localhost:3001/diagnose/?imageName=${imageName}`,
             {
                 method: "GET",
             }
@@ -63,9 +88,11 @@ class Diagnosis extends Component {
         this.setState({
             diagnosis: [
                 ...this.state.diagnosis,
-                {image: index, text: responseText},
+                { image: index, text: responseText, diagnosisButton: true },
             ],
         });
+
+
     };
 
     render() {
@@ -85,7 +112,7 @@ class Diagnosis extends Component {
                                 />
                                 <label className="upload-image" htmlFor="inputGroupFile01">
                                     <div>
-                                        <h6 style={{display: "inline"}}>
+                                        <h6 style={{ display: "inline" }}>
                                             Upload
                                         </h6>
                                         {this.state.uploadProgress !== 0 && (
@@ -103,18 +130,19 @@ class Diagnosis extends Component {
                             </div>
                         </div>
                     </Col>
-                </Row>    
+                </Row>
                 <Row>
                     {this.state.files.map((source, index) => (
                         <Col key={`col-${index}`}>
                             <Row>
                                 <Col>
-                                    <img key={index} src={source.url} style={{width : "40%"}}/>
+                                    <img key={index} src={source.url} style={{ width: "40%" }} />
                                 </Col>
                             </Row>
                             <Row>
                                 <Col>
-                                    <Button onClick={this.handleDiagnose.bind(this, index)}>
+                                    <div>{source.text}</div>
+                                    <Button onClick={this.handleDiagnose.bind(this, index)} disabled={!source.valid}>
                                         Diagnose
                                     </Button>
                                 </Col>
@@ -122,7 +150,7 @@ class Diagnosis extends Component {
                             <Row>
                                 <Col>
                                     {this.state.diagnosis.length > index && (
-                                        <div style={{margin: "auto"}} className="card w-50" >
+                                        <div style={{ margin: "auto" }} className="card w-50" >
                                             <div className="card-body">
                                                 <h5 className="card-title">
                                                     Results
@@ -131,7 +159,7 @@ class Diagnosis extends Component {
                                                     {
                                                         this.state.diagnosis[
                                                             this.state.diagnosis.findIndex(
-                                                                ({image}) => image === index)
+                                                                ({ image }) => image === index)
                                                         ].text
                                                     }
                                                 </p>

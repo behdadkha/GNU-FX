@@ -107,15 +107,25 @@ app.post('/upload',(req,res)=>{
     });
 });
 
-app.get('/diagnose', (req,res)=>{
+app.get('/imagevalidation', (req,res)=>{
     const imageName = req.query.imageName;
     console.log("analyzing: " + imageName);
     const { exec } = require("child_process");
-    let command = `cd ./AI && python predict.py ../images/${imageName}`;
-    exec(command, (err, stdout, stderr) => {
+    let commandCheckImage = `cd ./AI/imagecheck && python predictToeOrNot.py ../../images/${imageName}`;
+    exec(commandCheckImage, (err, stdout, stderr) => {
         res.send(stdout.split(" ")[0]);
     });
 });
+
+app.get('/diagnose', (req,res) =>{
+    const imageName = req.query.imageName;
+    console.log("analyzing: " + imageName);
+    const { exec } = require("child_process");
+    let commandCheckImage = `cd ./AI/diagnose && python predict.py ../../images/${imageName}`;
+    exec(commandCheckImage, (err, stdout, stderr) => {
+        res.send(stdout.split(" ")[0]);
+    }); 
+})
 
 app.listen(3001, () =>{
     console.log("server running on 3001");

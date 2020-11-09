@@ -5,8 +5,8 @@ from tensorflow.keras.optimizers import RMSprop
 import matplotlib.pyplot as plt 
 import numpy as np 
 import os
-import PIL
-import PIL.Image
+#import PIL
+#import PIL.Image
 
 train = ImageDataGenerator(rescale= 1/255)
 validation = ImageDataGenerator(rescale= 1/255)

@@ -109,11 +109,13 @@ app.post('/upload',(req,res)=>{
 
 app.get('/imagevalidation', (req,res)=>{
     const imageName = req.query.imageName;
-    console.log("analyzing: " + imageName);
+    console.log("Checking iamge: " + imageName);
     const { exec } = require("child_process");
-    let commandCheckImage = `cd ./AI/imagecheck && python predictToeOrNot.py ../../images/${imageName}`;
+    let commandCheckImage = `pwd && cd ./AI/imagecheck && python3 predictToeOrNot.py ../../images/${imageName}`;
     exec(commandCheckImage, (err, stdout, stderr) => {
-        res.send(stdout.split(" ")[0]);
+        //if(stderr) console.log(stderr);
+        //for some reason the first line is /toefx-server when run in docker
+        res.send(stdout.split("\n")[1]);
     });
 });
 
@@ -121,7 +123,7 @@ app.get('/diagnose', (req,res) =>{
     const imageName = req.query.imageName;
     console.log("analyzing: " + imageName);
     const { exec } = require("child_process");
-    let commandCheckImage = `cd ./AI/diagnose && python predict.py ../../images/${imageName}`;
+    let commandCheckImage = `cd ./AI/diagnose && python3 predict.py ../../images/${imageName}`;
     exec(commandCheckImage, (err, stdout, stderr) => {
         res.send(stdout.split(" ")[0]);
     }); 

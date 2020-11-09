@@ -1,0 +1,16 @@
+FROM node:13-alpine
+
+WORKDIR /toefx-client
+
+COPY package.json ./
+COPY package-lock.json ./
+
+# install the node modules
+RUN npm install --silent
+
+# copy the code into the container
+COPY . /toefx-client
+
+EXPOSE 3000
+
+CMD [ "npm", "start" ]

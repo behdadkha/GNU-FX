@@ -1,8 +1,7 @@
 import tensorflow as tf 
 from tensorflow import keras
 from tensorflow.keras.preprocessing import image
-from tensorflow.keras.optimizers import RMSprop
-import matplotlib.pyplot as plt 
+from tensorflow.keras.optimizers import RMSprop 
 import numpy as np 
 import os
 import sys
@@ -22,8 +21,6 @@ def predictor(imageName):
     return catagory[np.argmax(score)]
 
 print(predictor(sys.argv[1]))
-'''plt.grid(False)
-plt.imshow(prepare(), cmap=plt.cm.binary)
-plt.show()'''
+
 
 

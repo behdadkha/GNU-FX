@@ -111,11 +111,11 @@ app.get('/imagevalidation', (req,res)=>{
     const imageName = req.query.imageName;
     console.log("Checking iamge: " + imageName);
     const { exec } = require("child_process");
-    let commandCheckImage = `pwd && cd ./AI/imagecheck && python3 predictToeOrNot.py ../../images/${imageName}`;
+    let commandCheckImage = `cd ./AI/imagecheck && python3 predictToeOrNot.py ../../images/${imageName}`;
     exec(commandCheckImage, (err, stdout, stderr) => {
         //if(stderr) console.log(stderr);
         //for some reason the first line is /toefx-server when run in docker
-        res.send(stdout.split("\n")[1]);
+        res.send(stdout);
     });
 });
 

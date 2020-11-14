@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {Col, Row, Container, Form, FormControl, Button} from "react-bootstrap";
+import {Col, Row, Container, Form, Button} from "react-bootstrap";
 import "../componentsStyle/Login.css";
 
 export default class Signup extends Component {
@@ -27,7 +27,7 @@ export default class Signup extends Component {
         });
 
         if(response.status === 200){
-            let body = await response.json();
+            await response.json();
 
             //redirect to User page
             this.props.history.push('/user');

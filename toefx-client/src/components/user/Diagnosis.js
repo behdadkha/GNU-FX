@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Button, Container, Form, Col, Row } from "react-bootstrap";
+import { Button, Container, Col, Row } from "react-bootstrap";
 import "../../componentsStyle/Storyline.css";
 import axios from "axios";
 import { connect } from "react-redux";
@@ -136,7 +136,7 @@ class Diagnosis extends Component {
                         <Col key={`col-${index}`}>
                             <Row>
                                 <Col>
-                                    <img key={index} src={source.url} style={{ width: "40%" }} />
+                                    <img key={index} src={source.url} style={{ width: "40%" }} alt="uploaded" />
                                 </Col>
                             </Row>
                             <Row>

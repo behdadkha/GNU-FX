@@ -1,7 +1,6 @@
 import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
-
 import {Provider} from "react-redux";
 import store from "./Redux/store";
 
@@ -10,7 +9,7 @@ import FirstPage from "./components/FirstPage";
 import Login from "./components/Login";
 import Signup from "./components/Signup";
 import {Route, BrowserRouter as Router} from "react-router-dom";
-import User from "./components/user/User";
+import NewUser from "./components/user/NewUser";
 import jwt_decode from "jwt-decode";
 import setAuthHeader from "./utils/setAuthHeader";
 import {logOutUser, setCurrentUser} from "./Redux/Actions/authAction";
@@ -51,7 +50,7 @@ function App() {
               
               <Route path="/login" component={Login} exact/> 
               <Route path="/signup" component={Signup} exact />
-              <Route path="/user" component={User} exact/>
+              <Route path="/user" component={NewUser} exact/>
               <Route path="/Diagnosis" component={Diagnosis} exact/>
               <Route path="/Storyline" component={Storyline} exact/>
           </div>

@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {Button, Carousel, Col, Container, Row} from "react-bootstrap";
+import {Carousel, Col, Container, Row} from "react-bootstrap";
 import "../../componentsStyle/Storyline.css";
 import {connect} from "react-redux";
 import axios from "axios";
@@ -47,8 +47,6 @@ class Storyline extends Component {
     }
 
     render() {
-        //populate the slideShow when files are uploaded
-        let slideShow;
 
         return (
             <Container>

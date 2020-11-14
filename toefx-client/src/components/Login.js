@@ -1,8 +1,7 @@
 import React, {Component} from "react";
-import {Col, Row, Container, Form, FormControl, Button} from "react-bootstrap";
+import {Col, Row, Container, Form, Button} from "react-bootstrap";
 import "../componentsStyle/Login.css";
 import store from "../Redux/store";
-import {connect} from "react-redux";
 import {setCurrentUser} from "../Redux/Actions/authAction";
 import jwt_decode from "jwt-decode";
 import setAuthHeader from "../utils/setAuthHeader";

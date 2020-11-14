@@ -1,6 +1,7 @@
 import React, {Component} from "react";
-import {Col, Row, Container, Button} from "react-bootstrap";
+import {Col, Row, Container} from "react-bootstrap";
 import {connect} from "react-redux";
+import Sidebar from './Sidebar';
 import storylineImage from "../../storyline.png";
 import diagnosisImage from "../../diagnosis.png";
 import '../../componentsStyle/User.css';
@@ -17,6 +18,7 @@ class User extends Component {
     render() {
         return (
             <Container>
+                <Sidebar />
                 <Row>
                     <Col className="welcome">Welcome {this.props.auth.user.name}!</Col>
                 </Row>
@@ -25,22 +27,22 @@ class User extends Component {
                          style={{marginRight: "2%"}}
                          onClick={() => this.props.history.push("./Storyline")}
                     >
-                        <h6 class="options-headers">Create a Storyline</h6>
+                        <h6 className="options-headers">Create a Storyline</h6>
                         <img
                             src={storylineImage}
                             style={{width: "100%"}}
-                            alt="story line image"
+                            alt="story line"
                         ></img>
                     </Col>
 
                     <Col className="shadow option"
                          onClick={() => this.props.history.push("./diagnosis")}
                     >
-                        <h6 class="options-headers">Diagnosis</h6>
+                        <h6 className="options-headers">Diagnosis</h6>
                         <img
                             src={diagnosisImage}
                             style={{width: "100%"}}
-                            alt="diagnosis image"
+                            alt="diagnosis"
                         ></img>
                     </Col>
                 </Row>

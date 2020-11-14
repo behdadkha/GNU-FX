@@ -44,9 +44,9 @@ class Diagnosis extends Component {
                 this.setState({ uploadProgress: progress });
             },
         })
-            .then((res) => {
-                console.log(res);
-            });
+        .then((res) => {
+            console.log(res);
+        });
 
         axios.get(`http://localhost:3001/imagevalidation/?imageName=${file.name}`)
             .then(res => {

@@ -10,25 +10,20 @@
     padding-top: 20px;
 }
 
-.shadow{
-    border: 1px solid #ada0a0;
-    border-radius: 10px;
-}
-
 .options-headers {
     padding-top: 20px;
     font-size: 24px;
 }
 
 .option {
+    border: 1px solid #ada0a0;
+    border-radius: 10px;
     max-height: inherit;
-    padding: 15px;
 }
 
 .option:hover {
-    border: 3px solid;
+    border: 1px solid;
     cursor: pointer;
-    padding: 12px; /* Counteract border */
 }
 
 #images {
@@ -36,5 +31,6 @@
 }
 
 #tableCol{
-    padding: 5% 15.5% 0 0;
+    width: 80%;
+    padding: 5% 14% 0 0;
 }

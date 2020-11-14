@@ -46,7 +46,7 @@ export default class Graph extends Component {
         return (
             <div>
                 <div style={{ textAlign: "center" }}>
-                    <div style={{ display: "flex", float: "left", marginRight : "-5%"}}>
+                    <div style={{ display: "flex", float: "left", marginRight : "-5%", marginTop : "20%"}}>
                         <h6 style={{ writingMode: "vertical-rl" }}>Fungal coverage of nail</h6>
                     </div>
                     <div style={{ display: "flex" }}>

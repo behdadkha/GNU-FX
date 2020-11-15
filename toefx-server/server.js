@@ -19,7 +19,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 const mongoose = require('mongoose');
 //user schema
 const userSchema = require("./database/userSchema");
-const { resolve } = require('path');
+
+//toe-data schema
+const toe_dataSchema = require("./database/toe-dataSchema");
 
 
 
@@ -163,7 +165,30 @@ app.get('/diagnose', (req, res) => {
     exec(commandCheckImage, (err, stdout, stderr) => {
         res.send(stdout.split(" ")[0]);
     });
-})
+});
+
+//get the toe data from the database and send it back to the client
+app.get('/getToe', (req,res) => {
+
+    try{
+        const token = req.headers.authorization;
+        const data = jwt.verify(token.replace("Bearer ", ""), config.secretKey);
+        const userId = data.id;
+    
+        //find the user's data from the database(take a look at database/toe-dataSchema.js)
+        toe_dataSchema.findOne({ userID: userId }).then(data => {
+            if (data) {
+                res.json(data);
+            } else {
+                res.status(400).json({msg : "not found"});
+            }
+        });
+    }
+    catch(e){
+        console.log("Something happened when tried to access toe-data (might be an invalid user)");
+    }
+
+});
 
 app.listen(process.env.PORT || 3001, () => {
     console.log("server running on 3001");

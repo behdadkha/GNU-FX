@@ -38,7 +38,7 @@ export default class Login extends Component {
             });
 
             
-            const {token} = body; //extract the token from the respnse
+            const {token} = body; //extract the token from the response
             localStorage.setItem("jwt", token); //save the token in localstorage
             setAuthHeader(token); //set the token to header for feature requests
             store.dispatch(setCurrentUser(jwt_decode(token))); //add the user data to the store (decoded)

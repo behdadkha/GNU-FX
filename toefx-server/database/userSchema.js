@@ -32,6 +32,10 @@ const userSchema = new schema({
     date: {
         type : Date,
         default : Date.now
+    },
+    schedule: {
+        type: Array,
+        required : false
     }
 
 });

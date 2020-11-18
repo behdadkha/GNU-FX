@@ -27,7 +27,7 @@ class NewUser extends Component {
     async componentDidMount() {
         //if user is not logged in, go to the login page
         if (!this.props.auth.isAuth)
-            this.props.history.push("./Login");
+            this.props.history.push("/Login");
 
         //get all the user's images and store them in a data array
         for (var i = 1; i <= this.state.numberOfImages; i++) {

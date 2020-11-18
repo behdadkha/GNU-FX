@@ -23,6 +23,8 @@ const userSchema = require("./database/userSchema");
 //toe-data schema
 const toe_dataSchema = require("./database/toe-dataSchema");
 
+//user routes
+const userRoutes = require('./routes/user');
 
 
 //database Connection
@@ -189,6 +191,9 @@ app.get('/getToe', (req,res) => {
     }
 
 });
+
+//user 
+app.use('/user', userRoutes);
 
 app.listen(process.env.PORT || 3001, () => {
     console.log("server running on 3001");

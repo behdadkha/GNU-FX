@@ -12,10 +12,12 @@
 }
 
 #sidebar {
+    
     width: 250px;
-    position: fixed;
+    position: absolute;
     top: 0;
     left: 0;
+    right: 0;
     height: 100vh;
     z-index: 999;
     background: #30302b;

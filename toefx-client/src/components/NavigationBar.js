@@ -32,8 +32,8 @@ class NavigationBar extends Component {
         //show logout if user is logged in
         if (this.props.auth.isAuth) {
             loginSignup = <Nav>
-                <Nav.Link onClick={() => { store.dispatch(logOutUser()); window.location.href = "./"; }}>Log Out</Nav.Link>
-                {(window.location.pathname !== "/user" && window.location.pathname !== "/login") && <Nav.Link href="./user">Dashboard</Nav.Link>}
+                <Nav.Link onClick={() => { store.dispatch(logOutUser()); window.location.href = "/"; }}>Log Out</Nav.Link>
+                {(window.location.pathname !== "/user" && window.location.pathname !== "/login") && <Nav.Link href="/user">Dashboard</Nav.Link>}
             </Nav>
         }
 

@@ -15,6 +15,7 @@ import setAuthHeader from "./utils/setAuthHeader";
 import {logOutUser, setCurrentUser} from "./Redux/Actions/authAction";
 import Storyline from "./components/user/Storyline";
 import Diagnosis from "./components/user/Diagnosis";
+import Schedule from "./components/user/Schedule";
 
 //if the browser has the user's login info,
 //set the data and go to the user's page
@@ -53,6 +54,7 @@ function App() {
               <Route path="/user" component={NewUser} exact/>
               <Route path="/Diagnosis" component={Diagnosis} exact/>
               <Route path="/Storyline" component={Storyline} exact/>
+              <Route path="/user/schedule" component={Schedule}/>
           </div>
         </Router>
     </Provider>

@@ -15,12 +15,44 @@ class Diagnosis extends Component {
             diagnosis: [], //[{image: 0, text:""}]
             uploadProgress: 0,
         };
+
+        this.validateImage = this.validateImage.bind(this);
     }
 
     componentDidMount() {
         //if user is not logged in, go to the login page
         if (!this.props.auth.isAuth)
             this.props.history.push("./Login");
+    }
+
+    //request an iamge validation
+    validateImage(file){
+        console.log("here");
+        let currentImageIndex = this.state.files.length - 1;
+        axios.get(`http://localhost:3001/imagevalidation`)
+        .then(res => {
+            var response = res.data;
+            response = response.trim();
+            var valid, text;
+            if (response === "toe") {
+                valid = true;
+                text = "Toe detected"
+            }
+            else {
+                valid = false;
+                text = "It doesn't look like a toe"
+            }
+            let tempFiles = this.state.files;
+            console.log(tempFiles, currentImageIndex);
+            tempFiles[currentImageIndex].valid = valid;
+            tempFiles[currentImageIndex].text = text;
+            this.setState({
+                files: tempFiles
+            });
+        })
+        .catch((err) => {
+            console.log(err)
+        });
     }
 
     //e => event
@@ -35,7 +67,7 @@ class Diagnosis extends Component {
             input: file.name,
         });
 
-        let currentImageIndex = this.state.files.length;
+        
         const formData = new FormData();
         formData.append("file", e.target.files[0]);
         axios.post("http://localhost:3001/upload", formData, {
@@ -45,34 +77,12 @@ class Diagnosis extends Component {
             },
         })
         .then((res) => {
-            console.log(res);
+            this.validateImage(file);
         });
 
-        axios.get(`http://localhost:3001/imagevalidation/?imageName=${file.name}`)
-            .then(res => {
-                var response = res.data;
-                response = response.trim();
-                var valid, text;
-                if (response === "toe") {
-                    valid = true;
-                    text = "Toe detected"
-                }
-                else {
-                    valid = false;
-                    text = "It doesn't look like a toe"
-                }
-                let tempFiles = this.state.files;
-                tempFiles[currentImageIndex].valid = valid;
-                tempFiles[currentImageIndex].text = text;
-                this.setState({
-                    files: tempFiles
-                });
-            })
-            .catch((err) => {
-                console.log(err)
-            });
+        
     }
-
+    
     //index => files[index]
     //sends the imagename as a query string imageName=
     handleDiagnose = async (index) => {

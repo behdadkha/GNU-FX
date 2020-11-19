@@ -9,7 +9,7 @@ import FirstPage from "./components/FirstPage";
 import Login from "./components/Login";
 import Signup from "./components/Signup";
 import {Route, BrowserRouter as Router} from "react-router-dom";
-import NewUser from "./components/user/NewUser";
+import NewUser from "./components/user/User";
 import jwt_decode from "jwt-decode";
 import setAuthHeader from "./utils/setAuthHeader";
 import {logOutUser, setCurrentUser} from "./Redux/Actions/authAction";
@@ -44,9 +44,15 @@ function App() {
     <Provider store={store}>
         <Router>
           <div className="App">
-              <div className="navBar">
-                <Navbar></Navbar>
-              </div>
+              {// only show the navbar on pages other than /user
+              !window.location.pathname.includes('user') 
+                ? 
+                <div className="navBar">
+                  <Navbar></Navbar>
+                </div>
+                :
+                <div></div>
+              }
               <Route path="/" component={FirstPage} exact/>
               
               <Route path="/login" component={Login} exact/> 

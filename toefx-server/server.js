@@ -25,7 +25,8 @@ const toe_dataSchema = require("./database/toe-dataSchema");
 
 //user routes
 const userRoutes = require('./routes/user');
-
+const { resolve } = require('path');
+const { exec } = require("child_process");
 
 //database Connection
 (async () => {
@@ -50,6 +51,24 @@ function findPeople(userId, res) {
         })
     })
 }
+
+//function to run an exec command(cl)
+//runs the given command and returns a promise
+//resolve passes the command line output
+function runCommand(command){
+    const { exec } = require("child_process");
+    return new Promise((resolve, reject) => {
+        exec(command, (err, stdout, stderr) => {
+            if(err) {
+                console.log(err);
+                reject();
+            };
+            resolve(stdout);
+        });
+    });
+    
+}
+
 
 app.post('/login', (req, res) => {
     const { email, password } = req.body;
@@ -85,80 +104,164 @@ app.post('/login', (req, res) => {
 
 });
 
+
+//creates a new user in the database
+//creates a new folder with userid as its name in the images folder
+//returns a 200 as the response
 app.post('/signup', (req, res) => {
     const { name, email, password, age } = req.body;
 
-    userSchema.findOne({ email: email }).then(user => {
-        //the email address already exists
-        if (user) {
-            return res.status(400).json({ msg: "Account already exists" });
-        } else {
-            //user does not exist
-            //hash rounds
-            const rounds = 10
-            //hash the password
-            bcrypt.genSalt(rounds, (err, salt) => {
-                bcrypt.hash(password, salt, (err, hash) => {
-                    if (err) throw err;
-
-                    //creating a new user with the hashed password
-                    const newUser = new userSchema({ email: email, name: name, password: hash, age: age });
-                    newUser.save().then(() => {
-                        console.log("new user added to db")
-                        res.status(200).json({});
-                    }).catch(err => console.log(err));
+    try{
+        userSchema.findOne({ email: email }).then(user => {
+            //the email address already exists
+            if (user) {
+                return res.status(400).json({ msg: "Account already exists" });
+            } else {
+                //user does not exist
+    
+                //hash rounds
+                const rounds = 10
+                //hash the password
+                bcrypt.genSalt(rounds, (err, salt) => {
+                    bcrypt.hash(password, salt, (err, hash) => {
+                        if (err) throw err;
+    
+                        //creating a new user with the hashed password
+                        const newUser = new userSchema({ email: email, name: name, password: hash, images: [], age: age });
+                        newUser.save().then(() => {
+                            console.log("new user added to db");
+    
+                            //create a folder for the user's images
+                            console.log(newUser.id);
+                            runCommand(`cd images && mkdir ${newUser.id}`)
+    
+                            res.status(200).json({});
+    
+                        }).catch(err => console.log(err));
+                    });
                 });
-            });
-        }
-    });
-
-
-
+            }
+        });
+    }catch{
+        console.log("not able to finish the signup process");
+    }
 });
 
-app.post('/upload', (req, res) => {
+//handles image upload
+//moves the uploaded image into the images folder under the current user
+app.post('/upload', async (req, res) => {
     const image = req.files.file;
-    image.mv(`${__dirname}/images/${image.name}`, (err) => {
-        if (err) {
-            console.log(err);
-            return res.status(500).send({ msg: "Error occured" });
-        }
-    });
+    const token = req.headers.authorization;
+    const data = jwt.verify(token.replace("Bearer ", ""), config.secretKey);
+
+    //if the token is invalid
+    if (data == undefined){
+        res.status(500).send({ msg: "Error occured" });
+    }
+
+    const userId = data.id;
+    let user = await findPeople(userId, res);
+
+    console.log(userId);
+
+    let partsOfImageName = image.name.split(".");
+    let extension = partsOfImageName[partsOfImageName.length - 1];
+
+    //image name is images.length
+    const imageName = user.images.length + "." + extension;
+
+    //save the new image under user
+    user.images.push(imageName);
+    user.save();
+
+
+    try{
+        image.mv(`${__dirname}/images/${userId}/${imageName}`, (err) => {
+            if (err) {
+                console.log(err);
+                res.status(500).send({ msg: "Error occured" });
+            }else{
+                res.send({msg : "uploaded"})
+            }
+        });
+    }
+    catch{
+        console.log("Something happened when tried to save the image");
+    }
+    
+
+    
 });
 
 //serve user images back to the client app
 //finds the person in the database and gets the images
-//react sends an authorization token, decode it here and get the id, using that id validate user
+//react sends an authorization token. Decodes it here and gets the id, using that id validates the user
 app.get('/getImage', async (req, res) => {
 
-    const token = req.headers.authorization;
-    const data = jwt.verify(token.replace("Bearer ", ""), config.secretKey);
-    const userId = data.id;
+    try{
+        const token = req.headers.authorization;
+        const data = jwt.verify(token.replace("Bearer ", ""), config.secretKey);
+        const userId = data.id;
 
-    let user = await findPeople(userId, res);
-    let imageName = req.query.imageName;
+        //if the token is invalid
+        if (data == undefined){
+            res.status(500).send({ msg: "Error occured" });
+        }
 
-    //if images includes under the user
-    if (await user.images.includes(imageName)) {
-        res.sendFile(`${__dirname}/images/${imageName}`);
-    }
-    else {
-        res.status(400).json({ msg: "Invalid request" });
+        let user = await findPeople(userId, res);
+        let imageName = req.query.imageName;
+
+
+        //if the specified images is actually owned by the the user
+        if (await user.images.includes(imageName)) {
+            res.sendFile(`${__dirname}/images/${userId}/${imageName}`);
+        }
+        else {
+            res.status(400).json({ msg: "Invalid request" });
+        }
+    }catch(e){
+        //console.log(e)
+        console.log("invalid token , tried to get an image");
     }
 });
 
-app.get('/imagevalidation', (req, res) => {
-    const imageName = req.query.imageName;
-    console.log("Checking iamge: " + imageName);
-    const { exec } = require("child_process");
-    let commandCheckImage = `cd ./AI/imagecheck && python3 predictToeOrNot.py ../../images/${imageName}`;
-    exec(commandCheckImage, (err, stdout, stderr) => {
-        //if(stderr) console.log(stderr);
-        //for some reason the first line is /toefx-server when run in docker
-        res.send(stdout);
-    });
+
+//checks if the image has a toe
+app.get('/imagevalidation', async(req, res) => {
+    try{
+
+        //validate the user
+        const token = req.headers.authorization;
+        const data = jwt.verify(token.replace("Bearer ", ""), config.secretKey);
+        const userId = data.id;
+
+        //if the token is invalid
+        if (data == undefined){
+            res.status(500).send({ msg: "Error occured" });
+        }
+
+        console.log("Checking the image");
+
+        //getting the user's last image
+        let user = await findPeople(userId, res);
+        let imageName = user.images[user.images.length - 1];
+
+        console.log("imagename: ", imageName);
+
+        let commandCheckImage = `cd ./AI/imagecheck && python predictToeOrNot.py ../../images/${userId}/${imageName}`;
+        exec(commandCheckImage, (err, stdout, stderr) => {
+            //if(stderr) console.log(stderr);
+            res.send(stdout);
+        });
+    }catch(e){
+        console.log("error validating the image");
+        console.log(e);
+    }
+    
 });
 
+//runs the fungal diagnose python script
+//returns as response, health, unhealthy
 app.get('/diagnose', (req, res) => {
     const imageName = req.query.imageName;
     console.log("analyzing: " + imageName);
@@ -176,6 +279,10 @@ app.get('/getToe', (req,res) => {
         const token = req.headers.authorization;
         const data = jwt.verify(token.replace("Bearer ", ""), config.secretKey);
         const userId = data.id;
+
+        if (data == undefined){
+            res.status(500).send({ msg: "Error occured" });
+        }
     
         //find the user's data from the database(take a look at database/toe-dataSchema.js)
         toe_dataSchema.findOne({ userID: userId }).then(data => {
@@ -192,7 +299,26 @@ app.get('/getToe', (req,res) => {
 
 });
 
-//user 
+//send the list of the name of user's images
+app.get('/getImageNames', async(req,res) => {
+    try{
+        const token = req.headers.authorization;
+        const data = jwt.verify(token.replace("Bearer ", ""), config.secretKey);
+        const userId = data.id;
+
+        if (data == undefined){
+            res.status(500).send({ msg: "Error occured" });
+        }
+
+        let user = await findPeople(userId, res);
+        res.send(user.images)
+
+    }catch{
+        console.log("Something happened when tried to get user's image names");
+    }
+});
+
+//everything after /user 
 app.use('/user', userRoutes);
 
 app.listen(process.env.PORT || 3001, () => {

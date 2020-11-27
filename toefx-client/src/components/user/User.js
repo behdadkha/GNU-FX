@@ -18,7 +18,7 @@ class NewUser extends Component {
             selectedToeImage: 0, //index of the image in imageUrls array
             numberOfImages: 3,
             selectedFoot: 0, //0 for right foot, 1 for left
-            toeData: {},
+            toeData: {}, //recieved from the server
             imageUrls: [],//[{imageName: "1.PNG", url : }]
         };
     }
@@ -26,7 +26,7 @@ class NewUser extends Component {
     async componentDidMount() {
         //if user is not logged in, go to the login page
         if (!this.props.auth.isAuth)
-            this.props.history.push("/Login");
+            this.props.history.push("/login");
 
 
         await Axios.get(`http://localhost:3001/getImageNames`)
@@ -34,18 +34,15 @@ class NewUser extends Component {
 
                 //get all the user's images and store them in a data array
                 for (var i = 0; i < imageNames.data.length; i++) {
-
                     await Axios.get(`http://localhost:3001/getImage?imageName=${imageNames.data[i]}`, { responseType: "blob" })
                         .then((image) => {
                             this.setState({
                                 imageUrls: [...this.state.imageUrls, { imageName: imageNames.data[i], url: URL.createObjectURL(image.data) }]
                             });
                         });
-
                 }
+
             });
-
-
 
 
         //get the user's toe data from the node server
@@ -102,7 +99,7 @@ class NewUser extends Component {
                                     paddingTop: "4%",
                                 }}
                             >
-                                {console.log(this.state.selectedToe)}
+                                
                                 {/*Iterate over the selected toe's images */}
                                 {((Object.keys(this.state.toeData).length !== 0) && Object.values(Object.values(this.state.toeData)[this.state.selectedFoot + 2])[this.state.selectedToe] !== undefined) &&
                                     Object.values(Object.values(this.state.toeData)[this.state.selectedFoot + 2])[this.state.selectedToe].map(({ image }, index) =>

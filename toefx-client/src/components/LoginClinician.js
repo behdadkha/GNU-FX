@@ -1,13 +1,13 @@
-import React, {Component} from "react";
-import {Col, Row, Container, Form, Button} from "react-bootstrap";
+import React, { Component } from 'react';
+import { Col, Row, Container, Form, Button } from "react-bootstrap";
 import "../componentsStyle/Login.css";
 import store from "../Redux/store";
-import {setCurrentUser} from "../Redux/Actions/authAction";
+import { setCurrentUser } from "../Redux/Actions/authAction";
 import jwt_decode from "jwt-decode";
 import setAuthHeader from "../utils/setAuthHeader";
 import { config } from "../config";
 
-export default class Login extends Component {
+export default class LoginClinician extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -21,7 +21,7 @@ export default class Login extends Component {
     handleLoginPatient = async (e) => {
         e.preventDefault();
 
-        const response = await fetch(`${config.dev_server}/login`, {
+        const response = await fetch(`${config.dev_server}/loginClinician`, {
             method: "POST",
             headers: {
                 Accept: "application/json",
@@ -39,16 +39,16 @@ export default class Login extends Component {
                 user: body,
             });
 
-            
-            const {token} = body; //extract the token from the response
+
+            const { token } = body; //extract the token from the response
             localStorage.setItem("jwt", token); //save the token in localstorage
             setAuthHeader(token); //set the token to header for feature requests
             store.dispatch(setCurrentUser(jwt_decode(token))); //add the user data(decoded) to the store 
 
             //redirect to User page
-            this.props.history.push('/user');
+            this.props.history.push('/clinician');
 
-        }else{
+        } else {
             this.setState({
                 invalidUser: true,
             });
@@ -81,7 +81,7 @@ export default class Login extends Component {
                                     placeholder="Email"
                                     value={this.state.email}
                                     onChange={(e) =>
-                                        this.setState({email: e.target.value})
+                                        this.setState({ email: e.target.value })
                                     }
                                 />
                             </Form.Group>
@@ -102,7 +102,6 @@ export default class Login extends Component {
                             <Button variant="primary" type="submit">
                                 Login
                             </Button>
-                            <h6 id="IamAClinicianTEXT" onClick={() => this.props.history.push("loginClinician")}>I am a clinician</h6>
                         </Form>
                     </Col>
                 </Row>

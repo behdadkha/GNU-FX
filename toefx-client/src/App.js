@@ -16,6 +16,9 @@ import {logOutUser, setCurrentUser} from "./Redux/Actions/authAction";
 import Storyline from "./components/user/Storyline";
 import Diagnosis from "./components/user/Diagnosis";
 import Schedule from "./components/user/Schedule";
+import LoginClinician from "./components/LoginClinician";
+import ClinicianDashboard from "./components/clinician/ClinicianDashboard";
+import MyAccount from "./components/user/MyAccount";
 
 //if the browser has the user's login info,
 //set the data and go to the user's page
@@ -40,12 +43,14 @@ if (localStorage.jwt) {
 }
 
 function App() {
+  const pagesWithNavbar = ["/", "/signup"];
   return (
     <Provider store={store}>
         <Router>
           <div className="App">
+          {console.log((window.location.pathname))}
               {// only show the navbar on pages other than /user
-              !window.location.pathname.includes('user') 
+              pagesWithNavbar.includes(window.location.pathname)
                 ? 
                 <div className="navBar">
                   <Navbar></Navbar>
@@ -60,7 +65,10 @@ function App() {
               <Route path="/user" component={NewUser} exact/>
               <Route path="/Diagnosis" component={Diagnosis} exact/>
               <Route path="/Storyline" component={Storyline} exact/>
-              <Route path="/user/schedule" component={Schedule}/>
+              <Route path="/user/schedule" component={Schedule} exact/>
+              <Route path="/user/myAccount" component={MyAccount} exact/>
+              <Route path="/loginClinician" component={LoginClinician} exact/>
+              <Route path="/clinician" component={ClinicianDashboard} exact/>
           </div>
         </Router>
     </Provider>

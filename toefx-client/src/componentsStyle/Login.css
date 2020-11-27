@@ -4,3 +4,12 @@
     text-align: left;
     width: 50%;
 }
+#IamAClinicianTEXT{
+    color: blue;
+    display: inline;
+    padding-left: 4%;
+    cursor: pointer;
+}
+#IamAClinicianTEXT:hover{
+    text-decoration: underline;
+}

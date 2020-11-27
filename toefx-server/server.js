@@ -20,6 +20,9 @@ const mongoose = require('mongoose');
 //user schema
 const userSchema = require("./database/userSchema");
 
+//clinician schema
+const clinicianSchema = require("./database/clinicianSchema");
+
 //toe-data schema
 const toe_dataSchema = require("./database/toe-dataSchema");
 
@@ -75,6 +78,41 @@ app.post('/login', (req, res) => {
 
     //search for the provided email in the database
     userSchema.findOne({ email: email }).then(user => {
+        if (user) {
+            bcrypt.compare(password, user.password).then(valid => {
+                if (valid) {
+                    const payload = {
+                        id: user.id,
+                        name: user.name
+                    };
+
+                    jwt.sign(payload, config.secretKey, { expiresIn: "1 day" }, //31556926
+                        (err, token) => {
+                            res.json({
+                                success: true,
+                                token: "Bearer " + token
+                            });
+                        }
+                    );
+                } else {
+                    return res.status(400).json(undefined);
+                }
+            });
+
+        } else {//the email address is not found
+            res.status(400).json(undefined);
+        }
+    });
+
+
+});
+
+//login for clinician
+app.post('/loginClinician', (req, res) => {
+    const { email, password } = req.body;
+
+    //search for the provided email in the database
+    clinicianSchema.findOne({ email: email }).then(user => {
         if (user) {
             bcrypt.compare(password, user.password).then(valid => {
                 if (valid) {

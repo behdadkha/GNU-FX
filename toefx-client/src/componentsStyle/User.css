@@ -16,22 +16,40 @@
 }
 
 .option {
-    border: 1px solid #ada0a0;
     border-radius: 10px;
     max-height: inherit;
     background-color: white;
 }
 
-.option:hover {
-    border: 1px solid;
-    cursor: pointer;
-}
 
 #images {
     width : 50%;
 }
 
 #tableCol{
-    width: 80%;
-    padding: 5% 14% 0 0;
+    width: 85%;
+    margin-top: 5%;
+    border-radius: 10px;
+}
+
+.tab{
+    position: absolute; 
+    left: 0; 
+    top: 0;
+    background-color: lightblue; 
+    
+    border-right: 1px solid gray;
+    border-left: 1px solid gray;
+    border-bottom: 1px solid gray;
+
+    border-bottom-right-radius: 10px; 
+    border-bottom-left-radius: 10px; 
+    width: 120px; 
+    cursor: pointer;
+}
+.activeTab{
+    z-index: 1;
+    border-right: 2px solid darkblue;
+    border-left: 2px solid darkblue;
+    border-bottom: 2px solid darkblue;
 }

@@ -31,7 +31,7 @@ class Schedule extends Component {
     render() {
         return (
             <div>
-                <Sidebar />
+                <Sidebar {...this.props} />
                 <Table bordered variant="white" className="table-primary" style={{marginLeft: "16%", width: "80%", marginTop: "1%"}}>
                     
                     <thead>

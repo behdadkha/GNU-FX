@@ -1,66 +1,27 @@
-.wrapper{
-    display: flex;
-    margin: auto;
-    justify-content: center;
-    text-align: center;
-    width: 100%;
+* {
+    box-sizing: border-box;
+  }
+.sidebar{
+    width : 300px;
+    height : 100vh; 
+    float: left; 
+    padding: 2% 0 0 0;
+    border-right: 1px solid lightblue;
 }
-.wrapper a{
-    text-decoration: none;
-    background-color: none;
-    color: #fff;
-}
-
-#sidebar {
-    
-    width: 250px;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 100vh;
-    z-index: 999;
-    background: #30302b;
-    color: #fff;
-    transition: all 0.3s;
-    padding-top: 1%;
-}
-
-.components{
-    padding: 20% 0 0 0;
-}
-
-
-.sidebarItem{
-    text-align: left;
-    margin-top: 10%;
-}
-
-.sidebarItem:hover{
-    background-color: #1a1a17;
+.sidebarItems{
+    padding : 10% 0 0 20%;
+    text-align : left;
     cursor: pointer;
 }
-
-.active{
-    background-color: #1a1a17;
+.sidebarIcon{
+    width : 7%;
+    margin-right : 5%;
+}
+.sidebarItemText{
+    display : inline;
+    color: blue;
 }
 
-.icon{
-    margin-right: 10%;
-    width: 15%;
-    margin-left: 5%;
-}
-
-.itemText{
-    display: inline;
-}
-
-
-.logoutAndMyAccount{
-    text-align: left;
-    padding-left: 30%;
-}
-.logoutAndMyAccount:hover{
-    cursor: pointer;
-    background-color: #1a1a17;
+.activeItem{
+    filter: brightness(0.7);
 }

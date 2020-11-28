@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 //import '../../componentsStyle/Sidebar.css'
 import dashboardIcon from '../../icons/dashboard.png';
-
+import scheduleIcon from '../../icons/schedule.png';
+import reportIcon from '../../icons/report.png';
 //redux
 import { connect } from "react-redux";
 import { logOutUser } from "../../Redux/Actions/authAction";
@@ -18,13 +19,29 @@ class Sidebar extends Component {
 
                     <div className="components">
 
-                        {/* My Patients */}
+                        {/* My Dashboard */}
                             <a href="/user">
-                                <div className={window.location.pathname === "/clinician" ? "sidebarItem active" : "sidebarItem"}>
+                                <div className={window.location.pathname === "/user" ? "sidebarItem active" : "sidebarItem"}>
                                     <img className="icon" src={dashboardIcon} alt="dashbord icon"></img>
-                                    <h6 className="itemText" >Patients</h6>
+                                    <h6 className="itemText" >My Dashboard</h6>
                                 </div>
                             </a>
+
+                        {/* Treatment Schedule */}
+                        <a href="/user/schedule">
+                            <div className={window.location.pathname === "/user/schedule" ? "sidebarItem active" : "sidebarItem"} >
+                                <img className="icon" src={scheduleIcon} alt="schedule icon"></img>
+                                <h6 className="itemText">Treatment Schedule</h6>
+                            </div>
+                        </a>
+
+                        {/* Lab report */}
+                        <a href="/user/labreports">
+                            <div className={window.location.pathname === "/user/labreports" ? "sidebarItem active" : "sidebarItem"}>
+                                <img className="icon" src={reportIcon} alt="report icon"></img>
+                                <h6 className="itemText">Lab Reports</h6>
+                            </div>
+                        </a>
 
                         {/* Logout */}
                         <div
@@ -40,9 +57,11 @@ class Sidebar extends Component {
                         </div>
 
                         {/*My account */}
-                        <div className="logoutAndMyAccount">
-                            <h6 className="itemText">My Account</h6>
-                        </div>
+                        <a href="/user/myAccount">
+                            <div className="logoutAndMyAccount">
+                                <h6 className="itemText">My Account</h6>
+                            </div>
+                        </a>
                     </div>
 
                 </div>

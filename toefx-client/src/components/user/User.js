@@ -1,10 +1,11 @@
 import React, { Component } from "react";
-import { Col, Row, Container, Table, Carousel } from "react-bootstrap";
+import { Col, Row, Table, Carousel } from "react-bootstrap";
 import { connect } from "react-redux";
 import Sidebar from './Sidebar';
 import '../../componentsStyle/User.css';
 import Graph from './Graph';
 import Axios from "axios";
+import { config } from "../../config";
 
 /*TODO: Change "Create a Storyline" to "My Images"*/
 
@@ -29,12 +30,12 @@ class NewUser extends Component {
             this.props.history.push("/login");
 
 
-        await Axios.get(`http://localhost:3001/getImageNames`)
+        await Axios.get(`${config.dev_server}/getImageNames`)
             .then(async (imageNames) => {
 
                 //get all the user's images and store them in a data array
                 for (var i = 0; i < imageNames.data.length; i++) {
-                    await Axios.get(`http://localhost:3001/getImage?imageName=${imageNames.data[i]}`, { responseType: "blob" })
+                    await Axios.get(`${config.dev_server}/getImage?imageName=${imageNames.data[i]}`, { responseType: "blob" })
                         .then((image) => {
                             this.setState({
                                 imageUrls: [...this.state.imageUrls, { imageName: imageNames.data[i], url: URL.createObjectURL(image.data) }]
@@ -46,7 +47,7 @@ class NewUser extends Component {
 
 
         //get the user's toe data from the node server
-        Axios.get("http://localhost:3001/getToe")
+        Axios.get(`${config.dev_server}/getToe`)
             .then((data) => {
                 this.setState({
                     toeData: data.data

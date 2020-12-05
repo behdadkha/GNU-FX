@@ -28,6 +28,7 @@ const toe_dataSchema = require("./database/toe-dataSchema");
 
 //user routes
 const userRoutes = require('./routes/user');
+
 const { resolve } = require('path');
 const { exec } = require("child_process");
 
@@ -357,7 +358,7 @@ app.get('/getImageNames', async(req,res) => {
 });
 
 //everything after /user 
-app.use('/user', userRoutes);
+app.use('/user',userRoutes);
 
 app.listen(process.env.PORT || 3001, () => {
     console.log("server running on 3001");

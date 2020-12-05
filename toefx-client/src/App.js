@@ -19,6 +19,7 @@ import Schedule from "./components/user/Schedule";
 import LoginClinician from "./components/LoginClinician";
 import ClinicianDashboard from "./components/clinician/ClinicianDashboard";
 import MyAccount from "./components/user/MyAccount";
+import ResetPassword from "./components/user/ResetPassword";
 
 //if the browser has the user's login info,
 //set the data and go to the user's page
@@ -67,6 +68,7 @@ function App() {
               <Route path="/Storyline" component={Storyline} exact/>
               <Route path="/user/schedule" component={Schedule} exact/>
               <Route path="/user/myAccount" component={MyAccount} exact/>
+              <Route path="/user/resetPassword" component={ResetPassword} exact/>
               <Route path="/loginClinician" component={LoginClinician} exact/>
               <Route path="/clinician" component={ClinicianDashboard} exact/>
           </div>

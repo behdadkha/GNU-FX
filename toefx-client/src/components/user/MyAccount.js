@@ -37,6 +37,7 @@ class MyAccount extends Component {
             <div style={{ overflow: "hidden" }}>
                 <Sidebar {...this.props}></Sidebar>
 
+                {/* the top bar */}
                 <div style={{ overflow: "hidden", textAlign: "left" }}>
 
                     <h5 style={{ padding: "1.5% 0 1% 4%", display: "inline" }}>Setting</h5>
@@ -44,38 +45,43 @@ class MyAccount extends Component {
 
                 </div>
 
+                {/* Main part */}
                 <div style={{ overflow: "hidden", backgroundColor: "#8ef1f5", height: "100vh" }}>
-                    <div id="accountDetails">
+                    
+                    <div className="accountDetails">
 
-                        {/* name */}
-                        <h6 style={{ textAlign: "left", paddingTop: "3%", fontSize: "20px", color: "#7471ad" }}>Account Details</h6>
+                        <h6 style={{ textAlign: "left", fontSize: "20px", color: "#7471ad" }}>Account Details</h6>
 
-                        <div style={{ textAlign: "left", paddingTop: "1%", }}>
+                        <div style={{ textAlign: "left", paddingTop: "4%", paddingLeft: "5%" }}>
 
-                            <label style={{ display: "inline-block", fontSize: "20px", verticalAlign : "top" }}>Name</label>
+                            <label style={{ display: "inline-block", fontSize: "20px", verticalAlign: "top" }}>Name</label>
 
                             <div className="accountDetailItem">
                                 <h6 className="accountItemText">{this.props.auth.user.name}</h6>
                             </div>
 
                         </div>
-                        <div style={{ textAlign: "left", paddingTop : "10px" }}>
+                        <div style={{ textAlign: "left", paddingTop: "1%", paddingLeft: "5%" }}>
 
-                            <label style={{ display: "inline", fontSize: "20px", verticalAlign : "top"}}>Email</label>
+                            <label style={{ display: "inline", fontSize: "20px", verticalAlign: "top" }}>Email</label>
 
-                            <div className="accountDetailItem" style={{marginLeft : "2.5%"}}>
+                            <div className="accountDetailItem" style={{ marginLeft: "3%" }}>
                                 <h6 className="accountItemText" >{this.state.email}</h6>
                             </div>
 
                         </div>
+                    </div>
 
-                        <div style={{ textAlign: "center", position: "absolute", bottom: "5%", left: "45%" }}>
+                    <div className="accountDetails">
+                        <h6 style={{ textAlign: "left", fontSize: "20px", color: "#7471ad" }}>Reset Password</h6>
+                        <h6 style={{ textAlign: "left", fontSize: "15px", paddingTop : "2%" }}>If you wish to reset your password, click on the button below to get started</h6>
+                        <div style={{ textAlign: "left", padding : "10% 0 0 27%" }}>
 
-                            <Button style={{ fontSize: "25px" }}>Reset password</Button>
+                            <Button style={{ fontSize: "20px" }} onClick={() => this.props.history.push('/user/resetPassword')}>Reset password</Button>
 
                         </div>
-
                     </div>
+                    
                 </div>
             </div>
         )

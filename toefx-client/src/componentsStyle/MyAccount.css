@@ -1,13 +1,16 @@
-#accountDetails{
+.accountDetails{
     position: relative;
     background-color: white;
-    margin-top: 1%;
+    padding-top: 3%;
     padding-left: 4%;
-    width: 90%;
-    margin-left: 5%;
+    width: 40%;
+    margin : 2% 0 0 2%;
     border-radius: 10px; 
-    height: 60vh;
+    height: 40vh;
+    display: inline-block;
+    overflow: hidden;
 }
+
 
 .accountDetailItem{
     width: 200px;
@@ -17,6 +20,7 @@
     border-radius: 5px;
     margin-left: 2%;
     margin-top : 3px;
+    
 }
 .accountItemText{
     display: inline;

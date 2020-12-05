@@ -128,7 +128,7 @@ class NewUser extends Component {
                     </div>
                     <div style={{ overflow: "hidden", paddingLeft: "10%" }}>
 
-                        {/* Table column*/}
+                        {/* Table part*/}
                         <div id="tableCol" style={{ position: "relative", backgroundColor: "white" }}>
 
                             {/* left and right foot selection */}
@@ -136,14 +136,14 @@ class NewUser extends Component {
                                 className={this.state.selectedFoot === 0 ? "tab activeTab" : "tab"} 
                                 onClick={() => this.setState({ selectedFoot: 0 })}
                             >
-                                <h6 style={{ padding: "2%" }}>Right Foot</h6>
+                                <h6 style={{ padding: "2%", color : "white" }}>Right Foot</h6>
                             </div>
                             <div 
                                 className={this.state.selectedFoot === 1 ? "tab activeTab" : "tab"} 
                                 style={{left : "8%"}} 
                                 onClick={() => this.setState({ selectedFoot: 1 })}
                             >
-                                <h6 style={{ padding: "2%" }}>Left Foot</h6>
+                                <h6 style={{ padding: "2%", color : "white" }}>Left Foot</h6>
                             </div>
 
                             {/* Table itself */}
@@ -179,8 +179,8 @@ class NewUser extends Component {
                                                                 </input>
                                                             }
                                                             </th>
-                                                            <td><h6 style={{marginTop : "25%"}}>{toeName}</h6></td>
-                                                            <td><h6 style={{marginTop : "12%"}}>{toeElement.date}</h6></td>
+                                                            <td><h6 style={{marginTop : "20%"}}>{toeName}</h6></td>
+                                                            <td><h6 style={{marginTop : "20%"}}>{toeElement.date}</h6></td>
                                                             <td>
                                                                 <img
                                                                     style={{ width: "100px", height: "100px", borderRadius: "100px" }}
@@ -194,7 +194,7 @@ class NewUser extends Component {
                                                                 >
                                                                 </img>
                                                             </td>
-                                                            <td><h6 style={{marginTop : "15%"}}>{toeElement.fungalCoverage}</h6></td>
+                                                            <td><h6 style={{marginTop : "10%"}}>{toeElement.fungalCoverage}</h6></td>
                                                         </tr>
                                                     )}
 
@@ -215,13 +215,14 @@ class NewUser extends Component {
                                                                     id="first"
                                                                     type="radio"
                                                                     name="selected"
+                                                                    style={{marginTop : "35%"}}
                                                                     checked={index === this.state.selectedToe}
                                                                     onChange={this.handleSelectedToe.bind(this, index)}>
                                                                 </input>
                                                             }
                                                             </th>
-                                                            <td>{toeName}</td>
-                                                            <td>{toeElement.date}</td>
+                                                            <td><h6 style={{marginTop : "20%"}}>{toeName}</h6></td>
+                                                            <td><h6 style={{marginTop : "20%"}}>{toeElement.date}</h6></td>
                                                             <td>
                                                                 <img
                                                                     style={{ width: "100px", height: "100px", borderRadius: "100px" }}
@@ -232,7 +233,7 @@ class NewUser extends Component {
                                                                             : ""
                                                                     }
                                                                     alt="img"></img></td>
-                                                            <td>{toeElement.fungalCoverage}</td>
+                                                            <td><h6 style={{marginTop : "10%"}}>{toeElement.fungalCoverage}</h6></td>
                                                         </tr>
                                                     )}
 

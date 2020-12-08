@@ -1,8 +1,9 @@
 import React, { Component } from "react";
 import { Button, Container, Col, Row } from "react-bootstrap";
-import "../../componentsStyle/Storyline.css";
-import axios from "axios";
 import { connect } from "react-redux";
+import axios from "axios";
+import "../../componentsStyle/Storyline.css";
+
 
 class Diagnosis extends Component {
     constructor(props) {

@@ -32,21 +32,20 @@ export default class Graph extends PureComponent {
     render() {
         return (
             <div>
-                <div style={{display : "inline", width : "25px" ,float : "left", marginLeft : "-5%", marginTop:"10%"}}>
-                    <h6 style={{writingMode : "vertical-rl", textOrientation : "mixed", display : "inline", color : "lightblue"}}>Fungal coverage(%)</h6>
+                <div className="graph-y-title-container">
+                    <h6 className="graph-y-title-text">Fungal Coverage (%)</h6>
                 </div>
-                <ResponsiveContainer width={500} height={400} style={{paddingLeft : "10%"}}>
+                <ResponsiveContainer width="95%" height={400}>
                 <LineChart
                     data={data}
                     style={{color : "lightblue"}}
-                
                 >
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="name" />
                     <YAxis />
                     <Tooltip />
                     <Legend />
-                    <Line type="monotone" dataKey="fungus" stroke="#8884d8" activeDot={{ r: 5 }} />
+                    <Line type="monotone" dataKey="fungus" stroke="#8884d8" activeDot={{ r: 6 }} />
                 </LineChart>
                 </ResponsiveContainer>
             </div>

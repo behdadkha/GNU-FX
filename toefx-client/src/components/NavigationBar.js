@@ -20,12 +20,14 @@ class NavigationBar extends Component {
                 <Nav.Link href="/login">Login</Nav.Link>
             </Nav>;
             //in the login page only show signup
-        } else if (window.location.pathname === "/login") {
+        }
+        else if (window.location.pathname === "/login") {
             loginSignup = <Nav>
                 <Nav.Link href="/signup">Sign Up</Nav.Link>
             </Nav>;
             //in the signup page only show login
-        } else if (window.location.pathname === "/signup") {
+        }
+        else if (window.location.pathname === "/signup") {
             loginSignup = <Nav>
                 <Nav.Link href="/login">Login</Nav.Link>
             </Nav>;

@@ -1,8 +1,19 @@
-.input-group {
-    padding-top: 10%;
-    margin: auto;
-    width: 50%;
-    text-align: left;
+/*CSS Relating to the Page */
+
+.main-container {
+    overflow: hidden;
+    background-color: RGB(238, 238, 238);
+    height: 91vh;
+}
+
+/*CSS Relating to the Welcome Bar */
+
+.welcome-bar {
+    background-color: RGB(248, 248, 248);
+    overflow: hidden;
+    padding-bottom: 1%;
+    border-bottom: 1px solid RGB(200, 200, 200);
+    height: 9vh;
 }
 
 .welcome {
@@ -10,46 +21,87 @@
     padding-top: 20px;
 }
 
-.options-headers {
-    padding-top: 20px;
-    font-size: 24px;
+/* CSS Relating the Graph View */
+
+.graph-feet-buttons {
+    margin: 20px 20px 0px 20px;
 }
 
-.option {
-    border-radius: 10px;
-    max-height: inherit;
+.graph-foot-button {
+    background-color: RGB(200, 200, 200);
+    border: 0px;
+    border-radius: .25rem;
+    width: 50%;
+}
+
+.graph {
     background-color: white;
+    margin: 0px 20px 20px 20px;
+    min-height: 45vh;
+    overflow: hidden;
+    padding-top: 3%;
 }
 
-
-#images {
-    width : 50%;
+.graph-toe-button {
+    background-color: RGB(230, 230, 230);
+    width: 100px;
+    border: 0px;
+    border-radius: .25rem;
+    margin: 0px 0px 5px 10px;
 }
 
-#tableCol{
-    width: 85%;
-    margin-top: 5%;
-    border-radius: 10px;
+.active-toe-button {
+    color: white;
+    background-color: var(--highlight-color);
 }
 
-.tab{
-    position: absolute; 
-    left: 0; 
-    top: 0;
-    background-color: blue; 
-    
-    border-right: 1px solid white;
-    border-left: 1px solid white;
-    border-bottom: 1px solid white;
+.graph-toe-button:focus, .graph-foot-button:focus {
+    outline: none;
+}
 
-    border-bottom-right-radius: 10px; 
-    border-bottom-left-radius: 10px; 
-    width: 120px; 
-    cursor: pointer;
+.graph-toe-button:hover, .graph-foot-button:hover {
+    background-color: RGB(150, 150, 150);
 }
-.activeTab{
-    z-index: 1;
-    border-right: 2px solid white;
-    border-left: 2px solid white;
-    border-bottom: 2px solid white;
+
+.active-toe-button:hover {
+    background-color: var(--button-hover-color);
 }
+
+/* CSS Relating to the Foot Details */
+
+.selected-details-container {
+    background-color: white;
+    margin: 0px 20px 20px 20px;
+    overflow: scroll;
+    max-height: 35vh;
+}
+
+.selected-details-title {
+    font-size: 24px;
+    font-weight: bold;
+    align-content: center;
+    display: inline-block; /* Remove flex from row */
+    margin: auto;
+    padding-bottom: 20px;
+}
+
+.selected-details-row {
+    border-top: 1px solid;
+    font-size: 20px;
+    margin-left: 20px;
+    margin-right: 20px;
+    text-align: left;
+}
+
+.selected-details-bottom-row {
+    padding-bottom: 20px;
+}
+
+.selected-details-col {
+    border-left: 1px solid;
+}
+
+.selected-details-right-col {
+    border-right: 1px solid;
+}
+

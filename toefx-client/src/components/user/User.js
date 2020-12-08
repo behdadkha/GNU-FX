@@ -1,13 +1,38 @@
-import React, { Component } from "react";
-import { Col, Row, Table, Carousel } from "react-bootstrap";
-import { connect } from "react-redux";
+import React, {Component} from "react";
+import {Row, Col} from "react-bootstrap";
+import {connect} from "react-redux";
 import Sidebar from './Sidebar';
 import '../../componentsStyle/User.css';
-import Graph from './Graph';
+import ApexChart from './ApexChart';
 import Axios from "axios";
-import { config } from "../../config";
+import {config} from "../../config";
 
-/*TODO: Change "Create a Storyline" to "My Images"*/
+//Temp data
+const Data = [
+    {
+        name: 'Big Toe',
+        data: [100, 42, 51, 28, 40, 31, 9]
+    },
+    {
+        name: 'Index Toe',
+        data: [100, 50, 40, 60, 40, 10, 1]
+    },
+    {
+        name: 'Middle Toe',
+        data: [70, 65, 60, 55, 20, 30, 15]
+    },
+    {
+        name: 'Fourth Toe',
+        data: [15, 30, 50, 65, 1, 5, 0]
+    },
+    {
+        name: 'Little Toe',
+        data: [40, 45, 50, 55, 60, 65, 15]
+    }
+];
+
+const Dates = ["2020-09-01", "2020-10-01", "2020-11-01", "2020-12-01", "2021-01-01", "2021-02-01", "2021-03-01"];
+
 
 class NewUser extends Component {
 
@@ -15,12 +40,10 @@ class NewUser extends Component {
         super(props);
 
         this.state = {
-            selectedToe: 0,
-            selectedToeImage: 0, //index of the image in imageUrls array
-            numberOfImages: 3,
-            selectedFoot: 0, //0 for right foot, 1 for left
+            selectedFoot: 0,
+            selectedTreatment: 0,
             toeData: {}, //recieved from the server
-            imageUrls: [],//[{imageName: "1.PNG", url : }]
+            imageUrls: [], //[{imageName: "1.PNG", url : }]
         };
     }
 
@@ -34,7 +57,7 @@ class NewUser extends Component {
             .then(async (imageNames) => {
 
                 //get all the user's images and store them in a data array
-                for (var i = 0; i < imageNames.data.length; i++) {
+                for (let i = 0; i < imageNames.data.length; i++) {
                     await Axios.get(`${config.dev_server}/getImage?imageName=${imageNames.data[i]}`, { responseType: "blob" })
                         .then((image) => {
                             this.setState({
@@ -55,195 +78,45 @@ class NewUser extends Component {
             });
     }
 
-    //to keep track of which toe is selected
-    //toenum is the index of the selected toe
-    // image is the name of the selected image
-    handleSelectedToe(toeNum, image) {
-
-        let index = this.state.imageUrls.findIndex(({ imageName }) => imageName === image)
-        this.setState({
-            selectedToeImage: index,
-            selectedToe: toeNum
-        });
+    printToeData(id, name, percentage) {
+        return (
+            <Row key={id} className="selected-details-row">
+                <Col className="selected-details-col">{name}</Col>
+                <Col className="selected-details-col">{percentage}%</Col>
+                <Col className="selected-details-col">No Comments</Col>
+                <Col className="selected-details-col selected-details-right-col">[<br/>IMAGE<br/>]</Col>
+            </Row>
+        )
     }
 
-
     render() {
+        var footData = (this.state.selectedToe == 0) ? Data : Data; //Eventually should choose correct data
+    
         return (
             <div>
                 <Sidebar {...this.props}/>
-                <div style={{ backgroundColor: "white", overflow: "hidden", paddingBottom: "1%", borderRadius: "10px" }}>
-                    <h6 className="welcome">Welcome {this.props.auth.user.name}!</h6>
+                <div className="welcome-bar">
+                    <h6 className="welcome">Dashboard</h6>
                 </div>
-                <div style={{ overflow: "hidden", backgroundColor: "#7bedeb" }}>
-                    {/* the top row */}
-                    <div style={{ overflow: "hidden", marginLeft: "10%" }}>
-                        <Row>
-                            <Col style={{ paddingRight: "15%" }}>
 
-                            </Col>
+                <div className="main-container">
+                    {/* Graph */}
+                    <ApexChart leftFootData={Data} rightFootData={Data} leftFootDates={Dates} rightFootDates={Dates}></ApexChart>
+                
+                    <div className="selected-details-container">
+                        <Row className="selected-details-title">
+                            Left Foot - {Dates[0]}
                         </Row>
-                        <Row style={{ paddingTop: "3%" }} noGutters={true}>
-                            {/* Graph */}
-                            <Col
-                                lg="5"
-                                className="option"
-                                style={{ marginRight: "2%", minHeight: "45vh" }}
-                                onClick={() => this.props.history.push("./Storyline")}
-                            >
-                                <div style={{ padding: "10% 0 5% 5%" }}>
-                                    <Graph></Graph>
-                                </div>
-                            </Col>
-
-                            {/* Galary view */}
-                            <Col lg="5" className="option">
-
-                                <h6 className="options-headers" style={{ color: "gray" }}>Gallery View</h6>
-                                <Carousel
-                                    interval={null}
-                                    style={{
-                                        width: "60%",
-                                        margin: "auto",
-                                        paddingTop: "4%",
-                                    }}
-                                >
-
-                                    {/*Iterate over the selected toe's images */}
-                                    {((Object.keys(this.state.toeData).length !== 0) && Object.values(Object.values(this.state.toeData)[this.state.selectedFoot + 2])[this.state.selectedToe] !== undefined) &&
-                                        Object.values(Object.values(this.state.toeData)[this.state.selectedFoot + 2])[this.state.selectedToe].map(({ image }, index) =>
-                                            <Carousel.Item key={index}>
-                                                <img
-                                                    className="d-block w-100"
-                                                    style={{ width: "100%", maxHeight: "250px", border: "2px solid lightblue", borderRadius: "5px" }}
-                                                    src={this.state.imageUrls[this.state.imageUrls.findIndex(({ imageName }) => imageName === image)].url}
-                                                    alt="Slides"
-                                                />
-                                            </Carousel.Item>
-                                        )}
-
-                                </Carousel>
-                            </Col>
+                        <Row className="selected-details-row">
+                            <Col className="selected-details-col">Toe Name</Col>
+                            <Col className="selected-details-col">Fungal Coverage</Col>
+                            <Col className="selected-details-col">Comments</Col>
+                            <Col className="selected-details-col selected-details-right-col">Image</Col>
                         </Row>
-                    </div>
-                    <div style={{ overflow: "hidden", paddingLeft: "10%" }}>
-
-                        {/* Table part*/}
-                        <div id="tableCol" style={{ position: "relative", backgroundColor: "white" }}>
-
-                            {/* left and right foot selection */}
-                            <div 
-                                className={this.state.selectedFoot === 0 ? "tab activeTab" : "tab"} 
-                                onClick={() => this.setState({ selectedFoot: 0 })}
-                            >
-                                <h6 style={{ padding: "2%", color : "white" }}>Right Foot</h6>
-                            </div>
-                            <div 
-                                className={this.state.selectedFoot === 1 ? "tab activeTab" : "tab"} 
-                                style={{left : "8%"}} 
-                                onClick={() => this.setState({ selectedFoot: 1 })}
-                            >
-                                <h6 style={{ padding: "2%", color : "white" }}>Left Foot</h6>
-                            </div>
-
-                            {/* Table itself */}
-                            <div style={{ padding: "5%" }}>
-                                <Table striped bordered hover size="sm">
-                                    <thead>
-                                        <tr>
-                                            <th>Selected</th>
-                                            <th>Toe</th>
-                                            <th>Date</th>
-                                            <th>Image</th>
-                                            <th>Fungal coverage(%)</th>
-                                        </tr>
-                                    </thead>
-
-                                    {/* Right foot */}
-                                    {this.state.selectedFoot === 0 ?
-                                        (this.state.toeData.rightFoot !== undefined &&
-                                            Object.keys(this.state.toeData.rightFoot).map((toeName, index) =>
-
-                                                <tbody key={index}>
-
-                                                    {this.state.toeData.rightFoot[toeName].map((toeElement, toeIndex) =>
-                                                        <tr key={toeIndex}>
-                                                            <th>{toeIndex === 0 && //only the first element of a toe gets the radio input
-                                                                <input
-                                                                    id="first"
-                                                                    type="radio"
-                                                                    name="selected"
-                                                                    style={{marginTop : "35%"}}
-                                                                    checked={index === this.state.selectedToe}
-                                                                    onChange={this.handleSelectedToe.bind(this, index, toeElement.image)}>
-                                                                </input>
-                                                            }
-                                                            </th>
-                                                            <td><h6 style={{marginTop : "20%"}}>{toeName}</h6></td>
-                                                            <td><h6 style={{marginTop : "20%"}}>{toeElement.date}</h6></td>
-                                                            <td>
-                                                                <img
-                                                                    style={{ width: "100px", height: "100px", borderRadius: "100px" }}
-                                                                    src={
-                                                                        this.state.imageUrls[this.state.imageUrls.findIndex(({ imageName }) => imageName === toeElement.image)] !== undefined
-                                                                            ?
-                                                                            this.state.imageUrls[this.state.imageUrls.findIndex(({ imageName }) => imageName === toeElement.image)].url
-                                                                            : ""
-                                                                    }
-                                                                    alt="img"
-                                                                >
-                                                                </img>
-                                                            </td>
-                                                            <td><h6 style={{marginTop : "10%"}}>{toeElement.fungalCoverage}</h6></td>
-                                                        </tr>
-                                                    )}
-
-                                                </tbody>
-                                            )
-                                        )
-                                        : //else if left foot is selected
-                                        (this.state.toeData.leftFoot !== undefined &&
-                                            Object.keys(this.state.toeData.leftFoot).map((toeName, index) =>
-
-                                                <tbody key={index}>
-
-                                                    {this.state.toeData.leftFoot[toeName].map((toeElement, toeIndex) =>
-                                                        <tr key={toeIndex}>
-
-                                                            <th>{toeIndex === 0 && //only the first element of a toe gets the radio input
-                                                                <input
-                                                                    id="first"
-                                                                    type="radio"
-                                                                    name="selected"
-                                                                    style={{marginTop : "35%"}}
-                                                                    checked={index === this.state.selectedToe}
-                                                                    onChange={this.handleSelectedToe.bind(this, index)}>
-                                                                </input>
-                                                            }
-                                                            </th>
-                                                            <td><h6 style={{marginTop : "20%"}}>{toeName}</h6></td>
-                                                            <td><h6 style={{marginTop : "20%"}}>{toeElement.date}</h6></td>
-                                                            <td>
-                                                                <img
-                                                                    style={{ width: "100px", height: "100px", borderRadius: "100px" }}
-                                                                    src={
-                                                                        this.state.imageUrls[this.state.imageUrls.findIndex(({ imageName }) => imageName === toeElement.image)] !== undefined
-                                                                            ?
-                                                                            this.state.imageUrls[this.state.imageUrls.findIndex(({ imageName }) => imageName === toeElement.image)].url
-                                                                            : ""
-                                                                    }
-                                                                    alt="img"></img></td>
-                                                            <td><h6 style={{marginTop : "10%"}}>{toeElement.fungalCoverage}</h6></td>
-                                                        </tr>
-                                                    )}
-
-                                                </tbody>
-                                            )
-                                        )
-                                    }
-                                </Table>
-                            </div>
-                        </div>
+                        {
+                            footData.map(({id, name, data}) => this.printToeData(id, name, data[this.state.selectedTreatment]))
+                        }
+                        <Row className="selected-details-row selected-details-bottom-row"></Row>
                     </div>
                 </div>
             </div >

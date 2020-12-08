@@ -48,7 +48,8 @@ export default class LoginClinician extends Component {
             //redirect to User page
             this.props.history.push('/clinician');
 
-        } else {
+        }
+        else {
             this.setState({
                 invalidUser: true,
             });

@@ -1,5 +1,8 @@
 import React, { Component } from 'react'
-import { Button, Col, Row } from 'react-bootstrap';
+import { Container, Button, Row } from 'react-bootstrap';
+import { connect } from "react-redux";
+import { logOutUser } from "../../Redux/Actions/authAction";
+import store from "../../Redux/store";
 import dashboardIcon from '../../icons/dashboard2.png';
 import scheduleIcon from '../../icons/appointment.png';
 import reportIcon from '../../icons/report2.png';
@@ -7,10 +10,6 @@ import doctorIcon from '../../icons/doctor.png';
 import logoutIcon from '../../icons/logout.png';
 import myAccountIcon from '../../icons/myAccount.png';
 import '../../componentsStyle/Sidebar.css';
-//redux
-import { connect } from "react-redux";
-import { logOutUser } from "../../Redux/Actions/authAction";
-import store from "../../Redux/store";
 
 class Sidebar extends Component {
     render() {
@@ -18,73 +17,69 @@ class Sidebar extends Component {
             <div className="sidebar">
 
                 <div>
-                    <Button style={{ backgroundColor: "blue" }}>Make Appointment +</Button>
+                    <Button className="new-appointment-button">+ Schedule Appointment</Button>
                 </div>
 
-                {/* Dashboard */}
-                <div
-                    className={window.location.pathname === "/user" ? "sidebarItems activeItem" : "sidebarItems"}
-                    style={{ paddingTop: "20%" }}
-                    onClick={() => this.props.history.push("/user")}
-                >
-                    <img src={dashboardIcon} alt="dashboard icon" className="sidebarIcon"></img>
-                    <h6 className="sidebarItemText">Dashboard</h6>
-                </div>
+                <Container className="main-sidebar-options">
+                    {/* Dashboard */}
+                    <Row className={window.location.pathname === "/user" ? "sidebar-items sidebar-active-item" : "sidebar-items"}>
+                        <span onClick={() => this.props.history.push("/user")}>
+                            <img src={dashboardIcon} alt="dashboard icon" className="sidebar-icon"></img>
+                            <h6 className="sidebar-item-text">Dashboard</h6>
+                        </span>
+                    </Row>
 
-                {/* Treatment Schedule */}
-                <div 
-                    className={window.location.pathname === "/user/schedule" ? "sidebarItems activeItem" : "sidebarItems"}
-                    onClick={() => this.props.history.push("/user/schedule")}
-                >
-                    <img src={scheduleIcon} alt="schedule icon" className="sidebarIcon"></img>
-                    <h6 className="sidebarItemText">Treatment Schedule</h6>
-                </div>
+                    {/* Treatment Schedule */}
+                    <Row className={window.location.pathname === "/user/schedule" ? "sidebar-items sidebar-active-item" : "sidebar-items"}>
+                        <span onClick={() => this.props.history.push("/user/schedule")}>
+                            <img src={scheduleIcon} alt="schedule icon" className="sidebar-icon"></img>
+                            <h6 className="sidebar-item-text">Treatment Schedule</h6>
+                        </span>
+                    </Row>
 
-                {/* Lab Report */}
-                <div 
-                    className={window.location.pathname === "/user/labReports" ? "sidebarItems activeItem" : "sidebarItems"} 
-                    style={{ paddingLeft: "19%" }}
-                    onClick={() => this.props.history.push("/user/labReports")}
-                >
-                    <img src={reportIcon} alt="report icon" style={{ width: "10%", marginRight: "4%" }} className="sidebarIcon"></img>
-                    <h6 className="sidebarItemText">Lab Report</h6>
-                </div>
+                    {/* Lab Report */}
+                    <Row className={window.location.pathname === "/user/labReports" ? "sidebar-items sidebar-active-item" : "sidebar-items"}>
+                        <span onClick={() => this.props.history.push("/user/labReports")}>
+                            <img src={reportIcon} alt="report icon" style={{ width: "10%", marginRight: "4%" }} className="sidebar-icon"></img>
+                            <h6 className="sidebar-item-text">Lab Reports</h6>
+                        </span>
+                    </Row>
 
-                {/* Doctors */}
-                <div
-                    className={window.location.pathname === "/user/doctors" ? "sidebarItems activeItem" : "sidebarItems"}
-                    onClick={() => this.props.history.push("/user/doctors")}
-                >
-                    <img src={doctorIcon} alt="schedule icon" className="sidebarIcon"></img>
-                    <h6 className="sidebarItemText">Doctors</h6>
-                </div>
+                    {/* Doctors */}
+                    <Row className={window.location.pathname === "/user/doctors" ? "sidebar-items sidebar-active-item" : "sidebar-items"}>
+                        <span onClick={() => this.props.history.push("/user/doctors")}>
+                            <img src={doctorIcon} alt="schedule icon" className="sidebar-icon"></img>
+                            <h6 className="sidebar-item-text">Clinicians</h6>
+                        </span>
+                    </Row>
+                </Container>
 
-                {/* Log out */}
-                <div 
-                    className="sidebarItems" 
-                    style={{ paddingTop: "20%" }}
-                    onClick={() =>{
-                        store.dispatch(logOutUser());
-                        window.location.href = "/";
-                    }}
-                >
-                    <img src={logoutIcon} alt="schedule icon" className="sidebarIcon"></img>
-                    <h6 className="sidebarItemText">Log Out</h6>
-                </div>
+                <Container className="account-sidebar-options">
+                    {/* My Account */}
+                    <Row className="sidebar-items">
+                        <span onClick={() => this.props.history.push("/user/myAccount")}>
+                            <img src={myAccountIcon} alt="schedule icon" className="sidebar-icon"></img>
+                            <h6 className="sidebar-item-text">My Account</h6>
+                        </span>
+                    </Row>
 
-                {/* My Account */}
-                <div 
-                    className="sidebarItems" 
-                    style={{ paddingTop: "1%" }}
-                    onClick={() => this.props.history.push("/user/myAccount")}
-                >
-                    <img src={myAccountIcon} alt="schedule icon" className="sidebarIcon"></img>
-                    <h6 className="sidebarItemText">My Account</h6>
-                </div>
+                    {/* Log out */}
+                    <Row className="sidebar-items">
+                        <span onClick={() =>{
+                                    store.dispatch(logOutUser());
+                                    window.location.href = "/";
+                                }}
+                        >
+                            <img src={logoutIcon} alt="schedule icon" className="sidebar-icon"></img>
+                            <h6 className="sidebar-item-text"> Log Out</h6>
+                        </span>
+                    </Row>
+                </Container>
             </div>
         )
     }
 }
+
 const mapStateToProps = (state) => ({
     auth: state.auth,
 });

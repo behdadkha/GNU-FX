@@ -32,7 +32,11 @@ class Schedule extends Component {
         return (
             <div>
                 <Sidebar {...this.props} />
-                <Table bordered variant="white" className="table-primary" style={{marginLeft: "16%", width: "80%", marginTop: "1%"}}>
+                <div className="welcome-bar">
+                    <h6 className="welcome">Treatment Schedule</h6>
+                </div>
+
+                <Table bordered variant="white" className="table-primary" style={{marginLeft: "16%", width: "80%"}}>
                     
                     <thead>
                         <tr>

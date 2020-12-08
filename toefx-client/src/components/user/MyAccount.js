@@ -1,16 +1,11 @@
 import React, { Component } from 'react';
-import Sidebar from "./Sidebar";
 import { Button } from 'react-bootstrap';
-import '../../componentsStyle/MyAccount.css'
-//redux
 import { connect } from "react-redux";
-//Axios
-import Axios from 'axios';
-//config
 import { config } from "../../config";
-//icon
-import padlock from '../../icons/padlock.png';
-
+import Sidebar from "./Sidebar";
+import Axios from 'axios';
+import padlock from '../../icons/padlock.png'; //icon
+import '../../componentsStyle/MyAccount.css'
 
 
 class MyAccount extends Component {
@@ -30,7 +25,6 @@ class MyAccount extends Component {
                 });
             });
     }
-
 
     render() {
         return (

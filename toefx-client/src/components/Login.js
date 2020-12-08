@@ -60,9 +60,16 @@ export default class Login extends Component {
         if (this.state.invalidUser) {
             IfInvalid = (
                 <div>
-                    <h6>Invalid email or passowrd</h6>
+                    <h6>Please enter valid credentials.</h6>
                 </div>
             );
+        }
+        else {
+            IfInvalid = (
+                <div>
+                    <h6>.</h6>
+                </div>
+            );  
         }
 
         return (

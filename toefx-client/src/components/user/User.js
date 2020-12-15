@@ -7,6 +7,8 @@ import ApexChart from './ApexChart';
 import Axios from "axios";
 import {config} from "../../config";
 
+//TODO: Change printToeData to use a map
+
 //Temp data
 const Data = [
     {
@@ -42,6 +44,7 @@ class NewUser extends Component {
         this.state = {
             selectedFoot: 0,
             selectedTreatment: 0,
+            showingDateDetails: true, //Showing details about a specific date next to the graph
             toeData: {}, //recieved from the server
             imageUrls: [], //[{imageName: "1.PNG", url : }]
         };
@@ -78,20 +81,19 @@ class NewUser extends Component {
             });
     }
 
-    printToeData(id, name, percentage) {
+    printToeData(id, name, percentageData) {
         return (
-            <Row key={id} className="selected-details-row">
-                <Col className="selected-details-col">{name}</Col>
-                <Col className="selected-details-col">{percentage}%</Col>
-                <Col className="selected-details-col">No Comments</Col>
-                <Col className="selected-details-col selected-details-right-col">[<br/>IMAGE<br/>]</Col>
+            <Row key={id} className="total-details-row">
+                <Col className="total-details-col total-details-left-col">{name}</Col>
+                <Col className="total-details-col total-details-right-col">{percentageData[0]}% -{'>'} {percentageData[1]}% -{'>'} {percentageData[2]}% -{'>'} {percentageData[3]}% -{'>'} {percentageData[4]}% -{'>'} {percentageData[5]}%</Col>
             </Row>
         )
     }
 
     render() {
-        var footData = (this.state.selectedToe == 0) ? Data : Data; //Eventually should choose correct data
-    
+        var footData = (this.state.selectedToe === 0) ? Data : Data; //Eventually should choose correct data
+        var footName = (this.state.selectedFoot === 0) ? "Left" : "Right";
+
         return (
             <div>
                 <Sidebar {...this.props}/>
@@ -101,22 +103,23 @@ class NewUser extends Component {
 
                 <div className="main-container">
                     {/* Graph */}
-                    <ApexChart leftFootData={Data} rightFootData={Data} leftFootDates={Dates} rightFootDates={Dates}></ApexChart>
-                
-                    <div className="selected-details-container">
-                        <Row className="selected-details-title">
-                            Left Foot - {Dates[0]}
+                    <ApexChart leftFootData={Data} rightFootData={Data}
+                            leftFootDates={Dates} rightFootDates={Dates}
+                            showingDetails={this.state.showingDateDetails}></ApexChart>
+                    
+                    {/*Alternate Data View*/}
+                    <div className="total-details-container">
+                        <Row className="total-details-title">
+                            {footName} Foot: {Dates[0]} - {Dates[Dates.length - 1]}
                         </Row>
-                        <Row className="selected-details-row">
-                            <Col className="selected-details-col">Toe Name</Col>
-                            <Col className="selected-details-col">Fungal Coverage</Col>
-                            <Col className="selected-details-col">Comments</Col>
-                            <Col className="selected-details-col selected-details-right-col">Image</Col>
+                        <Row className="total-details-row total-details-title-row">
+                            <Col className="total-details-col total-details-left-col">Toe Name</Col>
+                            <Col className="total-details-col total-details-right-col">Fungal Coverage</Col>
                         </Row>
                         {
-                            footData.map(({id, name, data}) => this.printToeData(id, name, data[this.state.selectedTreatment]))
+                            footData.map(({id, name, data}) => this.printToeData(id, name, data))
                         }
-                        <Row className="selected-details-row selected-details-bottom-row"></Row>
+                        <Row className="total-details-row total-details-bottom-row"></Row>
                     </div>
                 </div>
             </div >

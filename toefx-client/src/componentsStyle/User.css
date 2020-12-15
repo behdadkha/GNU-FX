@@ -36,10 +36,18 @@
 
 .graph {
     background-color: white;
-    margin: 0px 20px 20px 20px;
-    min-height: 45vh;
+    min-height: 49vh;
     overflow: hidden;
     padding-top: 3%;
+    margin: 0px 20px 20px 20px;
+}
+
+.split-graph {
+    width: 50%;
+}
+
+.display-flex {
+    display: flex;
 }
 
 .graph-toe-button {
@@ -73,7 +81,7 @@
     background-color: white;
     margin: 0px 20px 20px 20px;
     overflow: scroll;
-    max-height: 35vh;
+    max-height: 38vh;
 }
 
 .selected-details-title {
@@ -104,4 +112,51 @@
 .selected-details-right-col {
     border-right: 1px solid;
 }
+
+/* CSS Relating to the Total Foot Details */
+
+.total-details-container {
+    background-color: white;
+    margin: 0px 20px 20px 20px;
+    overflow: scroll;
+    max-height: 35vh;
+}
+
+.total-details-title {
+    font-size: 24px;
+    font-weight: bold;
+    align-content: center;
+    display: inline-block; /* Remove flex from row */
+    margin: auto;
+    padding-bottom: 20px;
+}
+
+.total-details-row {
+    border-top: 1px solid;
+    font-size: 20px;
+    margin-left: 20px;
+    margin-right: 20px;
+    text-align: left;
+}
+
+.total-details-title-row {
+    font-weight: bold;
+}
+
+.total-details-bottom-row {
+    padding-bottom: 20px;
+}
+
+.total-details-col {
+    border-left: 1px solid;
+}
+
+.total-details-left-col {
+    max-width: 150px;
+}
+
+.total-details-right-col {
+    border-right: 1px solid;
+}
+
 

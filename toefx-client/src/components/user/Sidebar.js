@@ -17,7 +17,7 @@ class Sidebar extends Component {
             <div className="sidebar">
 
                 <div>
-                    <Button className="new-appointment-button">+ Schedule Appointment</Button>
+                    <Button className="new-appointment-button">+ Upload Image</Button>
                 </div>
 
                 <Container className="main-sidebar-options">

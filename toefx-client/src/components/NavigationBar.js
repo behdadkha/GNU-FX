@@ -10,7 +10,7 @@ import store from "../Redux/store";
 class NavigationBar extends Component {
     render() {
 
-        const pagesWithNavbar = ["/", "/login", "/signup"];
+        let pagesWithNavbar = ["/", "/login", "/signup", "/diagnosis"];
 
         var loginSignup;
         //home page
@@ -32,6 +32,7 @@ class NavigationBar extends Component {
                 <Nav.Link href="/login">Login</Nav.Link>
             </Nav>;
         }
+      
 
         //show logout if user is logged in
         if (this.props.auth.isAuth) {
@@ -42,6 +43,7 @@ class NavigationBar extends Component {
         }
 
         return (
+           
             <div>
                 {console.log((window.location.pathname))}
                 {
@@ -56,9 +58,11 @@ class NavigationBar extends Component {
                             }
                             <Navbar.Toggle aria-controls="basic-navbar-nav" />
                             <Navbar.Collapse id="basic-navbar-nav">
+                                {window.location.pathname !== "/user" ? console.log(" im not user") : ""}
                                 {window.location.pathname !== "/user" &&
                                     <Nav className="mr-auto">
                                         <Nav.Link href="/">Home</Nav.Link>
+                                        <Nav.Link href="/diagnosis">Diagnosis</Nav.Link>
                                     </Nav>
                                 }
 

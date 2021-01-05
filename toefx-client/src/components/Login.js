@@ -67,7 +67,7 @@ export default class Login extends Component {
         else {
             IfInvalid = (
                 <div>
-                    <h6>.</h6>
+                    <h6></h6>
                 </div>
             );  
         }

@@ -15,6 +15,7 @@ class Diagnosis extends Component {
             files: [], //currently uploaded files
             diagnosis: [], //[{image: 0, text:""}]
             uploadProgress: 0,
+            tempfileName: ""
         };
 
         this.validateImage = this.validateImage.bind(this);
@@ -31,6 +32,7 @@ class Diagnosis extends Component {
 
     //request an iamge validation
     validateImage(file) {
+        this.setState({ tempfileName: file });
         console.log("here");
         let currentImageIndex = this.state.files.length - 1;
         //If user is loggedin(which means that the images has to be stores on the database and a <userid> folder exists)
@@ -61,7 +63,7 @@ class Diagnosis extends Component {
                 });
         }
         else {
-            axios.post(`http://localhost:3001/imagevalidation/notloggedin`, {myimg: file})
+            axios.post(`http://localhost:3001/imagevalidation/notloggedin`, { myimg: file })
                 .then(res => {
                     var response = res.data;
                     response = response.trim();
@@ -135,14 +137,27 @@ class Diagnosis extends Component {
     //index => files[index]
     //sends the imagename as a query string imageName=
     handleDiagnose = async (index) => {
-        let imageName = this.state.files[index].name;
-        console.log("image name: " + imageName);
-        var responseText = ""
-        await axios.get(`http://localhost:3001/diagnose/loggedin/?imageName=${imageName}`)
+        if (this.props.auth.isAuth) {
+            let imageName = this.state.files[index].name;
+            console.log("image name: " + imageName);
+            var responseText = ""
+            await axios.get(`http://localhost:3001/diagnose/loggedin/?imageName=${imageName}`)
                 .then((res) => {
                     responseText = res.data;
                 })
-           
+        }
+        else {
+            //tempfileName = time(in milisecond) when it is uploaded
+            let imageName = this.state.tempfileName;
+            console.log("image name: " + imageName);
+            var responseText = ""
+            await axios.get(`http://localhost:3001/diagnose/notloggedin/?imageName=${imageName}`)
+                .then((res) => {
+                    responseText = res.data;
+                })
+        }
+
+
         /*const response = await fetch(
             `http://localhost:3001/diagnose/?imageName=${imageName}`,
             {

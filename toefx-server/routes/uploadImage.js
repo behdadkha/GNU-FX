@@ -54,7 +54,7 @@ uploadImage.route('/notloggedin').post(async(req,res) => {
     let partsOfImageName = image.name.split(".");
     let extension = partsOfImageName[partsOfImageName.length - 1];
     var timeInMss = new Date().getTime()
-    //image name is images.length
+    //image name is the time in milisonds and it is going to be stored in the tempImages folder.
     const imageName = timeInMss + "." + extension;
     try{
         //if user is not loggedin, we dont need to store the images. Create a temp folder and delete it when user uploads a new image

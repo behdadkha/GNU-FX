@@ -42,6 +42,10 @@ const { exec } = require("child_process");
 })()
 
 
+toe_dataSchema.findOne({ userID: "5fb6cba87f989d064047700e" }).then(data => {
+    console.log(data.feet[0].toes[0].images[0]);
+});
+
 //function to find people in the database
 function findPeople(userId, res) {
     return new Promise((resolve, reject) => {
@@ -311,7 +315,7 @@ app.get('/diagnose', (req, res) => {
     });
 });
 
-//get the toe data from the database and send it back to the client
+//gets the toe data from the database and send it back to the client
 app.get('/getToe', (req,res) => {
 
     try{

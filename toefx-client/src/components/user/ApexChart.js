@@ -12,15 +12,17 @@ class ApexChart extends React.Component {
         super(props);
 
         this.state = {
+            treatmentIndex : 0, //user clicks on a point in the graph, this represents the clicked index
             series: this.props.leftFootData,
             options: {
                 chart: {
                     height: 350,
                     type: "area",
                     events: {
-                        click: function(event, chartContext, config) {
+                        click: (event, chartContext, config) => {
                             /*config.seriesIndex; //Number of big toe, index toe, etc. starting from 0
                             config.dataPointIndex; //Number of treatment date*/
+                            this.setState({ treatmentIndex : config.dataPointIndex })
                         }
                     }
                 },
@@ -71,6 +73,8 @@ class ApexChart extends React.Component {
         this.resetShownToesData(shownToes);
     }
 
+    
+
     resetShownToesData(shownToes) {
         var toeData = []; //New toe data to be shown
         var toeDates = []; //New dates of toe data to be shown
@@ -92,9 +96,11 @@ class ApexChart extends React.Component {
         var options = this.state.options;
         options.xaxis.categories = toeDates;
 
+
         this.setState({
             series: toeData,
             options: options,
+            treatmentIndex : 0 //also, reset the treatmentIndex in case the user clicked a point on the graph
         });
     }
 
@@ -178,14 +184,26 @@ class ApexChart extends React.Component {
         );
     }
 
-    printToeData(id, name, percentage) {
+    //show the toe data on small preview section next to the graph
+    printToeData(id, name, images, percentage) {
+        var toeNames = ["Big Toe", "Index Toe", "Middle Toe", "Fourth Toe", "Little Toe"];
+        
+        if (this.state.rightFootData)
+            toeNames.reverse();
+
+        var isToeNotIncluded = this.state.shownToes[toeNames.findIndex(toeName => toeName === name)];
+        
         return (
-            <Row key={id} className="selected-details-row">
-                <Col className="selected-details-col">{name}</Col>
-                <Col className="selected-details-col">{percentage}%</Col>
-                <Col className="selected-details-col">No Comments</Col>
-                <Col className="selected-details-col selected-details-right-col">[<br/>IMAGE<br/>]</Col>
-            </Row>
+            (images[this.state.treatmentIndex] && isToeNotIncluded)
+            ?
+                <Row key={id} className="selected-details-row">
+                    <Col className="selected-details-col">{name}</Col>
+                    <Col className="selected-details-col">{percentage[this.state.treatmentIndex]}</Col>
+                    <Col className="selected-details-col">No Comments</Col>
+                    <Col className="selected-details-col selected-details-right-col"><img src={images[this.state.treatmentIndex]} alt="img"/></Col>
+                </Row>
+            :
+                ""
         )
     }
 
@@ -206,7 +224,7 @@ class ApexChart extends React.Component {
                     <Col className="selected-details-col selected-details-right-col">Image</Col>
                 </Row>
                 {
-                    footData.map(({id, name, data}) => this.printToeData(id, name, data[this.state.selectedTreatment]))
+                    (footData) ? footData.map(({name, images, data}, id) => this.printToeData(id, name, images, data)) : ""
                 }
                 <Row className="selected-details-row selected-details-bottom-row"></Row>
             </div>

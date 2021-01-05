@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 const schema = mongoose.Schema;
 
 //toe-data shema
-const toe_dataSchema = new schema({
+/*const toe_dataSchema = new schema({
     userID : {
         type : ObjectID,
         required : true
@@ -81,6 +81,61 @@ const toe_dataSchema = new schema({
 
     }
 
+});*/
+
+const toe_dataSchema = new schema({
+    userID : {
+        type : ObjectID,
+        required : true
+    },
+    feet : [
+        {
+            toes:
+            [
+                //an object for each toe
+                {
+                    images:
+                    [{
+                        date: Date,
+                        name: String,
+                        fungalCoverage: String
+                    }]
+                },
+                {
+                    images:
+                    [{
+                        date: Date,
+                        name: String,
+                        fungalCoverage: String
+                    }]
+                },
+                {
+                    images:
+                    [{
+                        date: Date,
+                        name: String,
+                        fungalCoverage: String
+                    }]
+                },
+                {
+                    images:
+                    [{
+                        date: Date,
+                        name: String,
+                        fungalCoverage: String
+                    }]
+                },
+                {
+                    images:
+                    [{
+                        date: Date,
+                        name: String,
+                        fungalCoverage: String
+                    }]
+                }
+            ]
+        }
+    ]
 });
 
 module.exports = mongoose.model('toe',toe_dataSchema, 'toe-data');//toe-data is the collection name

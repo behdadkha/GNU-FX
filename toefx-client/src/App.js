@@ -44,7 +44,7 @@ if (localStorage.jwt) {
 }
 
 function App() {
-  const pagesWithNavbar = ["/", "/signup"];
+  const pagesWithNavbar = ["/", "/signup", "/login", "/diagnosis"];
   return (
     <Provider store={store}>
         <Router>
@@ -64,7 +64,7 @@ function App() {
               <Route path="/login" component={Login} exact/> 
               <Route path="/signup" component={Signup} exact />
               <Route path="/user" component={NewUser} exact/>
-              <Route path="/Diagnosis" component={Diagnosis} exact/>
+              <Route path="/diagnosis" component={Diagnosis} exact/>
               <Route path="/Storyline" component={Storyline} exact/>
               <Route path="/user/schedule" component={Schedule} exact/>
               <Route path="/user/myAccount" component={MyAccount} exact/>

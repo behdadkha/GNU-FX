@@ -18,6 +18,10 @@ class MyAccount extends Component {
     }
 
     async componentDidMount() {
+        //if user is not logged in, go to the login page
+        if (!this.props.auth.isAuth)
+            this.props.history.push("/login");
+            
         await Axios.get(`${config.dev_server}/user/getUserInfo`)
             .then((data) => {
                 this.setState({

@@ -9,7 +9,6 @@ import FirstPage from "./components/FirstPage";
 import Login from "./components/Login";
 import Signup from "./components/Signup";
 import {Route, BrowserRouter as Router} from "react-router-dom";
-import NewUser from "./components/user/User";
 import jwt_decode from "jwt-decode";
 import setAuthHeader from "./utils/setAuthHeader";
 import {logOutUser, setCurrentUser} from "./Redux/Actions/authAction";
@@ -20,6 +19,7 @@ import LoginClinician from "./components/LoginClinician";
 import ClinicianDashboard from "./components/clinician/ClinicianDashboard";
 import MyAccount from "./components/user/MyAccount";
 import ResetPassword from "./components/user/ResetPassword";
+import User from "./components/user/User";
 
 //if the browser has the user's login info,
 //set the data and go to the user's page
@@ -63,7 +63,7 @@ function App() {
               
               <Route path="/login" component={Login} exact/> 
               <Route path="/signup" component={Signup} exact />
-              <Route path="/user" component={NewUser} exact/>
+              <Route path="/user" component={User} exact/>
               <Route path="/diagnosis" component={Diagnosis} exact/>
               <Route path="/Storyline" component={Storyline} exact/>
               <Route path="/user/schedule" component={Schedule} exact/>

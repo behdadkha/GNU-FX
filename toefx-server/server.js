@@ -21,7 +21,7 @@ const mongoose = require('mongoose');
 const userSchema = require("./database/userSchema");
 
 //clinician schema
-const clinicianSchema = require("./database/clinicianSchema");
+//const clinicianSchema = require("./database/clinicianSchema");
 
 //toe-data schema
 const toe_dataSchema = require("./database/toe-dataSchema");
@@ -46,12 +46,8 @@ const { exec } = require("child_process");
     } catch (e) {
         throw e;
     }
-})()
+})();
 
-
-toe_dataSchema.findOne({ userID: "5fb6cba87f989d064047700e" }).then(data => {
-    console.log(data.feet[0].toes[0].images[0]);
-});
 
 //function to find people in the database
 function findPeople(userId, res) {
@@ -215,7 +211,6 @@ app.get('/getImage', async (req, res) => {
 
         let user = await findPeople(userId, res);
         let imageName = req.query.imageName;
-
 
         //if the specified images is actually owned by the the user
         if (await user.images.includes(imageName)) {

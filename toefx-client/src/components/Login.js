@@ -63,6 +63,7 @@ export default class Login extends Component {
                 invalidUser: true,
             });
         }
+        window.location.reload();
     };
 
     /*

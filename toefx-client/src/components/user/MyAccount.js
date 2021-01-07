@@ -18,6 +18,10 @@ class MyAccount extends Component {
     }
 
     async componentDidMount() {
+        //if user is not logged in, go to the login page
+        if (!this.props.auth.isAuth)
+            this.props.history.push("/login");
+            
         await Axios.get(`${config.dev_server}/user/getUserInfo`)
             .then((data) => {
                 this.setState({
@@ -40,7 +44,7 @@ class MyAccount extends Component {
                 </div>
 
                 {/* Main part */}
-                <div style={{ overflow: "hidden", backgroundColor: "#8ef1f5", height: "100vh" }}>
+                <div className="myAccountMainDiv">
                     
                     <div className="accountDetails">
 

@@ -1,7 +1,9 @@
 import { combineReducers } from 'redux';
 import authReducer from './authReducer';
+import setFootReducer from './setFootReducer';
 
 
 export default combineReducers({
-    auth : authReducer
+    auth : authReducer,
+    setFoot: setFootReducer
 });

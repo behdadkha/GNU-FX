@@ -39,7 +39,7 @@ export default class Signup extends Component {
             });
         }
         
-
+        window.location.reload();
     }
 
     render() {

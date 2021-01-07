@@ -4,7 +4,9 @@
 
 import React from "react";
 import ReactApexChart from "react-apexcharts"
-import {Row, Col} from "react-bootstrap";
+import {Row, Table} from "react-bootstrap";
+import store from "../../Redux/store";
+import {setSelectedFoot} from "../../Redux/Actions/setFootAction";
 
 //TODO: Function that runs when you click on a data point
 //BUG: Clicking on bottom labels changes graph view but not selected buttons
@@ -29,7 +31,8 @@ class ApexChart extends React.Component {
                         click: (event, chartContext, config) => {
                             /*config.seriesIndex; //Number of big toe, index toe, etc. starting from 0
                             config.dataPointIndex; //Number of treatment date*/
-                            this.setState({ treatmentIndex : config.dataPointIndex })
+                            if (config.dataPointIndex >= 0) 
+                                this.setState({ treatmentIndex : config.dataPointIndex })
                         }
                     }
                 },
@@ -61,7 +64,12 @@ class ApexChart extends React.Component {
                     x: {
                         format: "yyyy/MM/dd"
                     },
+                    intersect : true,
+                    shared: false
                 },
+                markers: {
+                    size : 5
+                }
             },
             showLeftFoot: true, //Start off showing the left foot
             shownToes: gInitialToeSelection, //Initially only show certain toe
@@ -69,33 +77,44 @@ class ApexChart extends React.Component {
         };
     }
 
+    componentDidMount() {
+        this.resetShownToesData();
+    }
+
     /*
-        Displays data corresponding to a certain foot on the graph.
+        Displays data corresponding to a certain foot on the graph when a foot is selected.
         param showLeftFoot: If true show data for the left foot, otherwise show data for the right foot
     */
     viewFoot(showLeftFoot) {
         var shownToes = gInitialToeSelection; //Show initial toes again when changing feet
 
+
         this.setState({
             shownToes: shownToes,
-            showLeftFoot: showLeftFoot
-        })
+			showLeftFoot: showLeftFoot,
+			treatmentIndex : 0
+        },
+            this.resetShownToesData
+        );
 
-        this.resetShownToesData(shownToes);
+		//save the selected foot in the redux store
+		// need to know the selected foot to change the buttom cell
+		store.dispatch(setSelectedFoot(showLeftFoot ? 0 : 1)); 
     }
 
     /*
         Helps reset the graph when foot selection is changed.
         param shownToes: An array of the initially displayed toes on the graph.
     */
-    resetShownToesData(shownToes) {
+    resetShownToesData() {
         var toeData = []; //New toe data to be shown
         var toeDates = []; //New dates of toe data to be shown
         var data = (this.state.showLeftFoot) ? this.props.leftFootData : this.props.rightFootData;
         var dates = (this.state.showLeftFoot) ? this.props.leftFootDates : this.props.rightFootDates;
 
-        for (let i = 0; i < shownToes.length; ++i) {
-            if (shownToes[i]) { //The user wants to see this toe
+
+        for (let i = 0; i < this.state.shownToes.length; ++i) {
+            if (this.state.shownToes[i]) { //The user wants to see this toe
                 toeData.push(data[i]); //Original data is stored in props
                 toeDates.push(dates[i]); //Original data is stored in props
             }
@@ -106,13 +125,13 @@ class ApexChart extends React.Component {
             }
         }
 
+
         var options = this.state.options;
         options.xaxis.categories = toeDates;
 
         this.setState({
             series: toeData,
-            options: options,
-            treatmentIndex: 0 //Also reset the treatmentIndex in case the user clicked a point on the graph
+            options: options
         });
     }
 
@@ -122,13 +141,17 @@ class ApexChart extends React.Component {
     */
     showToe(num) {
         let shownToes = [false, false, false, false, false]; //Hide all toes
-        shownToes[num] = true; //Except toe clicked on
-
+		shownToes[num] = true; //Except toe clicked on
+		
+		let selectedFoot = (this.state.showLeftFoot) ? this.props.leftFootData : this.props.rightFootData;
+        let treatmentIndex = selectedFoot[num].data.filter(item => item === null).length ; // accounting for the nulls in the data
+    
         this.setState({
-            shownToes: shownToes
-        })
-
-        this.resetShownToesData(shownToes);
+            shownToes: shownToes,
+            treatmentIndex : treatmentIndex //also, reset the treatmentIndex in case the user clicks a point on the graph
+        },
+            this.resetShownToesData
+        );        
     }
 
     /*
@@ -150,10 +173,13 @@ class ApexChart extends React.Component {
             shownToes = [true, true, true, true, true];
 
         this.setState({
-            shownToes: shownToes,
-        });
+			shownToes: shownToes,
+			treatmentIndex : 0
+        },
+            this.resetShownToesData
+        );
 
-        this.resetShownToesData(shownToes);
+        
     }
 
     /*
@@ -221,16 +247,27 @@ class ApexChart extends React.Component {
             toeNames.reverse();
 
         var isToeNotIncluded = this.state.shownToes[toeNames.findIndex(toeName => toeName === name)];
-        
+        var imageIndex = this.state.treatmentIndex - percentage.filter(item => item === null).length;// need to subtract the number of nulls from the treatment index because images dont have nulls
+
+
+		//getting the fungal coverage based on the selected point on the graph
+		var fungalCoverage = percentage[this.state.treatmentIndex];
         return (
-            (images[this.state.treatmentIndex] && isToeNotIncluded)
+            ((images[imageIndex]) && isToeNotIncluded)
             ?
-                <Row key={id} className="selected-details-row">
-                    <Col className="selected-details-col">{name}</Col>
-                    <Col className="selected-details-col">{percentage[this.state.treatmentIndex]}</Col>
-                    <Col className="selected-details-col">No Comments</Col>
-                    <Col className="selected-details-col selected-details-right-col"><img src={images[this.state.treatmentIndex]} alt="img"/></Col>
-                </Row>
+                
+                <tr key={id} >
+                    <td>{name}</td>
+                    <td>{fungalCoverage}</td>
+                    <td>No Comments</td>
+                    <td style={{width : "150px"}}>
+                        <img 
+                            src={images[imageIndex] || images[0]} 
+                            alt="img" 
+                            style={{width : "150px", height : "100px", borderRadius : "8px", padding : "5px 0 5px 0"}}
+                        />
+                    </td>
+                </tr>
             :
                 ""
         )
@@ -243,23 +280,30 @@ class ApexChart extends React.Component {
     printSelectedDateDetails() {
         var footData = (this.state.showLeftFoot) ? this.props.leftFootData : this.props.rightFootData;
         var dates = (this.state.showLeftFoot) ? this.props.leftFootDates : this.props.rightFootDates;
+		var selectedDate = dates[this.state.treatmentIndex];
         var footName = (this.state.showLeftFoot) ? "Left" : "Right";
 
         return (
             <div className="selected-details-container split-graph">
                 <Row className="selected-details-title">
-                    {footName} Foot: {dates[0]}
+                    {footName} Foot: {selectedDate}
                 </Row>
-                <Row className="selected-details-row">
-                    <Col className="selected-details-col">Toe Name</Col>
-                    <Col className="selected-details-col">Fungal Coverage</Col>
-                    <Col className="selected-details-col">Comments</Col>
-                    <Col className="selected-details-col selected-details-right-col">Image</Col>
-                </Row>
-                {
-                    (footData) ? footData.map(({name, images, data}, id) => this.printToeData(id, name, images, data)) : ""
-                }
-                <Row className="selected-details-row selected-details-bottom-row"></Row>
+                
+                <Table striped bordered hover size="md" style={{textAlign : "left", width : "95%", marginLeft : "2%"}}>
+                    <thead>
+                        <tr>
+                            <th style={{width: "20%"}}>Toe Name</th>
+                            <th>Fungal coverage</th>
+                            <th>Comments</th>
+                            <th>Image</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {
+                        (footData[4].data) ? footData.map(({name, images, data}, id) => this.printToeData(id, name, images, data)) : ""
+                    }
+                    </tbody>
+                </Table>
             </div>
         );
     }

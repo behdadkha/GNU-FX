@@ -43,7 +43,6 @@ imageValidationRoutes.route('/loggedin').get(async (req, res) => {
     }
 })
 imageValidationRoutes.route('/notloggedin').post(async (req, res) => {
-    console.log("im in imagevalidation");
     let imageName = req.body.myimg;
     try {
         console.log("imagename: ", imageName);

@@ -15,7 +15,9 @@ class Diagnosis extends Component {
             files: [], //currently uploaded files
             diagnosis: [], //[{image: 0, text:""}]
             uploadProgress: 0,
-            tempfileName: ""
+            tempfileName: "",
+            foot: "",//can be selected from UI. Sent to /uploadimage endpoint
+            toe: ""
         };
 
         this.validateImage = this.validateImage.bind(this);
@@ -29,6 +31,13 @@ class Diagnosis extends Component {
             this.props.history.push("./Login");
     }
     */
+    onBackButtonEvent(e) {
+        e.preventDefault();
+        window.location.reload();
+    }
+    componentDidMount() {
+        window.onpopstate = this.onBackButtonEvent.bind(this);
+    }
 
     //request an iamge validation
     validateImage(file) {
@@ -103,10 +112,13 @@ class Diagnosis extends Component {
             input: file.name,
         });
 
-
+        //FormData contains the image 
         const formData = new FormData();
         formData.append("file", e.target.files[0]);
+        formData.append("foot", this.state.foot);
+        formData.append("toe", this.state.toe);
         if (this.props.auth.isAuth) {
+            //Sends a request to upload/loggedin
             axios.post("http://localhost:3001/upload/loggedin", formData, {
                 onUploadProgress: (ProgressEvent) => {
                     let progress = Math.round((ProgressEvent.loaded / ProgressEvent.total) * 100) + "%";
@@ -119,6 +131,8 @@ class Diagnosis extends Component {
                 });
         }
         else {
+            //Sends a request to upload/notloggedin
+            //It sends the temporary image name(time in Ms) to validateImage
             axios.post("http://localhost:3001/upload/notloggedin", formData, {
                 onUploadProgress: (ProgressEvent) => {
                     let progress = Math.round((ProgressEvent.loaded / ProgressEvent.total) * 100) + "%";
@@ -130,17 +144,14 @@ class Diagnosis extends Component {
                     this.validateImage(res.data.img);
                 });
         }
-
-
     }
 
     //index => files[index]
     //sends the imagename as a query string imageName=
     handleDiagnose = async (index) => {
+        var responseText = "";
         if (this.props.auth.isAuth) {
             let imageName = this.state.files[index].name;
-            console.log("image name: " + imageName);
-            var responseText = ""
             await axios.get(`http://localhost:3001/diagnose/loggedin/?imageName=${imageName}`)
                 .then((res) => {
                     responseText = res.data;
@@ -149,8 +160,6 @@ class Diagnosis extends Component {
         else {
             //tempfileName = time(in milisecond) when it is uploaded
             let imageName = this.state.tempfileName;
-            console.log("image name: " + imageName);
-            var responseText = ""
             await axios.get(`http://localhost:3001/diagnose/notloggedin/?imageName=${imageName}`)
                 .then((res) => {
                     responseText = res.data;
@@ -181,8 +190,28 @@ class Diagnosis extends Component {
     };
 
     render() {
+        const toe = ["Big toe", "Index toe", "Middle toe", "Fourth toe", "Little toe"];
         return (
             <Container>
+                <form style={{ marginTop: "1%" }} >
+                    <input type="radio" id="left" value="Left" name="footSelection" onClick={() => {this.setState({foot: "left"})}}/>
+                    <label htmlFor="left" style={{ marginLeft: "0.5%", fontSize: "1.3rem", color: "blue" }} >Left</label>
+
+                    <input type="radio" id="right" value="Right" name="footSelection" style={{ marginLeft: "1%" }} onClick={() => {this.setState({foot: "right"})}}/>
+                    <label htmlFor="right" style={{ marginLeft: "0.5%", fontSize: "1.3rem", color: "blue" }} >Right</label>
+
+                    <label style={{ marginLeft: "1%", fontSize: "1.5rem" }}>foot</label>
+                </form>
+                <div style={{ marginTop: "1%", margin: "auto", textAlign: "center", alignContent: "center"}} >
+                    {
+                        toe.map((name,index) => {return(
+                            <div key={index} style={{display: "inline"}}>
+                                <input type="radio" value={name} id={name} name="toeSelection" onClick={() => {this.setState({toe: index})}}/>
+                                <label htmlFor={name} style={{ marginLeft: "0.5%", marginRight: "4%", fontSize: "1.3rem" }} >{name}</label>
+                            </div>)
+                        })
+                    }
+                </div>
                 <Row>
                     <Col>
                         {/*uploadfile*/}
@@ -210,6 +239,7 @@ class Diagnosis extends Component {
                                                 {this.state.uploadProgress}
                                             </h6>
                                         )}
+
                                     </div>
                                 </label>
                             </div>

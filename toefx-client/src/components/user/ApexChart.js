@@ -1,6 +1,6 @@
 import React from "react";
 import ReactApexChart from "react-apexcharts"
-import {Row, Col} from "react-bootstrap";
+import {Row, Table} from "react-bootstrap";
 import store from "../../Redux/store";
 import {setSelectedFoot} from "../../Redux/Actions/setFootAction";
 
@@ -226,18 +226,19 @@ class ApexChart extends React.Component {
         return (
             ((images[imageIndex]) && isToeNotIncluded)
             ?
-                <Row key={id} className="selected-details-row">
-                    <Col className="selected-details-col">{name}</Col>
-                    <Col className="selected-details-col">{fungalCoverage || "NA"}</Col>
-                    <Col className="selected-details-col">No Comments</Col>
-                    <Col className="selected-details-col selected-details-right-col" style={{width : "150px"}}>
+                
+                <tr key={id} >
+                    <td>{name}</td>
+                    <td>{fungalCoverage}</td>
+                    <td>No Comments</td>
+                    <td style={{width : "150px"}}>
                         <img 
                             src={images[imageIndex] || images[0]} 
                             alt="img" 
                             style={{width : "150px", height : "100px", borderRadius : "8px", padding : "5px 0 5px 0"}}
                         />
-                    </Col>
-                </Row>
+                    </td>
+                </tr>
             :
                 ""
         )
@@ -254,16 +255,22 @@ class ApexChart extends React.Component {
                 <Row className="selected-details-title">
                     {footName} Foot: {selectedDate}
                 </Row>
-                <Row className="selected-details-row">
-                    <Col className="selected-details-col">Toe Name</Col>
-                    <Col className="selected-details-col">Fungal Coverage</Col>
-                    <Col className="selected-details-col">Comments</Col>
-                    <Col className="selected-details-col selected-details-right-col">Image</Col>
-                </Row>
-                {
-                    (footData) ? footData.map(({name, images, data}, id) => this.printToeData(id, name, images, data)) : ""
-                }
-                <Row className="selected-details-row selected-details-bottom-row"></Row>
+                
+                <Table striped bordered hover size="md" style={{textAlign : "left", width : "95%", marginLeft : "2%"}}>
+                    <thead>
+                        <tr>
+                            <th style={{width: "20%"}}>Toe Name</th>
+                            <th>Fungal coverage</th>
+                            <th>Comments</th>
+                            <th>Image</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {
+                        (footData[4].data) ? footData.map(({name, images, data}, id) => this.printToeData(id, name, images, data)) : ""
+                    }
+                    </tbody>
+                </Table>
             </div>
         );
     }

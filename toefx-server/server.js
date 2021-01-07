@@ -21,7 +21,7 @@ const mongoose = require('mongoose');
 const userSchema = require("./database/userSchema");
 
 //clinician schema
-const clinicianSchema = require("./database/clinicianSchema");
+//const clinicianSchema = require("./database/clinicianSchema");
 
 //toe-data schema
 const toe_dataSchema = require("./database/toe-dataSchema");

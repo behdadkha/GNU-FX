@@ -44,7 +44,7 @@ class MyAccount extends Component {
                 </div>
 
                 {/* Main part */}
-                <div style={{ overflow: "hidden", backgroundColor: "#8ef1f5", height: "100vh" }}>
+                <div className="myAccountMainDiv">
                     
                     <div className="accountDetails">
 

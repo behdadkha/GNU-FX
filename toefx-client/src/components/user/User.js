@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {Row, Col, Table} from "react-bootstrap";
+import {Row, Table} from "react-bootstrap";
 import {connect} from "react-redux";
 import Sidebar from './Sidebar';
 import '../../componentsStyle/User.css';
@@ -87,7 +87,8 @@ class User extends Component {
             for (let toe = 0; toe < this.state.toeData.feet[0].toes.length; toe++){
 
                 for (let i = 0; i < this.state.toeData.feet[footNumber].toes[toe].images.length; i++){
-                    var item = this.state.toeData.feet[footNumber].toes[toe].images[i];
+                    let item = this.state.toeData.feet[footNumber].toes[toe].images[i];
+
                     dates.push(item.date.split("T")[0]); // dates are in this format 2020-11-21T00:00:00.000Z, split("T")[0] returns the yyyy-mm-dd
                     fungalCoverage[toe].push(item.fungalCoverage);
                     var url = this.state.imageUrls.find(({imageName}) => imageName === item.name).url;// finds the url based on the image name from the imageURLs
@@ -247,7 +248,6 @@ class User extends Component {
                             }
                             </tbody>  
                         </Table>
-                        <Row className="total-details-row total-details-bottom-row"></Row>
                     </div>
                 </div>
             </div >

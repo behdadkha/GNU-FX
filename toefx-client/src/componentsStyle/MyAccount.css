@@ -1,3 +1,8 @@
+.myAccountMainDiv{
+    overflow: hidden;
+    background-color: RGB(238, 238, 238);
+    height: 100vh;
+}
 .accountDetails{
     position: relative;
     background-color: white;

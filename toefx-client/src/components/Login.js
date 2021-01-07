@@ -57,7 +57,7 @@ export default class Login extends Component {
     };
 
     render() {
-        let IfInvalid;
+        let IfInvalid = "";
         if (this.state.invalidUser) {
             IfInvalid = (
                 <div>
@@ -65,13 +65,7 @@ export default class Login extends Component {
                 </div>
             );
         }
-        else {
-            IfInvalid = (
-                <div>
-                    <h6></h6>
-                </div>
-            );  
-        }
+       
 
         return (
             <Container>
@@ -110,7 +104,6 @@ export default class Login extends Component {
                             <Button variant="primary" type="submit">
                                 Login
                             </Button>
-                            <h6 id="IamAClinicianTEXT" onClick={() => this.props.history.push("loginClinician")}>I am a clinician</h6>
                         </Form>
                     </Col>
                 </Row>

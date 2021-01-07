@@ -1,5 +1,5 @@
-import React, { Component, useEffect, useState } from "react";
-import { Button, Container, Col, Row, ButtonGroup } from "react-bootstrap";
+import React, { Component } from "react";
+import { Button, Container, Col, Row } from "react-bootstrap";
 import { connect } from "react-redux";
 import axios from "axios";
 import "../../componentsStyle/Storyline.css";
@@ -149,10 +149,9 @@ class Diagnosis extends Component {
     //index => files[index]
     //sends the imagename as a query string imageName=
     handleDiagnose = async (index) => {
+        var responseText = "";
         if (this.props.auth.isAuth) {
             let imageName = this.state.files[index].name;
-            console.log("image name: " + imageName);
-            var responseText = ""
             await axios.get(`http://localhost:3001/diagnose/loggedin/?imageName=${imageName}`)
                 .then((res) => {
                     responseText = res.data;
@@ -161,8 +160,6 @@ class Diagnosis extends Component {
         else {
             //tempfileName = time(in milisecond) when it is uploaded
             let imageName = this.state.tempfileName;
-            console.log("image name: " + imageName);
-            var responseText = ""
             await axios.get(`http://localhost:3001/diagnose/notloggedin/?imageName=${imageName}`)
                 .then((res) => {
                     responseText = res.data;

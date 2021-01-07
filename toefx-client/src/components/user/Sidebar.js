@@ -5,8 +5,6 @@ import { logOutUser } from "../../Redux/Actions/authAction";
 import store from "../../Redux/store";
 import dashboardIcon from '../../icons/dashboard2.png';
 import scheduleIcon from '../../icons/appointment.png';
-import reportIcon from '../../icons/report2.png';
-import doctorIcon from '../../icons/doctor.png';
 import logoutIcon from '../../icons/logout.png';
 import myAccountIcon from '../../icons/myAccount.png';
 import '../../componentsStyle/Sidebar.css';
@@ -42,20 +40,13 @@ class Sidebar extends Component {
                     </Row>
 
                     {/* Lab Report */}
-                    <Row className={window.location.pathname === "/user/labReports" ? "sidebar-items sidebar-active-item" : "sidebar-items"}>
+                    {/*<Row className={window.location.pathname === "/user/labReports" ? "sidebar-items sidebar-active-item" : "sidebar-items"}>
                         <span onClick={() => this.props.history.push("/user/labReports")}>
                             <img src={reportIcon} alt="report icon" style={{ width: "10%", marginRight: "4%" }} className="sidebar-icon"></img>
                             <h6 className="sidebar-item-text">Lab Reports</h6>
                         </span>
-                    </Row>
+                    </Row>*/}
 
-                    {/* Doctors */}
-                    <Row className={window.location.pathname === "/user/doctors" ? "sidebar-items sidebar-active-item" : "sidebar-items"}>
-                        <span onClick={() => this.props.history.push("/user/doctors")}>
-                            <img src={doctorIcon} alt="schedule icon" className="sidebar-icon"></img>
-                            <h6 className="sidebar-item-text">Clinicians</h6>
-                        </span>
-                    </Row>
                 </Container>
 
                 <Container className="account-sidebar-options">
@@ -74,7 +65,7 @@ class Sidebar extends Component {
                             window.location.href = "/";
                         }}
                         >
-                            <img src={logoutIcon} alt="schedule icon" className="sidebar-icon"></img>
+                            <img src={logoutIcon} alt="schedule icon" className="sidebar-icon" style={{paddingLeft : "3%", marginRight: "5px"}}></img>
                             <h6 className="sidebar-item-text"> Log Out</h6>
                         </span>
                     </Row>

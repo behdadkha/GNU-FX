@@ -15,8 +15,6 @@ import {logOutUser, setCurrentUser} from "./Redux/Actions/authAction";
 import Storyline from "./components/user/Storyline";
 import Diagnosis from "./components/user/Diagnosis";
 import Schedule from "./components/user/Schedule";
-import LoginClinician from "./components/LoginClinician";
-import ClinicianDashboard from "./components/clinician/ClinicianDashboard";
 import MyAccount from "./components/user/MyAccount";
 import ResetPassword from "./components/user/ResetPassword";
 import User from "./components/user/User";
@@ -69,8 +67,6 @@ function App() {
               <Route path="/user/schedule" component={Schedule} exact/>
               <Route path="/user/myAccount" component={MyAccount} exact/>
               <Route path="/user/resetPassword" component={ResetPassword} exact/>
-              <Route path="/loginClinician" component={LoginClinician} exact/>
-              <Route path="/clinician" component={ClinicianDashboard} exact/>
           </div>
         </Router>
     </Provider>

@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {Row, Col} from "react-bootstrap";
+import {Row, Col, Table} from "react-bootstrap";
 import {connect} from "react-redux";
 import Sidebar from './Sidebar';
 import '../../componentsStyle/User.css';
@@ -74,6 +74,9 @@ class User extends Component {
             });
     }
 
+    
+    //from the toedata recieved from the backend
+    //it creates an array for fungalcoverage, images and dates to be shown on the graph
     //footNumber 0:left 1:right
     extractFootData(footNumber){
         var fungalCoverage = [[],[],[],[],[]];
@@ -134,10 +137,10 @@ class User extends Component {
         fungalCoverage += percentageData[i];
 
         return (
-            <Row key={id} className="total-details-row">
-                <Col className="total-details-col total-details-left-col">{name}</Col>
-                <Col className="total-details-col total-details-right-col">{fungalCoverage}</Col>
-            </Row>
+            <tr key={id} >
+                <td>{name}</td>
+                <td>{fungalCoverage}</td>
+            </tr>
         )
     }
 
@@ -231,13 +234,19 @@ class User extends Component {
                         <Row className="total-details-title">
                             {footName} Foot: {sortedDates[0] + ' -- ' + sortedDates[selectedfootDates.length-1]}
                         </Row>
-                        <Row className="total-details-row total-details-title-row">
-                            <Col className="total-details-col total-details-left-col">Toe Name</Col>
-                            <Col className="total-details-col total-details-right-col">Fungal Coverage</Col>
-                        </Row>
-                        {
-                            (footData[4].data) ? footData.map(({name, data}, id) => this.printToeData(id, name, data.filter(item => item !== null))) : ""
-                        }
+                        <Table striped bordered hover size="md" style={{textAlign : "left", width : "95%", marginLeft : "2%"}}>
+                            <thead>
+                                <tr>
+                                    <th style={{width: "10%"}}>Toe Name</th>
+                                    <th>Fungal coverage</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {
+                                (footData[4].data) ? footData.map(({name, data}, id) => this.printToeData(id, name, data.filter(item => item !== null))) : ""
+                            }
+                            </tbody>  
+                        </Table>
                         <Row className="total-details-row total-details-bottom-row"></Row>
                     </div>
                 </div>

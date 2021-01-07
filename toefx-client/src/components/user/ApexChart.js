@@ -24,7 +24,8 @@ class ApexChart extends React.Component {
                         click: (event, chartContext, config) => {
                             /*config.seriesIndex; //Number of big toe, index toe, etc. starting from 0
                             config.dataPointIndex; //Number of treatment date*/
-                            this.setState({ treatmentIndex : config.dataPointIndex })
+                            if (config.dataPointIndex >= 0) 
+                                this.setState({ treatmentIndex : config.dataPointIndex })
                         }
                     }
                 },
@@ -56,12 +57,21 @@ class ApexChart extends React.Component {
                     x: {
                         format: "yyyy/MM/dd"
                     },
+                    intersect : true,
+                    shared: false
                 },
+                markers: {
+                    size : 5
+                }
             },
             showLeftFoot: true, //Start off showing the left foot
             shownToes: gInitialToeSelection,
             showingDetails: this.props.showingDetails, //Scrunch the graph on the left if showing details
         };
+    }
+
+    componentDidMount(){
+        this.resetShownToesData();
     }
 
     //changes the graph data
@@ -90,7 +100,6 @@ class ApexChart extends React.Component {
         var data = (this.state.showLeftFoot) ? this.props.leftFootData : this.props.rightFootData;
         var dates = (this.state.showLeftFoot) ? this.props.leftFootDates : this.props.rightFootDates;
 
-        //var shownToes = this.state.showToes;
 
         for (let i = 0; i < this.state.shownToes.length; ++i) {
             if (this.state.shownToes[i]) { //The user wants to see this toe
@@ -104,7 +113,6 @@ class ApexChart extends React.Component {
             }
         }
 
-        
 
         var options = this.state.options;
         options.xaxis.categories = toeDates;
@@ -215,15 +223,20 @@ class ApexChart extends React.Component {
 
 		//getting the fungal coverage based on the selected point on the graph
 		var fungalCoverage = percentage[this.state.treatmentIndex];
-
         return (
-            ((images[imageIndex] || images[0]) && isToeNotIncluded)
+            ((images[imageIndex]) && isToeNotIncluded)
             ?
                 <Row key={id} className="selected-details-row">
                     <Col className="selected-details-col">{name}</Col>
                     <Col className="selected-details-col">{fungalCoverage || "NA"}</Col>
                     <Col className="selected-details-col">No Comments</Col>
-                    <Col className="selected-details-col selected-details-right-col"><img src={images[imageIndex] || images[0]} alt="img"/></Col>
+                    <Col className="selected-details-col selected-details-right-col" style={{width : "150px"}}>
+                        <img 
+                            src={images[imageIndex] || images[0]} 
+                            alt="img" 
+                            style={{width : "150px", height : "100px", borderRadius : "8px", padding : "5px 0 5px 0"}}
+                        />
+                    </Col>
                 </Row>
             :
                 ""
@@ -232,7 +245,7 @@ class ApexChart extends React.Component {
 
     printSelectedDateDetails() {
         var footData = (this.state.showLeftFoot) ? this.props.leftFootData : this.props.rightFootData;
-		var dates = (this.state.showLeftFoot) ? this.props.leftFootDates : this.props.rightFootDates;
+        var dates = (this.state.showLeftFoot) ? this.props.leftFootDates : this.props.rightFootDates;
 		var selectedDate = dates[this.state.treatmentIndex];
         var footName = (this.state.showLeftFoot) ? "Left" : "Right";
 

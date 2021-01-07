@@ -46,7 +46,7 @@ const { exec } = require("child_process");
     } catch (e) {
         throw e;
     }
-})()2
+})();
 
 
 toe_dataSchema.findOne({ userID: "5fb6cba87f989d064047700e" }).then(data => {
@@ -215,7 +215,6 @@ app.get('/getImage', async (req, res) => {
 
         let user = await findPeople(userId, res);
         let imageName = req.query.imageName;
-
 
         //if the specified images is actually owned by the the user
         if (await user.images.includes(imageName)) {

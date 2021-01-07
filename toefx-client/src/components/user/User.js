@@ -1,18 +1,17 @@
-import React, {Component} from "react";
-import {Row, Col} from "react-bootstrap";
-import {connect} from "react-redux";
+import React, { Component } from "react";
+import { Row, Col } from "react-bootstrap";
+import { connect } from "react-redux";
 import Sidebar from './Sidebar';
 import '../../componentsStyle/User.css';
 import ApexChart from './ApexChart';
 import Axios from "axios";
-import {config} from "../../config";
+import { config } from "../../config";
 
 //TODO: Change printToeData to use a map
 
 
 
 const Dates = ["2020-09-01", "2020-10-01", "2020-11-01", "2020-12-01", "2021-01-01", "2021-02-01", "2021-03-01"];
-
 
 class NewUser extends Component {
 
@@ -23,15 +22,20 @@ class NewUser extends Component {
             selectedFoot: 0,
             selectedTreatment: 0,
             leftFootFungalCoverage: [],
-            rightFootFungalCoverage : [],
-            LeftFootImages : [],
+            rightFootFungalCoverage: [],
+            LeftFootImages: [],
             showingDateDetails: true, //Showing details about a specific date next to the graph
             toeData: {}, //recieved from the server
             imageUrls: [], //[{imageName: "1.PNG", url : }]
         };
     }
-
     async componentDidMount() {
+        this.props.history.listen((loc, action) => {
+            if (action === 'POP'){
+                window.location.reload();
+            }
+    })
+
         //if user is not logged in, go to the login page
         if (!this.props.auth.isAuth)
             this.props.history.push("/login");
@@ -63,7 +67,7 @@ class NewUser extends Component {
 
     }
 
-    async getImageURL(imageName){
+    async getImageURL(imageName) {
         await Axios.get(`${config.dev_server}/getImage?imageName=${imageName}`, { responseType: "blob" })
             .then((image) => {
 
@@ -74,41 +78,40 @@ class NewUser extends Component {
             });
     }
 
-    organizeDataforGraph(){
+    organizeDataforGraph() {
         if (this.state.toeData.feet !== undefined && this.state.leftFootFungalCoverage.length === 0) {
-            var LeftfungalCoverage = [[],[],[],[],[]]; // need to organize data for ApexChart
-            var RightfungalCoverage = [[],[],[],[],[]];
-            var LeftImages = [[],[],[],[],[]];
-            var RightImages = [[],[],[],[],[]];
+            var LeftfungalCoverage = [[], [], [], [], []]; // need to organize data for ApexChart
+            var RightfungalCoverage = [[], [], [], [], []];
+            var LeftImages = [[], [], [], [], []];
+            var RightImages = [[], [], [], [], []];
 
             //left foot
             if (this.state.toeData.feet[0] !== undefined)
-                for (let toe = 0; toe < this.state.toeData.feet[0].toes.length; toe++){
-                    this.state.toeData.feet[0].toes[toe].images.map(item => 
-                        {
-                            LeftfungalCoverage[toe].push(item.fungalCoverage);
-                            var url = this.state.imageUrls.find(({imageName}) => imageName === item.name).url;
-                            LeftImages[toe].push(url);
-                        });
+                for (let toe = 0; toe < this.state.toeData.feet[0].toes.length; toe++) {
+                    this.state.toeData.feet[0].toes[toe].images.map(item => {
+                        LeftfungalCoverage[toe].push(item.fungalCoverage);
+                        var url = this.state.imageUrls.find(({ imageName }) => imageName === item.name).url;
+                        LeftImages[toe].push(url);
+                    });
                 }
 
             //right foot
             if (this.state.toeData.feet[1] !== undefined)
-                for (let toe = 0; toe < this.state.toeData.feet[1].toes.length; toe++){
+                for (let toe = 0; toe < this.state.toeData.feet[1].toes.length; toe++) {
                     this.state.toeData.feet[1].toes[toe].images.map(item => RightfungalCoverage[toe].push(item.fungalCoverage));
                 }
 
 
             //console.log(LeftfungalCoverage);
-            this.setState({ 
-                leftFootFungalCoverage : LeftfungalCoverage,
+            this.setState({
+                leftFootFungalCoverage: LeftfungalCoverage,
                 rightFootFungalCoverage: RightfungalCoverage,
-                LeftFootImages : LeftImages
+                LeftFootImages: LeftImages
             });
         }
     }
 
-    
+
     printToeData(id, name, percentageData) {
         return (
             <Row key={id} className="total-details-row">
@@ -122,7 +125,7 @@ class NewUser extends Component {
 
         //organize the toeData for the graph
         this.organizeDataforGraph();
-        
+
         /*let toeImages = [];
         if(this.state.LeftFootImages[0]){
             console.log(this.state.LeftFootImages[0]);
@@ -168,7 +171,7 @@ class NewUser extends Component {
 
         return (
             <div>
-                <Sidebar {...this.props}/>
+                <Sidebar {...this.props} />
                 <div className="welcome-bar">
                     <h6 className="welcome">Dashboard</h6>
                 </div>
@@ -177,15 +180,15 @@ class NewUser extends Component {
                     {/* Graph */}
                     {
                         (Data[4].data) //wait for the data to be available
-                            ? 
+                            ?
                             <ApexChart leftFootData={Data} rightFootData={Data}
                                 leftFootDates={Dates} rightFootDates={Dates}
-                                showingDetails={this.state.showingDateDetails}>    
+                                showingDetails={this.state.showingDateDetails}>
                             </ApexChart>
                             :
                             ""
 
-                    } 
+                    }
                     {/*Alternate Data View*/}
                     <div className="total-details-container">
                         <Row className="total-details-title">
@@ -196,7 +199,7 @@ class NewUser extends Component {
                             <Col className="total-details-col total-details-right-col">Fungal Coverage</Col>
                         </Row>
                         {
-                            (footData.Data) ? footData.map(({id, name, data}) => this.printToeData(id, name, data)) : ""
+                            (footData.Data) ? footData.map(({ id, name, data }) => this.printToeData(id, name, data)) : ""
                         }
                         <Row className="total-details-row total-details-bottom-row"></Row>
                     </div>

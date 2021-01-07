@@ -17,7 +17,11 @@ class Sidebar extends Component {
             <div className="sidebar">
 
                 <div>
-                    <Button className="new-appointment-button">+ Upload Image</Button>
+                    <Button className="new-appointment-button" onClick={() => {
+                        this.props.history.push('/diagnosis');
+                        window.location.reload();
+                    }
+                    }>+ Upload Image</Button>
                 </div>
 
                 <Container className="main-sidebar-options">
@@ -65,10 +69,10 @@ class Sidebar extends Component {
 
                     {/* Log out */}
                     <Row className="sidebar-items">
-                        <span onClick={() =>{
-                                    store.dispatch(logOutUser());
-                                    window.location.href = "/";
-                                }}
+                        <span onClick={() => {
+                            store.dispatch(logOutUser());
+                            window.location.href = "/";
+                        }}
                         >
                             <img src={logoutIcon} alt="schedule icon" className="sidebar-icon"></img>
                             <h6 className="sidebar-item-text"> Log Out</h6>

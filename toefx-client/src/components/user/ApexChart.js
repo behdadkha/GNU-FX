@@ -1,3 +1,7 @@
+/*
+    Class for the chart that appears showing patient treatment improvement.
+*/
+
 import React from "react";
 import ReactApexChart from "react-apexcharts"
 import {Row, Col} from "react-bootstrap";
@@ -8,11 +12,14 @@ import {Row, Col} from "react-bootstrap";
 const gInitialToeSelection = [true, true, false, false, false]; //Only first two toes start off shown (client request)
 
 class ApexChart extends React.Component {
+
+    //Sets up initial data for the chart
     constructor(props) {
         super(props);
 
+        //Initially data for the left foot is shown, so set up the graph to show it
         this.state = {
-            treatmentIndex : 0, //user clicks on a point in the graph, this represents the clicked index
+            treatmentIndex : 0, //User clicks on a point in the graph, this represents the clicked index
             series: this.props.leftFootData,
             options: {
                 chart: {
@@ -57,11 +64,15 @@ class ApexChart extends React.Component {
                 },
             },
             showLeftFoot: true, //Start off showing the left foot
-            shownToes: gInitialToeSelection,
+            shownToes: gInitialToeSelection, //Initially only show certain toe
             showingDetails: this.props.showingDetails, //Scrunch the graph on the left if showing details
         };
     }
 
+    /*
+        Displays data corresponding to a certain foot on the graph.
+        param showLeftFoot: If true show data for the left foot, otherwise show data for the right foot
+    */
     viewFoot(showLeftFoot) {
         var shownToes = gInitialToeSelection; //Show initial toes again when changing feet
 
@@ -73,8 +84,10 @@ class ApexChart extends React.Component {
         this.resetShownToesData(shownToes);
     }
 
-    
-
+    /*
+        Helps reset the graph when foot selection is changed.
+        param shownToes: An array of the initially displayed toes on the graph.
+    */
     resetShownToesData(shownToes) {
         var toeData = []; //New toe data to be shown
         var toeDates = []; //New dates of toe data to be shown
@@ -96,14 +109,17 @@ class ApexChart extends React.Component {
         var options = this.state.options;
         options.xaxis.categories = toeDates;
 
-
         this.setState({
             series: toeData,
             options: options,
-            treatmentIndex : 0 //also, reset the treatmentIndex in case the user clicked a point on the graph
+            treatmentIndex: 0 //Also reset the treatmentIndex in case the user clicked a point on the graph
         });
     }
 
+    /*
+        Displays data only for the toe the user clicked on.
+        param num: The toe id clicked on.
+    */
     showToe(num) {
         let shownToes = [false, false, false, false, false]; //Hide all toes
         shownToes[num] = true; //Except toe clicked on
@@ -115,6 +131,10 @@ class ApexChart extends React.Component {
         this.resetShownToesData(shownToes);
     }
 
+    /*
+        Helps with the "Select All" button. If at least one toe is hidden,
+        then all are shown, otherwise all toes are hidden on the graph.
+    */
     showHideAllToes() {
         let shownToes = [false, false, false, false, false];
         let val = false; //Hide all toes by default
@@ -136,10 +156,17 @@ class ApexChart extends React.Component {
         this.resetShownToesData(shownToes);
     }
 
+    /*
+        Determines if data for all toes are visible on the graph.
+        returns: True if data for all toes are visuble on the graph, False otherwise.
+    */
     areAllToesShown() {
         return this.state.shownToes.filter(isToeShown => isToeShown).length === 5; //All true means all toes are shown
     }
 
+    /*
+        Adds buttons to the page where user can select or deselect toes.
+    */
     printToeButtons() {
         var toeNames = ["Big Toe", "Index Toe", "Middle Toe", "Fourth Toe", "Little Toe"];
         var toeOrder =  [0, 1, 2, 3, 4];
@@ -184,7 +211,9 @@ class ApexChart extends React.Component {
         );
     }
 
-    //show the toe data on small preview section next to the graph
+    /*
+        Shows the toe data on small preview section next to the graph
+    */
     printToeData(id, name, images, percentage) {
         var toeNames = ["Big Toe", "Index Toe", "Middle Toe", "Fourth Toe", "Little Toe"];
         
@@ -207,6 +236,10 @@ class ApexChart extends React.Component {
         )
     }
 
+    /*
+        If the user wants to see data from a certain date in the graph,
+        it is printed next to the graph.
+    */
     printSelectedDateDetails() {
         var footData = (this.state.showLeftFoot) ? this.props.leftFootData : this.props.rightFootData;
         var dates = (this.state.showLeftFoot) ? this.props.leftFootDates : this.props.rightFootDates;
@@ -231,6 +264,9 @@ class ApexChart extends React.Component {
         );
     }
 
+    /*
+        Draws the graph to the page.
+    */
     render() {
         var defaultFootButtonClass = "graph-foot-button";
         var activeFootButtonClass = defaultFootButtonClass + " active-toe-button";

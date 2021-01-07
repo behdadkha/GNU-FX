@@ -1,6 +1,12 @@
+/*
+    Class for the home page of the app. It is designed to look
+    similar to ToeFX's main website.
+*/
+
 import React, {Component} from "react";
-import "../componentsStyle/FirstPage.css";
 import {Col, Container, Row} from "react-bootstrap";
+import "../componentsStyle/FirstPage.css";
+
 
 export default class FirstPage extends Component {
     render() {

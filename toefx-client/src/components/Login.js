@@ -1,13 +1,21 @@
+/*
+    Class for the login page.
+*/
+
 import React, {Component} from "react";
 import {Col, Row, Container, Form, Button} from "react-bootstrap";
-import "../componentsStyle/Login.css";
 import store from "../Redux/store";
 import {setCurrentUser} from "../Redux/Actions/authAction";
 import jwt_decode from "jwt-decode";
 import setAuthHeader from "../utils/setAuthHeader";
 import { config } from "../config";
+import "../componentsStyle/Login.css";
+
 
 export default class Login extends Component {
+    /*
+        Sets base data for the page.
+    */
     constructor(props) {
         super(props);
         this.state = {
@@ -18,6 +26,9 @@ export default class Login extends Component {
         };
     }
 
+    /*
+        Logs the user in if the login info is correct.
+    */
     handleLoginPatient = async (e) => {
         e.preventDefault();
 
@@ -33,54 +44,47 @@ export default class Login extends Component {
             }),
         });
 
-        if (response.status === 200) {
+        if (response.status === 200) { //The login was a success
             let body = await response.json();
             this.setState({
                 user: body,
             });
 
-            
-            const {token} = body; //extract the token from the response
-            localStorage.setItem("jwt", token); //save the token in localstorage
-            setAuthHeader(token); //set the token to header for feature requests
-            store.dispatch(setCurrentUser(jwt_decode(token))); //add the user data(decoded) to the store 
+            const {token} = body; //Extract the token from the response
+            localStorage.setItem("jwt", token); //Save the token in localstorage
+            setAuthHeader(token); //Set the token to header for feature requests
+            store.dispatch(setCurrentUser(jwt_decode(token))); //Add the user data(decoded) to the store 
 
-            //redirect to User page
+            //Redirect to User page
             this.props.history.push('/user');
-
-        }else{
+        }
+        else { //The login was a failure
             this.setState({
                 invalidUser: true,
             });
         }
     };
 
+    /*
+        Displays the login page.
+    */
     render() {
-        let IfInvalid;
-        if (this.state.invalidUser) {
-            IfInvalid = (
-                <div>
-                    <h6>Please enter valid credentials.</h6>
-                </div>
-            );
-        }
-        else {
-            IfInvalid = (
-                <div>
-                    <h6></h6>
-                </div>
-            );  
-        }
+        let loginError = (this.state.invalidUser) ? //Error displayed to the user if problem with login
+            <div>
+                <h6 className="login-error">Please enter valid credentials.</h6>
+            </div>
+        : <div><h6 className="login-error"></h6></div>; //Empty container so form doesn't shift down when text is added
 
         return (
             <Container>
                 <Row>
                     <Col>
-                        {IfInvalid}
+                        {loginError /* Error message if needed */}
                         <Form
-                            className="form"
+                            className="login-form"
                             onSubmit={this.handleLoginPatient.bind(this)}
                         >
+                            {/* Email Input */}
                             <Form.Group controlId="formBasicEmail">
                                 <Form.Label>Email address</Form.Label>
                                 <Form.Control
@@ -93,6 +97,7 @@ export default class Login extends Component {
                                 />
                             </Form.Group>
 
+                            {/* Password Input */}
                             <Form.Group controlId="formBasicPassword">
                                 <Form.Label>Password</Form.Label>
                                 <Form.Control
@@ -106,10 +111,11 @@ export default class Login extends Component {
                                     placeholder="Password"
                                 />
                             </Form.Group>
+
+                            {/* Login Button */}
                             <Button variant="primary" type="submit">
                                 Login
                             </Button>
-                            <h6 id="IamAClinicianTEXT" onClick={() => this.props.history.push("loginClinician")}>I am a clinician</h6>
                         </Form>
                     </Col>
                 </Row>

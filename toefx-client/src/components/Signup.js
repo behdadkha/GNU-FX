@@ -2,6 +2,7 @@ import React, {Component} from "react";
 import {Col, Row, Container, Form, Button} from "react-bootstrap";
 import "../componentsStyle/Login.css";
 
+
 export default class Signup extends Component {
 
     constructor(props){

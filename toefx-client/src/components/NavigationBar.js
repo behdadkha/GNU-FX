@@ -7,6 +7,7 @@ import { connect } from "react-redux";
 import { logOutUser } from "../Redux/Actions/authAction";
 import store from "../Redux/store";
 
+
 class NavigationBar extends Component {
     render() {
 

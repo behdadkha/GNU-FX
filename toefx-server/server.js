@@ -46,7 +46,7 @@ const { exec } = require("child_process");
     } catch (e) {
         throw e;
     }
-})()2
+})()
 
 
 toe_dataSchema.findOne({ userID: "5fb6cba87f989d064047700e" }).then(data => {

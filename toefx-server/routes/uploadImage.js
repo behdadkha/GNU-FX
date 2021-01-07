@@ -33,18 +33,20 @@ uploadImage.route('/loggedin').post(async (req, res) => {
     //save the new image under user
     user.images.push(imageName);
     user.save();
-    ////////////////////////////////////////////////////////////////////////////TODO: FUNGAL COVERAGE
+    ////////////////////////////////////////////////////////////////////////////TODO: FUNGAL COVERAGE FROM AI
+    var date = new Date();
+    var datetoString = date.toString();
     toeData.findOne({ userID: userId }, (err, item) => {
         if (req.body.foot === "left") {
             item.feet[0].toes[parseInt(req.body.toe)].images.push({
-                date: new Date(),
+                date: datetoString,
                 name: imageName,
                 fungalCoverage: '20%'
             })
         }
-        else {
+        else if(req.body.foot === "right") {
             item.feet[1].toes[parseInt(req.body.toe)].images.push({
-                date: new Date(),
+                date: datetoString,
                 name: imageName,
                 fungalCoverage: '20%'
             })

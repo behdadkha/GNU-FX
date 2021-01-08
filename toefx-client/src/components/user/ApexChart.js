@@ -32,7 +32,7 @@ class ApexChart extends React.Component {
                             /*config.seriesIndex; //Number of big toe, index toe, etc. starting from 0
                             config.dataPointIndex; //Number of treatment date*/
                             if (config.dataPointIndex >= 0) 
-                                this.setState({ treatmentIndex : config.dataPointIndex })
+                                this.setState({ treatmentIndex: config.dataPointIndex,  showingDetails: true})
                         }
                     }
                 },
@@ -91,14 +91,15 @@ class ApexChart extends React.Component {
 
         this.setState({
             shownToes: shownToes,
-			showLeftFoot: showLeftFoot,
-			treatmentIndex : 0
+            showLeftFoot: showLeftFoot,
+            showingDetails: false,
+			treatmentIndex: 0
         },
             this.resetShownToesData
         );
 
 		//save the selected foot in the redux store
-		// need to know the selected foot to change the buttom cell
+		// need to know the selected foot to change the bottom cell
 		store.dispatch(setSelectedFoot(showLeftFoot ? 0 : 1)); 
     }
 
@@ -112,7 +113,6 @@ class ApexChart extends React.Component {
         var data = (this.state.showLeftFoot) ? this.props.leftFootData : this.props.rightFootData;
         var dates = (this.state.showLeftFoot) ? this.props.leftFootDates : this.props.rightFootDates;
 
-
         for (let i = 0; i < this.state.shownToes.length; ++i) {
             if (this.state.shownToes[i]) { //The user wants to see this toe
                 toeData.push(data[i]); //Original data is stored in props
@@ -124,7 +124,6 @@ class ApexChart extends React.Component {
                 toeDates.push("");
             }
         }
-
 
         var options = this.state.options;
         options.xaxis.categories = toeDates;
@@ -249,17 +248,12 @@ class ApexChart extends React.Component {
         var isToeNotIncluded = this.state.shownToes[toeNames.findIndex(toeName => toeName === name)];
         var imageIndex = this.state.treatmentIndex - percentage.filter(item => item === null).length;// need to subtract the number of nulls from the treatment index because images dont have nulls
 
-
 		//getting the fungal coverage based on the selected point on the graph
 		var fungalCoverage = percentage[this.state.treatmentIndex];
         return (
             ((images[imageIndex]) && isToeNotIncluded)
             ?
-                
-                <tr key={id} >
-                    <td>{name}</td>
-                    <td>{fungalCoverage}</td>
-                    <td>No Comments</td>
+                <tr key={id}>
                     <td style={{width : "150px"}}>
                         <img 
                             src={images[imageIndex] || images[0]} 
@@ -267,9 +261,12 @@ class ApexChart extends React.Component {
                             style={{width : "150px", height : "100px", borderRadius : "8px", padding : "5px 0 5px 0"}}
                         />
                     </td>
+                    <td>{name}</td>
+                    <td>{fungalCoverage}</td>
+                    <td>No Comments</td>
                 </tr>
             :
-                ""
+                <tr key={id}></tr>
         )
     }
 
@@ -289,18 +286,18 @@ class ApexChart extends React.Component {
                     {footName} Foot: {selectedDate}
                 </Row>
                 
-                <Table striped bordered hover size="md" style={{textAlign : "left", width : "95%", marginLeft : "2%"}}>
+                <Table striped bordered size="md" style={{textAlign : "left", width : "95%", marginLeft : "2%"}}>
                     <thead>
                         <tr>
-                            <th style={{width: "20%"}}>Toe Name</th>
+                            <th>Image</th>
+                            <th>Toe Name</th>
                             <th>Fungal coverage</th>
                             <th>Comments</th>
-                            <th>Image</th>
                         </tr>
                     </thead>
                     <tbody>
                     {
-                        (footData[4].data) ? footData.map(({name, images, data}, id) => this.printToeData(id, name, images, data)) : ""
+                        (footData[4].data) ? footData.map(({name, images, data}, id) => this.printToeData(id, name, images, data)) : <tr></tr>
                     }
                     </tbody>
                 </Table>

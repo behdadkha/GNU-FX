@@ -49,7 +49,7 @@ class Sidebar extends Component {
 
                 </Container>
 
-                <Container className="account-sidebar-options">
+                <Container>
                     {/* My Account */}
                     <Row className="sidebar-items">
                         <span onClick={() => this.props.history.push("/user/myAccount")}>

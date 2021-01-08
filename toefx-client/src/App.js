@@ -12,7 +12,6 @@ import {Route, BrowserRouter as Router} from "react-router-dom";
 import jwt_decode from "jwt-decode";
 import setAuthHeader from "./utils/setAuthHeader";
 import {logOutUser, setCurrentUser} from "./Redux/Actions/authAction";
-import Storyline from "./components/user/Storyline";
 import Diagnosis from "./components/user/Diagnosis";
 import Schedule from "./components/user/Schedule";
 import MyAccount from "./components/user/MyAccount";
@@ -63,7 +62,6 @@ function App() {
               <Route path="/signup" component={Signup} exact />
               <Route path="/user" component={User} exact/>
               <Route path="/diagnosis" component={Diagnosis} exact/>
-              <Route path="/Storyline" component={Storyline} exact/>
               <Route path="/user/schedule" component={Schedule} exact/>
               <Route path="/user/myAccount" component={MyAccount} exact/>
               <Route path="/user/resetPassword" component={ResetPassword} exact/>

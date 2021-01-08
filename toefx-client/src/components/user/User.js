@@ -1,14 +1,17 @@
 import React, {Component} from "react";
 import {Row, Table} from "react-bootstrap";
 import {connect} from "react-redux";
-import Sidebar from './Sidebar';
-import '../../componentsStyle/User.css';
-import ApexChart from './ApexChart';
 import Axios from "axios";
 import {config} from "../../config";
+import ApexChart from './ApexChart';
+import Sidebar from './Sidebar';
+import '../../componentsStyle/User.css';
+
 
 class User extends Component {
-
+    /*
+        Sets base data for the page.
+    */
     constructor(props) {
         super(props);
 
@@ -17,11 +20,10 @@ class User extends Component {
             selectedTreatment: 0,
             leftFootFungalCoverage: [],
             rightFootFungalCoverage : [],
-            LeftFootImages : [],
-            RightFootImages : [],
+            leftFootImages : [],
+            rightFootImages : [],
             leftFootDates: [],
             rightFootDates : [],
-            showingDateDetails: true, //Showing details about a specific date next to the graph
             toeData: {}, //recieved from the server
             imageUrls: [], //[{imageName: "1.PNG", url : ""}]
         };
@@ -95,10 +97,8 @@ class User extends Component {
                     images[toe].push(url);
 
                     //puts nulls, so that lines in the graph can start from their actual date. print fungalCoverage to see 
-                    for( let j = toe+1; j < 5; j++){
+                    for( let j = toe + 1; j < 5; j++)
                         fungalCoverage[j].push(null);
-                    }
-
                 }
                 
             }
@@ -108,8 +108,6 @@ class User extends Component {
 
     organizeDataforGraph(){
         if (this.state.toeData.feet !== undefined && this.state.leftFootFungalCoverage.length === 0) { 
-            
-
             //separate the fungal coverage and images (required for the Apexchart)
             //left foot == 0
             var leftFootData = this.extractFootData(0);
@@ -119,8 +117,8 @@ class User extends Component {
             this.setState({ 
                 leftFootFungalCoverage : leftFootData[0],
                 rightFootFungalCoverage: rightFootData[0],
-                LeftFootImages : leftFootData[1],
-                RightFootImages : rightFootData[1],
+                leftFootImages : leftFootData[1],
+                rightFootImages : rightFootData[1],
                 leftFootDates : leftFootData[2],
                 rightFootDates : rightFootData[2]
             });
@@ -148,110 +146,90 @@ class User extends Component {
     render() {;
         //console.log(this.state.leftFootFungalCoverage[1])
         //Toe data, standarized for the graph
-        const leftFootData = [
+        const toeNames = ["Big Toe", "Index Toe", "Middle Toe", "Fourth Toe", "Little Toe"]
+        var leftFootData = [];
+        var rightFootData = [];
+
+        for (let i = 0; i < toeNames.length; ++i)
+        {
+            leftFootData.push(
             {
-                name: 'Big Toe',
-                data: this.state.leftFootFungalCoverage[0],
-                images: this.state.LeftFootImages[0]
-            },
+                name: toeNames[i],
+                data: this.state.leftFootFungalCoverage[i],
+                images: this.state.leftFootImages[i],
+            });
+
+            rightFootData.push(
             {
-                name: 'Index Toe',
-                data: this.state.leftFootFungalCoverage[1],
-                images: this.state.LeftFootImages[1]
-            },
-            {
-                name: 'Middle Toe',
-                data: this.state.leftFootFungalCoverage[2],
-                images: this.state.LeftFootImages[2]
-            },
-            {
-                name: 'Fourth Toe',
-                data: this.state.leftFootFungalCoverage[3],
-                images: this.state.LeftFootImages[3]
-            },
-            {
-                name: 'Little Toe',
-                data: this.state.leftFootFungalCoverage[4],
-                images: this.state.LeftFootImages[4]
-            }
-        ];
-        const rightFootData = [
-            {
-                name: 'Big Toe',
-                data: this.state.rightFootFungalCoverage[0],
-                images: this.state.RightFootImages[0]
-            },
-            {
-                name: 'Index Toe',
-                data: this.state.rightFootFungalCoverage[1],
-                images: this.state.RightFootImages[1]
-            },
-            {
-                name: 'Middle Toe',
-                data: this.state.rightFootFungalCoverage[2],
-                images: this.state.RightFootImages[2]
-            },
-            {
-                name: 'Fourth Toe',
-                data: this.state.rightFootFungalCoverage[3],
-                images: this.state.RightFootImages[3]
-            },
-            {
-                name: 'Little Toe',
-                data: this.state.rightFootFungalCoverage[4],
-                images: this.state.RightFootImages[4]
-            }
-        ];
+                name: toeNames[i],
+                data: this.state.rightFootFungalCoverage[i],
+                images: this.state.rightFootImages[i],
+            });
+        }
 
         var footData = (this.props.setFoot.selectedFoot === 0) ? leftFootData : rightFootData;
         var selectedfootDates = (this.props.setFoot.selectedFoot === 0) ? this.state.leftFootDates : this.state.rightFootDates;
         var footName = (this.props.setFoot.selectedFoot === 0) ? "Left" : "Right";
 
-        //need to sort the dates to find the begining and end dates for the bottom table
+        //Need to sort the dates to find the begining and end dates for the bottom table
         let sortedDates = [...selectedfootDates].sort();
+        let pageLoaded = sortedDates[0] != null;
         
-        return (
-            <div>
-                <Sidebar {...this.props}/>
-                <div className="welcome-bar">
-                    <h6 className="welcome">Dashboard</h6>
-                </div>
-                
-                <div className="main-container">
-                    {/* Graph */}
-                    {
-                        (leftFootData[4].data) //wait for the data to be available
-                            ? 
-                            <ApexChart leftFootData={leftFootData} rightFootData={rightFootData}
-                                leftFootDates={this.state.leftFootDates} rightFootDates={this.state.rightFootDates}
-                                showingDetails={this.state.showingDateDetails}>    
-                            </ApexChart>
-                            :
-                            ""
-
-                    } 
-                    {/*Alternate Data View bottom*/}
-                    <div className="total-details-container">
-                        <Row className="total-details-title">
-                            {footName} Foot: {sortedDates[0] + ' -- ' + sortedDates[selectedfootDates.length-1]}
-                        </Row>
-                        <Table striped bordered hover size="md" style={{textAlign : "left", width : "95%", marginLeft : "2%"}}>
-                            <thead>
-                                <tr>
-                                    <th style={{width: "10%"}}>Toe Name</th>
-                                    <th>Fungal coverage</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            {
-                                (footData[4].data) ? footData.map(({name, data}, id) => this.printToeData(id, name, data.filter(item => item !== null))) : ""
-                            }
-                            </tbody>  
-                        </Table>
+        if (pageLoaded) { //The data is ready to be displayed
+            return (
+                <div>
+                    <Sidebar {...this.props}/>
+                    <div className="welcome-bar">
+                        <h6 className="welcome">Dashboard</h6>
                     </div>
-                </div>
-            </div >
-        );
+                    
+                    <div className="main-container">
+                        {/* Graph */}
+                        {
+                            (leftFootData[4].data) //wait for the data to be available
+                                ? 
+                                <ApexChart leftFootData={leftFootData} rightFootData={rightFootData}
+                                    leftFootDates={this.state.leftFootDates} rightFootDates={this.state.rightFootDates}>    
+                                </ApexChart>
+                                :
+                                ""
+                        }
+    
+                        {/*Alternate Data View bottom*/}
+                        <div className="total-details-container">
+                            <Row className="total-details-title">
+                                {footName} Foot: {sortedDates[0] + ' -- ' + sortedDates[selectedfootDates.length-1]}
+                            </Row>
+                            <Table striped bordered size="md" style={{textAlign : "left", width : "95%", marginLeft : "2%"}}>
+                                <thead>
+                                    <tr>
+                                        <th style={{width: "10%"}}>Toe Name</th>
+                                        <th>Fungal coverage</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                {
+                                    (footData[4].data) ? footData.map(({name, data}, id) => this.printToeData(id, name, data.filter(item => item !== null))) : ""
+                                }
+                                </tbody>  
+                            </Table>
+                        </div>
+                    </div>
+                </div >
+            );
+        }
+        else { //If not, display "Loading..." to the user
+            return (
+                <div>
+                    <Sidebar {...this.props}/>
+                    <div className="welcome-bar">
+                        <h6 className="welcome">Dashboard</h6>
+                    </div>
+
+                    <h4>Loading...</h4>
+                 </div>
+            );
+        }
     }
 }
 

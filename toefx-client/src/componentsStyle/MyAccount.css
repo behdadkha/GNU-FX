@@ -40,7 +40,7 @@
 
 /* For the image list */
 
-.account-images {
+.images-table {
     position: relative;
     background-color: white;
     width: fit-content;
@@ -50,6 +50,11 @@
     margin : 0%;
     border-radius: 10px;
     overflow: scroll;
+}
+
+.toeImages {
+	width: 100%;
+	max-height: 150px;
 }
 
 .uploaded-image-table {

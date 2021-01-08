@@ -6,6 +6,8 @@ import {config} from "../../config";
 import ApexChart from './ApexChart';
 import Sidebar from './Sidebar';
 import '../../componentsStyle/User.css';
+import { getAndSaveImages } from "../../Redux/Actions/setFootAction";
+import store from "../../Redux/store";
 
 
 class User extends Component {
@@ -49,7 +51,19 @@ class User extends Component {
                 }
 
             });
+        //redux data gets erased after a refresh so if the data is gone we need to get them again
+        if (this.props.foot.images.length === 0){
 
+            await store.dispatch(getAndSaveImages());
+            this.setState({
+                imageUrls : this.props.foot.images
+            });
+
+        }else{
+            this.setState({
+                imageUrls : this.props.foot.images
+            });
+        }
 
         //get the user's toe data from the node server
         await Axios.get(`${config.dev_server}/getToe`)
@@ -167,9 +181,9 @@ class User extends Component {
             });
         }
 
-        var footData = (this.props.setFoot.selectedFoot === 0) ? leftFootData : rightFootData;
-        var selectedfootDates = (this.props.setFoot.selectedFoot === 0) ? this.state.leftFootDates : this.state.rightFootDates;
-        var footName = (this.props.setFoot.selectedFoot === 0) ? "Left" : "Right";
+        var footData = (this.props.foot.selectedFoot === 0) ? leftFootData : rightFootData;
+        var selectedfootDates = (this.props.foot.selectedFoot === 0) ? this.state.leftFootDates : this.state.rightFootDates;
+        var footName = (this.props.foot.selectedFoot === 0) ? "Left" : "Right";
 
         //Need to sort the dates to find the begining and end dates for the bottom table
         let sortedDates = [...selectedfootDates].sort();
@@ -235,7 +249,7 @@ class User extends Component {
 
 const mapStateToProps = (state) => ({
     auth: state.auth,
-    setFoot: state.setFoot
+    foot: state.foot,
 });
 
 export default connect(mapStateToProps)(User);

@@ -6,6 +6,7 @@ import React, {Component} from "react";
 import {Col, Row, Container, Form, Button} from "react-bootstrap";
 import store from "../Redux/store";
 import {setCurrentUser} from "../Redux/Actions/authAction";
+import {getAndSaveImages} from "../Redux/Actions/setFootAction";
 import jwt_decode from "jwt-decode";
 import setAuthHeader from "../utils/setAuthHeader";
 import { config } from "../config";
@@ -49,12 +50,15 @@ export default class Login extends Component {
             this.setState({
                 user: body,
             });
-
+            
             const {token} = body; //Extract the token from the response
             localStorage.setItem("jwt", token); //Save the token in localstorage
             setAuthHeader(token); //Set the token to header for feature requests
             store.dispatch(setCurrentUser(jwt_decode(token))); //Add the user data(decoded) to the store 
-
+            
+            //getting all the user's images
+            store.dispatch(getAndSaveImages());
+            
             //Redirect to User page
             this.props.history.push('/user');
         }
@@ -63,7 +67,6 @@ export default class Login extends Component {
                 invalidUser: true,
             });
         }
-        window.location.reload();
     };
 
     /*
@@ -74,13 +77,16 @@ export default class Login extends Component {
             <div>
                 <h6 className="login-error">Please enter valid credentials.</h6>
             </div>
-        : <div><h6 className="login-error"></h6></div>; //Empty container so form doesn't shift down when text is added
+        : 
+            ""
 
         return (
             <Container>
                 <Row>
                     <Col>
-                        {loginError /* Error message if needed */}
+                        <div className="login-error">
+                            {loginError /* Error message if needed */}
+                        </div>
                         <Form
                             className="login-form"
                             onSubmit={this.handleLoginPatient.bind(this)}

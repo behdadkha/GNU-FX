@@ -17,7 +17,8 @@ class Diagnosis extends Component {
             uploadProgress: 0,
             tempfileName: "",
             foot: "",//can be selected from UI. Sent to /uploadimage endpoint
-            toe: ""
+            toe: "",
+            errorText : ""
         };
 
         this.validateImage = this.validateImage.bind(this);
@@ -103,6 +104,21 @@ class Diagnosis extends Component {
     //e => event
     handleUpload(e) {
         let file = e.target.files[0];
+        var possibleFileTypes = ["image/x-png","image/png","image/gif","image/jpeg"];
+
+        //invalid file type
+        if (possibleFileTypes.findIndex(item => item === file.type) === -1){
+            this.setState({
+                errorText: "Invalid file type"
+            });
+            return
+        }
+        if (this.state.errorText !== ""){
+            this.setState({
+                errorText: ""
+            });
+        }
+
         this.setState({
             files: [
                 ...this.state.files,
@@ -212,16 +228,18 @@ class Diagnosis extends Component {
                         })
                     }
                 </div>
+                
                 <Row>
                     <Col>
                         {/*uploadfile*/}
-                        <div className="input-group">
+                        <div className="input-group">   
                             <div className="custom-file">
                                 <input
                                     type="file"
                                     className="custom-file-input"
                                     id="inputGroupFile01"
                                     aria-describedby="inputGroupFileAddon01"
+                                    accept="image/x-png,image/png,image/gif,image/jpeg"
                                     onChange={this.handleUpload.bind(this)}
                                 />
                                 <label className="upload-image" htmlFor="inputGroupFile01">
@@ -286,6 +304,11 @@ class Diagnosis extends Component {
                         </Col>
                     ))}
                 </Row>
+                <div>
+                    <h6>
+                        {this.state.errorText}
+                    </h6>
+                </div>
             </Container>
         );
     }

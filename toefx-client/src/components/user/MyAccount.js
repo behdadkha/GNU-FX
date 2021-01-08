@@ -9,6 +9,8 @@ import {config} from "../../config";
 import Sidebar from "./Sidebar";
 import Axios from 'axios';
 import '../../componentsStyle/MyAccount.css'
+import store from '../../Redux/store';
+import { getAndSaveImages } from '../../Redux/Actions/setFootAction';
 
 
 class MyAccount extends Component {
@@ -21,6 +23,8 @@ class MyAccount extends Component {
         this.state = {
             email: "",
             imageUrls: [],
+            toeData: [],
+            showLeftFoot: true
         };
     }
 
@@ -28,40 +32,24 @@ class MyAccount extends Component {
         Logs the user out if they're not logged in.
         Otherwise loads the user's data from the server.
     */
-    /*async componentDidMount() {
-        if (!this.props.auth.isAuth) { //If user is not logged in, go to the login page
-            this.props.history.push("/login");
-        }
-        else { //Otherwise load their data from the server
-            await Axios.get(`${config.dev_server}/user/getUserInfo`)
-                .then((data) => {
-                    this.setState({
-                        email: data.data
-                    });
-                }
-            );
-        }
-    }*/
     async componentDidMount() {
         //if user is not logged in, go to the login page
         if (!this.props.auth.isAuth)
             this.props.history.push("/login");
 
         
-        await Axios.get(`${config.dev_server}/getImageNames`)
-            .then(async (imageNames) => {
-
-                //get all the user's images and store them in a data array
-                for (let i = 0; i < imageNames.data.length; i++) {
-                    await Axios.get(`${config.dev_server}/getImage?imageName=${imageNames.data[i]}`, { responseType: "blob" })
-                        .then((image) => {
-                            this.setState({
-                                imageUrls: [...this.state.imageUrls, { imageName: imageNames.data[i], url: URL.createObjectURL(image.data) }]
-                            });
-                        });
-                }
-
+        //redux data gets erased after a refresh so if the data is gone we need to get them again
+        if (this.props.foot.images.length === 0){
+            await store.dispatch(getAndSaveImages());
+            this.setState({
+                imageUrls : this.props.foot.images
             });
+
+        }else{
+            this.setState({
+                imageUrls : this.props.foot.images
+            });
+        }
 
 
         //get the user's toe data from the node server
@@ -71,6 +59,7 @@ class MyAccount extends Component {
                     toeData: data.data
                 })
             });
+        
     }
 
     /*
@@ -81,16 +70,32 @@ class MyAccount extends Component {
     }
 
     /*
+        Changes the value of showLeftFoot
+        showLeftFoot: bool 
+    */
+    viewFoot(showLeftFoot) {
+
+        this.setState({
+            showLeftFoot: showLeftFoot,
+        });
+ 
+    }
+
+    /*
         Prints one of the user's uploaded images in the list.
     */
-    printUploadedImage(id, url) {
+    printUploadedImage(id, toe, selectedFootIndex) {
+        var toesName = ["Big Toe", "Index Toe", "Middle Toe", "Fourth Toe", "Little Toe"];
+        var foot = ["Left", "Right"]
         return (
-            <tr key={id}>
-                <td>Dummy</td>
-                <td>Dummy</td>
-                <td>Dummy</td>
-                <td>No Date</td>
-            </tr>
+            toe.images.map(({name, date}, index) => 
+                <tr key={id + ' ' + index}>
+                    <td><img src={this.state.imageUrls.find(({imageName}) => imageName === name).url} alt="img" className="toeImages"/></td>
+                    <td>{foot[selectedFootIndex]}</td>
+                    <td>{toesName[id]}</td>
+                    <td>{date.split("T")[0]}</td>
+                </tr>
+            )
         )
     }
 
@@ -98,6 +103,13 @@ class MyAccount extends Component {
         Displays the account page.
     */
     render() {
+
+        var defaultFootButtonClass = "graph-foot-button";
+        var activeFootButtonClass = defaultFootButtonClass + " active-toe-button";
+
+        //0 -> left foot, 1 -> right foot
+        var selectedFootIndex =  (this.state.showLeftFoot) ? 0 : 1;
+
         return (
             <div style={{ overflow: "hidden" }}>
                 <Sidebar {...this.props}/>
@@ -118,11 +130,22 @@ class MyAccount extends Component {
                     </div>
 
                     {/* Image Table Bubble */}
-                    <div className="account-images">
+                    <div className="images-table">
+                        <div className="graph-feet-buttons">
+                            <button onClick={this.viewFoot.bind(this, true)}
+                                        className={(this.state.showLeftFoot ? activeFootButtonClass : defaultFootButtonClass)}>
+                                    Left Foot
+                            </button>
+
+                            <button onClick={this.viewFoot.bind(this, false)}
+                                        className={(!this.state.showLeftFoot ? activeFootButtonClass : defaultFootButtonClass)}>
+                                    Right Foot
+                            </button>
+                        </div>
                         <Table striped bordered size="md" className="uploaded-image-table">
                             <thead>
                                 <tr>
-                                    <th>Image</th>
+                                    <th style={{width : "20%"}}>Image</th>
                                     <th>Foot</th>
                                     <th>Toe</th>
                                     <th>Upload Date</th>
@@ -130,7 +153,7 @@ class MyAccount extends Component {
                             </thead>
                             <tbody>
                             {
-                                this.state.imageUrls.map((url, id) => this.printUploadedImage(id, url))
+                                (this.state.toeData.feet) ? this.state.toeData.feet[selectedFootIndex].toes.map((toe,id) => this.printUploadedImage(id, toe, selectedFootIndex)) : <tr></tr>
                             }
                             </tbody>
                         </Table>
@@ -143,6 +166,7 @@ class MyAccount extends Component {
 
 const mapStateToProps = (state) => ({
     auth: state.auth,
+    foot: state.foot
 });
 
 export default connect(mapStateToProps)(MyAccount);

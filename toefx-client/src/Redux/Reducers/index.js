@@ -5,5 +5,5 @@ import setFootReducer from './setFootReducer';
 
 export default combineReducers({
     auth : authReducer,
-    setFoot: setFootReducer
+    foot: setFootReducer
 });

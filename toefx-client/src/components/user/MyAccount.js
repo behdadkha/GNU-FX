@@ -81,28 +81,34 @@ class MyAccount extends Component {
 
     /*
         Deletes one of the user's uploaded image.
-        param name: The name of the image to delete.
+        param imageName: The name of the image to delete.
+        param selectedFootIndex: The index of the selected foot to delete, 0 for left foot and 1 for right foot.
+        param toeIndex: The index of the selected toe to delete, ranges from 0 to 4
+        param imageIndex: The index of the image to delete.
     */
-    deleteImage(name) {
-        //TODO
+    deleteImage(imageName, selectedFootIndex, toeIndex, imageIndex) {
+        Axios.get(`${config.dev_server}/deleteImage?footIndex=${selectedFootIndex}&toeIndex=${toeIndex}&imageIndex=${imageIndex}&imageName=${imageName}`)
+            .then(() => {
+                window.location.reload();
+            });
     }
 
     /*
         Prints one of the user's uploaded images in the image list.
-        param id: The list id for react.
+        param id: The toe index to print.
         param toe: Which toe the image is for.
-        param selectedFootIndex: Which foot the image is for.
+        param selectedFootIndex: which foot the image is for.
     */
     printUploadedImage(id, toe, selectedFootIndex) {
         //List is ordered by: Image, Toe Name, Fungal Coverage %, Upload Date
         return (
-            toe.images.map(({name, date}, index) => 
+            toe.images.map(({name, date, fungalCoverage}, index) => 
                 <tr key={id + ' ' + index}>
                     <td><img src={GetImageSrcByURLsAndName(this.state.imageUrls, name)} alt="Loading..." className="uploaded-image-table-toe-image"/></td>
                     <td>{GetToeName(id)}</td>
-                    <td>FILL IN FUNGAL COVERAGE</td>
+                    <td>{fungalCoverage}</td>
                     <td>{date.split("T")[0]}</td>
-                    <td><Button className="delete-image-button" onClick={this.deleteImage.bind(this, name)}>Delete</Button></td>
+                    <td><Button className="delete-image-button" onClick={this.deleteImage.bind(this, name, selectedFootIndex, id, index)}>Delete</Button></td>
                 </tr>
             )
         )

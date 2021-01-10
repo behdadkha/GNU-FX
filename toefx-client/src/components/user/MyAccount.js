@@ -98,7 +98,8 @@ class MyAccount extends Component {
         return (
             toe.images.map(({name, date}, index) => 
                 <tr key={id + ' ' + index}>
-                    <td><img src={GetImageSrcByURLsAndName(this.state.imageUrls, name)} alt="Loading..." className="uploaded-image-table-toe-image"/></td>
+                    <td><img src={GetImageSrcByURLsAndName(this.state.imageUrls, name)} alt="Loading..."
+                             className="uploaded-image-table-toe-image"/></td>
                     <td>{GetToeName(id)}</td>
                     <td>FILL IN FUNGAL COVERAGE</td>
                     <td>{date.split("T")[0]}</td>
@@ -113,11 +114,9 @@ class MyAccount extends Component {
     */
     render() {
         var imagesAreLoaded = this.state.toeData.feet; //Images have been retrieved from the server
-        var defaultFootButtonClass = "graph-foot-button";
-        var activeFootButtonClass = defaultFootButtonClass + " active-toe-button";
-
-        //0 -> left foot, 1 -> right foot
-        var selectedFootIndex =  (this.state.showLeftFoot) ? 0 : 1;
+        var defaultFootButtonClass = "graph-foot-button"; //The general CSS for the feet buttons
+        var activeFootButtonClass = defaultFootButtonClass + " active-toe-button"; //The foot button that's selected
+        var selectedFootIndex =  (this.state.showLeftFoot) ? 0 : 1; //0 -> left foot, 1 -> right foot
 
         //Bubble displaying user name, email, and option to reset password
         var accountDetailsBubble =

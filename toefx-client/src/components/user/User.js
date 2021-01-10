@@ -223,7 +223,9 @@ class User extends Component {
                                 </thead>
                                 <tbody>
                                 {
-                                    (footData[4].data) ? footData.map(({name, data}, id) => this.printToeData(id, name, data.filter(item => item !== null))) : ""
+                                    (footData[4].data) ? footData.map(({name, data}, id) =>
+                                                            this.printToeData(id, name, data.filter(item => item !== null)))
+                                                       : ""
                                 }
                                 </tbody>  
                             </Table>

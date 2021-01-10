@@ -17,7 +17,7 @@
 .sidebar-items {
     text-align : left;
     margin-top: 20px;
-    margin-left: 15%;
+    margin-left: 15% !important; /* Can't be overriden by Row */
 }
 
 .sidebar-icon {
@@ -45,4 +45,3 @@
 .new-appointment-button {
     background-color: var(--highlight-color);
 }
- 

@@ -1,3 +1,5 @@
+//import axios from "axios";
+
 /*
     General utility functions for all files.
 */
@@ -10,7 +12,7 @@ const gToeNames = ["Big Toe", "Index Toe", "Middle Toe", "Fourth Toe", "Little T
     returns: The name of the foot.
 */
 export function GetFootName(footId) {
-    if (footId == 0)
+    if (footId === 0)
         return "Left";
 
     return "Right";
@@ -46,3 +48,10 @@ export function GetToeCount() {
 export function GetImageSrcByURLsAndName(urls, name) {
     return urls.find(({imageName}) => imageName === name).url;
 }
+
+/*export function SetAuthHeader(token) {
+    if (token)
+        axios.defaults.headers.common["Authorization"] = token;
+    else
+        delete axios.defaults.headers.common["Authorization"];
+}*/

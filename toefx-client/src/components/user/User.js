@@ -80,6 +80,7 @@ class User extends Component {
         //          this.state.LeftFootImages , this.state.RightFootImages
         this.organizeDataforGraph();
 
+
     }
 
     async getImageURL(imageName){
@@ -193,9 +194,6 @@ class User extends Component {
             return (
                 <div>
                     <Sidebar {...this.props}/>
-                    <div className="welcome-bar">
-                        <h6 className="welcome">Dashboard</h6>
-                    </div>
                     
                     <div className="main-container">
                         {/* Graph */}
@@ -236,9 +234,6 @@ class User extends Component {
             return (
                 <div>
                     <Sidebar {...this.props}/>
-                    <div className="welcome-bar">
-                        <h6 className="welcome">Dashboard</h6>
-                    </div>
 
                     <h4>Loading...</h4>
                  </div>

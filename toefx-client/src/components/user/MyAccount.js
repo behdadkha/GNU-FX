@@ -100,14 +100,14 @@ class MyAccount extends Component {
         param toe: The toe inded the image is for.
         param selectedFootIndex: which foot the image is for.
     */
-    printUploadedImage(toe, selectedFootIndex) {
+    printUploadedImage(id ,toe, selectedFootIndex) {
         //List is ordered by: Image, Toe Name, Fungal Coverage %, Upload Date
         return (
             toe.images.map(({name, date, fungalCoverage}, index) => 
                 <tr key={toe + ' ' + index}>
                     <td><img src={GetImageSrcByURLsAndName(this.state.imageUrls, name)} alt="Loading..."
                              className="uploaded-image-table-toe-image"/></td>
-                    <td>{GetToeName(toe)}</td>
+                    <td>{GetToeName(id)}</td>
                     <td>{fungalCoverage}</td>
                     <td>{date.split("T")[0]}</td>
                     <td><Button className="delete-image-button" onClick={this.deleteImage.bind(this, name, selectedFootIndex, toe, index)}>Delete</Button></td>
@@ -166,7 +166,7 @@ class MyAccount extends Component {
                     <tbody>
                     {
                         //Print a list of images with data
-                        this.state.toeData.feet[selectedFootIndex].toes.map((toe) => this.printUploadedImage(toe, selectedFootIndex))
+                        this.state.toeData.feet[selectedFootIndex].toes.map((toe, id) => this.printUploadedImage(id, toe, selectedFootIndex))
                     }
                     </tbody>
                 </Table>

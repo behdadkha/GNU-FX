@@ -26,7 +26,7 @@ export function GetFootName(footId) {
 export function GetToeName(toeId) {
     if (toeId >= GetToeCount()) //Error handling
         return "Error";
-
+        
     return gToeNames[toeId];
 }
 

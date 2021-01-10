@@ -63,6 +63,7 @@ function findPeople(userId, res) {
     })
 }
 module.exports.findPeople = findPeople;
+
 //function to run an exec command(cl)
 //runs the given command and returns a promise
 //resolve passes the command line output
@@ -222,6 +223,59 @@ app.get('/getImage', async (req, res) => {
     } catch (e) {
         //console.log(e)
         console.log("invalid token , tried to get an image");
+    }
+});
+
+//deletes an image from the database and from the server storage
+//requires 4 query string params
+//footIndex: the index of the foot to be deleted, 0: left foot, 1: right foot
+//toeIndex: the index of the toe to be deleted
+//imageIndex: the index of the image to be deleted. we might have multiple images for a toe.
+//imageName: the name of the image to be deleted. 
+app.get('/deleteImage', async (req,res) => {
+    try{
+        const token = req.headers.authorization;
+        const data = jwt.verify(token.replace("Bearer ", ""), config.secretKey);
+        const userId = data.id;
+
+        if (data == undefined) {
+            res.status(500).send({ msg: "Error occured" });
+        }
+
+        const footIndex = req.query.footIndex;
+        const toeIndex = req.query.toeIndex;
+        const imageIndex = req.query.imageIndex;
+        const imageName = req.query.imageName;
+
+        //deleting the toe from toe data collection
+        toe_dataSchema.findOne({ userID: userId }).then(data => {
+            if (data) {
+                try{
+                    data.feet[footIndex].toes[toeIndex].images.splice(imageIndex,1);
+                    data.save();
+                }catch{
+                    res.status(400).json({ msg: "specified toe does not exist" });
+                }
+                
+            } else {
+                res.status(400).json({ msg: "not found" });
+            }
+        });
+
+        //deleting the toe image from the user collection
+        let user = await findPeople(userId, res);
+        user.images.splice(user.images.findIndex(name => name == imageName),1);
+        user.save();
+
+        //deleting the toe image from the user images folder
+        let command = `rm images/${userId}/${imageName}`
+        if (config.hostType.includes("Windows"))
+            command = `del images\\${userId}\\${imageName}`
+        runCommand(command);
+        res.status(200).json({});
+
+    }catch{
+        console.log("Something happened when tried to delete an image (might be an invalid user)");
     }
 });
 

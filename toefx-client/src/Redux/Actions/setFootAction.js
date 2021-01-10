@@ -1,4 +1,27 @@
-import getAllImages from '../../utils/imageReciever';
+import Axios from "axios";
+import { config } from "../../config";
+
+/*
+    Gets all of the user's uploaded images.
+    returns: The user's images stored in an array.
+*/
+async function GetAllImages() {
+    let imageUrls = [];
+
+    await Axios.get(`${config.dev_server}/getImageNames`)
+        .then(async (imageNames) => {
+            //Get all the user's images and store them in a data array
+            for (let i = 0; i < imageNames.data.length; i++) {
+                await Axios.get(`${config.dev_server}/getImage?imageName=${imageNames.data[i]}`, { responseType: "blob" })
+                    .then((image) => {
+                        imageUrls.push({ imageName: imageNames.data[i], url: URL.createObjectURL(image.data) });
+                    });
+            }
+        });
+
+    return imageUrls;
+}
+
 
 export const setSelectedFoot = (data) => {
     return {
@@ -15,11 +38,9 @@ export const saveImages = (data) => {
 }
 
 export const getAndSaveImages = () => async (dispatch) => {
-    
-    //recieving the images the backend server
-    let images = await getAllImages();
+    //Recieve the images from the backend server
+    let images = await GetAllImages();
 
-    //remove the current user's data
+    //Remove the current user's data
     dispatch(saveImages(images));
-
 }

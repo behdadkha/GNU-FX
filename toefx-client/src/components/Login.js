@@ -4,12 +4,14 @@
 
 import React, {Component} from "react";
 import {Col, Row, Container, Form, Button} from "react-bootstrap";
-import store from "../Redux/store";
-import {setCurrentUser} from "../Redux/Actions/authAction";
-import {getAndSaveImages} from "../Redux/Actions/setFootAction";
+
 import jwt_decode from "jwt-decode";
-import setAuthHeader from "../utils/setAuthHeader";
-import { config } from "../config";
+import {config} from "../config";
+import store from "../Redux/store";
+import {SetCurrentUser} from "../Redux/Actions/authAction";
+import {getAndSaveImages} from "../Redux/Actions/setFootAction";
+import {SetAuthHeader} from "../Utils";
+
 import "../componentsStyle/Login.css";
 
 
@@ -20,15 +22,16 @@ export default class Login extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            email: "",
-            password: "",
-            user: null,
-            invalidUser: false
+            email: "", //The user's email input
+            password: "", //The user's password input
+            user: null, //Stores the user object if their login is a success
+            invalidUser: false //Indicates whether or not an error message should be displayed
         };
     }
 
     /*
         Logs the user in if the login info is correct.
+        param e: The login event.
     */
     handleLoginPatient = async (e) => {
         e.preventDefault();
@@ -53,15 +56,15 @@ export default class Login extends Component {
             
             const {token} = body; //Extract the token from the response
             localStorage.setItem("jwt", token); //Save the token in localstorage
-            setAuthHeader(token); //Set the token to header for feature requests
-            store.dispatch(setCurrentUser(jwt_decode(token))); //Add the user data(decoded) to the store 
+            SetAuthHeader(token); //Set the token to header for feature requests
+            store.dispatch(SetCurrentUser(jwt_decode(token))); //Add the user data(decoded) to the store 
             
             //getting all the user's images
             store.dispatch(getAndSaveImages());
             
             //Redirect to User page
             this.props.history.push('/user');
-            //By reloading the page, the true path becomes /user
+            //By reloading the page, the true path becomes /user and the header bar disappears
             window.location.reload();
         }
         else { //The login was a failure
@@ -76,19 +79,18 @@ export default class Login extends Component {
     */
     render() {
         let loginError = (this.state.invalidUser) ? //Error displayed to the user if problem with login
-            <div>
-                <h6 className="login-error">Please enter valid credentials.</h6>
-            </div>
-        : 
-            ""
+                <h6>Please enter valid credentials.</h6> : "";
 
         return (
             <Container>
                 <Row>
                     <Col>
+                        {/* Error message if needed */}
                         <div className="login-error">
-                            {loginError /* Error message if needed */}
+                            {loginError}
                         </div>
+
+                        {/* Actual login form */}
                         <Form
                             className="login-form"
                             onSubmit={this.handleLoginPatient.bind(this)}
@@ -112,9 +114,7 @@ export default class Login extends Component {
                                 <Form.Control
                                     value={this.state.password}
                                     onChange={(e) =>
-                                        this.setState({
-                                            password: e.target.value,
-                                        })
+                                        this.setState({password: e.target.value})
                                     }
                                     type="password"
                                     placeholder="Password"

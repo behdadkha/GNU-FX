@@ -1,4 +1,4 @@
-//import axios from "axios";
+import axios from "axios";
 
 /*
     General utility functions for all files.
@@ -49,9 +49,9 @@ export function GetImageSrcByURLsAndName(urls, name) {
     return urls.find(({imageName}) => imageName === name).url;
 }
 
-/*export function SetAuthHeader(token) {
+export function SetAuthHeader(token) {
     if (token)
         axios.defaults.headers.common["Authorization"] = token;
     else
         delete axios.defaults.headers.common["Authorization"];
-}*/
+}

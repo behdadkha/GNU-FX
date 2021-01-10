@@ -1,20 +1,19 @@
-import setAuthHeader from "../../utils/setAuthHeader";
+import { SetAuthHeader } from "../../Utils";
 
-export const setCurrentUser = (data) => {
+export const SetCurrentUser = (data) => {
     return {
         type : "SET_CURRENT_USER",
         payload: data
     }
 }
 
-export const logOutUser = () => dispatch => {
-    //remove the token from the web browser
+export const logOutUser = () => Dispatch => {
+    //Eemove the token from the web browser
     localStorage.removeItem('jwt');
 
-    //remove auth header from the feature requests
-    setAuthHeader(false);
+    //Eemove auth header from the feature requests
+    SetAuthHeader(false);
 
-    //remove the current user's data
-    dispatch(setCurrentUser({}));
-
+    //Eemove the current user's data
+    Dispatch(SetCurrentUser({}));
 }

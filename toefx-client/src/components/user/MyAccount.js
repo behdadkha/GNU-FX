@@ -5,12 +5,14 @@
 import React, {Component} from 'react';
 import {Button, Table} from 'react-bootstrap';
 import {connect} from "react-redux";
-import {config} from "../../config";
 import Axios from 'axios';
+
+import {config} from "../../config";
 import store from '../../Redux/store';
 import { getAndSaveImages } from '../../Redux/Actions/setFootAction';
+import { GetToeName, GetImageSrcByURLsAndName } from "../../Utils";
 import Sidebar from "./Sidebar";
-import { GetToeName, GetImageSrcByURLsAndName } from "../Util";
+
 import '../../componentsStyle/MyAccount.css'
 
 
@@ -158,6 +160,7 @@ class MyAccount extends Component {
                     </thead>
                     <tbody>
                     {
+                        //Print a list of images with data
                         this.state.toeData.feet[selectedFootIndex].toes.map((toe,id) => this.printUploadedImage(id, toe, selectedFootIndex))
                     }
                     </tbody>

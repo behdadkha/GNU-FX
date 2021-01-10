@@ -5,6 +5,7 @@
 import React from "react";
 import ReactApexChart from "react-apexcharts"
 import {Row, Table} from "react-bootstrap";
+
 import store from "../../Redux/store";
 import {setSelectedFoot} from "../../Redux/Actions/setFootAction";
 

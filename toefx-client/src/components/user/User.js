@@ -1,14 +1,17 @@
 import React, {Component} from "react";
-import Axios from "axios";
-import {config} from "../../config";
 import {Row, Table} from "react-bootstrap";
 import {connect} from "react-redux";
-import { getAndSaveImages } from "../../Redux/Actions/setFootAction";
+import Axios from "axios";
+
+import {config} from "../../config";
+import { GetFootName, GetToeName, GetToeCount, GetImageSrcByURLsAndName } from "../../Utils";
 import store from "../../Redux/store";
+import { getAndSaveImages } from "../../Redux/Actions/setFootAction";
 import ApexChart from './ApexChart';
 import Sidebar from './Sidebar';
-import { GetFootName, GetToeName, GetToeCount, GetImageSrcByURLsAndName } from "../Util";
+
 import '../../componentsStyle/User.css';
+
 
 class User extends Component {
     /*

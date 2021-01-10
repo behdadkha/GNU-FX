@@ -1,4 +1,8 @@
-.my-account-main-container{
+.my-account-page {
+    overflow: hidden;
+}
+
+.my-account-main-container {
     overflow: hidden;
     background-color: RGB(238, 238, 238);
     height: 91vh; /* Put the gray at the bottom of the page */
@@ -40,7 +44,7 @@
 
 /* For the image list */
 
-.images-table {
+.uploaded-image-container {
     position: relative;
     background-color: white;
     width: fit-content;
@@ -52,11 +56,6 @@
     overflow: scroll;
 }
 
-.toeImages {
-	width: 100%;
-	max-height: 150px;
-}
-
 .uploaded-image-table {
     text-align: left;
 }
@@ -64,4 +63,18 @@
 .uploaded-image-table-headers {
     position: sticky;
     top: 0;
+}
+
+.uploaded-image-table-image-header {
+    width: 20%;
+}
+
+.uploaded-image-table-toe-image {
+	width: 100%;
+	max-height: 150px;
+}
+
+.delete-image-button {
+    margin: auto;
+    display: block; /* Centre button in cell */
 }

@@ -1,14 +1,14 @@
 import React, {Component} from "react";
-import {Row, Table} from "react-bootstrap";
-import {connect} from "react-redux";
 import Axios from "axios";
 import {config} from "../../config";
-import ApexChart from './ApexChart';
-import Sidebar from './Sidebar';
-import '../../componentsStyle/User.css';
+import {Row, Table} from "react-bootstrap";
+import {connect} from "react-redux";
 import { getAndSaveImages } from "../../Redux/Actions/setFootAction";
 import store from "../../Redux/store";
-
+import ApexChart from './ApexChart';
+import Sidebar from './Sidebar';
+import { GetFootName, GetToeName, GetToeCount, GetImageSrcByURLsAndName } from "../Util";
+import '../../componentsStyle/User.css';
 
 class User extends Component {
     /*
@@ -99,7 +99,7 @@ class User extends Component {
         var images = [[],[],[],[],[]];
         var dates = [];
 
-        if (this.state.toeData.feet[footNumber] !== undefined)
+        if (this.state.toeData.feet[footNumber] !== undefined) {
             for (let toe = 0; toe < this.state.toeData.feet[0].toes.length; toe++){
 
                 for (let i = 0; i < this.state.toeData.feet[footNumber].toes[toe].images.length; i++){
@@ -107,16 +107,17 @@ class User extends Component {
 
                     dates.push(item.date.split("T")[0]); // dates are in this format 2020-11-21T00:00:00.000Z, split("T")[0] returns the yyyy-mm-dd
                     fungalCoverage[toe].push(item.fungalCoverage);
-                    var url = this.state.imageUrls.find(({imageName}) => imageName === item.name).url;// finds the url based on the image name from the imageURLs
+                    var url = GetImageSrcByURLsAndName(this.state.imageUrls, item.name);// finds the url based on the image name from the imageURLs
                     images[toe].push(url);
 
                     //puts nulls, so that lines in the graph can start from their actual date. print fungalCoverage to see 
-                    for( let j = toe + 1; j < 5; j++)
+                    for( let j = toe + 1; j < GetToeCount(); ++j)
                         fungalCoverage[j].push(null);
                 }
                 
             }
-        
+        }
+
         return [fungalCoverage, images, dates];
     }
 
@@ -160,22 +161,21 @@ class User extends Component {
     render() {;
         //console.log(this.state.leftFootFungalCoverage[1])
         //Toe data, standarized for the graph
-        const toeNames = ["Big Toe", "Index Toe", "Middle Toe", "Fourth Toe", "Little Toe"]
         var leftFootData = [];
         var rightFootData = [];
 
-        for (let i = 0; i < toeNames.length; ++i)
+        for (let i = 0; i < GetToeCount(); ++i)
         {
             leftFootData.push(
             {
-                name: toeNames[i],
+                name: GetToeName(i),
                 data: this.state.leftFootFungalCoverage[i],
                 images: this.state.leftFootImages[i],
             });
 
             rightFootData.push(
             {
-                name: toeNames[i],
+                name: GetToeName(i),
                 data: this.state.rightFootFungalCoverage[i],
                 images: this.state.rightFootImages[i],
             });
@@ -183,7 +183,7 @@ class User extends Component {
 
         var footData = (this.props.foot.selectedFoot === 0) ? leftFootData : rightFootData;
         var selectedfootDates = (this.props.foot.selectedFoot === 0) ? this.state.leftFootDates : this.state.rightFootDates;
-        var footName = (this.props.foot.selectedFoot === 0) ? "Left" : "Right";
+        var footName = GetFootName(this.props.foot.selectedFoot);
 
         //Need to sort the dates to find the begining and end dates for the bottom table
         let sortedDates = [...selectedfootDates].sort();

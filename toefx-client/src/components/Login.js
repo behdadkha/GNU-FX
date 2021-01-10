@@ -61,6 +61,8 @@ export default class Login extends Component {
             
             //Redirect to User page
             this.props.history.push('/user');
+            //By reloading the page, the true path becomes /user
+            window.location.reload();
         }
         else { //The login was a failure
             this.setState({

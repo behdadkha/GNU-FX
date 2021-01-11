@@ -25,6 +25,9 @@ class ApexChart extends React.Component {
         //Initially data for the left foot is shown, so set up the graph to show it
         this.state = {
             treatmentIndex : 0, //User clicks on a point in the graph, this represents the clicked index
+            showLeftFoot: true, //Start off showing the left foot
+            shownToes: gInitialToeSelection, //Initially only show certain toes
+            showingDetails: this.props.showingDetails, //Viewing details about a specific data point
             series: this.props.leftFootData,
             options: {
                 chart: {
@@ -55,28 +58,20 @@ class ApexChart extends React.Component {
                     max: 100,
                     title: {
                         text: "Fungual Coverage (%)",
-                        style: {
-                            color: "black",
-                            fontSize: '16px',
-                            fontFamily: 'Arial, sans-serif',
-                            fontWeight: 0,
-                        },
+                        style: "graph-y-axis"
                     }
                 },
                 tooltip: {
                     x: {
                         format: "yyyy/MM/dd"
                     },
-                    intersect : true,
+                    intersect: true,
                     shared: false
                 },
                 markers: {
                     size : 5
                 }
             },
-            showLeftFoot: true, //Start off showing the left foot
-            shownToes: gInitialToeSelection, //Initially only show certain toes
-            showingDetails: this.props.showingDetails, //Scrunch the graph on the left if showing details
         };
     }
 
@@ -254,16 +249,13 @@ class ApexChart extends React.Component {
             ((images[imageIndex]) && isToeNotIncluded)
             ?
                 <tr key={id}>
-                    <td style={{width : "150px"}}>
-                        <img 
-                            src={images[imageIndex] || images[0]} 
-                            alt="img" 
-                            style={{width : "150px", height : "100px", borderRadius : "8px", padding : "5px 0 5px 0"}}
+                    <td className="selected-details-image-col">
+                        <img src={images[imageIndex] || images[0]} alt="img" 
+                             className="selected-details-image"
                         />
                     </td>
                     <td>{name}</td>
                     <td>{fungalCoverage}</td>
-                    <td>No Comments</td>
                 </tr>
             :
                 <tr key={id}></tr>
@@ -286,13 +278,12 @@ class ApexChart extends React.Component {
                     {footName} Foot: {selectedDate}
                 </Row>
                 
-                <Table striped bordered size="md" style={{textAlign : "left", width : "95%", marginLeft : "2%"}}>
+                <Table striped bordered size="md" className="selected-details-table">
                     <thead>
                         <tr>
                             <th>Image</th>
                             <th>Toe Name</th>
                             <th>Fungal Coverage</th>
-                            <th>Comments</th>
                         </tr>
                     </thead>
                     <tbody>

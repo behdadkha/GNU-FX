@@ -42,7 +42,7 @@ class MyAccount extends Component {
         if (!this.props.auth.isAuth)
             this.props.history.push("/login");
 
-        //Redux data gets erased after a refresh. so if the data is gone we need to get it again
+        //Redux data gets erased after a refresh, so if the data is gone we need to get it again
         if (this.props.foot.images.length === 0) {
             await store.dispatch(getAndSaveImages());
             this.setState({

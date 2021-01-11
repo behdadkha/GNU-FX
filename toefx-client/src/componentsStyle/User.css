@@ -3,7 +3,7 @@
 .main-container {
     overflow: hidden;
     background-color: RGB(238, 238, 238);
-    height: 91vh;
+    height: 100vh;
 }
 
 /*CSS Relating to the Welcome Bar */
@@ -18,6 +18,14 @@
 .welcome {
     font-size: 24px;
     padding-top: 20px;
+}
+
+.dashboard-loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    height: 98vh;
 }
 
 /* CSS Relating the Graph View */
@@ -92,36 +100,19 @@
     padding-bottom: 20px;
 }
 
-.selected-details-row {
-    border-top: 1px solid;
-    border-radius: 3px;
-    font-size: 20px;
-    margin-left: 20px;
-    margin-right: 20px;
-    text-align: left;
-}
-
-.selected-details-bottom-row {
-    padding-bottom: 20px;
-}
-
-.selected-details-col {
-    border-left: 1px solid;
-    border-radius: 3px;
-}
-
-.selected-details-right-col {
-    border-right: 1px solid;
-    border-radius: 3px;
-}
-
 /* CSS Relating to the Total Foot Details */
 
 .total-details-container {
     background-color: white;
     margin: 0px 20px 20px 20px;
     overflow: scroll;
-    max-height: 35vh;
+    max-height: 45vh;
+}
+
+.total-details-table {
+    text-align: left;
+    width: 95%;
+    margin-left: 2%;
 }
 
 .total-details-title {
@@ -133,32 +124,6 @@
     padding-bottom: 20px;
 }
 
-.total-details-row {
-    border-top: 1px solid;
-    font-size: 20px;
-    margin-left: 20px;
-    margin-right: 20px;
-    text-align: left;
-}
-
-.total-details-title-row {
-    font-weight: bold;
-}
-
-.total-details-bottom-row {
-    padding-bottom: 20px;
-}
-
-.total-details-col {
-    border-left: 1px solid;
-}
-
 .total-details-left-col {
-    max-width: 150px;
+    width: 10%;
 }
-
-.total-details-right-col {
-    border-right: 1px solid;
-}
-
-

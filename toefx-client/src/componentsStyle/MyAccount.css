@@ -76,5 +76,5 @@
 
 .delete-image-button {
     margin: auto;
-    display: block; /* Centre button in cell */
+    display: block !important; /* Centre button in cell */
 }

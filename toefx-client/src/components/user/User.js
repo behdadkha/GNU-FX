@@ -12,6 +12,8 @@ import Sidebar from './Sidebar';
 
 import '../../componentsStyle/User.css';
 
+//TODO: Display when user has no images on their account (probably something like "Upload image to get started!")
+
 
 class User extends Component {
     /*
@@ -21,54 +23,60 @@ class User extends Component {
         super(props);
 
         this.state = {
-            selectedFoot: 0,
-            selectedTreatment: 0,
-            leftFootFungalCoverage: [],
-            rightFootFungalCoverage : [],
+            selectedFoot: 0, //0 if the user is viewing the left foot, 1 for right foot
+            selectedTreatment: 0, //Point on graph user selected to view
             leftFootImages : [],
             rightFootImages : [],
             leftFootDates: [],
             rightFootDates : [],
-            toeData: {}, //recieved from the server
-            imageUrls: [], //[{imageName: "1.PNG", url : ""}]
+            leftFootFungalCoverage: [],
+            rightFootFungalCoverage : [],
+            toeData: {}, //Data recieved from the server
+            imageUrls: [], //List of data like: {imageName: "1.PNG", url : ""}
         };
     }
 
+    /*
+        Logs the user out if they're not logged in.
+        Otherwise loads the user's data from the server.
+    */
     async componentDidMount() {
-        //if user is not logged in, go to the login page
+        //Redirect to login page if user not logged in
         if (!this.props.auth.isAuth)
             this.props.history.push("/login");
 
-        
+        //Load the images from the server
         await Axios.get(`${config.dev_server}/getImageNames`)
             .then(async (imageNames) => {
-
-                //get all the user's images and store them in a data array
-                for (let i = 0; i < imageNames.data.length; i++) {
+                //Get all the user's images and store them in a data array
+                for (let i = 0; i < imageNames.data.length; ++i) {
                     await Axios.get(`${config.dev_server}/getImage?imageName=${imageNames.data[i]}`, { responseType: "blob" })
                         .then((image) => {
                             this.setState({
-                                imageUrls: [...this.state.imageUrls, { imageName: imageNames.data[i], url: URL.createObjectURL(image.data) }]
+                                imageUrls: [...this.state.imageUrls,
+                                            {
+                                                imageName: imageNames.data[i],
+                                                url: URL.createObjectURL(image.data)
+                                            }]
                             });
                         });
                 }
-
             });
-        //redux data gets erased after a refresh so if the data is gone we need to get them again
-        if (this.props.foot.images.length === 0){
 
+        //Redux data gets erased after a refresh, so if the data is gone we need to get it again
+        if (this.props.foot.images.length === 0) {
             await store.dispatch(getAndSaveImages());
             this.setState({
                 imageUrls : this.props.foot.images
             });
-
-        }else{
+        }
+        else {
             this.setState({
                 imageUrls : this.props.foot.images
             });
         }
 
-        //get the user's toe data from the node server
+        //Get the user's toe data from the node server
         await Axios.get(`${config.dev_server}/getToe`)
             .then((data) => {
                 this.setState({
@@ -78,18 +86,15 @@ class User extends Component {
 
 
         //organize the toeData for the graph
-        //populates: 
+        //populates:
+        //          this.state.LeftFootImages, this.state.RightFootImages
         //          this.state.leftFootFungalCoverage, this.state.rightFootFungalCoverage
-        //          this.state.LeftFootImages , this.state.RightFootImages
         this.organizeDataforGraph();
-
-
     }
 
     async getImageURL(imageName){
         await Axios.get(`${config.dev_server}/getImage?imageName=${imageName}`, { responseType: "blob" })
             .then((image) => {
-
                 return URL.createObjectURL(image.data);
             });
     }
@@ -144,26 +149,31 @@ class User extends Component {
         }
     }
 
-    //creates the bottom table
+    /*
+        Prints the rows in the bottom table. Each row shows progress over time of
+        fungal percentage increase/decrease.
+        param id: The list id for react.
+        param name: The toe's name.
+        param percentageData: The fungal coverage percentages for the toe over time.
+    */
     printToeData(id, name, percentageData) {
         var fungalCoverage = "";
 
-        //generating the 20% -> 10% -> 1% format for the bottom table
-        for (var i = 0; i < percentageData.length - 1; i++){
+        //Generates the 20% -> 10% -> 1% format for the bottom table
+        for (var i = 0; i < percentageData.length - 1; ++i)
             fungalCoverage += percentageData[i] + " -> ";
-        }
+
         fungalCoverage += percentageData[i];
 
         return (
-            <tr key={id} >
-                <td>{name}</td>
+            <tr key={id}>
+                <td className="total-details-left-col">{name}</td>
                 <td>{fungalCoverage}</td>
             </tr>
         )
     }
 
     render() {;
-        //console.log(this.state.leftFootFungalCoverage[1])
         //Toe data, standarized for the graph
         var leftFootData = [];
         var rightFootData = [];
@@ -185,14 +195,14 @@ class User extends Component {
             });
         }
 
+        var footName = GetFootName(this.props.foot.selectedFoot);
         var footData = (this.props.foot.selectedFoot === 0) ? leftFootData : rightFootData;
         var selectedfootDates = (this.props.foot.selectedFoot === 0) ? this.state.leftFootDates : this.state.rightFootDates;
-        var footName = GetFootName(this.props.foot.selectedFoot);
 
         //Need to sort the dates to find the begining and end dates for the bottom table
         let sortedDates = [...selectedfootDates].sort();
         let pageLoaded = sortedDates[0] != null;
-        
+
         if (pageLoaded) { //The data is ready to be displayed
             return (
                 <div>
@@ -201,32 +211,27 @@ class User extends Component {
                     <div className="main-container">
                         {/* Graph */}
                         {
-                            (leftFootData[4].data) //wait for the data to be available
-                                ? 
-                                <ApexChart leftFootData={leftFootData} rightFootData={rightFootData}
-                                    leftFootDates={this.state.leftFootDates} rightFootDates={this.state.rightFootDates}>    
-                                </ApexChart>
-                                :
-                                ""
+                            <ApexChart leftFootData={leftFootData} rightFootData={rightFootData}
+                                leftFootDates={this.state.leftFootDates} rightFootDates={this.state.rightFootDates}>    
+                            </ApexChart>
                         }
-    
+
                         {/*Alternate Data View bottom*/}
                         <div className="total-details-container">
                             <Row className="total-details-title">
-                                {footName} Foot: {sortedDates[0] + ' -- ' + sortedDates[selectedfootDates.length-1]}
+                                {footName} Foot: {sortedDates[0] + ' -- ' + sortedDates[selectedfootDates.length - 1]}
                             </Row>
-                            <Table striped bordered size="md" style={{textAlign : "left", width : "95%", marginLeft : "2%"}}>
+                            <Table striped bordered size="md" className="total-details-table">
                                 <thead>
                                     <tr>
-                                        <th style={{width: "10%"}}>Toe Name</th>
-                                        <th>Fungal coverage</th>
+                                        <th className="total-details-left-col">Toe Name</th>
+                                        <th>Fungal Coverage Change</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                 {
-                                    (footData[4].data) ? footData.map(({name, data}, id) =>
-                                                            this.printToeData(id, name, data.filter(item => item !== null)))
-                                                       : ""
+                                    footData.map(({name, data}, id) =>
+                                        this.printToeData(id, name, data.filter(item => item !== null)))
                                 }
                                 </tbody>  
                             </Table>
@@ -235,12 +240,12 @@ class User extends Component {
                 </div >
             );
         }
-        else { //If not, display "Loading..." to the user
+        else { //If data isn't loaded, display "Loading..." to the user
             return (
                 <div>
                     <Sidebar {...this.props}/>
 
-                    <h4>Loading...</h4>
+                    <h4 className="dashboard-loading">Loading...</h4>
                  </div>
             );
         }

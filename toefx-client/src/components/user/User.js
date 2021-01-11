@@ -1,18 +1,23 @@
+/*
+    A class for displaying the user's home dashboard.
+*/
+
 import React, {Component} from "react";
 import {Row, Table} from "react-bootstrap";
 import {connect} from "react-redux";
 import Axios from "axios";
 
 import {config} from "../../config";
-import { GetFootName, GetToeName, GetToeCount, GetImageSrcByURLsAndName } from "../../Utils";
+import {GetFootName, GetToeName, GetImageSrcByURLsAndName, LEFT_FOOT_ID, RIGHT_FOOT_ID, TOE_COUNT} from "../../Utils";
 import store from "../../Redux/store";
-import { getAndSaveImages } from "../../Redux/Actions/setFootAction";
+import {getAndSaveImages} from "../../Redux/Actions/setFootAction";
 import ApexChart from './ApexChart';
 import Sidebar from './Sidebar';
 
 import '../../componentsStyle/User.css';
 
 //TODO: Display when user has no images on their account (probably something like "Upload image to get started!")
+//      Should also then change way of determining if no data is loaded yet.
 
 
 class User extends Component {
@@ -25,12 +30,12 @@ class User extends Component {
         this.state = {
             selectedFoot: 0, //0 if the user is viewing the left foot, 1 for right foot
             selectedTreatment: 0, //Point on graph user selected to view
-            leftFootImages : [],
-            rightFootImages : [],
-            leftFootDates: [],
-            rightFootDates : [],
-            leftFootFungalCoverage: [],
-            rightFootFungalCoverage : [],
+            leftFootImages : [], //Images of toes on the left foot
+            rightFootImages : [], //Images of toes on the right foot
+            leftFootDates: [], //Dates images were taken of toes on the left foot
+            rightFootDates : [], //Dates images were taken of toes on the right foot
+            leftFootFungalCoverage: [], //Fungal coverage percent of the images of toes on the left foot
+            rightFootFungalCoverage : [], //Fungal coverage percent of the images of toes on the right foot
             toeData: {}, //Data recieved from the server
             imageUrls: [], //List of data like: {imageName: "1.PNG", url : ""}
         };
@@ -84,67 +89,85 @@ class User extends Component {
                 })
             });
 
-
-        //organize the toeData for the graph
-        //populates:
-        //          this.state.LeftFootImages, this.state.RightFootImages
-        //          this.state.leftFootFungalCoverage, this.state.rightFootFungalCoverage
+        //Organize the toe data for the graph
+        //Populates:
+        //  this.state.leftFootImages, this.state.rightFootImages
+        //  this.state.leftFootFungalCoverage, this.state.rightFootFungalCoverage
+        //  this.state.leftFootDates, this.state.rightFootDates
         this.organizeDataforGraph();
     }
 
-    async getImageURL(imageName){
+    /*
+        Converts an image name into its corresponding URL for access.
+        param imageName: The name of the image to get the URL for.
+        returns: The URL for the image given.
+    */
+    async getImageURL(imageName) {
         await Axios.get(`${config.dev_server}/getImage?imageName=${imageName}`, { responseType: "blob" })
             .then((image) => {
                 return URL.createObjectURL(image.data);
             });
     }
 
-    
-    //from the toedata recieved from the backend
-    //it creates an array for fungalcoverage, images and dates to be shown on the graph
-    //footNumber 0:left 1:right
-    extractFootData(footNumber){
-        var fungalCoverage = [[],[],[],[],[]];
-        var images = [[],[],[],[],[]];
+    /*
+        Processes the date received from the server, and splits it into categories.
+        param footId: 0 for left foot, 1 for right foot.
+        returns: Object containing
+                    images: An array of URLs to each image
+                    dates: Dates each image was uploaded
+                    fungalCoverage: An of fungal coverage in percent of each image
+    */
+    processServerFeetData(footId) {
+        var images = [[], [], [], [], []]; //One slot for each toe (5 toes)
+        var fungalCoverage = [[], [], [], [], []];
         var dates = [];
 
-        if (this.state.toeData.feet[footNumber] !== undefined) {
-            for (let toe = 0; toe < this.state.toeData.feet[0].toes.length; toe++){
+        if (this.state.toeData.feet[footId] !== undefined) { //Error handling
+            for (let toeId = 0; toeId < this.state.toeData.feet[footId].toes.length; ++toeId) { //Each toe
+                let toe = this.state.toeData.feet[footId].toes[toeId];
 
-                for (let i = 0; i < this.state.toeData.feet[footNumber].toes[toe].images.length; i++){
-                    let item = this.state.toeData.feet[footNumber].toes[toe].images[i];
+                for (let image of toe.images) { //Each of image of the toe
+                    let imageURL = GetImageSrcByURLsAndName(this.state.imageUrls, image.name); //Finds the URL based on the image name and URLs loaded
+                    let date = image.date.split("T")[0] //Format: 2020-11-21T00:00:00.000Z, split("T")[0] returns the yyyy-mm-dd
 
-                    dates.push(item.date.split("T")[0]); // dates are in this format 2020-11-21T00:00:00.000Z, split("T")[0] returns the yyyy-mm-dd
-                    fungalCoverage[toe].push(item.fungalCoverage);
-                    var url = GetImageSrcByURLsAndName(this.state.imageUrls, item.name);// finds the url based on the image name from the imageURLs
-                    images[toe].push(url);
+                    images[toeId].push(imageURL);
+                    fungalCoverage[toeId].push(image.fungalCoverage);
+                    dates.push(date);
 
-                    //puts nulls, so that lines in the graph can start from their actual date. print fungalCoverage to see 
-                    for( let j = toe + 1; j < GetToeCount(); ++j)
+                    //Add blank entries to future toes so that lines in the graph can start from their actual date.
+                    //ApexChart must take in a single dimension array, so dates have to be stored in order.
+                    //Looks like:
+                    //Toe 0: [80%,    75%,    60%]
+                    //Toe 1: [null,   null,   null,   90%,    80%,    70%]
+                    //Dates: [Date 1, Date 2, Date 3, Date 1, Date 2, Date 3]
+                    for (let j = toeId + 1; j < this.state.toeData.feet[footId].toes.length; ++j)
                         fungalCoverage[j].push(null);
                 }
-                
             }
         }
 
-        return [fungalCoverage, images, dates];
+        return {
+            images: images,
+            dates: dates,
+            fungalCoverage: fungalCoverage,  
+        };
     }
 
-    organizeDataforGraph(){
+    organizeDataforGraph() {
         if (this.state.toeData.feet !== undefined && this.state.leftFootFungalCoverage.length === 0) { 
             //separate the fungal coverage and images (required for the Apexchart)
             //left foot == 0
-            var leftFootData = this.extractFootData(0);
+            var leftFootData = this.processServerFeetData(LEFT_FOOT_ID);
             //right foot == 1
-            var rightFootData = this.extractFootData(1);
+            var rightFootData = this.processServerFeetData(RIGHT_FOOT_ID);
 
             this.setState({ 
-                leftFootFungalCoverage : leftFootData[0],
-                rightFootFungalCoverage: rightFootData[0],
-                leftFootImages : leftFootData[1],
-                rightFootImages : rightFootData[1],
-                leftFootDates : leftFootData[2],
-                rightFootDates : rightFootData[2]
+                leftFootFungalCoverage: leftFootData.fungalCoverage,
+                rightFootFungalCoverage: rightFootData.fungalCoverage,
+                leftFootImages: leftFootData.images,
+                rightFootImages: rightFootData.images,
+                leftFootDates: leftFootData.dates,
+                rightFootDates: rightFootData.dates
             });
         }
     }
@@ -173,12 +196,15 @@ class User extends Component {
         )
     }
 
-    render() {;
+    /*
+        Prints the user's dashboard.
+    */
+    render() {
         //Toe data, standarized for the graph
         var leftFootData = [];
         var rightFootData = [];
 
-        for (let i = 0; i < GetToeCount(); ++i)
+        for (let i = 0; i < TOE_COUNT; ++i)
         {
             leftFootData.push(
             {
@@ -196,8 +222,8 @@ class User extends Component {
         }
 
         var footName = GetFootName(this.props.foot.selectedFoot);
-        var footData = (this.props.foot.selectedFoot === 0) ? leftFootData : rightFootData;
-        var selectedfootDates = (this.props.foot.selectedFoot === 0) ? this.state.leftFootDates : this.state.rightFootDates;
+        var footData = (this.props.foot.selectedFoot === LEFT_FOOT_ID) ? leftFootData : rightFootData;
+        var selectedfootDates = (this.props.foot.selectedFoot === LEFT_FOOT_ID) ? this.state.leftFootDates : this.state.rightFootDates;
 
         //Need to sort the dates to find the begining and end dates for the bottom table
         let sortedDates = [...selectedfootDates].sort();

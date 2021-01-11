@@ -1,7 +1,7 @@
 /*CSS Relating to the Page */
 
 .main-container {
-    overflow: hidden;
+    overflow: scroll;
     background-color: RGB(238, 238, 238);
     height: 100vh;
 }
@@ -41,20 +41,12 @@
     width: 50%;
 }
 
-.graph {
+.graph-container {
     background-color: white;
     min-height: 49vh;
     overflow: hidden;
     padding-top: 3%;
     margin: 0px 20px 20px 20px;
-}
-
-.split-graph {
-    width: 50%;
-}
-
-.display-flex {
-    display: flex;
 }
 
 .graph-toe-button {
@@ -82,6 +74,17 @@
     background-color: var(--button-hover-color);
 }
 
+.graph-sub-container { /* For the graph below the buttons */
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+
+.graph-chart {
+    flex-grow: 1; /* Always fill the remaining space at min 50% of screen */
+    min-width: 50%;
+}
+
 /* CSS Relating to the Foot Details */
 
 .selected-details-container {
@@ -89,15 +92,24 @@
     margin: 0px 20px 20px 20px;
     overflow: scroll;
     max-height: 38vh;
+    flex-grow: 10; /* Always shove graph over */
 }
 
 .selected-details-title {
     font-size: 24px;
     font-weight: bold;
     align-content: center;
-    display: inline-block; /* Remove flex from row */
+    display: inline-block !important; /* Remove flex from row */
     margin: auto;
     padding-bottom: 20px;
+}
+
+.selected-details-instructions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    height: 100vh;
 }
 
 /* CSS Relating to the Total Foot Details */
@@ -105,8 +117,7 @@
 .total-details-container {
     background-color: white;
     margin: 0px 20px 20px 20px;
-    overflow: scroll;
-    max-height: 45vh;
+    padding-bottom: 10px;
 }
 
 .total-details-table {

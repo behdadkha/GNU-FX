@@ -4,6 +4,12 @@ import axios from "axios";
     General utility functions for all files.
 */
 
+//Self-commenting Ids for feet
+export const LEFT_FOOT_ID = 0;
+export const RIGHT_FOOT_ID = 1;
+export const TOE_COUNT = 5; //5 toes on each foot
+
+//Common names of toes
 const gToeNames = ["Big Toe", "Index Toe", "Middle Toe", "Fourth Toe", "Little Toe"];
 
 /*
@@ -12,7 +18,7 @@ const gToeNames = ["Big Toe", "Index Toe", "Middle Toe", "Fourth Toe", "Little T
     returns: The name of the foot.
 */
 export function GetFootName(footId) {
-    if (footId === 0)
+    if (footId === LEFT_FOOT_ID)
         return "Left";
 
     return "Right";
@@ -24,20 +30,11 @@ export function GetFootName(footId) {
     returns: The name of the toe.
 */
 export function GetToeName(toeId) {
-    if (toeId >= GetToeCount()) //Error handling
+    if (toeId >= TOE_COUNT) //Error handling
         return "Error";
         
     return gToeNames[toeId];
 }
-
-/*
-    Gets the number of toes on a foot.
-    returns: The number of toes on a foot.
-*/
-export function GetToeCount() {
-    return 5; //5 toes on each foot
-}
-
 
 /*
     Gets the image URL for displaying it on the page.

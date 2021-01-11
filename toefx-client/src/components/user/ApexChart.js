@@ -6,7 +6,7 @@ import React from "react";
 import ReactApexChart from "react-apexcharts"
 import {Row, Table} from "react-bootstrap";
 
-import {GetFootName, GetToeName} from "../../Utils";
+import {GetFootName, GetToeName, LEFT_FOOT_ID, RIGHT_FOOT_ID, TOE_COUNT} from "../../Utils";
 import store from "../../Redux/store";
 import {setSelectedFoot} from "../../Redux/Actions/setFootAction";
 
@@ -14,9 +14,11 @@ import {setSelectedFoot} from "../../Redux/Actions/setFootAction";
 
 const gInitialToeSelection = [true, true, false, false, false]; //Only first two toes start off shown (client request)
 
-class ApexChart extends React.Component {
 
-    //Sets up initial data for the chart
+class ApexChart extends React.Component {
+    /*
+        Sets base data for the chart.
+    */
     constructor(props) {
         super(props);
 
@@ -30,10 +32,10 @@ class ApexChart extends React.Component {
                     type: "area",
                     events: {
                         click: (event, chartContext, config) => {
-                            /*config.seriesIndex; //Number of big toe, index toe, etc. starting from 0
-                            config.dataPointIndex; //Number of treatment date*/
+                            /*config.seriesIndex: Number of big toe, index toe, etc. starting from 0
+                              config.dataPointIndex: Number of treatment date*/
                             if (config.dataPointIndex >= 0) 
-                                this.setState({ treatmentIndex: config.dataPointIndex,  showingDetails: true})
+                                this.setState({treatmentIndex: config.dataPointIndex, showingDetails: true})
                         }
                     }
                 },
@@ -73,7 +75,7 @@ class ApexChart extends React.Component {
                 }
             },
             showLeftFoot: true, //Start off showing the left foot
-            shownToes: gInitialToeSelection, //Initially only show certain toe
+            shownToes: gInitialToeSelection, //Initially only show certain toes
             showingDetails: this.props.showingDetails, //Scrunch the graph on the left if showing details
         };
     }
@@ -95,12 +97,12 @@ class ApexChart extends React.Component {
             showingDetails: false,
 			treatmentIndex: 0
         },
-            this.resetShownToesData
+            this.resetShownToesData //Call the function when state is changed
         );
 
-		//save the selected foot in the redux store
-		// need to know the selected foot to change the bottom cell
-		store.dispatch(setSelectedFoot(showLeftFoot ? 0 : 1)); 
+		//Save the selected foot globally in the redux store
+		//Need to know the selected foot to change the bottom cell
+		store.dispatch(setSelectedFoot(showLeftFoot ? LEFT_FOOT_ID : RIGHT_FOOT_ID)); 
     }
 
     /*
@@ -141,13 +143,14 @@ class ApexChart extends React.Component {
     showToe(num) {
         let shownToes = [false, false, false, false, false]; //Hide all toes
 		shownToes[num] = true; //Except toe clicked on
-		
+
 		let selectedFoot = (this.state.showLeftFoot) ? this.props.leftFootData : this.props.rightFootData;
         let treatmentIndex = selectedFoot[num].data.filter(item => item === null).length ; // accounting for the nulls in the data
-    
+
         this.setState({
             shownToes: shownToes,
-            treatmentIndex : treatmentIndex //also, reset the treatmentIndex in case the user clicks a point on the graph
+            treatmentIndex : treatmentIndex, //Also reset the treatmentIndex in case the user clicks a point on the graph
+            showingDetails: false //Remove details from old toe
         },
             this.resetShownToesData
         );        
@@ -159,26 +162,25 @@ class ApexChart extends React.Component {
     */
     showHideAllToes() {
         let shownToes = [false, false, false, false, false];
-        let val = false; //Hide all toes by default
+        let showAll = false; //Hide all toes by default
 
         for (let isToeShown of this.state.shownToes) {
             if (!isToeShown) { //At least one toe is hidden
-                val = true; //Show all toes
+                showAll = true; //Show all toes
                 break;
             }
         }
 
-        if (val) //Show all toes
+        if (showAll) //Show all toes
             shownToes = [true, true, true, true, true];
 
         this.setState({
 			shownToes: shownToes,
-			treatmentIndex : 0
+            treatmentIndex: 0,
+            showingDetails: false //Remove details from old toe
         },
             this.resetShownToesData
         );
-
-        
     }
 
     /*
@@ -186,12 +188,16 @@ class ApexChart extends React.Component {
         returns: True if data for all toes are visuble on the graph, False otherwise.
     */
     areAllToesShown() {
-        return this.state.shownToes.filter(isToeShown => isToeShown).length === 5; //All true means all toes are shown
+        return this.state.shownToes.filter(isToeShown => isToeShown).length === TOE_COUNT; //All true means all toes are shown
     }
 
+    /*
+        Prints one of the buttons the user can press to select a toe.
+        param toeId: The toe the button is for.
+    */
     printToeButton(toeId) {
         var defaultToeButtonClass = "graph-toe-button";
-        var activeToeButtonClass = defaultToeButtonClass + " active-toe-button";
+        var activeToeButtonClass = defaultToeButtonClass + " active-toe-button"; //When the toe's data is being shown on the chart
 
         return (<button onClick={this.showToe.bind(this, toeId)}
                 className={(this.state.shownToes[toeId] ? activeToeButtonClass : defaultToeButtonClass)}>
@@ -200,12 +206,14 @@ class ApexChart extends React.Component {
     }
 
     /*
-        Adds buttons to the page where user can select or deselect toes.
+        Adds buttons to the page where user can select toes.
     */
     printToeButtons() {
-        var toeOrder =  [0, 1, 2, 3, 4];
         var defaultToeButtonClass = "graph-toe-button";
-        var activeToeButtonClass = defaultToeButtonClass + " active-toe-button";
+        var activeToeButtonClass = defaultToeButtonClass + " active-toe-button"; //For when all toe data is being shown on the chart
+        var toeOrder =  [];
+        for (let i = 0; i < TOE_COUNT; ++i)
+            toeOrder.push(i); //Initial view in order of ids (based on right foot)
 
         if (this.state.showLeftFoot)
             toeOrder.reverse(); //Toes go in opposite order on left foot
@@ -227,19 +235,21 @@ class ApexChart extends React.Component {
     }
 
     /*
-        Shows the toe data on small preview section next to the graph
+        Shows the toe data on small preview section next to the graph.
     */
     printToeData(id, name, images, percentage) {
-        var toeNames = ["Big Toe", "Index Toe", "Middle Toe", "Fourth Toe", "Little Toe"];
-        
+        var toeNames = [];
+
+        for (let i = 0; i < TOE_COUNT; ++i)
+            toeNames.push(GetToeName(i)) //Initial order in based on right foot
+
         if (this.state.rightFootData)
-            toeNames.reverse();
+            toeNames.reverse(); //Toes go in opposite order on left foot
 
         var isToeNotIncluded = this.state.shownToes[toeNames.findIndex(toeName => toeName === name)];
-        var imageIndex = this.state.treatmentIndex - percentage.filter(item => item === null).length;// need to subtract the number of nulls from the treatment index because images dont have nulls
+        var imageIndex = this.state.treatmentIndex - percentage.filter(item => item === null).length; //Need to subtract the number of nulls from the treatment index because images dont have nulls		
+        var fungalCoverage = percentage[this.state.treatmentIndex]; //Gets the fungal coverage based on the selected point on the graph
 
-		//getting the fungal coverage based on the selected point on the graph
-		var fungalCoverage = percentage[this.state.treatmentIndex];
         return (
             ((images[imageIndex]) && isToeNotIncluded)
             ?
@@ -268,7 +278,7 @@ class ApexChart extends React.Component {
         var footData = (this.state.showLeftFoot) ? this.props.leftFootData : this.props.rightFootData;
         var dates = (this.state.showLeftFoot) ? this.props.leftFootDates : this.props.rightFootDates;
 		var selectedDate = dates[this.state.treatmentIndex];
-        var footName = (this.state.showLeftFoot) ? GetFootName(0) : GetFootName(1);
+        var footName = (this.state.showLeftFoot) ? GetFootName(LEFT_FOOT_ID) : GetFootName(RIGHT_FOOT_ID);
 
         return (
             <div className="selected-details-container split-graph">
@@ -299,17 +309,18 @@ class ApexChart extends React.Component {
         Draws the graph to the page.
     */
     render() {
+        var dateDetails;
         var defaultFootButtonClass = "graph-foot-button";
         var activeFootButtonClass = defaultFootButtonClass + " active-toe-button";
-        var graphClassName = "";
-        var dateDetails = "";
-        var flexClassName = "";
 
-        if (this.state.showingDetails)
-        {
-            graphClassName += "split-graph";
+        if (this.state.showingDetails) {
             dateDetails = this.printSelectedDateDetails();
-            flexClassName = "display-flex";
+        }
+        else {
+            dateDetails =
+            <div className="selected-details-container selected-details-instructions">
+                <h6>Click on a point to view details!</h6>
+            </div>
         }
 
         return (
@@ -328,12 +339,12 @@ class ApexChart extends React.Component {
                 </div>
 
                 {/*Buttons to filter toes*/}
-                <div lg="5" className="graph">
+                <div lg="5" className="graph-container">
                     {
                         this.printToeButtons()
                     }
-                    <div className={flexClassName}>
-                        <div className={graphClassName}>
+                    <div className="graph-sub-container">
+                        <div className="graph-chart">
                             {/*The actual chart itself*/}
                             <ReactApexChart options={this.state.options} series={this.state.series} type="area" height="300px" />
                         </div>

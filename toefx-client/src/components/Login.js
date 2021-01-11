@@ -9,7 +9,7 @@ import jwt_decode from "jwt-decode";
 import {config} from "../config";
 import store from "../Redux/store";
 import {SetCurrentUser} from "../Redux/Actions/authAction";
-import {getAndSaveImages} from "../Redux/Actions/setFootAction";
+import {getAndSaveImages, getAndSaveToeData} from "../Redux/Actions/setFootAction";
 import {SetAuthHeader} from "../Utils";
 
 import "../componentsStyle/Login.css";
@@ -61,6 +61,9 @@ export default class Login extends Component {
             
             //getting all the user's images
             store.dispatch(getAndSaveImages());
+
+            //getting all the user's toe data
+            store.dispatch(getAndSaveToeData());
             
             //Redirect to User page
             this.props.history.push('/user');

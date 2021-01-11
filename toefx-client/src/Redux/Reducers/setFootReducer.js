@@ -1,6 +1,7 @@
 const initialState = {
     selectedFoot: 0,
-    images: []
+    images: [],
+    toeData: []
 }
 
 export default function(state = initialState , action) {
@@ -15,7 +16,11 @@ export default function(state = initialState , action) {
                 ...state,
                 images: action.payload
             };
-
+        case "SAVE_TOE_DATA":
+            return {
+                ...state,
+                toeData: action.payload
+            }
         default:
             return state;
     }

@@ -10,7 +10,7 @@ import Axios from "axios";
 import {config} from "../../config";
 import {GetFootName, GetToeName, GetImageSrcByURLsAndName, LEFT_FOOT_ID, RIGHT_FOOT_ID, TOE_COUNT} from "../../Utils";
 import store from "../../Redux/store";
-import {getAndSaveImages} from "../../Redux/Actions/setFootAction";
+import {getAndSaveImages, getAndSaveToeData} from "../../Redux/Actions/setFootAction";
 import ApexChart from './ApexChart';
 import Sidebar from './Sidebar';
 
@@ -30,14 +30,17 @@ class User extends Component {
         this.state = {
             selectedFoot: 0, //0 if the user is viewing the left foot, 1 for right foot
             selectedTreatment: 0, //Point on graph user selected to view
-            leftFootImages : [], //Images of toes on the left foot
-            rightFootImages : [], //Images of toes on the right foot
+            //leftFootImages : [], //Images of toes on the left foot
+            //rightFootImages : [], //Images of toes on the right foot
+            rightFootData: [],
+            leftFootData: [],
             leftFootDates: [], //Dates images were taken of toes on the left foot
             rightFootDates : [], //Dates images were taken of toes on the right foot
-            leftFootFungalCoverage: [], //Fungal coverage percent of the images of toes on the left foot
-            rightFootFungalCoverage : [], //Fungal coverage percent of the images of toes on the right foot
+            //leftFootFungalCoverage: [], //Fungal coverage percent of the images of toes on the left foot
+            //rightFootFungalCoverage : [], //Fungal coverage percent of the images of toes on the right foot
             toeData: {}, //Data recieved from the server
             imageUrls: [], //List of data like: {imageName: "1.PNG", url : ""}
+            dataLoaded: false, //Used for showing the loading screen until all data are loaded
         };
     }
 
@@ -49,52 +52,20 @@ class User extends Component {
         //Redirect to login page if user not logged in
         if (!this.props.auth.isAuth)
             this.props.history.push("/login");
-
-        //Load the images from the server
-        await Axios.get(`${config.dev_server}/getImageNames`)
-            .then(async (imageNames) => {
-                //Get all the user's images and store them in a data array
-                for (let i = 0; i < imageNames.data.length; ++i) {
-                    await Axios.get(`${config.dev_server}/getImage?imageName=${imageNames.data[i]}`, { responseType: "blob" })
-                        .then((image) => {
-                            this.setState({
-                                imageUrls: [...this.state.imageUrls,
-                                            {
-                                                imageName: imageNames.data[i],
-                                                url: URL.createObjectURL(image.data)
-                                            }]
-                            });
-                        });
-                }
-            });
-
+		
         //Redux data gets erased after a refresh, so if the data is gone we need to get it again
         if (this.props.foot.images.length === 0) {
-            await store.dispatch(getAndSaveImages());
-            this.setState({
-                imageUrls : this.props.foot.images
-            });
-        }
-        else {
-            this.setState({
-                imageUrls : this.props.foot.images
-            });
+            await store.dispatch(getAndSaveImages());//saving image urls
+            await store.dispatch(getAndSaveToeData());//saving toe data
         }
 
-        //Get the user's toe data from the node server
-        await Axios.get(`${config.dev_server}/getToe`)
-            .then((data) => {
-                this.setState({
-                    toeData: data.data
-                })
-            });
-
-        //Organize the toe data for the graph
-        //Populates:
-        //  this.state.leftFootImages, this.state.rightFootImages
-        //  this.state.leftFootFungalCoverage, this.state.rightFootFungalCoverage
-        //  this.state.leftFootDates, this.state.rightFootDates
-        this.organizeDataforGraph();
+		this.setState({
+			imageUrls : this.props.foot.images,
+			toeData: this.props.foot.toeData
+		},
+			this.organizeDataforGraph
+		);
+        
     }
 
     /*
@@ -153,21 +124,45 @@ class User extends Component {
         };
     }
 
+	/* 
+		Organize the toe data for the graph.
+		The data recieved from the server has format: feet: [{toes: [{images:[]}]}] so we need to change it for the graph
+	*/
     organizeDataforGraph() {
-        if (this.state.toeData.feet !== undefined && this.state.leftFootFungalCoverage.length === 0) { 
+        if (this.state.toeData.feet !== undefined && this.state.leftFootData.length === 0) { 
             //separate the fungal coverage and images (required for the Apexchart)
             //left foot == 0
-            var leftFootData = this.processServerFeetData(LEFT_FOOT_ID);
+            var allLeftFootData = this.processServerFeetData(LEFT_FOOT_ID);
             //right foot == 1
-            var rightFootData = this.processServerFeetData(RIGHT_FOOT_ID);
+            var allRightFootData = this.processServerFeetData(RIGHT_FOOT_ID);
+            
+			//Toe data, standarized for the graph
+			var leftFootData = [];
+			var rightFootData = [];
 
+            for (let i = 0; i < TOE_COUNT; ++i)
+        	{
+                leftFootData.push(
+                {
+                    name: GetToeName(i),
+                    data: allLeftFootData.fungalCoverage[i],
+                    images: allLeftFootData.images[i],
+                });
+
+                rightFootData.push(
+                {
+                    name: GetToeName(i),
+                    data: allRightFootData.fungalCoverage[i],
+                    images: allRightFootData.images[i],
+                });
+			}
+			
             this.setState({ 
-                leftFootFungalCoverage: leftFootData.fungalCoverage,
-                rightFootFungalCoverage: rightFootData.fungalCoverage,
-                leftFootImages: leftFootData.images,
-                rightFootImages: rightFootData.images,
-                leftFootDates: leftFootData.dates,
-                rightFootDates: rightFootData.dates
+				leftFootData: leftFootData,
+				rightFootData: rightFootData,
+				leftFootDates: allLeftFootData.dates,
+				rightFootDates: allRightFootData.dates,
+                dataLoaded: true
             });
         }
     }
@@ -182,11 +177,16 @@ class User extends Component {
     printToeData(id, name, percentageData) {
         var fungalCoverage = "";
 
-        //Generates the 20% -> 10% -> 1% format for the bottom table
-        for (var i = 0; i < percentageData.length - 1; ++i)
-            fungalCoverage += percentageData[i] + " -> ";
+        if (percentageData.length === 0) {
+            fungalCoverage = "No Data"
+        }
+        else{
+            //Generates the 20% -> 10% -> 1% format for the bottom table
+            for (var i = 0; i < percentageData.length - 1; ++i)
+                fungalCoverage += percentageData[i] + " -> ";
 
-        fungalCoverage += percentageData[i];
+            fungalCoverage += percentageData[i];              
+        }
 
         return (
             <tr key={id}>
@@ -200,36 +200,20 @@ class User extends Component {
         Prints the user's dashboard.
     */
     render() {
-        //Toe data, standarized for the graph
-        var leftFootData = [];
-        var rightFootData = [];
-
-        for (let i = 0; i < TOE_COUNT; ++i)
-        {
-            leftFootData.push(
-            {
-                name: GetToeName(i),
-                data: this.state.leftFootFungalCoverage[i],
-                images: this.state.leftFootImages[i],
-            });
-
-            rightFootData.push(
-            {
-                name: GetToeName(i),
-                data: this.state.rightFootFungalCoverage[i],
-                images: this.state.rightFootImages[i],
-            });
-        }
-
+		
         var footName = GetFootName(this.props.foot.selectedFoot);
-        var footData = (this.props.foot.selectedFoot === LEFT_FOOT_ID) ? leftFootData : rightFootData;
+        var footData = (this.props.foot.selectedFoot === LEFT_FOOT_ID) ? this.state.leftFootData : this.state.rightFootData;
         var selectedfootDates = (this.props.foot.selectedFoot === LEFT_FOOT_ID) ? this.state.leftFootDates : this.state.rightFootDates;
 
         //Need to sort the dates to find the begining and end dates for the bottom table
         let sortedDates = [...selectedfootDates].sort();
-        let pageLoaded = sortedDates[0] != null;
+        let dateRange = <h4 style={{color: "red"}}>"Use the Upload Image button located on top left corner to add in data"</h4>;
+        if (selectedfootDates.length !== 0) {
+            dateRange = sortedDates[0] + ' -- ' + sortedDates[selectedfootDates.length - 1];
+        }
+        
 
-        if (pageLoaded) { //The data is ready to be displayed
+		if (this.state.dataLoaded) { //The data is ready to be displayed
             return (
                 <div>
                     <Sidebar {...this.props}/>
@@ -237,15 +221,15 @@ class User extends Component {
                     <div className="main-container">
                         {/* Graph */}
                         {
-                            <ApexChart leftFootData={leftFootData} rightFootData={rightFootData}
+                            <ApexChart leftFootData={this.state.leftFootData} rightFootData={this.state.rightFootData}
                                 leftFootDates={this.state.leftFootDates} rightFootDates={this.state.rightFootDates}>    
                             </ApexChart>
-                        }
+						}
 
                         {/*Alternate Data View bottom*/}
                         <div className="total-details-container">
                             <Row className="total-details-title">
-                                {footName} Foot: {sortedDates[0] + ' -- ' + sortedDates[selectedfootDates.length - 1]}
+                                {footName} Foot: {dateRange}
                             </Row>
                             <Table striped bordered size="md" className="total-details-table">
                                 <thead>

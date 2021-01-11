@@ -9,7 +9,7 @@ import Axios from 'axios';
 
 import {config} from "../../config";
 import store from '../../Redux/store';
-import { getAndSaveImages } from '../../Redux/Actions/setFootAction';
+import { getAndSaveImages, getAndSaveToeData } from '../../Redux/Actions/setFootAction';
 import { GetToeName, GetImageSrcByURLsAndName } from "../../Utils";
 import Sidebar from "./Sidebar";
 
@@ -44,24 +44,14 @@ class MyAccount extends Component {
 
         //Redux data gets erased after a refresh, so if the data is gone we need to get it again
         if (this.props.foot.images.length === 0) {
-            await store.dispatch(getAndSaveImages());
-            this.setState({
-                imageUrls : this.props.foot.images
-            });
-        }
-        else {
-            this.setState({
-                imageUrls : this.props.foot.images
-            });
+            await store.dispatch(getAndSaveImages());//saving user's images
+            await store.dispatch(getAndSaveToeData());//saving toe data
         }
 
-        //Get the user's toe data from the node server
-        await Axios.get(`${config.dev_server}/getToe`)
-            .then((data) => {
-                this.setState({
-                    toeData: data.data
-                })
-            });
+        this.setState({
+            imageUrls : this.props.foot.images,
+            toeData: this.props.foot.toeData
+        });
     }
 
     /*
@@ -97,6 +87,7 @@ class MyAccount extends Component {
 
     /*
         Prints one of the user's uploaded images in the image list.
+        param id: The toe id to be removed.
         param toe: The toe inded the image is for.
         param selectedFootIndex: which foot the image is for.
     */
@@ -110,7 +101,7 @@ class MyAccount extends Component {
                     <td>{GetToeName(id)}</td>
                     <td>{fungalCoverage}</td>
                     <td>{date.split("T")[0]}</td>
-                    <td><Button className="delete-image-button" onClick={this.deleteImage.bind(this, name, selectedFootIndex, toe, index)}>Delete</Button></td>
+                    <td><Button className="delete-image-button" onClick={this.deleteImage.bind(this, name, selectedFootIndex, id, index)}>Delete</Button></td>
                 </tr>
             )
         )

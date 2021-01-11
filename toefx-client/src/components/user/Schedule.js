@@ -35,31 +35,32 @@ class Schedule extends Component {
                 <div className="welcome-bar">
                     <h6 className="welcome">Treatment Schedule</h6>
                 </div>
-
-                <Table bordered variant="white" className="table-primary" style={{marginLeft: "16%", width: "80%"}}>
-                    
-                    <thead>
-                        <tr>
-                            <th>Treatment</th>
-                            <th>Date</th>
-                            <th>comment</th>
-                            <th>Doctor</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {this.state.scheduleData !== undefined ? this.state.scheduleData.map((data, index) => { 
-                            return(
-                            <tr key={index}>
-                                <td>{index + 1}</td>
-                                <td>{data.date}</td>
-                                <td>{data.comment}</td>
-                                <td>{data.doctor}</td>
+                <div style={{overflow: "scroll"}}>
+                    <Table bordered variant="white" className="table-primary" style={{margin: "1% 0 0 2%", width: "95%"}}>
+                        
+                        <thead>
+                            <tr>
+                                <th>Treatment</th>
+                                <th>Date</th>
+                                <th>comment</th>
+                                <th>Doctor</th>
                             </tr>
-                            )
-                        }) : <tr><td>can't load date</td></tr>}
+                        </thead>
+                        <tbody>
+                            {this.state.scheduleData !== undefined ? this.state.scheduleData.map((data, index) => { 
+                                return(
+                                <tr key={index}>
+                                    <td>{index + 1}</td>
+                                    <td>{data.date}</td>
+                                    <td>{data.comment}</td>
+                                    <td>{data.doctor}</td>
+                                </tr>
+                                )
+                            }) : <tr><td>can't load date</td></tr>}
 
-                    </tbody>
-                </Table>
+                        </tbody>
+                    </Table>
+                </div>
             </div>
         )
     }

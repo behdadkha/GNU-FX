@@ -22,6 +22,20 @@ async function GetAllImages() {
     return imageUrls;
 }
 
+/*
+    Gets all the user's toe data from the backend server.
+    returns: the user's toe data stored in an array.
+*/
+async function getToeData(){
+    let toeData = [];
+
+    await Axios.get(`${config.dev_server}/getToe`)
+        .then((data) => {
+            toeData = data.data;
+        });
+    
+    return toeData;
+}
 
 export const setSelectedFoot = (data) => {
     return {
@@ -37,10 +51,22 @@ export const saveImages = (data) => {
     }
 }
 
+export const saveToeData = (data) => {
+    return {
+        type: "SAVE_TOE_DATA",
+        payload: data
+    }
+}
+
 export const getAndSaveImages = () => async (dispatch) => {
     //Recieve the images from the backend server
     let images = await GetAllImages();
 
-    //Remove the current user's data
+    //saves the image urls in the redux store
     dispatch(saveImages(images));
+}
+
+export const getAndSaveToeData = () => async (dispach) => {
+    let toeData = await getToeData();
+    dispach(saveToeData(toeData));
 }

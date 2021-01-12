@@ -19,7 +19,7 @@ export default class Signup extends Component {
             email : "", //User's email input
             password: "", //User's password input
             confirmedPassword: "", //User's confirmed password input
-            age: 0, //User's age input
+            age: "", //User's age input
             accountExistsError: false, //Helps with error message if account with email already exists
             passwordMismatchError: false, //Helps with error message when user enters password and confirm password that don't match
             emptyFieldError: false, //Helps with error message user leaves fields blank
@@ -94,17 +94,24 @@ export default class Signup extends Component {
     }
 
     /*
-        Print sign up page.
+        Gets the appropriate text to display to the user upon an error.
+        returns: Error text if error exists.
     */
-    render() {
-        let signUpError =
-            (this.state.emptyFieldError) ? //User left a field blank
+    getErrorText() {
+        return (this.state.emptyFieldError) ? //User left a field blank
                 <h6>Please fill in all fields.</h6>
             : (this.state.passwordMismatchError) ? //Passwords don't match
                 <h6>Please make sure passwords match.</h6>
             : (this.state.accountExistsError) ? //Entered email is already in use
                 <h6>That email is already in use. Please choose another.</h6>
             : "";
+    }
+
+    /*
+        Print sign up page.
+    */
+    render() {
+        let signUpError = this.getErrorText();
 
         return (
             <Container>

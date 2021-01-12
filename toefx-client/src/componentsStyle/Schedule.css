@@ -1,5 +1,9 @@
 .schedule-container {
-    overflow-y: hidden; /* Scrolling is done on the page */
+    width: 100%;
+}
+
+.schedule-sub-container {
+    height: 92%
 }
 
 .schedule-table {

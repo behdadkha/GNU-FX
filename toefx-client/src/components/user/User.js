@@ -210,39 +210,42 @@ class User extends Component {
 
         if (this.state.dataLoaded) { //The data is ready to be displayed
             return (
-                <div>
+                <div className="page">
                     <Sidebar {...this.props}/>
-                    <div className="welcome-bar">
-                        <h6 className="welcome">Dashboard</h6>
-                    </div>
 
                     <div className="main-container">
-                        {/* Graph */}
-                        {
-                            <ApexChart leftFootData={this.state.leftFootData} rightFootData={this.state.rightFootData}
-                                leftFootDates={this.state.leftFootDates} rightFootDates={this.state.rightFootDates}>    
-                            </ApexChart>
-                        }
+                        <div className="welcome-bar">
+                            <h6 className="welcome">Dashboard</h6>
+                        </div>
 
-                        {/*Alternate Data View bottom*/}
-                        <div className="total-details-container">
-                            <Row className="total-details-title">
-                                {footName} Foot: {dateRange}
-                            </Row>
-                            <Table striped bordered size="md" className="total-details-table">
-                                <thead>
-                                    <tr>
-                                        <th className="total-details-left-col">Toe Name</th>
-                                        <th>Fungal Coverage Change</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                {
-                                    footData.map(({name, data}, id) =>
-                                        this.printToeData(id, name, data.filter(item => item !== null)))
-                                }
-                                </tbody>  
-                            </Table>
+                        <div className="sub-container user-sub-container">
+                            {/* Graph */}
+                            {
+                                <ApexChart leftFootData={this.state.leftFootData} rightFootData={this.state.rightFootData}
+                                    leftFootDates={this.state.leftFootDates} rightFootDates={this.state.rightFootDates}>    
+                                </ApexChart>
+                            }
+
+                            {/*Alternate Data View bottom*/}
+                            <div className="total-details-container">
+                                <Row className="total-details-title">
+                                    {footName} Foot: {dateRange}
+                                </Row>
+                                <Table striped bordered size="md" className="total-details-table">
+                                    <thead>
+                                        <tr>
+                                            <th className="total-details-left-col">Toe Name</th>
+                                            <th>Fungal Coverage Change</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    {
+                                        footData.map(({name, data}, id) =>
+                                            this.printToeData(id, name, data.filter(item => item !== null)))
+                                    }
+                                    </tbody>  
+                                </Table>
+                            </div>
                         </div>
                     </div>
                 </div >
@@ -252,11 +255,15 @@ class User extends Component {
             return (
                 <div>
                     <Sidebar {...this.props}/>
-                    <div className="welcome-bar">
-                        <h6 className="welcome">Dashboard</h6>
-                    </div>
+                    <div className="main-container">
+                        <div className="welcome-bar">
+                            <h6 className="welcome">Dashboard</h6>
+                        </div>
 
-                    <h4 className="dashboard-loading">Loading...</h4>
+                        <div className="sub-container user-sub-container">
+                            <h4 className="dashboard-loading">Loading...</h4>
+                        </div>
+                    </div>
                 </div>
             );
         }

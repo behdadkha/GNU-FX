@@ -3,6 +3,10 @@ import {Button, Container, Col, Row, ButtonGroup, ToggleButton} from "react-boot
 import {connect} from "react-redux";
 import axios from "axios";
 
+<<<<<<< HEAD
+=======
+import "../../componentsStyle/Diagnosis.css";
+>>>>>>> 3070e4495e675f0a456c507b121577856efd9e4c
 
 
 class Diagnosis extends Component {

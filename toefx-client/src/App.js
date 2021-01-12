@@ -18,7 +18,7 @@ import ResetPassword from "./components/user/ResetPassword";
 import Schedule from "./components/user/Schedule";
 import User from "./components/user/User";
 import store from "./Redux/store";
-import {logOutUser, SetCurrentUser} from "./Redux/Actions/authAction";
+import {LogOutUser, SetCurrentUser} from "./Redux/Actions/authAction";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
@@ -36,13 +36,13 @@ if (localStorage.jwt) {
 
         //If the jwt is expired
         if (decodedData.exp < time)
-            store.dispatch(logOutUser()); //Remove the user
+            store.dispatch(LogOutUser()); //Remove the user
         else
             store.dispatch(SetCurrentUser(decodedData));
     }
     catch (error) {
         console.log("invalid jwt");
-        store.dispatch(logOutUser());
+        store.dispatch(LogOutUser());
     }
 }
 

@@ -172,17 +172,20 @@ class MyAccount extends Component {
         return (
             <div className="my-account-page">
                 <Sidebar {...this.props}/>
-                <div className="welcome-bar">
-                    <h6 className="welcome">My Account</h6>
-                </div>
 
                 {/* Main part */}
                 <div className="my-account-main-container">
-                    {/* Account Details Bubble */}
-                    {accountDetailsBubble}
+                    <div className="welcome-bar">
+                        <h6 className="welcome">My Account</h6>
+                    </div>
 
-                    {/* Image Table Bubble */}
-                    {imageTableBubble}
+                    <div className="my-account-sub-container">
+                        {/* Account Details Bubble */}
+                        {accountDetailsBubble}
+
+                        {/* Image Table Bubble */}
+                        {imageTableBubble}
+                    </div>
                 </div>
             </div>
         )

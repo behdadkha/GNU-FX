@@ -1,9 +1,8 @@
 import Axios from 'axios';
-import React, { Component } from 'react'
-import { Button, Form } from 'react-bootstrap';
-//config
-import { config } from "../../config";
-//icon
+import React, {Component} from 'react'
+import {Button, Form} from 'react-bootstrap';
+
+import {config} from "../../config";
 import padlock from '../../icons/padlock.png';
 
 import '../../componentsStyle/ResetPassword.css';
@@ -43,8 +42,8 @@ export default class ResetPassword extends Component {
     }
 
     /*
-        Checks if the user didn't fill out all fields on the form.
-        returns: true if there is an empty field, false if all fields are filled in.
+        Processes the user's reset password submission. Redirects to the login page upon a successful submission.
+        param e: The rest password submission event.
     */
     handleSubmit(e) {
         e.preventDefault(); //Prevents page reload on form submission

@@ -2,13 +2,13 @@
     A class for the navigation bar that appears on the side of the dashboard.
 */
 
-import React, { Component } from 'react'
-import { isMobile } from 'react-device-detect';
-import { Container, Button, Row, Navbar, Nav, } from 'react-bootstrap';
+import React, {Component} from 'react'
+import {isMobile} from 'react-device-detect';
+import {Container, Button, Row, Navbar, Nav} from 'react-bootstrap';
 
-import { connect } from "react-redux";
+import {connect} from "react-redux";
 import store from "../../Redux/store";
-import { logOutUser } from "../../Redux/Actions/authAction";
+import {LogOutUser} from "../../Redux/Actions/authAction";
 import scheduleIcon from '../../icons/appointment.png';
 import dashboardIcon from '../../icons/dashboard2.png';
 import myAccountIcon from '../../icons/myAccount.png';
@@ -39,7 +39,7 @@ class Sidebar extends Component {
                             <Nav.Link onClick={() => this.props.history.push("/user/schedule") }>Treatment Schedule</Nav.Link>
                             <Nav.Link onClick={() => this.props.history.push("/user/myAccount")}>My Account</Nav.Link>
                             <Nav.Link onClick={() => {
-                                store.dispatch(logOutUser());
+                                store.dispatch(LogOutUser());
                                 window.location.href = "/";
                             }}>Log out</Nav.Link>
                         </Nav>
@@ -89,7 +89,7 @@ class Sidebar extends Component {
                         {/* Log out */}
                         <Row className={itemClass}>
                             <span onClick={() => {
-                                store.dispatch(logOutUser());
+                                store.dispatch(LogOutUser());
                                 window.location.href = "/";
                             }}>
                                 <img src={logoutIcon} alt="Log-Out-Icon" className={iconClass}></img>

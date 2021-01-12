@@ -1,5 +1,9 @@
-import { SetAuthHeader } from "../../Utils";
+import {SetAuthHeader} from "../../Utils";
 
+/*
+    Sets the client-side data for the user once they log in.
+    param data: Data specific to the current user.
+*/
 export const SetCurrentUser = (data) => {
     return {
         type : "SET_CURRENT_USER",
@@ -7,13 +11,16 @@ export const SetCurrentUser = (data) => {
     }
 }
 
-export const logOutUser = () => Dispatch => {
-    //Eemove the token from the web browser
+/*
+    Logs out the current user from the website.
+*/
+export const LogOutUser = () => Dispatch => {
+    //Remove the token from the web browser
     localStorage.removeItem('jwt');
 
-    //Eemove auth header from the feature requests
+    //Remove auth header from the feature requests
     SetAuthHeader(false);
 
-    //Eemove the current user's data
+    //Remove the current user's data
     Dispatch(SetCurrentUser({}));
 }

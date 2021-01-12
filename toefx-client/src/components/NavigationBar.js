@@ -7,7 +7,7 @@ import {Navbar, Nav} from "react-bootstrap";
 import {connect} from "react-redux";
 
 import store from "../Redux/store";
-import {logOutUser} from "../Redux/Actions/authAction";
+import {LogOutUser} from "../Redux/Actions/authAction";
 
 
 class NavigationBar extends Component {
@@ -22,7 +22,7 @@ class NavigationBar extends Component {
         if (this.props.auth.isAuth) {
             loginSignup =
             <Nav>
-                <Nav.Link onClick={() => {store.dispatch(logOutUser()); window.location.href = "/";}}>
+                <Nav.Link onClick={() => {store.dispatch(LogOutUser()); window.location.href = "/";}}>
                     Log Out
                 </Nav.Link>
                 {(window.location.pathname !== "/user" && window.location.pathname !== "/login") &&

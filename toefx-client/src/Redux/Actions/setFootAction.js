@@ -1,5 +1,5 @@
 import Axios from "axios";
-import { config } from "../../config";
+import {config} from "../../config";
 
 /*
     Gets all of the user's uploaded images.
@@ -58,6 +58,9 @@ export const saveToeData = (data) => {
     }
 }
 
+/*
+    Loads all of the user's toe images from the server and saves it to the local memory.
+*/
 export const getAndSaveImages = () => async (dispatch) => {
     //Recieve the images from the backend server
     let images = await GetAllImages();
@@ -66,6 +69,9 @@ export const getAndSaveImages = () => async (dispatch) => {
     dispatch(saveImages(images));
 }
 
+/*
+    Loads all of the user's toe data from the server and saves it to the local memory.
+*/
 export const getAndSaveToeData = () => async (dispach) => {
     let toeData = await getToeData();
     dispach(saveToeData(toeData));

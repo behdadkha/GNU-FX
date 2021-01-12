@@ -38,7 +38,7 @@ uploadImage.route('/loggedin').post(async (req, res) => {
     //saving the data in the toe-data collection 
     var date = new Date();
     var datetoString = date.toString();
-    var footIndex = (req.body.foot === "left") ? 0 : 1;
+    var footIndex = parseInt(req.body.foot)
     var toeIndex = parseInt(req.body.toe);
     toeData.findOne({ userID: userId }, (err, item) => {
         

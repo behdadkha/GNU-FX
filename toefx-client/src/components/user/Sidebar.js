@@ -36,9 +36,9 @@ class Sidebar extends Component {
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav"> {/* Hamburger menu */}
                         <Nav className="mr-auto">
-                            <Nav.Link href="#link" onClick={() => this.props.history.push("/user/schedule") }>Treatment Schedule</Nav.Link>
-                            <Nav.Link href="#link" onClick={() => this.props.history.push("/user/myAccount")}>My Account</Nav.Link>
-                            <Nav.Link href="#link" onClick={() => {
+                            <Nav.Link onClick={() => this.props.history.push("/user/schedule") }>Treatment Schedule</Nav.Link>
+                            <Nav.Link onClick={() => this.props.history.push("/user/myAccount")}>My Account</Nav.Link>
+                            <Nav.Link onClick={() => {
                                 store.dispatch(logOutUser());
                                 window.location.href = "/";
                             }}>Log out</Nav.Link>

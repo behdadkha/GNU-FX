@@ -77,29 +77,33 @@ class Schedule extends Component {
         }
 
         return (
-            <div>
+            <div className="page">
                 <Sidebar {...this.props} />
-                <div className="welcome-bar">
-                    <h6 className="welcome">Treatment Schedule</h6>
-                </div>
+
                 <div className="schedule-container">
-                    <Table bordered variant="white" className="table-primary" className="schedule-table">
-                        <thead>
-                            <tr>
-                                <th>Treatment</th>
-                                <th>Date</th>
-                                <th>Doctor</th>
-                                <th>Comments</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {
-                                this.state.scheduleData !== undefined ?
-                                    this.state.scheduleData.map((data, index) => this.printDate(index, data))
-                                : <tr><td>Unable to load dates!</td></tr>
-                            }
-                        </tbody>
-                    </Table>
+                    <div className="welcome-bar">
+                        <h6 className="welcome">Treatment Schedule</h6>
+                    </div>
+
+                    <div className="sub-container schedule-sub-container">
+                        <Table bordered variant="white" className="table-primary" className="schedule-table">
+                            <thead>
+                                <tr>
+                                    <th>Treatment</th>
+                                    <th>Date</th>
+                                    <th>Doctor</th>
+                                    <th>Comments</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {
+                                    this.state.scheduleData !== undefined ?
+                                        this.state.scheduleData.map((data, index) => this.printDate(index, data))
+                                    : <tr><td>Unable to load dates!</td></tr>
+                                }
+                            </tbody>
+                        </Table>
+                    </div>
                 </div>
             </div>
         )

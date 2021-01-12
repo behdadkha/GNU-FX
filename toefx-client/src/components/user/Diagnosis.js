@@ -1,7 +1,8 @@
-import React, { Component } from "react";
-import { Button, Container, Col, Row, ButtonGroup, ToggleButton } from "react-bootstrap";
-import { connect } from "react-redux";
+import React, {Component} from "react";
+import {Button, Container, Col, Row, ButtonGroup, ToggleButton} from "react-bootstrap";
+import {connect} from "react-redux";
 import axios from "axios";
+
 import "../../componentsStyle/Diagnosis.css";
 
 

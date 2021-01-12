@@ -1,8 +1,8 @@
-import React, { Component } from "react";
-import { Button, Container, Col, Row } from "react-bootstrap";
-import { connect } from "react-redux";
+import React, {Component} from "react";
+import {Button, Container, Col, Row, ButtonGroup, ToggleButton} from "react-bootstrap";
+import {connect} from "react-redux";
 import axios from "axios";
-import "../../componentsStyle/Storyline.css";
+
 
 
 class Diagnosis extends Component {
@@ -18,7 +18,10 @@ class Diagnosis extends Component {
             tempfileName: "",
             foot: "",//can be selected from UI. Sent to /uploadimage endpoint
             toe: "",
-            errorText : ""
+            errorText: "",
+            toeRadioBtnValue: -1,
+            footRadioBtnValue: -1,
+            error: ""
         };
 
         this.validateImage = this.validateImage.bind(this);
@@ -104,16 +107,16 @@ class Diagnosis extends Component {
     //e => event
     handleUpload(e) {
         let file = e.target.files[0];
-        var possibleFileTypes = ["image/x-png","image/png","image/gif","image/jpeg"];
+        var possibleFileTypes = ["image/x-png", "image/png", "image/gif", "image/jpeg"];
 
         //invalid file type
-        if (possibleFileTypes.findIndex(item => item === file.type) === -1){
+        if (possibleFileTypes.findIndex(item => item === file.type) === -1) {
             this.setState({
                 errorText: "Invalid file type"
             });
             return
         }
-        if (this.state.errorText !== ""){
+        if (this.state.errorText !== "") {
             this.setState({
                 errorText: ""
             });
@@ -206,34 +209,62 @@ class Diagnosis extends Component {
     };
 
     render() {
-        const toe = ["Big toe", "Index toe", "Middle toe", "Fourth toe", "Little toe"];
+        const feet = [
+            { name: "Left foot", value: '0' },
+            { name: "Right foot", value: '1' }
+        ]
+        const toes = [
+            { name: "Big toe", value: '0' },
+            { name: "Index toe", value: '1' },
+            { name: "Middle toe", value: '2' },
+            { name: "Forth toe", value: '3' },
+            { name: "Little toe", value: '4' },
+        ]
         return (
             <Container>
-                <form style={{ marginTop: "1%" }} >
-                    <input type="radio" id="left" value="Left" name="footSelection" onClick={() => {this.setState({foot: "left"})}}/>
-                    <label htmlFor="left" style={{ marginLeft: "0.5%", fontSize: "1.3rem", color: "blue" }} >Left</label>
+                <h3 id="DiagnosisFont">Select foot:</h3>
+                {/*Foot selection*/}
+                <ButtonGroup toggle className="SelectBtns">
+                    {feet.map((foot, idx) => (
+                        <ToggleButton
+                            key={idx}
+                            type="radio"
+                            variant="primary"
+                            name="radio"
+                            value={foot.value}
+                            checked={this.state.footRadioBtnValue === foot.value}
+                            onChange={(e) => this.setState({ footRadioBtnValue: e.currentTarget.value, foot: e.currentTarget.value, error: "" })}
+                        >
+                            {foot.name}
+                        </ToggleButton>
+                    ))}
+                </ButtonGroup>
+                <br></br>
+                <br></br>
 
-                    <input type="radio" id="right" value="Right" name="footSelection" style={{ marginLeft: "1%" }} onClick={() => {this.setState({foot: "right"})}}/>
-                    <label htmlFor="right" style={{ marginLeft: "0.5%", fontSize: "1.3rem", color: "blue" }} >Right</label>
+                {/*Toe selection*/}
+                <h3 id="DiagnosisFont">Select toe:</h3>
+                <ButtonGroup toggle className="SelectBtns">
+                    {toes.map((toe, idx) => (
+                        <ToggleButton
+                            key={idx}
+                            type="radio"
+                            variant="primary"
+                            name="radio"
+                            value={toe.value}
+                            checked={this.state.toeRadioBtnValue === toe.value}
+                            onChange={(e) => this.setState({ toeRadioBtnValue: e.currentTarget.value, toe: e.currentTarget.value, error: "" })}
+                        >
+                            {toe.name}
+                        </ToggleButton>
+                    ))}
+                </ButtonGroup>
 
-                    <label style={{ marginLeft: "1%", fontSize: "1.5rem" }}>foot</label>
-                </form>
-                <div style={{ marginTop: "1%", margin: "auto", textAlign: "center", alignContent: "center"}} >
-                    {
-                        toe.map((name,index) => {return(
-                            <div key={index} style={{display: "inline"}}>
-                                <input type="radio" value={name} id={name} name="toeSelection" onClick={() => {this.setState({toe: index})}}/>
-                                <label htmlFor={name} style={{ marginLeft: "0.5%", marginRight: "4%", fontSize: "1.3rem" }} >{name}</label>
-                            </div>)
-                        })
-                    }
-                </div>
-                
                 <Row>
                     <Col>
                         {/*uploadfile*/}
-                        <div className="input-group">   
-                            <div className="custom-file">
+                        <div className="input-group">
+                            <div>
                                 <input
                                     type="file"
                                     className="custom-file-input"
@@ -242,24 +273,21 @@ class Diagnosis extends Component {
                                     accept="image/x-png,image/png,image/gif,image/jpeg"
                                     onChange={this.handleUpload.bind(this)}
                                 />
-                                <label className="upload-image" htmlFor="inputGroupFile01">
+                                <label className="shadow p-3 mb-5 bg-dark rounded" id="UploadBtn" htmlFor={this.state.footRadioBtnValue !== -1 && this.state.toeRadioBtnValue !== -1 ? "inputGroupFile01" : ''} onClick={
+                                    this.state.footRadioBtnValue === -1 || this.state.toeRadioBtnValue === -1 ? () => this.setState({error: "Foot or toe not selected!"}) : () => this.setState({error: ""})
+                                }>
                                     <div>
-                                        <h6 style={{ display: "inline" }}>
+                                        <h6 id="DiagnosisUploadBtnFONT">
                                             Upload
                                         </h6>
                                         {this.state.uploadProgress !== 0 && (
-                                            <h6
-                                                style={{
-                                                    paddingLeft: 40,
-                                                    display: "inline",
-                                                }}
-                                            >
+                                            <h6 id="DiagnosisUploadBtnFONT">
                                                 {this.state.uploadProgress}
                                             </h6>
                                         )}
-
                                     </div>
                                 </label>
+                                <h5>{this.state.error}</h5>
                             </div>
                         </div>
                     </Col>

@@ -26,7 +26,8 @@ class MyAccount extends Component {
         super(props);
 
         this.state = {
-            email: "", //The logged in user
+            email: "", //The logged in user's email address
+            age: 0, //The user's age
             imageUrls: [], //User's images
             toeData: [], //Data for user's images
             showLeftFoot: true //Determine which foot to show images for
@@ -48,9 +49,14 @@ class MyAccount extends Component {
             await store.dispatch(getAndSaveToeData()); //Load the user's toe data
         }
 
+        //getting user's info
+        let userInfo = (await Axios.get(`${config.dev_server}/user/getUserInfo`)).data;
+        
         this.setState({
             imageUrls : this.props.foot.images,
-            toeData: this.props.foot.toeData
+            toeData: this.props.foot.toeData,
+            email: userInfo.email,
+            age: userInfo.age
         });
     }
 

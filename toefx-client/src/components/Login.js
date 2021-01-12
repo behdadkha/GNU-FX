@@ -1,5 +1,5 @@
 /*
-    Class for the login page.
+    Class for the form user's can use to log in to the site.
 */
 
 import React, {Component} from "react";
@@ -30,12 +30,13 @@ export default class Login extends Component {
     }
 
     /*
-        Logs the user in if the login info is correct.
-        param e: The login event.
+        Logs the user in and redirects to the dashboar if the login info is correct.
+        param e: The login submission event.
     */
     handleLoginPatient = async (e) => {
-        e.preventDefault();
+        e.preventDefault(); //Prevents page reload on form submission
 
+        //Try to log in user
         const response = await fetch(`${config.dev_server}/login`, {
             method: "POST",
             headers: {
@@ -48,6 +49,7 @@ export default class Login extends Component {
             }),
         });
 
+        //Process response from server
         if (response.status === 200) { //The login was a success
             let body = await response.json();
             this.setState({
@@ -59,10 +61,10 @@ export default class Login extends Component {
             SetAuthHeader(token); //Set the token to header for feature requests
             store.dispatch(SetCurrentUser(jwt_decode(token))); //Add the user data(decoded) to the store 
             
-            //getting all the user's images
+            //Load all of the user's images from the server
             store.dispatch(getAndSaveImages());
 
-            //getting all the user's toe data
+            //Load all of the user's toe data from the server like fungal coverage
             store.dispatch(getAndSaveToeData());
             
             //Redirect to User page
@@ -103,7 +105,7 @@ export default class Login extends Component {
                                 <Form.Label>Email address</Form.Label>
                                 <Form.Control
                                     type="email"
-                                    placeholder="Email"
+                                    placeholder=""
                                     value={this.state.email}
                                     onChange={(e) =>
                                         this.setState({email: e.target.value})
@@ -120,7 +122,7 @@ export default class Login extends Component {
                                         this.setState({password: e.target.value})
                                     }
                                     type="password"
-                                    placeholder="Password"
+                                    placeholder=""
                                 />
                             </Form.Group>
 

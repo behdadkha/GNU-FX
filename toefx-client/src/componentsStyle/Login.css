@@ -9,3 +9,7 @@
     height: 30px;
     margin-top: 20px;
 }
+
+.login-error-input {
+    color: pink;
+}

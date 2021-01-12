@@ -1,6 +1,15 @@
-.form {
-    padding-top: 10%;
+.signup-form {
+    padding-top: 20px;
     margin: auto;
     text-align: left;
     width: 50%;
+}
+
+.signup-error {
+    height: 30px;
+    margin-top: 20px;
+}
+
+.signup-error-input {
+    background-color: pink !important;
 }

@@ -9,9 +9,14 @@ import "../componentsStyle/FirstPage.css";
 
 
 export default class FirstPage extends Component {
+
+    /*
+        Prints the home page to the screen.
+    */
     render() {
         return (
             <div>
+                {/* ToeFX Logo */}
                 <div>
                     <img className="image"
                          src="https://toefx.com/wp-content/uploads/2019/09/pipette.jpg"
@@ -19,7 +24,8 @@ export default class FirstPage extends Component {
                     ></img>
                 </div>
 
-                <Container>
+                {/* Three blue boxes taken from original ToeFX webpage */}
+                <Container className="home-page-boxes">
                     <Row>
                         <Col lg={4}>
                             <div className="box box1">

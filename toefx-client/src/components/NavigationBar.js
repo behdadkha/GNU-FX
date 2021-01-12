@@ -1,79 +1,95 @@
-import React, { Component } from "react";
-import {
-    Navbar,
-    Nav,
-} from "react-bootstrap";
-import { connect } from "react-redux";
-import { logOutUser } from "../Redux/Actions/authAction";
+/*
+    A class for the navigation bar that can appear at the top of certain pages.
+*/
+
+import React, {Component} from "react";
+import {Navbar, Nav} from "react-bootstrap";
+import {connect} from "react-redux";
+
 import store from "../Redux/store";
+import {logOutUser} from "../Redux/Actions/authAction";
 
 
 class NavigationBar extends Component {
+    /*
+        Prints the navigation bar to the top of the screen.
+    */
     render() {
+        var loginSignup, logo, loggedInNav;
+        var pagesWithNavbar = ["/", "/login", "/signup", "/diagnosis"];
 
-        let pagesWithNavbar = ["/", "/login", "/signup", "/diagnosis"];
-
-        var loginSignup;
-        //home page
-        if (window.location.pathname !== "/login" && window.location.pathname !== "/signup") {
-            loginSignup = <Nav>
-                <Nav.Link href="/signup">Sign Up</Nav.Link>
-                <Nav.Link href="/login">Login</Nav.Link>
-            </Nav>;
-            //in the login page only show signup
-        }
-        else if (window.location.pathname === "/login") {
-            loginSignup = <Nav>
-                <Nav.Link href="/signup">Sign Up</Nav.Link>
-            </Nav>;
-            //in the signup page only show login
-        }
-        else if (window.location.pathname === "/signup") {
-            loginSignup = <Nav>
-                <Nav.Link href="/login">Login</Nav.Link>
-            </Nav>;
-        }
-      
-
-        //show logout if user is logged in
+        //Show Dashboard and Log Out if user is logged in
         if (this.props.auth.isAuth) {
-            loginSignup = <Nav>
-                <Nav.Link onClick={() => { store.dispatch(logOutUser()); window.location.href = "/"; }}>Log Out</Nav.Link>
-                {(window.location.pathname !== "/user" && window.location.pathname !== "/login") && <Nav.Link href="/user">Dashboard</Nav.Link>}
+            loginSignup =
+            <Nav>
+                <Nav.Link onClick={() => {store.dispatch(logOutUser()); window.location.href = "/";}}>
+                    Log Out
+                </Nav.Link>
+                {(window.location.pathname !== "/user" && window.location.pathname !== "/login") &&
+                <Nav.Link href="/user">
+                    Dashboard
+                </Nav.Link>}
             </Nav>
+        }
+        else { //User is not logged in
+            if (window.location.pathname !== "/login" && window.location.pathname !== "/signup") {
+                //On the home page show both Login and Sign Up
+                loginSignup =
+                <Nav>
+                    <Nav.Link href="/signup">Sign Up</Nav.Link>
+                    <Nav.Link href="/login">Login</Nav.Link>
+                </Nav>;
+            }
+            else if (window.location.pathname === "/login") {
+                //On the login page only show Sign Up
+                loginSignup = <Nav>
+                    <Nav.Link href="/signup">Sign Up</Nav.Link>
+                </Nav>;
+            }
+            else if (window.location.pathname === "/signup") {
+                //On the signup page only show Login
+                loginSignup = <Nav>
+                    <Nav.Link href="/login">Login</Nav.Link>
+                </Nav>;
+            }
+        }
+
+        logo = "";
+        loggedInNav = "";
+        if (window.location.pathname !== "/user") {
+            //Only show the ToeFX logo on the home page
+            logo =
+            <Navbar.Brand href="https://www.toefx.com/">
+                ToeFX
+            </Navbar.Brand>;
+
+            //Only show special logged in options on the home page
+            loggedInNav =
+            <Nav className="mr-auto">
+                <Nav.Link href="/">Home</Nav.Link>
+                <Nav.Link href="/diagnosis">Diagnosis</Nav.Link>
+            </Nav>;
         }
 
         return (
-           
             <div>
-                {console.log((window.location.pathname))}
                 {
-                    pagesWithNavbar.includes(window.location.pathname)
-                        ?
+                    pagesWithNavbar.includes(window.location.pathname) ? //Navbar on this page
                         <Navbar bg="light" expand="md">
-                            {/*only show the Toefx if user is not logged in*/}
-                            {window.location.pathname !== "/user" &&
-                                <Navbar.Brand href="https://www.toefx.com/">
-                                    ToeFX
-                                </Navbar.Brand>
-                            }
+                            {/* Potentially show ToeFX logo */}
+                            {logo}
+
+                            {/* Actual nav bar */}
                             <Navbar.Toggle aria-controls="basic-navbar-nav" />
                             <Navbar.Collapse id="basic-navbar-nav">
-                                {window.location.pathname !== "/user" ? console.log(" im not user") : ""}
-                                {window.location.pathname !== "/user" &&
-                                    <Nav className="mr-auto">
-                                        <Nav.Link href="/">Home</Nav.Link>
-                                        <Nav.Link href="/diagnosis">Diagnosis</Nav.Link>
-                                    </Nav>
-                                }
+                                {loggedInNav}
 
                                 <Nav className="ml-auto">
                                     {loginSignup}
                                 </Nav>
                             </Navbar.Collapse>
                         </Navbar>
-                        :
-                        ""
+                    : ""
                 }
             </div>
         );

@@ -9,8 +9,8 @@ import Axios from 'axios';
 
 import {config} from "../../config";
 import store from '../../Redux/store';
-import { getAndSaveImages, getAndSaveToeData } from '../../Redux/Actions/setFootAction';
-import { GetToeName, GetImageSrcByURLsAndName } from "../../Utils";
+import {getAndSaveImages, getAndSaveToeData} from '../../Redux/Actions/setFootAction';
+import {GetToeName, GetImageSrcByURLsAndName} from "../../Utils";
 import Sidebar from "./Sidebar";
 
 import '../../componentsStyle/MyAccount.css'
@@ -44,8 +44,8 @@ class MyAccount extends Component {
 
         //Redux data gets erased after a refresh, so if the data is gone we need to get it again
         if (this.props.foot.images.length === 0) {
-            await store.dispatch(getAndSaveImages());//saving user's images
-            await store.dispatch(getAndSaveToeData());//saving toe data
+            await store.dispatch(getAndSaveImages()); //Load the user's images
+            await store.dispatch(getAndSaveToeData()); //Load the user's toe data
         }
 
         this.setState({
@@ -97,7 +97,7 @@ class MyAccount extends Component {
             toe.images.map(({name, date, fungalCoverage}, index) => 
                 <tr key={toe + ' ' + index}>
                     <td><img src={GetImageSrcByURLsAndName(this.state.imageUrls, name)} alt="Loading..."
-                             className="uploaded-image-table-toe-image"/></td>
+                            className="uploaded-image-table-toe-image"/></td>
                     <td>{GetToeName(id)}</td>
                     <td>{fungalCoverage}</td>
                     <td>{date.split("T")[0]}</td>

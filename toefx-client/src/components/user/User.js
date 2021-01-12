@@ -52,20 +52,19 @@ class User extends Component {
         //Redirect to login page if user not logged in
         if (!this.props.auth.isAuth)
             this.props.history.push("/login");
-		
+        
         //Redux data gets erased after a refresh, so if the data is gone we need to get it again
         if (this.props.foot.images.length === 0) {
-            await store.dispatch(getAndSaveImages());//saving image urls
-            await store.dispatch(getAndSaveToeData());//saving toe data
+            await store.dispatch(getAndSaveImages()); //Load image URLs
+            await store.dispatch(getAndSaveToeData());//Load toe data
         }
 
-		this.setState({
-			imageUrls : this.props.foot.images,
-			toeData: this.props.foot.toeData
-		},
-			this.organizeDataforGraph
-		);
-        
+        this.setState({
+            imageUrls : this.props.foot.images,
+            toeData: this.props.foot.toeData
+        },
+            this.organizeDataforGraph //Only call once date is saved to state
+        );
     }
 
     /*
@@ -124,24 +123,22 @@ class User extends Component {
         };
     }
 
-	/* 
-		Organize the toe data for the graph.
-		The data recieved from the server has format: feet: [{toes: [{images:[]}]}] so we need to change it for the graph
-	*/
+    /* 
+        Organize the toe data for the graph.
+        The data recieved from the server has format: feet: [{toes: [{images:[]}]}] so we need to change it for the graph
+    */
     organizeDataforGraph() {
         if (this.state.toeData.feet !== undefined && this.state.leftFootData.length === 0) { 
-            //separate the fungal coverage and images (required for the Apexchart)
-            //left foot == 0
+            //Seperate the fungal coverage and images (required for the Apexchart)
             var allLeftFootData = this.processServerFeetData(LEFT_FOOT_ID);
-            //right foot == 1
             var allRightFootData = this.processServerFeetData(RIGHT_FOOT_ID);
             
-			//Toe data, standarized for the graph
-			var leftFootData = [];
-			var rightFootData = [];
+            //Toe data standarized for the graph
+            var leftFootData = [];
+            var rightFootData = [];
 
             for (let i = 0; i < TOE_COUNT; ++i)
-        	{
+            {
                 leftFootData.push(
                 {
                     name: GetToeName(i),
@@ -155,13 +152,13 @@ class User extends Component {
                     data: allRightFootData.fungalCoverage[i],
                     images: allRightFootData.images[i],
                 });
-			}
-			
+            }
+            
             this.setState({ 
-				leftFootData: leftFootData,
-				rightFootData: rightFootData,
-				leftFootDates: allLeftFootData.dates,
-				rightFootDates: allRightFootData.dates,
+                leftFootData: leftFootData,
+                rightFootData: rightFootData,
+                leftFootDates: allLeftFootData.dates,
+                rightFootDates: allRightFootData.dates,
                 dataLoaded: true
             });
         }
@@ -180,7 +177,7 @@ class User extends Component {
         if (percentageData.length === 0) {
             fungalCoverage = "No Data"
         }
-        else{
+        else {
             //Generates the 20% -> 10% -> 1% format for the bottom table
             for (var i = 0; i < percentageData.length - 1; ++i)
                 fungalCoverage += percentageData[i] + " -> ";
@@ -200,31 +197,32 @@ class User extends Component {
         Prints the user's dashboard.
     */
     render() {
-		
         var footName = GetFootName(this.props.foot.selectedFoot);
         var footData = (this.props.foot.selectedFoot === LEFT_FOOT_ID) ? this.state.leftFootData : this.state.rightFootData;
         var selectedfootDates = (this.props.foot.selectedFoot === LEFT_FOOT_ID) ? this.state.leftFootDates : this.state.rightFootDates;
 
-        //Need to sort the dates to find the begining and end dates for the bottom table
-        let sortedDates = [...selectedfootDates].sort();
-        let dateRange = <h4 style={{color: "red"}}>"Use the Upload Image button located on top left corner to add in data"</h4>;
-        if (selectedfootDates.length !== 0) {
+        let dateRange;
+        let sortedDates = [...selectedfootDates].sort(); //Need to sort the dates to find the begining and end dates for the bottom table
+        if (selectedfootDates.length === 0) //User hasn't uploaded images so give instructions how to start
+            dateRange = <h4 className="no-uploaded-images-title">"Press the "Upload Image" button located in top left corner to get started."</h4>;
+        else
             dateRange = sortedDates[0] + ' -- ' + sortedDates[selectedfootDates.length - 1];
-        }
-        
 
-		if (this.state.dataLoaded) { //The data is ready to be displayed
+        if (this.state.dataLoaded) { //The data is ready to be displayed
             return (
                 <div>
                     <Sidebar {...this.props}/>
-                    
+                    <div className="welcome-bar">
+                        <h6 className="welcome">Dashboard</h6>
+                    </div>
+
                     <div className="main-container">
                         {/* Graph */}
                         {
                             <ApexChart leftFootData={this.state.leftFootData} rightFootData={this.state.rightFootData}
                                 leftFootDates={this.state.leftFootDates} rightFootDates={this.state.rightFootDates}>    
                             </ApexChart>
-						}
+                        }
 
                         {/*Alternate Data View bottom*/}
                         <div className="total-details-container">
@@ -254,9 +252,12 @@ class User extends Component {
             return (
                 <div>
                     <Sidebar {...this.props}/>
+                    <div className="welcome-bar">
+                        <h6 className="welcome">Dashboard</h6>
+                    </div>
 
                     <h4 className="dashboard-loading">Loading...</h4>
-                 </div>
+                </div>
             );
         }
     }

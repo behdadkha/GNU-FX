@@ -274,7 +274,7 @@ class Diagnosis extends Component {
                                     onChange={this.handleUpload.bind(this)}
                                 />
                                 <label className="shadow p-3 mb-5 bg-dark rounded" id="UploadBtn" htmlFor={this.state.footRadioBtnValue !== -1 && this.state.toeRadioBtnValue !== -1 ? "inputGroupFile01" : ''} onClick={
-                                    this.state.footRadioBtnValue === -1 && this.state.toeRadioBtnValue === -1 ? () => this.setState({error: "!Foot or toe not selected"}) : () => this.setState({error: ""})
+                                    this.state.footRadioBtnValue === -1 || this.state.toeRadioBtnValue === -1 ? () => this.setState({error: "Foot or toe not selected!"}) : () => this.setState({error: ""})
                                 }>
                                     <div>
                                         <h6 id="DiagnosisUploadBtnFONT">

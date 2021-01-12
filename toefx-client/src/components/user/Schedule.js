@@ -86,7 +86,7 @@ class Schedule extends Component {
                     </div>
 
                     <div className="sub-container schedule-sub-container">
-                        <Table bordered variant="white" className="table-primary" className="schedule-table">
+                        <Table bordered variant="white" className="table-primary schedule-table">
                             <thead>
                                 <tr>
                                     <th>Treatment</th>

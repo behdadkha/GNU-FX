@@ -37,6 +37,10 @@ async function getToeData(){
     return toeData;
 }
 
+/*
+    Stores the selectedFoot index.
+    Param data: 0 or 1 referring to left foot or right foot
+*/
 export const setSelectedFoot = (data) => {
     return {
         type : "SET_SELECTED_FOOT",
@@ -44,6 +48,11 @@ export const setSelectedFoot = (data) => {
     }
 }
 
+/*
+    Saves the images fetched from the server.
+    In order to avoid fetching the images multiple times in different components.
+    Param data: array of images in the form [{name: "", url: ""}
+*/
 export const saveImages = (data) => {
     return {
         type: "SAVE_IMAGES",
@@ -51,6 +60,11 @@ export const saveImages = (data) => {
     }
 }
 
+/*
+    Saves the toe data fetched from the server.
+    To have access to the data in different components.
+    Param data: array of toe data, format: toe-dataSchema.
+*/
 export const saveToeData = (data) => {
     return {
         type: "SAVE_TOE_DATA",

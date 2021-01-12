@@ -28,9 +28,9 @@ export default class ResetPassword extends Component {
         returns: true if there is an empty field, false if all fields are filled in.
     */
     isAnyFieldLeftBlank() {
-        return this.state.currentPassword == ""
-            ||  this.state.newPassword1 == ""
-            ||  this.state.newPassword2 == "";
+        return this.state.currentPassword === ""
+            ||  this.state.newPassword1 === ""
+            ||  this.state.newPassword2 === "";
     }
 
     /*

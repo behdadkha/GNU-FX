@@ -13,7 +13,6 @@
 
 #UploadBtn{
     width: 100%;
-    
     height: auto;
     cursor: pointer;
 }
@@ -33,5 +32,6 @@
 
 .diagnose-img
 {
-    width : "40%"
+    width : "40%";
+    height: "50%";
 }

@@ -2,11 +2,9 @@ import React, {Component} from "react";
 import {Button, Container, Col, Row, ButtonGroup, ToggleButton} from "react-bootstrap";
 import {connect} from "react-redux";
 import axios from "axios";
+import {config} from "../../config";
 
-<<<<<<< HEAD
-=======
 import "../../componentsStyle/Diagnosis.css";
->>>>>>> 3070e4495e675f0a456c507b121577856efd9e4c
 
 
 class Diagnosis extends Component {
@@ -31,14 +29,6 @@ class Diagnosis extends Component {
         this.validateImage = this.validateImage.bind(this);
     }
 
-    //Diagnosis is accessible from the homepage without being required to login
-    /*
-    componentDidMount() {
-        //if user is not logged in, go to the login page
-        if (!this.props.auth.isAuth)
-            this.props.history.push("./Login");
-    }
-    */
     onBackButtonEvent(e) {
         e.preventDefault();
         window.location.reload();
@@ -47,59 +37,51 @@ class Diagnosis extends Component {
         window.onpopstate = this.onBackButtonEvent.bind(this);
     }
 
+    setTheNewFile(imageIndex, response){
+        var valid, text;
+        if (response === "toe") {
+            valid = true;
+            text = "Toe detected"
+        }
+        else {
+            valid = false;
+            text = "It doesn't look like a toe"
+        }
+
+        let tempFiles = this.state.files;
+                    
+        tempFiles[imageIndex].valid = valid;
+        tempFiles[imageIndex].text = text;
+        this.setState({
+            files: tempFiles
+        });
+    }
+
+
     //request an iamge validation
     validateImage(file) {
         this.setState({ tempfileName: file });
-        console.log("here");
+    
         let currentImageIndex = this.state.files.length - 1;
         //If user is loggedin(which means that the images has to be stores on the database and a <userid> folder exists)
         if (this.props.auth.isAuth) {
-            axios.get(`http://localhost:3001/imagevalidation/loggedin`)
+            axios.get(`${config.dev_server}/imagevalidation/loggedin`)
                 .then(res => {
                     var response = res.data;
                     response = response.trim();
-                    var valid, text;
-                    if (response === "toe") {
-                        valid = true;
-                        text = "Toe detected"
-                    }
-                    else {
-                        valid = false;
-                        text = "It doesn't look like a toe"
-                    }
-                    let tempFiles = this.state.files;
-                    console.log(tempFiles, currentImageIndex);
-                    tempFiles[currentImageIndex].valid = valid;
-                    tempFiles[currentImageIndex].text = text;
-                    this.setState({
-                        files: tempFiles
-                    });
+                    this.setTheNewFile(currentImageIndex, response);
+                    
                 })
                 .catch((err) => {
                     console.log(err)
                 });
         }
         else {
-            axios.post(`http://localhost:3001/imagevalidation/notloggedin`, { myimg: file })
+            axios.post(`${config.dev_server}/imagevalidation/notloggedin`, { myimg: file })
                 .then(res => {
                     var response = res.data;
                     response = response.trim();
-                    var valid, text;
-                    if (response === "toe") {
-                        valid = true;
-                        text = "Toe detected"
-                    }
-                    else {
-                        valid = false;
-                        text = "It doesn't look like a toe"
-                    }
-                    let tempFiles = this.state.files;
-                    console.log(tempFiles, currentImageIndex);
-                    tempFiles[currentImageIndex].valid = valid;
-                    tempFiles[currentImageIndex].text = text;
-                    this.setState({
-                        files: tempFiles
-                    });
+                    this.setTheNewFile(currentImageIndex, response);
                 })
                 .catch((err) => {
                     console.log(err)
@@ -142,7 +124,7 @@ class Diagnosis extends Component {
         formData.append("toe", this.state.toe);
         if (this.props.auth.isAuth) {
             //Sends a request to upload/loggedin
-            axios.post("http://localhost:3001/upload/loggedin", formData, {
+            axios.post(`${config.dev_server}/upload/loggedin`, formData, {
                 onUploadProgress: (ProgressEvent) => {
                     let progress = Math.round((ProgressEvent.loaded / ProgressEvent.total) * 100) + "%";
                     this.setState({ uploadProgress: progress });
@@ -156,7 +138,7 @@ class Diagnosis extends Component {
         else {
             //Sends a request to upload/notloggedin
             //It sends the temporary image name(time in Ms) to validateImage
-            axios.post("http://localhost:3001/upload/notloggedin", formData, {
+            axios.post(`${config.dev_server}/upload/notloggedin`, formData, {
                 onUploadProgress: (ProgressEvent) => {
                     let progress = Math.round((ProgressEvent.loaded / ProgressEvent.total) * 100) + "%";
                     this.setState({ uploadProgress: progress });
@@ -175,7 +157,7 @@ class Diagnosis extends Component {
         var responseText = "";
         if (this.props.auth.isAuth) {
             let imageName = this.state.files[index].name;
-            await axios.get(`http://localhost:3001/diagnose/loggedin/?imageName=${imageName}`)
+            await axios.get(`${config.dev_server}/diagnose/loggedin/?imageName=${imageName}`)
                 .then((res) => {
                     responseText = res.data;
                 })
@@ -183,25 +165,12 @@ class Diagnosis extends Component {
         else {
             //tempfileName = time(in milisecond) when it is uploaded
             let imageName = this.state.tempfileName;
-            await axios.get(`http://localhost:3001/diagnose/notloggedin/?imageName=${imageName}`)
+            await axios.get(`${config.dev_server}/diagnose/notloggedin/?imageName=${imageName}`)
                 .then((res) => {
                     responseText = res.data;
                 })
         }
 
-
-        /*const response = await fetch(
-            `http://localhost:3001/diagnose/?imageName=${imageName}`,
-            {
-                method: "GET",
-                headers: new Headers({
-                    'Authorization': Basic
-                })
-            }
-        );*/
-
-        //let responseText = await response.data;
-        //console.log(responseText)
         this.setState({
             diagnosis: [
                 ...this.state.diagnosis,
@@ -301,7 +270,7 @@ class Diagnosis extends Component {
                         <Col key={`col-${index}`}>
                             <Row>
                                 <Col>
-                                    <img key={index} src={source.url} style={{ width: "40%" }} alt="uploaded" />
+                                    <img key={index} src={source.url} className="diagnose-img" alt="uploaded" />
                                 </Col>
                             </Row>
                             <Row>

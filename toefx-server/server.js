@@ -108,14 +108,13 @@ function createEmptyToeEntery(userId){
 */
 function createSignedToken(payload, key, expiresIn){
 	return new Promise((resolve, reject) => {
-		jwt.sign(payload, config.secretKey, { expiresIn: "1 day" }, 
+		jwt.sign(payload, key, { expiresIn: expiresIn }, 
 		(err, token) => {
-			resolve(token)
-		}
-	});
-	
-);
-}
+			resolve(token);
+		})
+	});	
+};
+
 
 /*
     Login endpoint.
@@ -130,14 +129,14 @@ app.post('/login', (req, res) => {
 	try{
 		userSchema.findOne({ email: email }).then(user => {
 			if (user) {
-				bcrypt.compare(password, user.password).then(valid => {
+				bcrypt.compare(password, user.password).then(async (valid) => {
 					if (valid) {
 						const payload = {
 							id: user.id,
 							name: user.name
 						};
 
-						var token = await createSignedToken();
+						var token = await createSignedToken(payload, config.secretKey, "1 day");
 						res.json({
 							success: true,
 							token: "Bearer " + token

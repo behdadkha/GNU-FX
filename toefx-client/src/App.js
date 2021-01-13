@@ -3,11 +3,11 @@
 */
 
 import React from "react";
-import {Provider} from "react-redux";
-import {Route, BrowserRouter as Router} from "react-router-dom";
+import { Provider } from "react-redux";
+import { Route, BrowserRouter as Router, Switch } from "react-router-dom";
 
 import jwt_decode from "jwt-decode";
-import {SetAuthHeader} from "./Utils";
+import { SetAuthHeader } from "./Utils";
 import FirstPage from "./components/FirstPage";
 import Login from "./components/Login";
 import Navbar from "./components/NavigationBar";
@@ -17,8 +17,9 @@ import MyAccount from "./components/user/MyAccount";
 import ResetPassword from "./components/user/ResetPassword";
 import Schedule from "./components/user/Schedule";
 import User from "./components/user/User";
+import Component404 from "./components/Component404";
 import store from "./Redux/store";
-import {LogOutUser, SetCurrentUser} from "./Redux/Actions/authAction";
+import { LogOutUser, SetCurrentUser } from "./Redux/Actions/authAction";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
@@ -47,34 +48,38 @@ if (localStorage.jwt) {
 }
 
 function App() {
-    const pagesWithNavbar = ["/", "/signup", "/login", "/diagnosis"]; 
+    const pagesWithNavbar = ["/", "/signup", "/login", "/diagnosis"];
 
     return (
         <Provider store={store}>
             <Router>
-            <div className="App">
-                {
-                    //Only show the navigation bar on certain pages so no scrolling is required
-                    pagesWithNavbar.includes(window.location.pathname)
-                    ? 
-                        <div className="navBar">
-                            <Navbar></Navbar>
-                        </div>
-                    :
-                        <div></div> //Empty container
-                }
+                
+                    <div className="App">
+                        {
+                            //Only show the navigation bar on certain pages so no scrolling is required
+                            pagesWithNavbar.includes(window.location.pathname)
+                                ?
+                                <div className="navBar">
+                                    <Navbar></Navbar>
+                                </div>
+                                :
+                                <div></div> //Empty container
+                        }
 
-                {/* Set up the routing */}
-                <Route path="/" component={FirstPage} exact/>
+                        {/* Set up the routing */}
+                        <Switch>
+                            <Route path="/" component={FirstPage} exact />
 
-                <Route path="/login" component={Login} exact/> 
-                <Route path="/signup" component={Signup} exact />
-                <Route path="/user" component={User} exact/>
-                <Route path="/diagnosis" component={Diagnosis} exact/>
-                <Route path="/user/schedule" component={Schedule} exact/>
-                <Route path="/user/myAccount" component={MyAccount} exact/>
-                <Route path="/user/resetPassword" component={ResetPassword} exact/>
-            </div>
+                            <Route path="/login" component={Login} exact />
+                            <Route path="/signup" component={Signup} exact />
+                            <Route path="/user" component={User} exact />
+                            <Route path="/diagnosis" component={Diagnosis} exact />
+                            <Route path="/user/schedule" component={Schedule} exact />
+                            <Route path="/user/myAccount" component={MyAccount} exact />
+                            <Route path="/user/resetPassword" component={ResetPassword} exact />
+                            <Route component={Component404} />
+                        </Switch>
+                    </div>
             </Router>
         </Provider>
     );

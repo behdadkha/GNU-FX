@@ -3,7 +3,7 @@ A web application that helps patients with detecting toe fungal infection and ke
 ## Requirements:
 * [Nodejs (15.5.1)](https://nodejs.org/en/)
 * [Python3](https://www.python.org/downloads/)<br>
-Note: Make sure you have python3 alias as python. Running ```python``` should show an interactive CI.
+Note: Make sure you have python3 alias set as python. Running ```python``` should open an interactive CI.
 ## Instructions:
 1. Open a terminal.
 2. Navigate to the toefx-client folder.

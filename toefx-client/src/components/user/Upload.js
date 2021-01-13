@@ -233,6 +233,9 @@ class Upload extends Component {
 
     /*
         Prints one of the buttons the user can press to select a toe.
+        These two functions are similar to the one found in User.js, but they are distinct
+        in the fact that they control their state differently. They do use shared CSS,
+        however, to avoid code duplication.
         param toeId: The toe the button is for.
     */
     printToeButton(toeId) {

@@ -1,10 +1,16 @@
-import React, { Component } from 'react'
-import "../componentsStyle/Component404.css";
-import errorImg from "../icons/error404.png";
 /*
-    When entered path does not exist
+    A class for a page redirected to when some component does not exist.
 */
+
+import React, {Component} from 'react'
+
+import errorImg from "../icons/error404.png";
+import "../componentsStyle/Component404.css";
+
 export default class Component404 extends Component {
+    /*
+        Prints the 404 error page.
+    */
     render() {
         return (
             <div className="Component404Center">

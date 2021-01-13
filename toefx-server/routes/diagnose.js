@@ -14,7 +14,7 @@ const utils = require('../utils');
     Prints an error message upon a failed image diagnosis.
     param error: The error to be printed.
 */
-function PrintImageValidationError(error) {
+function PrintImageDiagnosisError(error) {
     console.log("Error diagnosing the image:");
     console.log(error);
 }
@@ -54,7 +54,7 @@ diagnoseRouter.route('/loggedin').get(async (req, res) => {
         await GetAndSendDiagnosisOutput(commandCheckImage, res);
     }
     catch (e) {
-        PrintImageValidationError(e);
+        PrintImageDiagnosisError(e);
     }
 });
 
@@ -76,7 +76,7 @@ diagnoseRouter.route('/notloggedin').get(async (req, res) => {
         await GetAndSendDiagnosisOutput(commandCheckImage, res); //Try getting and send the output
     }
     catch (e) {
-        PrintImageValidationError(e);
+        PrintImageDiagnosisError(e);
     }
 });
 

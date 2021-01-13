@@ -16,7 +16,7 @@ const gPossibleFileTypes = ["image/x-png", "image/png", "image/bmp", "image/jpeg
 //TODO: Add submit button and confirmation after user uploads image
 //TODO: Image shouldn't be saved to database until it's validated.
 //TODO: Saving a temp file name is bad because what if the user uploads two images and then tries to diagnose the first?
-
+//TODO: Diagnose button needs to inform user of ongoing diagnosis.
 
 class Diagnosis extends Component {
     /*

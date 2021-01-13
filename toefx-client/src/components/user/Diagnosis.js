@@ -6,6 +6,7 @@ import React, {Component} from "react";
 import {Button, Container, Col, Row} from "react-bootstrap";
 import {connect} from "react-redux";
 import axios from "axios";
+import {config} from "../../config";
 
 import "../../componentsStyle/Diagnosis.css";
 import { GetToeName, TOE_COUNT, LEFT_FOOT_ID, RIGHT_FOOT_ID } from "../../Utils";
@@ -107,12 +108,12 @@ class Diagnosis extends Component {
         this.setState({tempfileName: file}); //Used later if the user decides to run a diagnosis
 
         if (this.props.auth.isAuth) { //If the user is logged in, the image is loaded from the database
-            axios.get(`http://localhost:3001/imagevalidation/loggedin`)
+            axios.get(`${config.dev_server}/imagevalidation/loggedin`)
                 .then(res => this.processImageValidationResult(res))
                 .catch((error) => this.printFileValidationErrorToConsole(error));
         }
         else { //If the user isn't logged in, the file has to be passed in manually
-            axios.post(`http://localhost:3001/imagevalidation/notloggedin`, {myimg: file})
+            axios.post(`${config.dev_server}/imagevalidation/notloggedin`, {myimg: file})
                 .then(res => this.processImageValidationResult(res))
                 .catch((error) => this.printFileValidationErrorToConsole(error));
         }
@@ -161,7 +162,7 @@ class Diagnosis extends Component {
         formData.append("toe", this.state.toe);
 
         if (this.props.auth.isAuth) { //User is logged in
-            axios.post("http://localhost:3001/upload/loggedin", formData, {
+            axios.post(`${config.dev_server}/upload/loggedin`, formData, {
                 onUploadProgress: (ProgressEvent) => this.updateUploadProgress(ProgressEvent)
             }).then((res) => {
                 console.log("Done, now validating the image")
@@ -170,7 +171,7 @@ class Diagnosis extends Component {
         }
         else { //User isn't logged in
             //It sends the temporary image name (time in ms) to validateImage
-            axios.post("http://localhost:3001/upload/notloggedin", formData, {
+            axios.post(`${config.dev_server}/upload/notloggedin`, formData, {
                 onUploadProgress: (ProgressEvent) => this.updateUploadProgress(ProgressEvent)
             }).then((res) => {
                 console.log("Done, now validating the image")
@@ -189,28 +190,15 @@ class Diagnosis extends Component {
         //The image name is sent as a query string imageName=
         if (this.props.auth.isAuth) {
             let imageName = this.state.files[index].name;
-            await axios.get(`http://localhost:3001/diagnose/loggedin/?imageName=${imageName}`)
-                .then((res) => {responseText = res.data;})
+            await axios.get(`${config.dev_server}/diagnose/loggedin/?imageName=${imageName}`)
+                .then((res) => {responseText = res.data})
         }
         else {
             //tempfilename would have been set earlier
             let imageName = this.state.tempfileName;
-            await axios.get(`http://localhost:3001/diagnose/notloggedin/?imageName=${imageName}`)
-                .then((res) => {responseText = res.data;})
+            await axios.get(`${config.dev_server}/diagnose/notloggedin/?imageName=${imageName}`)
+                .then((res) => {responseText = res.data})
         }
-
-        /* BACK-END FUNCTION NOT READY YET - DON't DELETE!
-        const response = await fetch(
-            `http://localhost:3001/diagnose/?imageName=${imageName}`,
-            {
-                method: "GET",
-                headers: new Headers({
-                    'Authorization': Basic
-                })
-            }
-        );*/
-
-        //let responseText = await response.data;
 
         this.setState({
             diagnosis: [

@@ -4,97 +4,105 @@ const userRoutes = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const config = require('../config');
+const utils = require('../utils');
 //user schema
 const userSchema = require("../database/userSchema");
 
+/*
+    Hashes the given password.
+    Param password: the text that needs to be hashed.
+    Param hashRounds: the number of rounds the hash function should run.
+    returns a promise with hash if resolved.
+*/
+function hashPassword(password, hashRounds){
+    return new Promise((resolve, reject) => {
+        bcrypt.genSalt(rounds, (err, salt) => {
+            bcrypt.hash(newPassword1, salt, (err, hash) => {
+                if (err) throw err;
+    
+                //return the hashed password
+                resolve(hash);
+                
+            });
+        });
+        reject();
+    });
+    
+}
 
-//sends back user info for the myAccount page
-//sends email for now...
-userRoutes.route('/getUserInfo').get((req, res) => {
+/*
+    Endpoint: /user/getUserInfo
+    Finds the user in the database and returns their email and age.
+    returns as the response: user's email address and age.
+*/
+userRoutes.route('/getUserInfo').get(async (req, res) => {
     try {
         const token = req.headers.authorization;
-        const data = jwt.verify(token.replace("Bearer ", ""), config.secretKey);
-        const userId = data.id;
+        let userId = utils.validateUser(token, res);
 
-        userSchema.findOne({ _id: userId }).then(data => {
-            if (data) {
-                res.json(data.email);
-            } else {
-                res.status(400).json({ msg: "not found" });
-            }
-        });
+        let user = await utils.findPeople(userId, res);
+        res.json({email: user.email, age: user.age});
 
     } catch {
         console.log("Couldnt get users info at /getUserInfo");
     }
 });
 
-//sends back user's schedule
-userRoutes.route('/getschedule').get((req, res) => {
+/*
+    Endpoint: /user/getschedule
+    Finds the user in the database and return their schedule.
+    returns as the response: user's schedule.
+*/
+userRoutes.route('/getschedule').get(async (req, res) => {
     try {
         const token = req.headers.authorization;
-        const data = jwt.verify(token.replace("Bearer ", ""), config.secretKey);
-        const userId = data.id;
+        let userId = utils.validateUser(token, res);
 
-        userSchema.findOne({ _id: userId }).then(data => {
-            if (data) {
-                res.json(data.schedule);
-            } else {
-                res.status(400).json({ msg: "not found" });
-            }
-        });
+        let user = await utils.findPeople(userId, res);
+        res.json(user.schedule);
     }
     catch (e) {
         console.log("Something happened when tried to get user schedule (might be an invalid user)");
     }
 });
 
-userRoutes.post('/resetPassword', (req, res) => {
+/*
+    Endpoint: /user/resetPassword
+    changes the user's password to a new password.
+    Body Param currentPassword: the user's currently saved password. 
+    Body Param newPassword1: the new password to replace the old password.
+    Body Param newPassword2: same as the newPassword1.
+*/
+userRoutes.post('/resetPassword', async (req, res) => {
     try {
 
         const token = req.headers.authorization;
-        const data = jwt.verify(token.replace("Bearer ", ""), config.secretKey);
-        const userId = data.id;
+        let userId = utils.validateUser(token, res);
 
         const { currentPassword, newPassword1, newPassword2 } = req.body;
 
-        userSchema.findOne({ _id: userId }).then(user => {
-            if (user) {
-                //check if the currentpassword is correct
-                bcrypt.compare(currentPassword, user.password).then(valid => {
+        let user = await utils.findPeople(userId, res);
+        if (user) {
+            //check if the currentpassword is correct
+            bcrypt.compare(currentPassword, user.password).then(async (valid) => {
 
-                    if (valid) {
-                        //if the passwords match
-                        if (newPassword1 === newPassword2) {
-                            //hash rounds
-                            const rounds = 10
-                            //hash the password
-                            bcrypt.genSalt(rounds, (err, salt) => {
-                                bcrypt.hash(newPassword1, salt, (err, hash) => {
-                                    if (err) throw err;
+                if (valid) {
+                    //if the passwords match
+                    if (newPassword1 === newPassword2) {
+                        //hash the password
+                        const rounds = 10;
+                        user.password = await hashPassword(newPassword1, rounds);
 
-                                    //saves the new password in Database
-                                    user.password = hash;
-                                    user.save().then(() => {
-
-                                        res.status(200).json({msg : "password changed"});
-
-                                    }).catch(err => console.log(err));
-                                });
-                            });
-                        }
-                    } else {
-                        
-                        return res.json({ msg: "Invalid password" });
+                        user.save().then(() => {
+                            res.status(200).json({msg : "password changed"});
+                        }).catch(err => console.log(err));
                     }
-                });
-
-            } else {
-                //user does not exist (invalid jwt)
-                res.json({ msg: "not found" });
-
-            }
-        });
+                } else {
+                    
+                    return res.json({ msg: "Invalid password" });
+                }
+            });
+        };
 
     } catch {
         console.log("Failed to reset password");

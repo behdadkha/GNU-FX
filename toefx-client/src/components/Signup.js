@@ -84,8 +84,8 @@ export default class Signup extends Component {
         if (response.status === 200) { //Sign-up was a success
             await response.json();
 
-            //Redirect to User page
-            this.props.history.push('/user');
+            //Redirect to login page
+            this.props.history.push('/login');
 
         }
         else if(response.status === 400) { //Account already exists

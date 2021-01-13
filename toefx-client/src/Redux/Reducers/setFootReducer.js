@@ -4,6 +4,10 @@ const initialState = {
     toeData: []
 }
 
+/*
+    Helps save the selected foot, images and toe data to the database.
+    Redux
+*/
 export default function(state = initialState , action) {
     switch(action.type){
         case "SET_SELECTED_FOOT":

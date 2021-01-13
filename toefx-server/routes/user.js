@@ -44,7 +44,7 @@ function hashPassword(password, hashRounds) {
 userRoutes.route('/getUserInfo').get(async (req, res) => {
     try {
         //Get the user
-        var user = await utils.loadUserObject(req, res).user;
+        var user = (await utils.loadUserObject(req, res)).user;
 
         //Return the data
         res.json({email: user.email, age: user.age});
@@ -64,12 +64,13 @@ userRoutes.route('/getUserInfo').get(async (req, res) => {
 userRoutes.route('/getschedule').get(async (req, res) => {
     try {
         //Get the user
-        var user = await utils.loadUserObject(req, res).user;
-
+        var user = (await utils.loadUserObject(req, res)).user;
+        
         //Return the data
         res.json(user.schedule);
     }
     catch (e) {
+        console.log(e);
         console.log("An error occurred while attempting to retrieve a user's schedule. Possibly due to an invalid user.");
     }
 });
@@ -86,8 +87,8 @@ userRoutes.route('/getschedule').get(async (req, res) => {
 userRoutes.post('/resetPassword', async (req, res) => {
     try {
         const {currentPassword, newPassword1, newPassword2} = req.body;
-        var user = await LoadUserObject(req, res).user
-
+        var user = (await utils.loadUserObject(req, res)).user;
+        
         if (user) {
             bcrypt.compare(currentPassword, user.password).then(async (valid) => { //Check if the current password is correct
                 if (valid) {

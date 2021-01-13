@@ -54,10 +54,10 @@ async function loadUserObject(req, res) {
     const token = req.headers.authorization;
     var userId = getUserIdFromToken(token, res);
     var user = await getUserByUserId(userId, res); //The user object
-
+    
     return {
         user: user,
-        userId: userId,
+        id: userId,
     }
 }
 

@@ -54,7 +54,7 @@ class Sidebar extends Component {
                     <div>
                         <Button className="new-appointment-button"
                             onClick={() => {
-                                this.props.history.push('/diagnosis');
+                                this.props.history.push('/upload');
                                 window.location.reload();
                             }}
                         >+ Upload Image</Button>

@@ -16,7 +16,7 @@ class NavigationBar extends Component {
     */
     render() {
         var loginSignup, logo, loggedInNav;
-        var pagesWithNavbar = ["/", "/login", "/signup", "/diagnosis"];
+        var pagesWithNavbar = ["/", "/login", "/signup", "/upload"];
 
         //Show Dashboard and Log Out if user is logged in
         if (this.props.auth.isAuth) {
@@ -67,7 +67,7 @@ class NavigationBar extends Component {
             loggedInNav =
             <Nav className="mr-auto">
                 <Nav.Link href="/">Home</Nav.Link>
-                <Nav.Link href="/diagnosis">Diagnosis</Nav.Link>
+                <Nav.Link href="/upload">Diagnosis</Nav.Link>
             </Nav>;
         }
 

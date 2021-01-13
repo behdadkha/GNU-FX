@@ -12,10 +12,10 @@ import FirstPage from "./components/FirstPage";
 import Login from "./components/Login";
 import Navbar from "./components/NavigationBar";
 import Signup from "./components/Signup";
-import Diagnosis from "./components/user/Diagnosis";
 import MyAccount from "./components/user/MyAccount";
 import ResetPassword from "./components/user/ResetPassword";
 import Schedule from "./components/user/Schedule";
+import Upload from "./components/user/Upload";
 import User from "./components/user/User";
 import Component404 from "./components/Component404";
 import store from "./Redux/store";
@@ -48,7 +48,7 @@ if (localStorage.jwt) {
 }
 
 function App() {
-    const pagesWithNavbar = ["/", "/signup", "/login", "/diagnosis"];
+    const pagesWithNavbar = ["/", "/signup", "/login", "/upload"];
 
     return (
         <Provider store={store}>
@@ -73,7 +73,7 @@ function App() {
                             <Route path="/login" component={Login} exact />
                             <Route path="/signup" component={Signup} exact />
                             <Route path="/user" component={User} exact />
-                            <Route path="/diagnosis" component={Diagnosis} exact />
+                            <Route path="/upload" component={Upload} exact />
                             <Route path="/user/schedule" component={Schedule} exact />
                             <Route path="/user/myAccount" component={MyAccount} exact />
                             <Route path="/user/resetPassword" component={ResetPassword} exact />

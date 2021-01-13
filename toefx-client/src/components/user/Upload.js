@@ -8,7 +8,7 @@ import {connect} from "react-redux";
 import axios from "axios";
 import {config} from "../../config";
 
-import "../../componentsStyle/Diagnosis.css";
+import "../../componentsStyle/Upload.css";
 import { GetToeName, TOE_COUNT, LEFT_FOOT_ID, RIGHT_FOOT_ID } from "../../Utils";
 
 const gPossibleFileTypes = ["image/x-png", "image/png", "image/bmp", "image/jpeg"];
@@ -19,7 +19,7 @@ const gPossibleFileTypes = ["image/x-png", "image/png", "image/bmp", "image/jpeg
 //TODO: Diagnose button needs to inform user of ongoing diagnosis.
 
 
-class Diagnosis extends Component {
+class Upload extends Component {
     /*
         Sets base data for the page.
     */
@@ -405,4 +405,4 @@ const mapStateToProps = (state) => ({
     auth: state.auth,
 });
 
-export default connect(mapStateToProps)(Diagnosis);
+export default connect(mapStateToProps)(Upload);

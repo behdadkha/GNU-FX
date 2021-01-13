@@ -275,7 +275,7 @@ app.get('/deleteImage', async (req, res) => {
 	Find the user's toe data from the DB.
 	Returns as the response: the toe data.
 */
-app.get('/getToe', (req, res) => {
+app.get('/getToe', async (req, res) => {
 
     try {
         var userObject = await utils.loadUserObject(req, res);

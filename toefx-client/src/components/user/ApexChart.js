@@ -194,7 +194,7 @@ class ApexChart extends React.Component {
         var defaultToeButtonClass = "graph-toe-button";
         var activeToeButtonClass = defaultToeButtonClass + " active-toe-button"; //When the toe's data is being shown on the chart
 
-        return (<button onClick={this.showToe.bind(this, toeId)}
+        return (<button key={toeId} onClick={this.showToe.bind(this, toeId)}
                 className={(this.state.shownToes[toeId] ? activeToeButtonClass : defaultToeButtonClass)}>
             {GetToeName(toeId)}
         </button>);

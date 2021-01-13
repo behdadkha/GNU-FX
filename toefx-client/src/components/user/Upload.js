@@ -159,8 +159,8 @@ class Upload extends Component {
         //Now that the file has been confirmed, upload it to the database -- THIS SHOULD COME AFTER VALIDATION!!!
         const formData = new FormData(); //formData contains the image to be uploaded
         formData.append("file", e.target.files[0]);
-        formData.append("foot", this.state.foot);
-        formData.append("toe", this.state.toe);
+        formData.append("foot", this.state.selectedFootId);
+        formData.append("toe", this.state.selectedToeId);
 
         if (this.props.auth.isAuth) { //User is logged in
             axios.post(`${config.dev_server}/upload/loggedin`, formData, {

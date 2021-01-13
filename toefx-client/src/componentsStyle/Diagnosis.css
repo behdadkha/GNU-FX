@@ -1,37 +1,31 @@
-#DiagnosisFont{
-    font-family: 'Nunito', sans-serif;
+.diagnosis-question {
     margin-top: 1%;
     font-size: 130%;
 }
 
-.SelectBtns{
-    font-family: 'Balsamiq Sans', cursive;
-    margin-top: 1.3%;
-    width: 50%;
-    height: 150%;
-}
-
-#UploadBtn{
-    width: 100%;
-    
-    height: auto;
+.upload-image-button {
+    font-size: 24px !important;
+    width: fit-content;
+    padding: 20px 40px;
+    border-radius: 10px;
     cursor: pointer;
 }
 
-#DiagnosisUploadBtnFONT{
-    font-family: 'Acme', sans-serif;
-    color: white;
-    width: 100%;
-    cursor: pointer;
+.greyed-button {
+    background-color: grey !important;
+    border: revert !important;
 }
 
-.input-group {
-    margin-top: 1%;
+.centred-text-with-margin-above {
     text-align: center;
     justify-content: center;
+    margin-top: 1%;
 }
 
-.diagnose-img
-{
+.diagnosis-img {
     width : "40%"
+}
+
+.diagnosis-results-container {
+    margin: auto;
 }

@@ -1,3 +1,7 @@
+/*
+    A class for helping the user reset their password.
+*/
+
 import Axios from 'axios';
 import React, {Component} from 'react'
 import {Button, Form} from 'react-bootstrap';

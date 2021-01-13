@@ -220,11 +220,9 @@ class ApexChart extends React.Component {
                     ALL
                 </button>
 
-                {this.printToeButton(toeOrder[0])}
-                {this.printToeButton(toeOrder[1])}
-                {this.printToeButton(toeOrder[2])}
-                {this.printToeButton(toeOrder[3])}
-                {this.printToeButton(toeOrder[4])}
+                {
+                    toeOrder.map((toeId) => this.printToeButton(toeId))
+                }
             </span>
         );
     }

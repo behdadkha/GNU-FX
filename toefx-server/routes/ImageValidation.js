@@ -1,64 +1,83 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const imageValidationRoutes = express.Router();
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const config = require('../config');
-const server = require('../server.js');
-const utils = require('../utils');
-const { exec } = require("child_process");
+/*
+    Functions for validating whether or not an image is of a toe.
+*/
 
-var jsonParser = bodyParser.json();
-var urlencodedParser = bodyParser.urlencoded({ extended: false })
+const express = require('express');
+const imageValidationRoutes = express.Router();
+const utils = require('../utils');
+
+//TODO: The user's last image shouldn't be checked, since the saving should only happen once the image is validated.
+
+
+/*
+    Prints an error message upon a failed image validation.
+    param error: The error to be printed.
+*/
+function PrintImageValidationError(error) {
+    console.log("Error validating the image:");
+    console.log(error);
+}
+
+/*
+    Runs the diagnosis on the image.
+    commandCheckImage: The command for running the image validation.
+    param res: The object to store and send the result in.
+*/
+async function GetAndSendValidationOutput(commandCheckImage, res)
+{
+    let output = await utils.runCommand(commandCheckImage);
+    res.send(output);
+}
 
 /*
     Endpoint: /imageValidation/loggedin
-    checks to see if the uploaded image is a valid image containing a toe.
-    It checks the most recent image in the images arrays because the uploaded image first gets added to the images array in the DB.
-    returns as the reponse: the output from running the python script. "toe" or "NotToe".
+    Checks to see if the uploaded image is a valid image containing a toe.
+        It checks the most recent image in the images arrays because the uploaded image
+        first gets added to the images array in the database.
+    param req: An object with data about the current user. Stored in req.headers.authorization.
+    param res: The object to store and send the result in.
+    returns: The respone being the output from running the python script. "toe" or "NotToe".
 */
 imageValidationRoutes.route('/loggedin').get(async (req, res) => {
     try {
-        
-        //validate the user
-        const token = req.headers.authorization;
-        let userId = utils.validateUser(token, res);
+        //Load the user
+        var userObject = await utils.loadUserObject(req, res);
+        var user = userObject.user;
+        var userId = userObject.id;
 
-        console.log("Checking the image");
-
-        //getting the user's last image
-        let user = await utils.findPeople(userId, res);
-        let imageName = user.images[user.images.length - 1];
-        console.log("userID: ", userId);
-        console.log("imagename: ", imageName);
-
+        //Get the image to be validaed
+        let imageName = user.images[user.images.length - 1]; //The user's last uploaded image
         let commandCheckImage = `cd ./AI/imagecheck && python predictToeOrNot.py ../../images/${userId}/${imageName}`;
-        let output = await utils.runCommand(commandCheckImage);
-        res.send(output);
+        console.log("Validating the image...");
+        console.log("userID: ", userId);
+        console.log("imageName: ", imageName);
 
-    } catch (e) {
-        console.log("error validating the image");
-        console.log(e);
+        //Get and send the output
+        GetAndSendValidationOutput(commandCheckImage, res);
     }
-})
+    catch (e) {
+        PrintImageValidationError(e);
+    }
+});
 
 /*
     Endpoint: /imageValidation/notloggedin
     checks to see if the uploaded image is a valid image containing a toe.
-    returns as the reponse: the output from running the python script. "toe" or "NotToe".
+    param req: An object with data about the image to be checked. Stored in req.body.myimg.
+    param res: The object to store and send the result in.
+    returns: The respone being the output from running the python script. "toe" or "NotToe".
 */
 imageValidationRoutes.route('/notloggedin').post(async (req, res) => {
     let imageName = req.body.myimg;
+    let commandCheckImage = `cd ./AI/imagecheck && python predictToeOrNot.py ../../tempImages/${imageName}`;
+    console.log("Validating: ", imageName);
+
     try {
-        console.log("imagename: ", imageName);
-
-        let commandCheckImage = `cd ./AI/imagecheck && python predictToeOrNot.py ../../tempImages/${imageName}`;
-        let output = await utils.runCommand(commandCheckImage);
-        res.send(output);
-    } catch (e) {
-        console.log("error validating the image");
-        console.log(e);
+        GetAndSendValidationOutput(commandCheckImage, res);
     }
+    catch (e) {
+        PrintImageValidationError(e);
+    }
+});
 
-})
 module.exports = imageValidationRoutes;

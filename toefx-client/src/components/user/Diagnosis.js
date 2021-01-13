@@ -18,6 +18,7 @@ const gPossibleFileTypes = ["image/x-png", "image/png", "image/bmp", "image/jpeg
 //TODO: Saving a temp file name is bad because what if the user uploads two images and then tries to diagnose the first?
 //TODO: Diagnose button needs to inform user of ongoing diagnosis.
 
+
 class Diagnosis extends Component {
     /*
         Sets base data for the page.
@@ -240,7 +241,7 @@ class Diagnosis extends Component {
 
         return (
             <button onClick={this.setToe.bind(this, toeId)}
-                    className={(this.state.selectedToeId == toeId ? activeToeButtonClass : defaultToeButtonClass)}>
+                    className={(this.state.selectedToeId === toeId ? activeToeButtonClass : defaultToeButtonClass)}>
                 {GetToeName(toeId)}
             </button>
         );
@@ -254,7 +255,7 @@ class Diagnosis extends Component {
         for (let i = 0; i < TOE_COUNT; ++i)
             toeOrder.push(i); //Initial view in order of ids (based on right foot)
 
-        if (this.state.selectedFootId == LEFT_FOOT_ID)
+        if (this.state.selectedFootId === LEFT_FOOT_ID)
             toeOrder.reverse(); //Toes go in opposite order on left foot
 
         return (
@@ -293,12 +294,12 @@ class Diagnosis extends Component {
                 {/* Buttons to change which foot is being viewed */}
                                 <div className="graph-feet-buttons">
                     <button onClick={this.setFoot.bind(this, LEFT_FOOT_ID)}
-                                className={(this.state.selectedFootId == LEFT_FOOT_ID ? activeFootButtonClass : defaultFootButtonClass)}>
+                                className={(this.state.selectedFootId === LEFT_FOOT_ID ? activeFootButtonClass : defaultFootButtonClass)}>
                             Left Foot
                     </button>
 
                     <button onClick={this.setFoot.bind(this, RIGHT_FOOT_ID)}
-                                className={(this.state.selectedFootId == RIGHT_FOOT_ID ? activeFootButtonClass : defaultFootButtonClass)}>
+                                className={(this.state.selectedFootId === RIGHT_FOOT_ID ? activeFootButtonClass : defaultFootButtonClass)}>
                             Right Foot
                     </button>
                 </div>

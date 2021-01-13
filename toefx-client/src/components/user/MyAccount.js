@@ -15,8 +15,8 @@ import Sidebar from "./Sidebar";
 
 import '../../componentsStyle/MyAccount.css'
 
+//TODO: Delete button should delete the image with confirmation before and after delete
 
-//TOOD: Delete button should actually delete the image with confirmation before and after delete
 
 class MyAccount extends Component {
     /*

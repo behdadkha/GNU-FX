@@ -21,6 +21,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 const mongoose = require('mongoose');
+
+
 /*
 	database schemas
 */
@@ -47,7 +49,6 @@ function createImageFolder(userId){
             resolve();
         })
     })
-    
 }
 
 /*
@@ -70,7 +71,6 @@ function createNewUser(name, email, password, age) {
                 //creating a new user with the hashed password
                 const newUser = new userSchema({ email: email, name: name, password: hash, images: [], age: age });
                 newUser.save().then(() => {
-                    
                     console.log("new user added to db");
                     resolve(newUser);
 
@@ -84,9 +84,7 @@ function createNewUser(name, email, password, age) {
 	Creates a new object in the toe-data (database) for a new user.
 */
 function createEmptyToeEntery(userId){
-	
 	const emptyFeet = utils.emptyFeet;
-
 	const newToeData = new toe_dataSchema({ 
 		userID: userId,
 		feet: emptyFeet
@@ -97,8 +95,6 @@ function createEmptyToeEntery(userId){
 			resolve();
 		});
 	});
-	
-	
 }
 
 /*
@@ -108,7 +104,7 @@ function createEmptyToeEntery(userId){
 */
 function createSignedToken(payload, key, expiresIn){
 	return new Promise((resolve, reject) => {
-		jwt.sign(payload, key, { expiresIn: expiresIn }, 
+		jwt.sign(payload, key, {expiresIn: expiresIn}, 
 		(err, token) => {
 			resolve(token);
 		})
@@ -123,10 +119,10 @@ function createSignedToken(payload, key, expiresIn){
     Body Param password: user's password in text.  
 */
 app.post('/login', (req, res) => {
-	const { email, password } = req.body;
+	const {email, password} = req.body;
 	
 	//searching for the provided email in the database
-	try{
+	try {
 		userSchema.findOne({ email: email }).then(user => {
 			if (user) {
 				bcrypt.compare(password, user.password).then(async (valid) => {
@@ -141,23 +137,22 @@ app.post('/login', (req, res) => {
 							success: true,
 							token: "Bearer " + token
 						});
-						
-					} else {
+                    }
+                    else {
 						return res.status(400).json(undefined);
 					}
 				});
 
-			} else {//the email address is not found
+            }
+            else { //the email address is not found
 				res.status(400).json(undefined);
 			}
 		});
 	}
-	catch{
+	catch {
 		console.log("Login failed");
 	}
-
 });
-
 
 /*
 	signup endpoint.
@@ -176,8 +171,9 @@ app.post('/signup', (req, res) => {
             //the email address already exists
             if (user) {
                 return res.status(400).json({ msg: "Account already exists" });
-            } else {
-				try{
+            }
+            else {
+				try {
 					//creating a new user
 					const user = await createNewUser(name, email, password, age);
 					//creating a new image folder for the user
@@ -186,17 +182,17 @@ app.post('/signup', (req, res) => {
 							res.status(200).json({});
 						});
 					})
-				}catch{
+                }
+                catch {
 					res.status(400).json();
 				}
-                
             }
         });
-    } catch {
+    }
+    catch {
         console.log("not able to finish the signup process");
     }
 });
-
 
 /*
 	Recieves an image name as the query parameter and checks if the image belongs to the user
@@ -206,20 +202,18 @@ app.post('/signup', (req, res) => {
 app.get('/getImage', async (req, res) => {
     try {
         //validating the user token
-        const token = req.headers.authorization;
-        let userId = utils.validateUser(token, res);
-
-        let user = await utils.findPeople(userId, res);
+        var userObject = await utils.loadUserObject(req, res);
+        var user = userObject.user;
+        var userId = userObject.id;
         let imageName = req.query.imageName;
 
         //if the specified images is actually owned by the the user
-        if (await user.images.includes(imageName)) {
+        if (await user.images.includes(imageName))
             res.sendFile(`${__dirname}/images/${userId}/${imageName}`);
-        }
-        else {
+        else
             res.status(400).json({ msg: "Invalid request" });
-        }
-    } catch (e) {
+    }
+    catch (e) {
         //console.log(e)
         console.log("invalid token , tried to get an image");
     }
@@ -235,15 +229,16 @@ app.get('/getImage', async (req, res) => {
 */
 app.get('/deleteImage', async (req, res) => {
     try {
-        const token = req.headers.authorization;
-        let userId = utils.validateUser(token, res);
+        var userObject = await utils.loadUserObject(req, res);
+        var user = userObject.user;
+        var userId = userObject.id;
 
         const footIndex = req.query.footIndex;
         const toeIndex = req.query.toeIndex;
         const imageIndex = req.query.imageIndex;
         const imageName = req.query.imageName;
 
-        //deleting the toe from toe data collection
+        //Delete the toe from toe data collection
         const toeData = await utils.getToeData(userId);
         if (toeData) {
             try {
@@ -251,12 +246,12 @@ app.get('/deleteImage', async (req, res) => {
             } catch {
                 res.status(400).json({ msg: "specified toe does not exist" });
             }
-        } else {
+        }
+        else {
             res.status(400).json({ msg: "not found" });
         }
 
         //deleting the toe image from the user collection
-        let user = await utils.findPeople(userId, res);
         user.images.splice(user.images.findIndex(name => name == imageName), 1);
 
         //deleting the toe image from the user images folder
@@ -270,8 +265,8 @@ app.get('/deleteImage', async (req, res) => {
         user.save();
 
         res.status(200).json({});
-
-    } catch {
+    }
+    catch {
         console.log("Something happened when tried to delete an image (might be an invalid user)");
     }
 });
@@ -283,8 +278,8 @@ app.get('/deleteImage', async (req, res) => {
 app.get('/getToe', (req, res) => {
 
     try {
-        const token = req.headers.authorization;
-        let userId = utils.validateUser(token, res);
+        var userObject = await utils.loadUserObject(req, res);
+        var userId = userObject.id;
 
         //find the user's data from the database(take a look at database/toe-dataSchema.js)
         toe_dataSchema.findOne({ userID: userId }).then(data => {
@@ -298,7 +293,6 @@ app.get('/getToe', (req, res) => {
     catch (e) {
         console.log("Something happened when tried to access toe-data (might be an invalid user)");
     }
-
 });
 
 /*
@@ -306,13 +300,11 @@ app.get('/getToe', (req, res) => {
 */
 app.get('/getImageNames', async (req, res) => {
     try {
-        const token = req.headers.authorization;
-		let userId = utils.validateUser(token, res);
-		
-		let user = await utils.findPeople(userId, res);
+        var userObject = await utils.loadUserObject(req, res);
+        var user = userObject.user;
         res.send(user.images)
-
-    } catch {
+    }
+    catch {
         console.log("Something happened when tried to get user's image names");
     }
 });
@@ -324,8 +316,6 @@ app.use('/upload', uploadImage);
 app.use('/imageValidation', imageValidationRoutes);
 app.use('/diagnose', diagnoseRouter);
 app.use('/user', userRoutes);
-
-
 
 app.listen(process.env.PORT || 3001, () => {
     console.log("server running on 3001");

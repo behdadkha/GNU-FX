@@ -70,8 +70,8 @@ userRoutes.route('/getschedule').get(async (req, res) => {
         res.json(user.schedule);
     }
     catch (e) {
-        console.log(e);
         console.log("An error occurred while attempting to retrieve a user's schedule. Possibly due to an invalid user.");
+        console.log(e);
     }
 });
 

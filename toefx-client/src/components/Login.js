@@ -11,6 +11,7 @@ import store from "../Redux/store";
 import {SetCurrentUser} from "../Redux/Actions/authAction";
 import {getAndSaveImages, getAndSaveToeData} from "../Redux/Actions/setFootAction";
 import {SetAuthHeader} from "../Utils";
+import Axios from 'axios';
 
 import "../componentsStyle/Login.css";
 
@@ -24,7 +25,6 @@ export default class Login extends Component {
         this.state = {
             email: "", //The user's email input
             password: "", //The user's password input
-            user: null, //Stores the user object if their login is a success
             invalidUser: false //Indicates whether or not an error message should be displayed
         };
     }
@@ -35,40 +35,30 @@ export default class Login extends Component {
     */
     handleLoginPatient = async (e) => {
         e.preventDefault(); //Prevents page reload on form submission
-
         //Try to log in user
-        const response = await fetch(`${config.dev_server}/login`, {
-            method: "POST",
-            headers: {
-                Accept: "application/json",
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                email: this.state.email,
-                password: this.state.password,
-            }),
-        });
-
+        const response = await Axios.post(`${config.dev_server}/login`,{
+            email: this.state.email,
+            password: this.state.password
+        })
         //Process response from server
         if (response.status === 200) { //The login was a success
-            let body = await response.json();
-            this.setState({
-                user: body,
-            });
-            
+            let body = response.data;
+
             const {token} = body; //Extract the token from the response
             localStorage.setItem("jwt", token); //Save the token in localstorage
+
             SetAuthHeader(token); //Set the token to header for feature requests
             store.dispatch(SetCurrentUser(jwt_decode(token))); //Add the user data(decoded) to the store 
-            
+
             //Load all of the user's images from the server
             store.dispatch(getAndSaveImages());
 
             //Load all of the user's toe data from the server like fungal coverage
             store.dispatch(getAndSaveToeData());
-            
+
             //Redirect to User page
-            this.props.history.push('/user');
+            this.redirectTo('/user');
+            
             //By reloading the page, the true path becomes /user and the header bar disappears
             window.location.reload();
         }
@@ -78,6 +68,10 @@ export default class Login extends Component {
             });
         }
     };
+
+    redirectTo = (path) => {
+        this.props.history.push(path);
+    }
 
     /*
         Displays the login page.

@@ -120,7 +120,7 @@ function createSignedToken(payload, key, expiresIn) {
 */
 app.post('/login', (req, res) => {
     const { email, password } = req.body;
-
+    if(email === "" || password === ""){return res.status(400).json({msg: "Required input is empty"});}
     //searching for the provided email in the database
     try {
         userSchema.findOne({ email: email }).then(user => {
@@ -234,6 +234,7 @@ app.get('/getImage', async (req, res) => {
     }
     catch (e) {
         //console.log(e)
+        res.status(400).json({ msg: "Invalid token , tried to get an image" });
         console.log("invalid token , tried to get an image");
     }
 });

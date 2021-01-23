@@ -3,11 +3,6 @@
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
-  "__jest":{
-    "testPathIgnorePatterns": [
-      "./tests/signup.test.js"
-    ]
-  },
   "scripts": {
     "test": "jest --testEnvironment=node --verbose --forceExit --watchAll --maxWorkers=1",
     "start": "node server.js"

@@ -24,7 +24,7 @@ const mongoose = require('mongoose');
 
 
 /*
-	database schemas
+    database schemas
 */
 const userSchema = require("./database/userSchema");
 const toe_dataSchema = require("./database/toe-dataSchema");
@@ -43,7 +43,7 @@ const toe_dataSchema = require("./database/toe-dataSchema");
     The folder will be user for storing the images.
     Param userId: the folder's name referring the the folder owner.
 */
-function createImageFolder(userId){
+function createImageFolder(userId) {
     return new Promise((resolve, reject) => {
         utils.runCommand(`cd images && mkdir ${userId}`).then(() => {
             resolve();
@@ -76,39 +76,39 @@ function createNewUser(name, email, password, age) {
 
                 }).catch(err => console.log(err));
             });
-		});
+        });
     });
 }
 
 /*
-	Creates a new object in the toe-data (database) for a new user.
+    Creates a new object in the toe-data (database) for a new user.
 */
-function createEmptyToeEntery(userId){
-	const emptyFeet = utils.emptyFeet;
-	const newToeData = new toe_dataSchema({ 
-		userID: userId,
-		feet: emptyFeet
-	});
+function createEmptyToeEntery(userId) {
+    const emptyFeet = utils.emptyFeet;
+    const newToeData = new toe_dataSchema({
+        userID: userId,
+        feet: emptyFeet
+    });
 
-	return new Promise((resolve, reject) => {	
-		newToeData.save().then(() => {
-			resolve();
-		});
-	});
+    return new Promise((resolve, reject) => {
+        newToeData.save().then(() => {
+            resolve();
+        });
+    });
 }
 
 /*
-	creates a signed jwt token.
-	Sent to the user on login
-	returns a promise with the token if resolved.
+    creates a signed jwt token.
+    Sent to the user on login
+    returns a promise with the token if resolved.
 */
-function createSignedToken(payload, key, expiresIn){
-	return new Promise((resolve, reject) => {
-		jwt.sign(payload, key, {expiresIn: expiresIn}, 
-		(err, token) => {
-			resolve(token);
-		})
-	});	
+function createSignedToken(payload, key, expiresIn) {
+    return new Promise((resolve, reject) => {
+        jwt.sign(payload, key, { expiresIn: expiresIn },
+            (err, token) => {
+                resolve(token);
+            })
+    });
 };
 
 
@@ -119,72 +119,70 @@ function createSignedToken(payload, key, expiresIn){
     Body Param password: user's password in text.  
 */
 app.post('/login', (req, res) => {
-	const {email, password} = req.body;
-	
-	//searching for the provided email in the database
-	try {
-		userSchema.findOne({ email: email }).then(user => {
-			if (user) {
-				bcrypt.compare(password, user.password).then(async (valid) => {
-					if (valid) {
-						const payload = {
-							id: user.id,
-							name: user.name
-						};
+    const { email, password } = req.body;
 
-						var token = await createSignedToken(payload, config.secretKey, "1 day");
-						res.json({
-							success: true,
-							token: "Bearer " + token
-						});
+    //searching for the provided email in the database
+    try {
+        userSchema.findOne({ email: email }).then(user => {
+            if (user) {
+                bcrypt.compare(password, user.password).then(async (valid) => {
+                    if (valid) {
+                        const payload = {
+                            id: user.id,
+                            name: user.name
+                        };
+
+                        var token = await createSignedToken(payload, config.secretKey, "1 day");
+                        res.json({
+                            success: true,
+                            token: "Bearer " + token
+                        });
                     }
                     else {
-						return res.status(400).json(undefined);
-					}
-				});
+                        return res.status(400).json(undefined);
+                    }
+                });
 
             }
             else { //the email address is not found
-				res.status(400).json(undefined);
-			}
-		});
-	}
-	catch {
-		console.log("Login failed");
-	}
+                res.status(400).json(undefined);
+            }
+        });
+    }
+    catch {
+        console.log("Login failed");
+    }
 });
 
 /*
-	creates a signed jwt token.
-	Sent to the user on login
-	returns a promise with the token if resolved.
+    If any of the required inputs are empty or undefined, returns an error message
 */
-function checkInput(name,email,password,age){
+function checkInput(name, email, password, age) {
     // if required input is empty
-    if (name === "" || email === "" || password === "" || age === ""){
-        return("Required input is empty");
+    if (name === "" || email === "" || password === "" || age === "") {
+        return ("Required input is empty");
     }
     //if required input is undefined
-    else if (name === undefined || email === undefined || password === undefined || age === undefined){
+    else if (name === undefined || email === undefined || password === undefined || age === undefined) {
         return ("Required input is undefined");
     }
-    else{
-        return("NOERROR");
+    else {
+        return ("NOERROR");
     }
 }
 /*
-	signup endpoint.
-	Creates a new user and an image folder for the new user. 
-	returns a 200 response if successful, 400 otherwise
-	Param name: the name given by the user in the signup form.
+    signup endpoint.
+    Creates a new user and an image folder for the new user. 
+    returns a 200 response if successful, 400 otherwise
+    Param name: the name given by the user in the signup form.
     Param email: the email address given by the user.
     Param password: the password in text given by the user.
     Param age: user's age.
 */
 app.post('/signup', (req, res) => {
     const { name, email, password, age } = req.body;
-    const inputValidMsg = checkInput(name,email,password,age);
-    if (inputValidMsg !== "NOERROR"){
+    const inputValidMsg = checkInput(name, email, password, age);
+    if (inputValidMsg !== "NOERROR") {
         return res.status(400).json({ msg: inputValidMsg });
     }
     try {
@@ -194,19 +192,19 @@ app.post('/signup', (req, res) => {
                 return res.status(400).json({ msg: "Account already exists" });
             }
             else {
-				try {
-					//creating a new user
-					const user = await createNewUser(name, email, password, age);
-					//creating a new image folder for the user
-					createImageFolder(user.id).then(() => {
-						createEmptyToeEntery(user.id).then(() => {
-							res.status(200).json({});
-						});
-					})
+                try {
+                    //creating a new user
+                    const user = await createNewUser(name, email, password, age);
+                    //creating a new image folder for the user
+                    createImageFolder(user.id).then(() => {
+                        createEmptyToeEntery(user.id).then(() => {
+                            res.status(200).json({});
+                        });
+                    })
                 }
                 catch {
-					res.status(400).json();
-				}
+                    res.status(400).json();
+                }
             }
         });
     }
@@ -216,9 +214,9 @@ app.post('/signup', (req, res) => {
 });
 
 /*
-	Recieves an image name as the query parameter and checks if the image belongs to the user
-	if it is valid, it sends back the file as the response.
-	Query Param imageName: the name of the image to be sent.
+    Recieves an image name as the query parameter and checks if the image belongs to the user
+    if it is valid, it sends back the file as the response.
+    Query Param imageName: the name of the image to be sent.
 */
 app.get('/getImage', async (req, res) => {
     try {
@@ -293,8 +291,8 @@ app.get('/deleteImage', async (req, res) => {
 });
 
 /*
-	Find the user's toe data from the DB.
-	Returns as the response: the toe data.
+    Find the user's toe data from the DB.
+    Returns as the response: the toe data.
 */
 app.get('/getToe', async (req, res) => {
 
@@ -317,7 +315,7 @@ app.get('/getToe', async (req, res) => {
 });
 
 /*
-	returns as the response: the list user's images
+    returns as the response: the list user's images
 */
 app.get('/getImageNames', async (req, res) => {
     try {
@@ -331,7 +329,7 @@ app.get('/getImageNames', async (req, res) => {
 });
 
 /*
-	other Routes
+    other Routes
 */
 app.use('/upload', uploadImage);
 app.use('/imageValidation', imageValidationRoutes);

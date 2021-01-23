@@ -8,8 +8,8 @@ import { shallow, mount } from "enzyme";
 import mockAxios from './__mocks__/axios';
 import Login from './components/Login';
 import axios from 'axios';
-
-import jwt_decode from './__mocks__/jwt-decode';
+import store from './Redux/store'
+import * as footAction from './Redux/Actions/setFootAction.js';
 
 const middlewares = [thunk];
 const mockStore = configureMockStore(middlewares);
@@ -44,67 +44,153 @@ describe("login functions work", () => {
 
 describe("handleLoginPatient works correctly", () => {
     let component
+    let mockedHistory
+    let instance
     beforeEach(() => {
-        component = shallow(<Login/>);
+        mockedHistory = {push: jest.fn()}
+        component = shallow(<Login history={mockedHistory}/>);
+        component.setState({email: email, password: password});
+        instance = component.instance()
         window.location.reload = jest.fn();
     });
+    afterEach(() => {
+        axios.post.mockClear();
+    });
+    
     it("calls the api for login", async () => {
 
-        const instance = component.instance();
-        component.setState({email: email, password: password});
-
-        jest.spyOn(instance, 'redirectTo').mockImplementation((e) => e);
-
-        await component.instance().handleLoginPatient({preventDefault: () => {}});
+        //jest.spyOn(instance, 'dispatchToStore').mockImplementation((e) => console.log("here"));
+        await instance.handleLoginPatient({preventDefault: () => {}});
         
         expect(axios.post).toHaveBeenCalledWith('http://localhost:3001/login', {email: email, password: password})
         expect(axios.get).toHaveBeenCalled();
         expect(window.location.reload).toHaveBeenCalled();
-        expect(instance.redirectTo).toBeCalled();
-
-        //the function gets called but it get registered here
+        expect(mockedHistory.push).toHaveBeenCalled();
     });
+
     it("redirects to the user page /user", async() => {
-        const instance = component.instance();
-        component.setState({email: email, password: password});
 
-        jest.spyOn(instance, 'redirectTo').mockImplementation((e) => e);
-
-        await component.instance().handleLoginPatient({preventDefault: () => {}});
+        await instance.handleLoginPatient({preventDefault: () => {}});
         
-        expect(instance.redirectTo).toHaveBeenCalledWith('/user');
+        expect(mockedHistory.push).toHaveBeenCalledWith('/user');
     });
 
     it("handles invalid user", async() => {
-        const instance = component.instance();
-        component.setState({email: email, password: password});
-        mockAxios.post.mockImplementation(() => Promise.resolve({status: 400, data: { success: false, token: "Bearer asdf"}}));
-        jest.spyOn(instance, 'redirectTo').mockImplementation((e) => e);
+        mockAxios.post.mockImplementationOnce(() => Promise.resolve({status: 400, data: { success: false, token: "Bearer asdf"}}));
         
-        await component.instance().handleLoginPatient({preventDefault: () => {}});
+        await instance.handleLoginPatient({preventDefault: () => {}});
         
         expect(component.state('invalidUser')).toEqual(true);
     });
+
 
     it("handles login request resolved but no data", async() => {
-        const instance = component.instance();
-        component.setState({email: email, password: password});
-        mockAxios.post.mockImplementation(() => Promise.resolve({status: 200}));
-        jest.spyOn(instance, 'redirectTo').mockImplementation((e) => e);
 
-        await component.instance().handleLoginPatient({preventDefault: () => {}});
+        mockAxios.post.mockImplementationOnce(() => Promise.resolve({status: 200}));
+        
+        await instance.handleLoginPatient({preventDefault: () => {}});
         
         expect(component.state('invalidUser')).toEqual(true);
+       
     });
 
-    it("dispaches set current user(redux store)", async() => {
-        const instance = component.instance();
-        component.setState({email: email, password: password});
-        let store = mockStore({auth: {}, foot: {}});
-        store.dispatch = jest.fn(() => console.log("fd"));
-        
-        await component.instance().handleLoginPatient({preventDefault: () => {}});
-        
-        expect(store.dispatch).toHaveBeenCalled();
+    it("calls the store.dispatch 3 times", async() => {
+        store.dispatch = jest.fn();
+        footAction.getAndSaveImages = jest.fn();
+        footAction.getAndSaveToeData = jest.fn();
+
+        await instance.handleLoginPatient({preventDefault: () => {}});
+
+        expect(store.dispatch).toHaveBeenCalledTimes(3);
+        //one time to set the user
+        expect(store.dispatch).toHaveBeenCalledWith({"payload": {"id": "0000", "name": "auto tester"}, "type": "SET_CURRENT_USER"});
+        //one time to get images
+        expect(footAction.getAndSaveImages).toHaveBeenCalledTimes(1);
+        //one time to get the toe data
+        expect(footAction.getAndSaveToeData).toHaveBeenCalledTimes(1);
     });
-})
+
+    it("handles empty email and password states", async() => {
+        component.setState({email: "", password: ""});
+        
+        await instance.handleLoginPatient({preventDefault: () => {}});
+        
+        expect(component.state('email')).toEqual("");
+        expect(component.state('password')).toEqual("");
+        expect(axios.post).toHaveBeenCalledTimes(0);// post request is not called
+    });
+
+    it("handles empty email and password states", async() => {
+        component.setState({email: "", password: ""});
+        
+        await instance.handleLoginPatient({preventDefault: () => {}});
+        
+        expect(component.state('email')).toEqual("");
+        expect(component.state('password')).toEqual("");
+        expect(axios.post).toHaveBeenCalledTimes(0);// post request is not called
+    });
+
+    it("can handle if email state is empty", async() => {
+        component.setState({email: "", password: "123"});
+        
+        await instance.handleLoginPatient({preventDefault: () => {}});
+        
+        expect(component.state('email')).toEqual("");
+        expect(component.state('password')).toEqual("123");
+        expect(axios.post).toHaveBeenCalledTimes(0);// post request is not called
+    });
+
+    it("can handle if password state is empty", async() => {
+        component.setState({email: "some@gmail.com", password: ""});
+        
+        await instance.handleLoginPatient({preventDefault: () => {}});
+        
+        expect(component.state('email')).toEqual("some@gmail.com");
+        expect(component.state('password')).toEqual("");
+        expect(axios.post).toHaveBeenCalledTimes(0);// post request is not called
+    });
+
+});
+
+describe('testing the UI functionalities', () => {
+
+    it("renders empty input fields", async() => {
+        const component = mount(<Login/>);
+        const emailField = component.find('[type="email"]').first();
+        const passwordField = component.find('[type="password"]').first();
+        expect(emailField.props().value).toEqual("");
+        expect(passwordField.props().value).toEqual("");
+    });
+
+    it("correctly sets the email and password state from the input fields", async() => {
+        const component = mount(<Login/>);
+        const submit_button = component.find('Button');
+        const emailField = component.find('[type="email"]').first();
+        const passwordField = component.find('[type="password"]').first();
+
+        emailField.simulate('change', {target: {value: "demo@gmail.com"}});
+        passwordField.simulate('change', {target: {value: "123"}});
+
+        expect(component.state('email')).toEqual("demo@gmail.com");
+        expect(component.state('password')).toEqual("123");
+    });
+
+    it("can handle empty fields", async() => {
+        const component = mount(<Login history={{push: jest.fn()}}/>);
+        const submit_button = component.find('Button');
+        const emailField = component.find('[type="email"]').first();
+        const passwordField = component.find('[type="password"]').first();
+
+        emailField.simulate('change', {target: {value: ""}});
+        passwordField.simulate('change', {target: {value: ""}});
+
+        component.find('Form').simulate('submit');
+
+        expect(component.state('email')).toEqual("");
+        expect(component.state('password')).toEqual("");
+    });
+});
+
+//might come in handy
+//prints out the elements
+//component.find('[type="email"]').forEach(wrapper => console.log(wrapper.debug()));

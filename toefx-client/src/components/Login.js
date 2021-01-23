@@ -41,7 +41,7 @@ export default class Login extends Component {
             password: this.state.password
         })
         //Process response from server
-        if (response.status === 200) { //The login was a success
+        if (response.status === 200 && response.data) { //The login was a success
             let body = response.data;
 
             const {token} = body; //Extract the token from the response

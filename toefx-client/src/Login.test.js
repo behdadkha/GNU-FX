@@ -7,6 +7,9 @@ import { render } from '@testing-library/react';
 import { shallow, mount } from "enzyme";
 import mockAxios from './__mocks__/axios';
 import Login from './components/Login';
+import axios from 'axios';
+
+import jwt_decode from './__mocks__/jwt-decode';
 
 const middlewares = [thunk];
 const mockStore = configureMockStore(middlewares);
@@ -15,6 +18,7 @@ const mockStore = configureMockStore(middlewares);
 let email = "demo@gmail.com";
 let password = "123";
 
+//jest.mock(axios);
 
 describe("login states are initialized correctly", () => {
     it("invalidUser is set to false", () => {
@@ -39,43 +43,68 @@ describe("login functions work", () => {
 });
 
 describe("handleLoginPatient works correctly", () => {
-    it("calls the api for login", async () => {
-        const store = mockStore({selectedFoot: 0,images: [], toeData: []});
-        const thismockAxios = mockAxios.post;
-        mockAxios.get.mockImplementation(() => Promise.resolve({data: []}));
-        const mockHistoryPush = { history: { push: jest.fn() } };
-
+    let component
+    beforeEach(() => {
+        component = shallow(<Login/>);
         window.location.reload = jest.fn();
-    
-        const component = shallow(<Login {...mockHistoryPush}/>);
+    });
+    it("calls the api for login", async () => {
+
         const instance = component.instance();
         component.setState({email: email, password: password});
-        jest.spyOn(instance, 'redirectTo').mockImplementation(jest.fn());
-        instance.forceUpdate();
-        
-        //component.find("Form").simulate("submit");
-        component.instance().handleLoginPatient({preventDefault: () => {}});
-        
-        
-        expect(thismockAxios).toHaveBeenCalled();
-        expect(instance.redirectTo).toHaveBeenCalledWith('/user');//the function gets called but it get registered here
-        expect(thismockAxios).toHaveBeenCalledWith('http://localhost:3001/login', {email: email, password: password})
-    });
-    it("redirects to the user page /user", () => {
-        const component = shallow(<Login/>);
-        component.instance().redirectTo = jest.fn();
-        component.instance().redirectTo('/user');
-        expect(component.instance().redirectTo).toHaveBeenCalledWith('/user');
-    });
 
-    /*it("recieves a bearer token", async () => {
-        const thismockAxios = mockAxios.post;
+        jest.spyOn(instance, 'redirectTo').mockImplementation((e) => e);
 
-        const component = shallow(<Login />);
-        let email = "demo@gmail.com";
-        let password = "123";
+        await component.instance().handleLoginPatient({preventDefault: () => {}});
+        
+        expect(axios.post).toHaveBeenCalledWith('http://localhost:3001/login', {email: email, password: password})
+        expect(axios.get).toHaveBeenCalled();
+        expect(window.location.reload).toHaveBeenCalled();
+        expect(instance.redirectTo).toBeCalled();
+
+        //the function gets called but it get registered here
+    });
+    it("redirects to the user page /user", async() => {
+        const instance = component.instance();
         component.setState({email: email, password: password});
-        component.find("Form").simulate("submit", thismockAxios);
-        expect(thismockAxios).toHaveBeenCalledWith('http://localhost:3001/login', {email: email, password: password})
-    });*/
+
+        jest.spyOn(instance, 'redirectTo').mockImplementation((e) => e);
+
+        await component.instance().handleLoginPatient({preventDefault: () => {}});
+        
+        expect(instance.redirectTo).toHaveBeenCalledWith('/user');
+    });
+
+    it("handles invalid user", async() => {
+        const instance = component.instance();
+        component.setState({email: email, password: password});
+        mockAxios.post.mockImplementation(() => Promise.resolve({status: 400, data: { success: false, token: "Bearer asdf"}}));
+        jest.spyOn(instance, 'redirectTo').mockImplementation((e) => e);
+        
+        await component.instance().handleLoginPatient({preventDefault: () => {}});
+        
+        expect(component.state('invalidUser')).toEqual(true);
+    });
+
+    it("handles login request resolved but no data", async() => {
+        const instance = component.instance();
+        component.setState({email: email, password: password});
+        mockAxios.post.mockImplementation(() => Promise.resolve({status: 200}));
+        jest.spyOn(instance, 'redirectTo').mockImplementation((e) => e);
+
+        await component.instance().handleLoginPatient({preventDefault: () => {}});
+        
+        expect(component.state('invalidUser')).toEqual(true);
+    });
+
+    it("dispaches set current user(redux store)", async() => {
+        const instance = component.instance();
+        component.setState({email: email, password: password});
+        let store = mockStore({auth: {}, foot: {}});
+        store.dispatch = jest.fn(() => console.log("fd"));
+        
+        await component.instance().handleLoginPatient({preventDefault: () => {}});
+        
+        expect(store.dispatch).toHaveBeenCalled();
+    });
 })

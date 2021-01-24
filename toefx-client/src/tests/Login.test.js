@@ -5,11 +5,11 @@ import thunk from 'redux-thunk'
 
 import { render } from '@testing-library/react';
 import { shallow, mount } from "enzyme";
-import mockAxios from './__mocks__/axios';
-import Login from './components/Login';
+import mockAxios from '../__mocks__/axios';
+import Login from '../components/Login';
 import axios from 'axios';
-import store from './Redux/store'
-import * as footAction from './Redux/Actions/setFootAction.js';
+import store from '../Redux/store'
+import * as footAction from '../Redux/Actions/setFootAction.js';
 
 const middlewares = [thunk];
 const mockStore = configureMockStore(middlewares);
@@ -21,18 +21,22 @@ let password = "123";
 //jest.mock(axios);
 
 describe("login states are initialized correctly", () => {
+
     it("invalidUser is set to false", () => {
         const component = shallow(<Login />);
         expect(component.state('invalidUser')).toEqual(false);
     })
+
 });
 describe("rendering componentes", () => {
+
     it("renders login page without crashing", () => {
         shallow(<Login />);
     });
     
 });
 describe("login functions work", () => {
+    
     it("sets states correctly", async () => {
         const component = shallow(<Login />);
         component.setState({email: "demo@gmail.com", password: "123"});
@@ -43,20 +47,26 @@ describe("login functions work", () => {
 });
 
 describe("handleLoginPatient works correctly", () => {
+
     let component
     let mockedHistory
     let instance
+
     beforeEach(() => {
+
         mockedHistory = {push: jest.fn()}
         component = shallow(<Login history={mockedHistory}/>);
         component.setState({email: email, password: password});
         instance = component.instance()
         window.location.reload = jest.fn();
+        
     });
+
     afterEach(() => {
         axios.post.mockClear();
     });
     
+
     it("calls the api for login", async () => {
 
         //jest.spyOn(instance, 'dispatchToStore').mockImplementation((e) => console.log("here"));
@@ -66,35 +76,38 @@ describe("handleLoginPatient works correctly", () => {
         expect(axios.get).toHaveBeenCalled();
         expect(window.location.reload).toHaveBeenCalled();
         expect(mockedHistory.push).toHaveBeenCalled();
+
     });
 
     it("redirects to the user page /user", async() => {
 
-        await instance.handleLoginPatient({preventDefault: () => {}});
-        
+        await instance.handleLoginPatient({preventDefault: () => {}}); 
+
         expect(mockedHistory.push).toHaveBeenCalledWith('/user');
+
     });
 
     it("handles invalid user", async() => {
-        mockAxios.post.mockImplementationOnce(() => Promise.resolve({status: 400, data: { success: false, token: "Bearer asdf"}}));
-        
+
+        mockAxios.post.mockImplementationOnce(() => Promise.resolve({status: 404, data: { success: false, token: "Bearer asdf"}}));
         await instance.handleLoginPatient({preventDefault: () => {}});
-        
+
         expect(component.state('invalidUser')).toEqual(true);
+
     });
 
 
     it("handles login request resolved but no data", async() => {
 
         mockAxios.post.mockImplementationOnce(() => Promise.resolve({status: 200}));
-        
         await instance.handleLoginPatient({preventDefault: () => {}});
         
         expect(component.state('invalidUser')).toEqual(true);
-       
+
     });
 
     it("calls the store.dispatch 3 times", async() => {
+
         store.dispatch = jest.fn();
         footAction.getAndSaveImages = jest.fn();
         footAction.getAndSaveToeData = jest.fn();
@@ -108,87 +121,146 @@ describe("handleLoginPatient works correctly", () => {
         expect(footAction.getAndSaveImages).toHaveBeenCalledTimes(1);
         //one time to get the toe data
         expect(footAction.getAndSaveToeData).toHaveBeenCalledTimes(1);
+
     });
 
     it("handles empty email and password states", async() => {
-        component.setState({email: "", password: ""});
-        
+
+        component.setState({email: "", password: ""}); 
         await instance.handleLoginPatient({preventDefault: () => {}});
         
         expect(component.state('email')).toEqual("");
         expect(component.state('password')).toEqual("");
         expect(axios.post).toHaveBeenCalledTimes(0);// post request is not called
+
     });
 
     it("handles empty email and password states", async() => {
+
         component.setState({email: "", password: ""});
-        
         await instance.handleLoginPatient({preventDefault: () => {}});
         
         expect(component.state('email')).toEqual("");
         expect(component.state('password')).toEqual("");
         expect(axios.post).toHaveBeenCalledTimes(0);// post request is not called
+
     });
 
     it("can handle if email state is empty", async() => {
+
         component.setState({email: "", password: "123"});
-        
         await instance.handleLoginPatient({preventDefault: () => {}});
         
         expect(component.state('email')).toEqual("");
         expect(component.state('password')).toEqual("123");
         expect(axios.post).toHaveBeenCalledTimes(0);// post request is not called
+
     });
 
     it("can handle if password state is empty", async() => {
+
         component.setState({email: "some@gmail.com", password: ""});
-        
         await instance.handleLoginPatient({preventDefault: () => {}});
         
         expect(component.state('email')).toEqual("some@gmail.com");
         expect(component.state('password')).toEqual("");
         expect(axios.post).toHaveBeenCalledTimes(0);// post request is not called
+
+    });
+
+    it("does not accept invalid email format", async() => {
+
+        component.setState({email: "s</ome%gmail.com", password: "123"});
+        await instance.handleLoginPatient({preventDefault: () => {}});
+        
+        expect(component.state('email')).toEqual("");
+        expect(component.state('password')).toEqual("123");
+        expect(axios.post).toHaveBeenCalledTimes(0);// post request is not called
+        
     });
 
 });
 
-describe('testing the UI functionalities', () => {
+describe('testing the Login UI functionalities', () => {
+
+    let component, submit_button, emailField, passwordField
+
+    beforeEach(() => {
+
+        component = mount(<Login history={{push: jest.fn()}}/>);
+        submit_button = component.find('Button');
+        emailField = component.find('[type="email"]').first();
+        passwordField = component.find('[type="password"]').first();
+
+    });
+
 
     it("renders empty input fields", async() => {
-        const component = mount(<Login/>);
-        const emailField = component.find('[type="email"]').first();
-        const passwordField = component.find('[type="password"]').first();
+
         expect(emailField.props().value).toEqual("");
         expect(passwordField.props().value).toEqual("");
+
     });
 
     it("correctly sets the email and password state from the input fields", async() => {
-        const component = mount(<Login/>);
-        const submit_button = component.find('Button');
-        const emailField = component.find('[type="email"]').first();
-        const passwordField = component.find('[type="password"]').first();
 
         emailField.simulate('change', {target: {value: "demo@gmail.com"}});
         passwordField.simulate('change', {target: {value: "123"}});
 
         expect(component.state('email')).toEqual("demo@gmail.com");
         expect(component.state('password')).toEqual("123");
+
     });
 
     it("can handle empty fields", async() => {
-        const component = mount(<Login history={{push: jest.fn()}}/>);
-        const submit_button = component.find('Button');
-        const emailField = component.find('[type="email"]').first();
-        const passwordField = component.find('[type="password"]').first();
 
         emailField.simulate('change', {target: {value: ""}});
         passwordField.simulate('change', {target: {value: ""}});
 
-        component.find('Form').simulate('submit');
+        component.find('Form').simulate('submit', {
+            preventDefault: () => {}
+        })
 
         expect(component.state('email')).toEqual("");
         expect(component.state('password')).toEqual("");
+        expect(axios.post).toHaveBeenCalledTimes(0);// post request is not called
     });
+
+    it("inputs remove white spaces", async() => {
+
+        emailField.simulate('change', {target: {value: " demo@gmail.com"}});
+        passwordField.simulate('change', {target: {value: " 123"}});
+
+        //states are not set
+        expect(component.state('email')).toEqual("demo@gmail.com");
+        expect(component.state('password')).toEqual("123");
+
+    });
+
+    it("correctly removes unnecessary spaces from the end of the input", async() => {
+
+        emailField.simulate('change', {target: {value: "demo@gmail.com     "}});
+        passwordField.simulate('change', {target: {value: "123  "}});
+
+        //white spaces are removed
+        expect(component.state('email')).toEqual("demo@gmail.com");
+        expect(component.state('password')).toEqual("123");
+
+    });
+
+    it("shows 'Please enter valid credentials.' if the server doesnt find the user", async() => {
+
+        mockAxios.post.mockImplementationOnce(() => Promise.resolve({status: 404}));
+        component.setState({email: "fake@gmail.com", password: "123"});
+
+        await component.find('Form').simulate('submit');
+
+        expect(component.state('invalidUser')).toEqual(true);
+        expect(component.find(".login-error").childAt(0).text()).toEqual("Please enter valid credentials.");
+
+    });
+
+
 });
 
 //might come in handy

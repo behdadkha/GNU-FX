@@ -10,7 +10,7 @@ import {config} from "../config";
 import store from "../Redux/store";
 import {SetCurrentUser} from "../Redux/Actions/authAction";
 import {getAndSaveImages, getAndSaveToeData} from "../Redux/Actions/setFootAction";
-import {SetAuthHeader, isValidInput} from "../Utils";
+import {SetAuthHeader, isValidInput, isValidEmail} from "../Utils";
 import Axios from 'axios';
 
 import "../componentsStyle/Login.css";
@@ -25,7 +25,8 @@ export default class Login extends Component {
         this.state = {
             email: "", //The user's email input
             password: "", //The user's password input
-            invalidUser: false //Indicates whether or not an error message should be displayed
+            invalidUser: false, //Indicates whether or not an error message should be displayed
+            errorMessage: ""
         };
     }
 
@@ -36,13 +37,29 @@ export default class Login extends Component {
     handleLoginPatient = async (e) => {
         e.preventDefault(); //Prevents page reload on form submission
         //Try to log in user
-        if (!isValidInput(this.state.email) || !isValidInput(this.state.password))
+            
+        if (!isValidEmail(this.state.email)) {
+            this.setState({email: "", errorMessage: "Invalid Email Address"});
             return
+        }
+        if (!isValidInput(this.state.password)) {
+            this.setState({password: "", errorMessage: "Invalid Password"})
+            return
+        }
+    
+        let response
+        try {
+            response = await Axios.post(`${config.dev_server}/login`,{
+                email: this.state.email,
+                password: this.state.password
+            })
+        } catch (res) {
+            this.setState({
+                invalidUser: true
+            });
+            return
+        }
         
-        const response = await Axios.post(`${config.dev_server}/login`,{
-            email: this.state.email,
-            password: this.state.password
-        })
         //Process response from server
         if (response.status === 200 && response.data) { //The login was a success
             let body = response.data;
@@ -65,24 +82,19 @@ export default class Login extends Component {
             
             //By reloading the page, the true path becomes /user and the header bar disappears
             window.location.reload();
-        }
-        else { //The login was a failure
+        } else {
             this.setState({
-                invalidUser: true,
+                invalidUser: true
             });
         }
     };
-
-    /*dispatchToStore = (action) => {
-        store.dispatch(action);
-    }*/
 
     /*
         Displays the login page.
     */
     render() {
         let loginError = (this.state.invalidUser) ? //Error displayed to the user if problem with login
-                <h6>Please enter valid credentials.</h6> : "";
+                "Please enter valid credentials." : "";
 
         return (
             <Container>
@@ -90,7 +102,12 @@ export default class Login extends Component {
                     <Col>
                         {/* Error message if needed */}
                         <div className="login-error">
-                            {loginError}
+                            <h6>
+                                {loginError}
+                            </h6>
+                            <h6>
+                                {this.state.errorMessage}
+                            </h6>
                         </div>
 
                         {/* Actual login form */}
@@ -106,7 +123,9 @@ export default class Login extends Component {
                                     placeholder=""
                                     value={this.state.email}
                                     onChange={(e) =>
-                                        this.setState({email: e.target.value})
+                                        {
+                                            this.setState({email: e.target.value.trim()})
+                                        }
                                     }
                                 />
                             </Form.Group>
@@ -117,7 +136,7 @@ export default class Login extends Component {
                                 <Form.Control
                                     value={this.state.password}
                                     onChange={(e) =>
-                                        this.setState({password: e.target.value})
+                                        this.setState({password: e.target.value.trim()})
                                     }
                                     type="password"
                                     placeholder=""

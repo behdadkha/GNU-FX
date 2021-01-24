@@ -37,6 +37,17 @@ export function GetToeName(toeId) {
 }
 
 /*
+    Validates the input
+    param input: string to be validated
+    returns true if the input is acceptable, false otherwise
+*/
+export function isValidInput(input){
+    if (input === undefined || input.length === 0)
+        return false
+    return true
+}
+
+/*
     Gets the image URL for displaying it on the page.
     param urls: The list of URLs to search through.
     param name: The saved name of the image.

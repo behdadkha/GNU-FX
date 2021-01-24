@@ -10,7 +10,7 @@ import {config} from "../config";
 import store from "../Redux/store";
 import {SetCurrentUser} from "../Redux/Actions/authAction";
 import {getAndSaveImages, getAndSaveToeData} from "../Redux/Actions/setFootAction";
-import {SetAuthHeader} from "../Utils";
+import {SetAuthHeader, isValidInput} from "../Utils";
 import Axios from 'axios';
 
 import "../componentsStyle/Login.css";
@@ -36,6 +36,9 @@ export default class Login extends Component {
     handleLoginPatient = async (e) => {
         e.preventDefault(); //Prevents page reload on form submission
         //Try to log in user
+        if (!isValidInput(this.state.email) || !isValidInput(this.state.password))
+            return
+        
         const response = await Axios.post(`${config.dev_server}/login`,{
             email: this.state.email,
             password: this.state.password
@@ -48,7 +51,8 @@ export default class Login extends Component {
             localStorage.setItem("jwt", token); //Save the token in localstorage
 
             SetAuthHeader(token); //Set the token to header for feature requests
-            store.dispatch(SetCurrentUser(jwt_decode(token))); //Add the user data(decoded) to the store 
+
+            store.dispatch(SetCurrentUser(jwt_decode(token)));//Add the user data(decoded) to the store 
 
             //Load all of the user's images from the server
             store.dispatch(getAndSaveImages());
@@ -57,7 +61,7 @@ export default class Login extends Component {
             store.dispatch(getAndSaveToeData());
 
             //Redirect to User page
-            this.redirectTo('/user');
+            this.props.history.push('/user');
             
             //By reloading the page, the true path becomes /user and the header bar disappears
             window.location.reload();
@@ -69,9 +73,9 @@ export default class Login extends Component {
         }
     };
 
-    redirectTo = (path) => {
-        this.props.history.push(path);
-    }
+    /*dispatchToStore = (action) => {
+        store.dispatch(action);
+    }*/
 
     /*
         Displays the login page.

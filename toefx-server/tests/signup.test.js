@@ -43,7 +43,63 @@ describe('Signup endpoint', () => {
             .post('/signup')
             .send({
                 name: "",
-                email: "demoTEST@gmail.com",
+                email: "",
+                password: "",
+                age: "",
+
+            });
+        expect(res.statusCode).toEqual(400);
+        expect(res.body.msg).toBe("Required input is empty");
+    });
+
+    it('Signup should fail if name is empty', async () => {
+        const res = await request(app)
+            .post('/signup')
+            .send({
+                name: "",
+                email: "demo@gmail.com",
+                password: "123",
+                age: "22",
+
+            });
+        expect(res.statusCode).toEqual(400);
+        expect(res.body.msg).toBe("Required input is empty");
+    });
+
+    it('Signup should fail if email is empty', async () => {
+        const res = await request(app)
+            .post('/signup')
+            .send({
+                name: "bob smith",
+                email: "",
+                password: "123",
+                age: "22",
+
+            });
+        expect(res.statusCode).toEqual(400);
+        expect(res.body.msg).toBe("Required input is empty");
+    });
+
+    it('Signup should fail if password is empty', async () => {
+        const res = await request(app)
+            .post('/signup')
+            .send({
+                name: "Bob smith",
+                email: "demo@gmail.com",
+                password: "",
+                age: "22",
+
+            });
+        expect(res.statusCode).toEqual(400);
+        expect(res.body.msg).toBe("Required input is empty");
+    });
+
+    it('Signup should fail if age is empty', async () => {
+        const res = await request(app)
+            .post('/signup')
+            .send({
+                name: "Bob smith",
+                email: "demo@gmail.com",
                 password: "123",
                 age: "",
 

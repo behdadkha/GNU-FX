@@ -50,7 +50,7 @@ userRoutes.route('/getUserInfo').get(async (req, res) => {
         res.json({email: user.email, age: user.age});
     }
     catch {
-        console.log("Couldnt get user's info at /getUserInfo.");
+        res.status(400).json({msg: "Couldnt get user's info at /getUserInfo."});
     }
 });
 
@@ -70,8 +70,7 @@ userRoutes.route('/getschedule').get(async (req, res) => {
         res.json(user.schedule);
     }
     catch (e) {
-        console.log("An error occurred while attempting to retrieve a user's schedule. Possibly due to an invalid user.");
-        console.log(e);
+        res.status(400).json({msg: "An error occurred while attempting to retrieve a user's schedule. Possibly due to an invalid user."})
     }
 });
 
@@ -87,30 +86,39 @@ userRoutes.route('/getschedule').get(async (req, res) => {
 userRoutes.post('/resetPassword', async (req, res) => {
     try {
         const {currentPassword, newPassword1, newPassword2} = req.body;
-        var user = (await utils.loadUserObject(req, res)).user;
+        if (currentPassword === "" || newPassword1 === "" || newPassword2 === ""){return res.status(400).json({msg: "All the inputs have to be filled"})}
         
-        if (user) {
-            bcrypt.compare(currentPassword, user.password).then(async (valid) => { //Check if the current password is correct
-                if (valid) {
-                    if (newPassword1 === newPassword2) { //Password can only be changed if the two new passwords match
-                        //Hash the password
-                        const rounds = 10; //10 rounds of hashing
-                        user.password = await hashPassword(newPassword1, rounds);
+        var user = (await utils.loadUserObject(req, res)).user;
+        try{
+            if (user) {
+                bcrypt.compare(currentPassword, user.password).then(async (valid) => { //Check if the current password is correct
+                    if (valid) {
+                        if (newPassword1 === newPassword2) { //Password can only be changed if the two new passwords match
+                            //Hash the password
+                            const rounds = 10; //10 rounds of hashing
+                            user.password = await hashPassword(newPassword1, rounds);
 
-                        //Save the new encrypted password for security reasons
-                        user.save().then(() => {
-                            res.status(200).json({msg: "password changed"});
-                        }).catch(err => console.log(err));
+                            //Save the new encrypted password for security reasons
+                            user.save().then(() => {
+                                res.status(200).json({msg: "password changed"});
+                            }).catch(err => console.log(err));
+                        }
+                        else{
+                            return res.status(400).json({msg: "New passwords don't match"})
+                        }
                     }
-                }
-                else {
-                    return res.json({msg: "Invalid password"});
-                }
-            });
+                    else {
+                        return res.status(400).json({msg: "Invalid password"});
+                    }
+                });
+            }
+        }
+        catch{
+            return res.status(400).json({msg: "Invalid password"})
         }
     }
     catch {
-        console.log("Failed to reset password.");
+        return res.status(400).json({msg: "Something went wrong"})
     }
 });
 

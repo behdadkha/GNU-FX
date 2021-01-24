@@ -235,7 +235,6 @@ app.get('/getImage', async (req, res) => {
     catch (e) {
         //console.log(e)
         res.status(400).json({ msg: "Invalid token , tried to get an image" });
-        console.log("invalid token , tried to get an image");
     }
 });
 

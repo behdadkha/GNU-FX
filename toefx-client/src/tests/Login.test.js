@@ -10,6 +10,7 @@ import Login from '../components/Login';
 import axios from 'axios';
 import store from '../Redux/store'
 import * as footAction from '../Redux/Actions/setFootAction.js';
+import {config} from "../config";
 
 const middlewares = [thunk];
 const mockStore = configureMockStore(middlewares);
@@ -35,7 +36,7 @@ describe("rendering componentes", () => {
     });
     
 });
-describe("login functions work", () => {
+describe("login states work", () => {
     
     it("sets states correctly", async () => {
         const component = shallow(<Login />);
@@ -72,7 +73,7 @@ describe("handleLoginPatient works correctly", () => {
         //jest.spyOn(instance, 'dispatchToStore').mockImplementation((e) => console.log("here"));
         await instance.handleLoginPatient({preventDefault: () => {}});
         
-        expect(axios.post).toHaveBeenCalledWith('http://localhost:3001/login', {email: email, password: password})
+        expect(axios.post).toHaveBeenCalledWith(`${config.dev_server}/login`, {email: email, password: password})
         expect(axios.get).toHaveBeenCalled();
         expect(window.location.reload).toHaveBeenCalled();
         expect(mockedHistory.push).toHaveBeenCalled();

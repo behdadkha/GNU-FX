@@ -4,6 +4,9 @@
 
 import React, {Component} from "react";
 import {Col, Row, Container, Form, Button} from "react-bootstrap";
+import Axios from 'axios';
+import {config} from "../config";
+import {isValidInput, isValidEmail} from "../Utils";
 
 import "../componentsStyle/Signup.css";
 
@@ -20,6 +23,7 @@ export default class Signup extends Component {
             password: "", //User's password input
             confirmedPassword: "", //User's confirmed password input
             age: "", //User's age input
+            errorMessage: "",
             accountExistsError: false, //Helps with error message if account with email already exists
             passwordMismatchError: false, //Helps with error message when user enters password and confirm password that don't match
             emptyFieldError: false, //Helps with error message user leaves fields blank
@@ -64,26 +68,35 @@ export default class Signup extends Component {
             this.setState({emptyFieldError: false, accountExistsError: false, passwordMismatchError: true});
             return; //User's password and confirm password field don't match
         }
+        
+        if (!isValidEmail(this.state.email)) {
+            this.setState({errorMessage: "Invalid Email Address"});
+            return
+        }
+
+        if (!isValidInput(this.state.password)) {
+            this.setState({errorMessage: "Invalid Password"})
+            return
+        }
 
         //Try to sign up the user
-        const response = await fetch("http://localhost:3001/signup", {
-            method : "POST",
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type' : 'application/json'
-            },
-            body:JSON.stringify({
-                "name": this.state.name,
-                "email": this.state.email,
-                "password": this.state.password,
-                "age": this.state.age
+        let response;
+        try {
+            response = await Axios.post(`${config.dev_server}/signup`,{
+                name: this.state.name,
+                email: this.state.email,
+                password: this.state.password,
+                age: this.state.age
             })
-        });
+        } catch (res) {
+            console.log(res);
+            this.setState({emptyFieldError: false, accountExistsError: true, passwordMismatchError: false});
+            return;
+        }
 
         //Process response from server
         if (response.status === 200) { //Sign-up was a success
-            await response.json();
-
+            
             //Redirect to login page
             this.props.history.push('/login');
 
@@ -120,6 +133,9 @@ export default class Signup extends Component {
                         {/* Error message if needed */}
                         <div className="signup-error">
                             {signUpError}
+                            <h6>
+                                {this.state.errorMessage}
+                            </h6>
                         </div>
 
                         <Form className="signup-form" onSubmit={this.handleSignup.bind(this)}>

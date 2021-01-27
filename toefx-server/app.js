@@ -225,7 +225,8 @@ app.get('/getImage', async (req, res) => {
         var user = userObject.user;
         var userId = userObject.id;
         let imageName = req.query.imageName;
-
+        console.log(imageName)
+        if (imageName === undefined){return res.status(400).json({msg: "ImageName should be specified"})}
         //if the specified images is actually owned by the the user
         if (await user.images.includes(imageName))
             res.sendFile(`${__dirname}/images/${userId}/${imageName}`);
@@ -307,14 +308,14 @@ app.get('/getToe', async (req, res) => {
         //find the user's data from the database(take a look at database/toe-dataSchema.js)
         toe_dataSchema.findOne({ userID: userId }).then(data => {
             if (data) {
-                res.json(data);
+                return res.json(data);
             } else {
-                res.status(400).json({ msg: "not found" });
+                return res.status(400).json({ msg: "Data not found" });
             }
         });
     }
     catch (e) {
-        console.log("Something happened when tried to access toe-data (might be an invalid user)");
+        return res.status(400).json({msg: "Invalid user token"})
     }
 });
 
@@ -325,10 +326,10 @@ app.get('/getImageNames', async (req, res) => {
     try {
         var userObject = await utils.loadUserObject(req, res);
         var user = userObject.user;
-        res.send(user.images)
+        return res.send(user.images)
     }
     catch {
-        console.log("Something happened when tried to get user's image names");
+        return res.status(400).json({msg: "Something happened when tried to get user's image names"});
     }
 });
 

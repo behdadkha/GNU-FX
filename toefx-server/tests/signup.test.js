@@ -1,10 +1,10 @@
 const mongoose = require("mongoose");
 const UserModel = require('../database/userSchema');
-const userData = {email: 'demoTEST@gmail.com', password: '123test', name: 'tester', age: '12'};
 const config = require('../config');
 const mongodbConfig = require("./mongodb-config");
 const { MongoClient } = require("mongodb");
 
+const userData = {email: 'demoTEST@gmail.com', password: '123test', name: 'tester', age: '12'};
 const request = require("supertest");
 const app = require('../app');
 

@@ -252,6 +252,10 @@ app.get('/deleteImage', async (req, res) => {
         var user = userObject.user;
         var userId = userObject.id;
 
+        if(req.query.footIndex === undefined || req.query.toeIndex === undefined || req.query.imageIndex === undefined || req.query.imageName === undefined){
+            return res.status(400).json({msg: "4 query params are undefined"});
+        }
+
         const footIndex = req.query.footIndex;
         const toeIndex = req.query.toeIndex;
         const imageIndex = req.query.imageIndex;
@@ -263,11 +267,11 @@ app.get('/deleteImage', async (req, res) => {
             try {
                 toeData.feet[footIndex].toes[toeIndex].images.splice(imageIndex, 1);
             } catch {
-                res.status(400).json({ msg: "specified toe does not exist" });
+                return res.status(400).json({ msg: "specified toe or foot does not exist" });
             }
         }
         else {
-            res.status(400).json({ msg: "not found" });
+            return res.status(400).json({ msg: "not found" });
         }
 
         //deleting the toe image from the user collection
@@ -283,10 +287,10 @@ app.get('/deleteImage', async (req, res) => {
         toeData.save();
         user.save();
 
-        res.status(200).json({});
+        return res.status(200).json({msg: "Image deleted successfully"});
     }
     catch {
-        console.log("Something happened when tried to delete an image (might be an invalid user)");
+        return res.status(400).json({msg: "Something happened when tried to delete an image (might be an invalid token)"})
     }
 });
 

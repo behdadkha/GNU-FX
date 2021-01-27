@@ -1,103 +1,149 @@
+/*
+    Class for the form user's can use to log in to the site.
+*/
+
 import React, {Component} from "react";
-import {Col, Row, Container, Form, FormControl, Button} from "react-bootstrap";
-import "../componentsStyle/Login.css";
-import store from "../Redux/store";
-import {connect} from "react-redux";
-import {setCurrentUser} from "../Redux/Actions/authAction";
+import {Col, Row, Container, Form, Button} from "react-bootstrap";
+
 import jwt_decode from "jwt-decode";
-import setAuthHeader from "../utils/setAuthHeader";
+import {config} from "../config";
+import store from "../Redux/store";
+import {SetCurrentUser} from "../Redux/Actions/authAction";
+import {getAndSaveImages, getAndSaveToeData} from "../Redux/Actions/setFootAction";
+import {SetAuthHeader, isValidInput, isValidEmail} from "../Utils";
+import Axios from 'axios';
+
+import "../componentsStyle/Login.css";
+
 
 export default class Login extends Component {
+    /*
+        Sets base data for the page.
+    */
     constructor(props) {
         super(props);
         this.state = {
-            email: "",
-            password: "",
-            user: null,
-            invalidUser: false,
+            email: "", //The user's email input
+            password: "", //The user's password input
+            invalidUser: false, //Indicates whether or not an error message should be displayed
+            errorMessage: ""
         };
     }
 
-    handleLogin = async (e) => {
-        e.preventDefault();
-        const response = await fetch("http://localhost:3001/login", {
-            method: "POST",
-            headers: {
-                Accept: "application/json",
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                email: this.state.email,
-                password: this.state.password,
-            }),
-        });
-
-        if (response.status === 200) {
-            let body = await response.json();
-            this.setState({
-                user: body,
-            });
-
+    /*
+        Logs the user in and redirects to the dashboar if the login info is correct.
+        param e: The login submission event.
+    */
+    handleLoginPatient = async (e) => {
+        e.preventDefault(); //Prevents page reload on form submission
+        //Try to log in user
             
-            const {token} = body; //extract the token from the respnse
-            localStorage.setItem("jwt", token); //save the token in localstorage
-            setAuthHeader(token); //set the token to header for feature requests
-            store.dispatch(setCurrentUser(jwt_decode(token))); //add the user data to the store (decoded)
-
-            //redirect to User page
-            this.props.history.push('/user');
-
-        }else{
+        if (!isValidEmail(this.state.email)) {
+            this.setState({email: "", errorMessage: "Invalid Email Address"});
+            return
+        }
+        if (!isValidInput(this.state.password)) {
+            this.setState({password: "", errorMessage: "Invalid Password"})
+            return
+        }
+    
+        let response
+        try {
+            response = await Axios.post(`${config.dev_server}/login`,{
+                email: this.state.email,
+                password: this.state.password
+            })
+        } catch (res) {
             this.setState({
-                invalidUser: true,
+                invalidUser: true
+            });
+            return
+        }
+        
+        //Process response from server
+        if (response.status === 200 && response.data) { //The login was a success
+            let body = response.data;
+
+            const {token} = body; //Extract the token from the response
+            localStorage.setItem("jwt", token); //Save the token in localstorage
+
+            SetAuthHeader(token); //Set the token to header for feature requests
+
+            store.dispatch(SetCurrentUser(jwt_decode(token)));//Add the user data(decoded) to the store 
+
+            //Load all of the user's images from the server
+            store.dispatch(getAndSaveImages());
+
+            //Load all of the user's toe data from the server like fungal coverage
+            store.dispatch(getAndSaveToeData());
+
+            //Redirect to User page
+            this.props.history.push('/user');
+            
+            //By reloading the page, the true path becomes /user and the header bar disappears
+            window.location.reload();
+        } else {
+            this.setState({
+                invalidUser: true
             });
         }
     };
 
+    /*
+        Displays the login page.
+    */
     render() {
-        let IfInvalid;
-        if (this.state.invalidUser) {
-            IfInvalid = (
-                <div>
-                    <h6>Invalid email or passowrd</h6>
-                </div>
-            );
-        }
+        let loginError = (this.state.invalidUser) ? //Error displayed to the user if problem with login
+                "Please enter valid credentials." : "";
 
         return (
             <Container>
                 <Row>
                     <Col>
-                        {IfInvalid}
+                        {/* Error message if needed */}
+                        <div className="login-error">
+                            <h6>
+                                {loginError}
+                            </h6>
+                            <h6>
+                                {this.state.errorMessage}
+                            </h6>
+                        </div>
+
+                        {/* Actual login form */}
                         <Form
-                            className="form"
-                            onSubmit={this.handleLogin.bind(this)}
+                            className="login-form"
+                            onSubmit={this.handleLoginPatient.bind(this)}
                         >
+                            {/* Email Input */}
                             <Form.Group controlId="formBasicEmail">
                                 <Form.Label>Email address</Form.Label>
                                 <Form.Control
                                     type="email"
-                                    placeholder="Email"
+                                    placeholder=""
                                     value={this.state.email}
                                     onChange={(e) =>
-                                        this.setState({email: e.target.value})
+                                        {
+                                            this.setState({email: e.target.value.trim()})
+                                        }
                                     }
                                 />
                             </Form.Group>
 
+                            {/* Password Input */}
                             <Form.Group controlId="formBasicPassword">
                                 <Form.Label>Password</Form.Label>
                                 <Form.Control
                                     value={this.state.password}
                                     onChange={(e) =>
-                                        this.setState({
-                                            password: e.target.value,
-                                        })
+                                        this.setState({password: e.target.value.trim()})
                                     }
                                     type="password"
-                                    placeholder="Password"
+                                    placeholder=""
                                 />
                             </Form.Group>
+
+                            {/* Login Button */}
                             <Button variant="primary" type="submit">
                                 Login
                             </Button>

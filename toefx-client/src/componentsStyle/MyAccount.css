@@ -1,0 +1,82 @@
+.my-account-page {
+    display: flex;
+}
+
+.my-account-main-container {
+    background-color: RGB(238, 238, 238);
+    width: 100%;
+}
+
+.my-account-sub-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    overflow-y: scroll;
+    height: 92%; /*Largest value found to work - no idea why 100% didn't work */
+}
+
+/* For the small details bubble */
+.account-details {
+    position: relative;
+    background-color: white;
+    flex-grow: 1; /* 1:10 meaning fit-content unless space to expand */
+    width: fit-content;
+    height: fit-content;
+    padding: 20px;
+    margin : 2%;
+    border-radius: 10px; 
+}
+
+.account-details-title {
+    text-align: left;
+    font-size: 20px;
+    color: #7471ad;
+}
+
+.account-details-name {
+    font-size: 20px;
+    text-align: left;
+    margin-top: 20px;
+}
+
+.reset-password-button {
+    font-size: 20px;
+    width: 200px;
+    height: 100px;
+    margin-top: 20px;
+}
+
+/* For the image list */
+
+.uploaded-image-container {
+    position: relative;
+    background-color: white;
+    width: fit-content;
+    flex-grow: 10; /* Takes up as much space as possible next to account details */
+    padding: 20px;
+    margin : 0%;
+    border-radius: 10px;
+}
+
+.uploaded-image-table {
+    text-align: left;
+}
+
+.uploaded-image-table-headers {
+    position: sticky;
+    top: 0;
+}
+
+.uploaded-image-table-image-header {
+    width: 20%;
+}
+
+.uploaded-image-table-toe-image {
+	width: 100%;
+	max-height: 150px;
+}
+
+.delete-image-button {
+    margin: auto;
+    display: block !important; /* Centre button in cell */
+}

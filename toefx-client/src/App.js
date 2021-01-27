@@ -1,63 +1,88 @@
+/*
+    The main page of the application.
+*/
+
 import React from "react";
+import { Provider } from "react-redux";
+import { Route, BrowserRouter as Router, Switch } from "react-router-dom";
+
+import jwt_decode from "jwt-decode";
+import { SetAuthHeader } from "./Utils";
+import FirstPage from "./components/FirstPage";
+import Login from "./components/Login";
+import Navbar from "./components/NavigationBar";
+import Signup from "./components/Signup";
+import MyAccount from "./components/user/MyAccount";
+import ResetPassword from "./components/user/ResetPassword";
+import Schedule from "./components/user/Schedule";
+import Upload from "./components/user/Upload";
+import User from "./components/user/User";
+import Component404 from "./components/Component404";
+import store from "./Redux/store";
+import { LogOutUser, SetCurrentUser } from "./Redux/Actions/authAction";
+
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 
-import {Provider} from "react-redux";
-import store from "./Redux/store";
-
-import Navbar from "./components/NavigationBar";
-import FirstPage from "./components/FirstPage";
-import Login from "./components/Login";
-import Signup from "./components/Signup";
-import {Route, BrowserRouter as Router} from "react-router-dom";
-import User from "./components/user/User";
-import jwt_decode from "jwt-decode";
-import setAuthHeader from "./utils/setAuthHeader";
-import {logOutUser, setCurrentUser} from "./Redux/Actions/authAction";
-import Storyline from "./components/user/Storyline";
-import Diagnosis from "./components/user/Diagnosis";
-
-//if the browser has the user's login info,
+//If the browser has the user's login info,
 //set the data and go to the user's page
 if (localStorage.jwt) {
     const token = localStorage.jwt;
     var decodedData = "invalid";
+
     try {
         const time = Date.now() / 1000;
         decodedData = jwt_decode(token);
-        setAuthHeader(token);
+        SetAuthHeader(token);
 
-        //if the jwt is expired
+        //If the jwt is expired
         if (decodedData.exp < time)
-            store.dispatch(logOutUser()); //remove the user
+            store.dispatch(LogOutUser()); //Remove the user
         else
-            store.dispatch(setCurrentUser(decodedData));
+            store.dispatch(SetCurrentUser(decodedData));
     }
     catch (error) {
         console.log("invalid jwt");
-        store.dispatch(logOutUser());
+        store.dispatch(LogOutUser());
     }
 }
 
 function App() {
-  return (
-    <Provider store={store}>
-        <Router>
-          <div className="App">
-              <div className="navBar">
-                <Navbar></Navbar>
-              </div>
-              <Route path="/" component={FirstPage} exact/>
-              
-              <Route path="/login" component={Login} exact/> 
-              <Route path="/signup" component={Signup} exact />
-              <Route path="/user" component={User} exact/>
-              <Route path="/Diagnosis" component={Diagnosis} exact/>
-              <Route path="/Storyline" component={Storyline} exact/>
-          </div>
-        </Router>
-    </Provider>
-  );
+    const pagesWithNavbar = ["/", "/signup", "/login", "/upload"];
+
+    return (
+        <Provider store={store}>
+            <Router>
+                
+                    <div className="App">
+                        {
+                            //Only show the navigation bar on certain pages so no scrolling is required
+                            pagesWithNavbar.includes(window.location.pathname)
+                                ?
+                                <div className="navBar">
+                                    <Navbar></Navbar>
+                                </div>
+                                :
+                                <div></div> //Empty container
+                        }
+
+                        {/* Set up the routing */}
+                        <Switch>
+                            <Route path="/" component={FirstPage} exact />
+
+                            <Route path="/login" component={Login} exact />
+                            <Route path="/signup" component={Signup} exact />
+                            <Route path="/user" component={User} exact />
+                            <Route path="/upload" component={Upload} exact />
+                            <Route path="/user/schedule" component={Schedule} exact />
+                            <Route path="/user/myAccount" component={MyAccount} exact />
+                            <Route path="/user/resetPassword" component={ResetPassword} exact />
+                            <Route component={Component404} />
+                        </Switch>
+                    </div>
+            </Router>
+        </Provider>
+    );
 }
 
 export default App;

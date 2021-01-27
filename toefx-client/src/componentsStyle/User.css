@@ -1,8 +1,34 @@
-.input-group {
-    padding-top: 10%;
-    margin: auto;
-    width: 50%;
-    text-align: left;
+/*CSS Relating to the Page */
+
+html {
+    overflow-y: hidden;
+}
+
+.page {
+    display: flex;
+}
+
+.main-container {
+    background-color: RGB(238, 238, 238);
+    height: 100vh;
+    width: 100%;
+}
+
+.sub-container {
+    overflow-y: scroll;
+}
+
+.user-sub-container {
+    height: 92%; /*Largest value found to work - no idea why 100% didn't work */
+}
+
+/*CSS Relating to the Welcome Bar */
+
+.welcome-bar {
+    background-color: RGB(248, 248, 248);
+    overflow: hidden;
+    padding-bottom: 1%;
+    border-bottom: 1px solid RGB(200, 200, 200);
 }
 
 .welcome {
@@ -10,22 +36,143 @@
     padding-top: 20px;
 }
 
-.options-headers {
-    padding-top: 20px;
+.dashboard-loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    height: 98vh;
+}
+
+/* CSS Relating the Graph View */
+
+.graph-feet-buttons {
+    padding-top: 10px;
+}
+
+.graph-foot-button {
+    background-color: RGB(200, 200, 200);
+    border: 0px;
+    border-radius: .25rem;
+    width: 45%;
+}
+
+.graph-container {
+    background-color: white;
+    overflow: hidden;
+    padding-top: 3%;
+}
+
+.graph-toe-button {
+    background-color: RGB(230, 230, 230);
+    width: 100px;
+    border: 0px;
+    border-radius: .25rem;
+    margin: 0px 0px 5px 10px;
+}
+
+.active-toe-button {
+    color: white;
+    background-color: var(--highlight-color);
+}
+
+.graph-toe-button:focus, .graph-foot-button:focus {
+    outline: none;
+}
+
+.graph-toe-button:hover, .graph-foot-button:hover {
+    background-color: RGB(150, 150, 150);
+}
+
+.active-toe-button:hover {
+    background-color: var(--button-hover-color);
+}
+
+.graph-sub-container { /* For the graph below the buttons */
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+
+.graph-chart {
+    flex-grow: 1; /* Always fill the remaining space at min 50% of screen */
+    min-width: 50%;
+}
+
+.graph-y-axis {
+    color: black;
+    font-size: 16px;
+    font-family: Arial, sans-serif;
+    font-weight: 0;
+}
+
+/* CSS Relating to the Foot Details */
+
+.selected-details-container {
+    background-color: white;
+    margin: 0px 20px 20px 20px;
+    overflow: scroll;
+    flex-grow: 10; /* Always shove graph over */
+}
+
+.selected-details-title {
     font-size: 24px;
+    font-weight: bold;
+    align-content: center;
+    display: inline-block !important; /* Remove flex from row */
+    margin: auto;
+    padding-bottom: 20px;
 }
 
-.option {
-    max-height: inherit;
-    padding: 15px;
+.selected-details-table {
+    text-align : left;
+    width: 95%;
+    margin-left: 2%;
 }
 
-.option:hover {
-    border: 3px solid;
-    cursor: pointer;
-    padding: 12px; /* Counteract border */
+.selected-details-image-col {
+    width: 150px;
 }
 
-#images {
-    width : 50%;
+.selected-details-image {
+    max-width: 150px;
+    max-height: 100px;
+    border-radius: 8px;
+    padding: 5px 0px 5px 0px;
+}
+
+.selected-details-instructions { /* For when no data is selected */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+/* CSS Relating to the Total Foot Details */
+
+.total-details-container {
+    background-color: white;
+    overflow-y: hidden;
+}
+
+.total-details-table {
+    text-align: left;
+    margin-bottom: 0px !important; 
+}
+
+.total-details-title {
+    font-size: 24px;
+    font-weight: bold;
+    align-content: center;
+    display: inline-block; /* Remove flex from row */
+    margin: auto;
+    padding-bottom: 20px;
+}
+
+.total-details-left-col {
+    width: 10%;
+}
+
+.no-uploaded-images-title {
+    color: red;
 }

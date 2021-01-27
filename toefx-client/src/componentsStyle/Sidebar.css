@@ -1,0 +1,47 @@
+* {
+    box-sizing: border-box;
+}
+
+.sidebar {
+    background-color: rgb(54, 43, 47);
+    width : 350px;
+    height : 100vh; 
+    float: left; 
+    padding: 2% 0 0 0;
+}
+
+.main-sidebar-options {
+    margin-top: 50px;
+}
+
+.sidebar-items {
+    text-align : left;
+    margin-top: 20px;
+    margin-left: 15% !important; /* Can't be overriden by Row */
+}
+
+.sidebar-icon {
+    width : 15px;
+    margin-right : 10px;
+    margin-bottom: 5px;
+    cursor: pointer;
+}
+
+.sidebar-item-text {
+    color: white;
+    font-size: 20px;
+    display : inline;
+    cursor: pointer;
+}
+
+.sidebar-active-item {
+    filter: brightness(0.7);
+}
+
+.btn:hover {
+    background-color: var(--button-hover-color);
+}
+
+.new-appointment-button {
+    background-color: var(--highlight-color);
+}

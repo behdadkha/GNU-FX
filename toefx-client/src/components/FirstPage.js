@@ -1,11 +1,22 @@
+/*
+    Class for the home page of the app. It is designed to look
+    similar to ToeFX's main website.
+*/
+
 import React, {Component} from "react";
-import "../componentsStyle/FirstPage.css";
 import {Col, Container, Row} from "react-bootstrap";
+import "../componentsStyle/FirstPage.css";
+
 
 export default class FirstPage extends Component {
+
+    /*
+        Prints the home page to the screen.
+    */
     render() {
         return (
             <div>
+                {/* ToeFX Logo */}
                 <div>
                     <img className="image"
                          src="https://toefx.com/wp-content/uploads/2019/09/pipette.jpg"
@@ -13,7 +24,8 @@ export default class FirstPage extends Component {
                     ></img>
                 </div>
 
-                <Container>
+                {/* Three blue boxes taken from original ToeFX webpage */}
+                <Container className="home-page-boxes">
                     <Row>
                         <Col lg={4}>
                             <div className="box box1">

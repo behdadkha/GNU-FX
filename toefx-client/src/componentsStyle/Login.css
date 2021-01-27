@@ -1,6 +1,15 @@
-.form {
-    padding-top: 10%;
+.login-form {
+    padding-top: 20px;
     margin: auto;
     text-align: left;
     width: 50%;
+}
+
+.login-error {
+    height: 30px;
+    margin-top: 20px;
+}
+
+.login-error-input {
+    color: pink;
 }

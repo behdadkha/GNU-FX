@@ -1,0 +1,31 @@
+.diagnosis-question {
+    margin-top: 1%;
+    font-size: 130%;
+}
+
+.upload-image-button {
+    font-size: 24px !important;
+    width: fit-content;
+    padding: 20px 40px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.greyed-button {
+    background-color: grey !important;
+    border: revert !important;
+}
+
+.centred-text-with-margin-above {
+    text-align: center;
+    justify-content: center;
+    margin-top: 1%;
+}
+
+.diagnosis-img {
+    width : "40%"
+}
+
+.diagnosis-results-container {
+    margin: auto;
+}

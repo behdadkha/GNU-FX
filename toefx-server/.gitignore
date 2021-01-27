@@ -1,2 +1,5 @@
-/images
+/tempImages
 /node_modules
+/logs
+.ipynb_checkpoints/
+.idea/

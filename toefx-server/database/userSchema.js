@@ -1,3 +1,4 @@
+const { json } = require('body-parser');
 const mongoose = require('mongoose');
 
 const schema = mongoose.Schema;
@@ -24,9 +25,17 @@ const userSchema = new schema({
             message : '{value} is not an integer value'
         }
     },
+    images: {
+        type : Array,
+        required : false
+    },
     date: {
         type : Date,
         default : Date.now
+    },
+    schedule: {
+        type: Array,
+        required : false
     }
 
 });

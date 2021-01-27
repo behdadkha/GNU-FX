@@ -1,0 +1,28 @@
+#tensorflow Debian based
+FROM tensorflow/tensorflow
+
+RUN apt-get update \
+    && apt-get install -y python3-dev python3-pip \
+    && pip3 install pillow \
+    && apt-get install -y curl \
+    && apt-get install sudo
+
+#installing nodejs
+RUN curl -sL https://deb.nodesource.com/setup_12.x | bash - \
+    && apt-get install -y nodejs
+
+
+WORKDIR /toefx-server
+
+COPY package.json ./
+COPY package-lock.json ./
+
+# install the node modules
+RUN npm install --silent
+
+# copy the code into the container
+COPY . /toefx-server
+
+EXPOSE 3001
+
+CMD [ "npm", "start" ]

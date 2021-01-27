@@ -2,8 +2,9 @@ const request = require("supertest");
 const app = require('../app');
 const config = require('../config');
 const mongoose = require("mongoose");
+const jestConfig = require("./jest.config");
 
-const TestAuthToken = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmYjZjYmE4N2Y5ODlkMDY0MDQ3NzAwZSIsIm5hbWUiOiJhc2RmIiwiaWF0IjoxNjExNDM4NDQ3LCJleHAiOjE2MTE1MjQ4NDd9.NHKBl87hDdH4QejezoHBkxSQfX6ayIiTAlQ2fM9SG4U';
+const TestAuthToken = jestConfig.TestAuthToken;
 describe('/user/getUserInfo endpoint', () => {
     beforeAll(async () => {
         await mongoose.connect(config.database, { useNewUrlParser: true, useCreateIndex: true }, (err) => {

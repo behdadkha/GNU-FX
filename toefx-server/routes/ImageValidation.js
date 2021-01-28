@@ -47,8 +47,9 @@ imageValidationRoutes.route('/loggedin').get(async (req, res) => {
 
         //Get the image to be validaed
         let imageName = user.images[user.images.length - 1]; //The user's last uploaded image
+        if (Object.entries(imageName).length === 0){return res.status(400).json({msg: "No image found in the database"})}
         let commandCheckImage = `cd ./AI/imagecheck && python predictToeOrNot.py ../../images/${userId}/${imageName}`;
-        console.log("Validating the image...");
+        console.log("Validating the image: " + imageName + " userID: " + userId);
         console.log("userID: ", userId);
         console.log("imageName: ", imageName);
 
@@ -57,6 +58,7 @@ imageValidationRoutes.route('/loggedin').get(async (req, res) => {
     }
     catch (e) {
         PrintImageValidationError(e);
+        return res.status(400).json({msg: "Failed! Token or user not valid"})
     }
 });
 
@@ -69,6 +71,7 @@ imageValidationRoutes.route('/loggedin').get(async (req, res) => {
 */
 imageValidationRoutes.route('/notloggedin').post(async (req, res) => {
     let imageName = req.body.myimg;
+    if(imageName === undefined){return res.status(400).json({msg: "Image name not specified"})};
     let commandCheckImage = `cd ./AI/imagecheck && python predictToeOrNot.py ../../tempImages/${imageName}`;
     console.log("Validating: ", imageName);
 

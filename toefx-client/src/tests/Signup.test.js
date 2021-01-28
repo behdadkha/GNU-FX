@@ -119,7 +119,18 @@ describe("Signup method: handleSignup", () => {
         expect(component.state('emptyFieldError')).toEqual(false);
         expect(component.state('accountExistsError')).toEqual(true);//<----
         expect(component.state('passwordMismatchError')).toEqual(false);
+       
 
+    });
+
+    it('Server returns status: 404', async () => {
+
+        component.setState(allStates);
+
+        mockAxios.post.mockRejectedValueOnce();
+        await component.instance().handleSignup({preventDefault: () => {}});
+        expect(component.state('accountExistsError')).toEqual(true);//<----
+        
     });
 
     it('State variables are empty', async () => {
@@ -239,9 +250,42 @@ describe("Signup UI Functionalities", () => {
             preventDefault: () => {}
         })
 
+        expect(mockAxios.post).toHaveBeenCalledTimes(0);// the post request is not called
+        expect(component.state('errorMessage')).toEqual("Invalid Email Address");
+        
+    });
+
+    it("password starts with white spaces", async() => {
+        
+        emailField.simulate('change', {target: {value: "  some@gmail.com"}});
+        passwordField.simulate('change', {target: {value: "  23A password"}});
+        confirmedPassword.simulate('change', {target: {value: "  23A password"}});
+        fullName.simulate('change', {target: {value: allStates.fullName}});
+        age.simulate('change', {target: {value: allStates.age}});
+
+        await component.find('.signup-form').simulate('submit', {
+            preventDefault: () => {}
+        })
 
         expect(mockAxios.post).toHaveBeenCalledTimes(0);// the post request is not called
         expect(component.state('errorMessage')).toEqual("Invalid Email Address");
+        
+    });
+
+    it("password starts with white spaces", async() => {
+        
+        emailField.simulate('change', {target: {value: allStates.email}});
+        passwordField.simulate('change', {target: {value: "  23A password"}});
+        confirmedPassword.simulate('change', {target: {value: "  23A password"}});
+        fullName.simulate('change', {target: {value: allStates.fullName}});
+        age.simulate('change', {target: {value: allStates.age}});
+
+        await component.find('.signup-form').simulate('submit', {
+            preventDefault: () => {}
+        })
+
+        expect(mockAxios.post).toHaveBeenCalledTimes(0);// the post request is not called
+        expect(component.state('errorMessage')).toEqual("Invalid Password");
         
     });
 

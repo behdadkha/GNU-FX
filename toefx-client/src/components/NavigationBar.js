@@ -17,12 +17,12 @@ class NavigationBar extends Component {
     render() {
         var loginSignup, logo, loggedInNav;
         var pagesWithNavbar = ["/", "/login", "/signup", "/upload"];
-
+       
         //Show Dashboard and Log Out if user is logged in
         if (this.props.auth.isAuth) {
             loginSignup =
             <Nav>
-                <Nav.Link onClick={() => {store.dispatch(LogOutUser()); window.location.href = "/";}}>
+                <Nav.Link test-id="logOut" onClick={() => {store.dispatch(LogOutUser()); window.location.href = "/";}}>
                     Log Out
                 </Nav.Link>
                 {(window.location.pathname !== "/user" && window.location.pathname !== "/login") &&
@@ -70,7 +70,7 @@ class NavigationBar extends Component {
                 <Nav.Link href="/upload">Diagnosis</Nav.Link>
             </Nav>;
         }
-
+        
         return (
             <div>
                 {

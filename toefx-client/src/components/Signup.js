@@ -71,12 +71,12 @@ export default class Signup extends Component {
         
         if (!isValidEmail(this.state.email)) {
             this.setState({errorMessage: "Invalid Email Address"});
-            return
+            return;
         }
 
         if (!isValidInput(this.state.password)) {
             this.setState({errorMessage: "Invalid Password"})
-            return
+            return;
         }
 
         //Try to sign up the user
@@ -88,8 +88,7 @@ export default class Signup extends Component {
                 password: this.state.password,
                 age: this.state.age
             })
-        } catch (res) {
-            console.log(res);
+        } catch (res) {//Account already exists
             this.setState({emptyFieldError: false, accountExistsError: true, passwordMismatchError: false});
             return;
         }
@@ -99,9 +98,8 @@ export default class Signup extends Component {
             
             //Redirect to login page
             this.props.history.push('/login');
-
         }
-        else if(response.status === 400) { //Account already exists
+        else { //Account already exists
             this.setState({emptyFieldError: false, accountExistsError: true, passwordMismatchError: false});
         }
     }

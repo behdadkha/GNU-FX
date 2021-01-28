@@ -97,6 +97,15 @@ describe("handleLoginPatient works correctly", () => {
 
     });
 
+    it("handles server rejection", async() => {
+
+        mockAxios.post.mockRejectedValueOnce();
+        await instance.handleLoginPatient({preventDefault: () => {}});
+
+        expect(component.state('invalidUser')).toEqual(true);
+
+    });
+
 
     it("handles login request resolved but no data", async() => {
 

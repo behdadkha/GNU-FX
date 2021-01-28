@@ -106,28 +106,28 @@ class ApexChart extends React.Component {
     */
     resetShownToesData() {
         var toeData = []; //New toe data to be shown
-        var toeDates = []; //New dates of toe data to be shown
         var data = (this.state.showLeftFoot) ? this.props.leftFootData : this.props.rightFootData;
         var dates = (this.state.showLeftFoot) ? this.props.leftFootDates : this.props.rightFootDates;
-
+        
         for (let i = 0; i < this.state.shownToes.length; ++i) {
             if (this.state.shownToes[i]) { //The user wants to see this toe
                 toeData.push(data[i]); //Original data is stored in props
-                toeDates.push(dates[i]); //Original data is stored in props
             }
             else {
                 //Push blank entries so graph stays the same colour for each toe
                 toeData.push({name: "", data: []});
-                toeDates.push("");
             }
         }
-
-        var options = this.state.options;
-        options.xaxis.categories = toeDates;
-
+        
         this.setState({
             series: toeData,
-            options: options
+            options: {
+                ...this.state.options,
+                xaxis: {
+                  ...this.state.options.xaxis,
+                  categories: dates
+                }
+              }
         });
     }
 
@@ -311,7 +311,7 @@ class ApexChart extends React.Component {
                 <h6>Click on a point to view details!</h6>
             </div>
         }
-
+        
         return (
             <div>
                 {/* Buttons to change which foot is being viewed */}

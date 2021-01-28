@@ -103,7 +103,6 @@ class User extends Component {
                     images[toeId].push(imageURL);
                     fungalCoverage[toeId].push(image.fungalCoverage);
                     dates.push(date);
-
                     //Add blank entries to future toes so that lines in the graph can start from their actual date.
                     //ApexChart must take in a single dimension array, so dates have to be stored in order.
                     //Looks like:
@@ -115,11 +114,11 @@ class User extends Component {
                 }
             }
         }
-
+        
         return {
             images: images,
             dates: dates,
-            fungalCoverage: fungalCoverage,  
+            fungalCoverage: fungalCoverage
         };
     }
 
@@ -143,14 +142,14 @@ class User extends Component {
                 {
                     name: GetToeName(i),
                     data: allLeftFootData.fungalCoverage[i],
-                    images: allLeftFootData.images[i],
+                    images: allLeftFootData.images[i]
                 });
 
                 rightFootData.push(
                 {
                     name: GetToeName(i),
                     data: allRightFootData.fungalCoverage[i],
-                    images: allRightFootData.images[i],
+                    images: allRightFootData.images[i]
                 });
             }
             

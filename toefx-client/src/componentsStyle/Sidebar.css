@@ -42,6 +42,6 @@
     background-color: var(--button-hover-color);
 }
 
-.new-appointment-button {
+.uploadButton {
     background-color: var(--highlight-color);
 }

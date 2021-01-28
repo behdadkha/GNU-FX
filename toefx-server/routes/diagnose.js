@@ -27,7 +27,7 @@ function PrintImageDiagnosisError(error) {
 async function GetAndSendDiagnosisOutput(commandCheckImage, res)
 {
     let output = await utils.runCommand(commandCheckImage);
-    res.send(output.split(" ")[0]);
+    return res.send(output.split(" ")[0]);
 }
 
 /*
@@ -44,10 +44,11 @@ diagnoseRouter.route('/loggedin').get(async (req, res) => {
         var userObject = await utils.loadUserObject(req, res);
         var user = userObject.user;
         var userId = userObject.id;
-
         //Analyze the image
         let imageName = user.images[user.images.length - 1];
+        if (Object.entries(imageName).length === 0){return res.status(400).json({msg: "No image found in the database"})}
         console.log("Analyzing: " + imageName);
+
         let commandCheckImage = `cd ./AI/diagnose && python predict.py ../../images/${userId}/${imageName}`;
 
         //Get and send the output
@@ -55,6 +56,7 @@ diagnoseRouter.route('/loggedin').get(async (req, res) => {
     }
     catch (e) {
         PrintImageDiagnosisError(e);
+        return res.status(400).json({msg: "Failed! Token or user not valid"})
     }
 });
 
@@ -69,6 +71,7 @@ diagnoseRouter.route('/loggedin').get(async (req, res) => {
 diagnoseRouter.route('/notloggedin').get(async (req, res) => {
     //Analyze the image (no user validation is necessary since the user is not logged in)
     let imageName = req.query.imageName;
+    if(imageName === undefined){return res.status(400).json({msg: "Image name not specified"})}
     let commandCheckImage = `cd ./AI/diagnose && python predict.py ../../tempImages/${imageName}`;
     console.log("Analyzing: " + imageName);
 

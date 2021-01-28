@@ -225,7 +225,6 @@ app.get('/getImage', async (req, res) => {
         var user = userObject.user;
         var userId = userObject.id;
         let imageName = req.query.imageName;
-        console.log(imageName)
         if (imageName === undefined){return res.status(400).json({msg: "ImageName should be specified"})}
         //if the specified images is actually owned by the the user
         if (await user.images.includes(imageName))

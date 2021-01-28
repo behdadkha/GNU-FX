@@ -4,7 +4,7 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "test": "jest --testEnvironment=node --verbose --forceExit --watchAll --maxWorkers=1",
+    "test": "jest --testEnvironment=node --verbose --forceExit --watchAll --maxWorkers=1 --coverage",
     "start": "node server.js"
   },
   "author": "",

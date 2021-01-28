@@ -1,0 +1,256 @@
+.footlogo{
+    width: 10%;
+}
+
+.leftFootContainer {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    margin-left: 38%;
+  }
+  
+  .leftFootContainer img {
+    width: 100%;
+    height: auto;
+  }
+  
+  .leftFootContainer .btnBigToe {
+    position: absolute;
+    top: 25%;
+    left: 62%;
+    transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    background-color: black;
+    color: white;
+    font-size: 16px;
+    padding: 23px 15px;
+    border: none;
+    cursor: pointer;
+    border-radius: 15px;
+    text-align: center;
+  }
+
+  .leftFootContainer .btnIndexToe {
+    position: absolute;
+    top: 24%;
+    left: 53%;
+    transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    background-color: black;
+    color: white;
+    font-size: 16px;
+    padding: 15px 8px;
+    border: none;
+    cursor: pointer;
+    border-radius: 15px;
+    text-align: center;
+  }
+  
+  .leftFootContainer .btnMiddleToe {
+    position: absolute;
+    top: 29%;
+    left: 46%;
+    transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    background-color: black;
+    color: white;
+    font-size: 16px;
+    padding: 13px 8px;
+    border: none;
+    cursor: pointer;
+    border-radius: 15px;
+    text-align: center;
+  }
+
+  .leftFootContainer .btnFourthToe {
+    position: absolute;
+    top: 38%;
+    left: 40%;
+    transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    background-color: black;
+    color: white;
+    font-size: 16px;
+    padding: 13px 7px;
+    border: none;
+    cursor: pointer;
+    border-radius: 15px;
+    text-align: center;
+  }
+
+  .leftFootContainer .btnLittleToe {
+    position: absolute;
+    top: 47%;
+    left: 35%;
+    transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    background-color: black;
+    color: white;
+    font-size: 16px;
+    padding: 10px 6px;
+    border: none;
+    cursor: pointer;
+    border-radius: 15px;
+    text-align: center;
+  }
+
+  .leftFootContainer .btnAlltoes {
+    position: absolute;
+    top: 77%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    background-color: black;
+    color: white;
+    font-size: 16px;
+    padding: 45px 45px;
+    border: none;
+    cursor: pointer;
+    border-radius: 40px;
+    text-align: center;
+  }
+
+  .leftFootContainer .btnBigToe:hover {
+    background-color: red;
+  }
+  .leftFootContainer .btnIndexToe:hover  {
+    background-color: red;
+  }
+  .leftFootContainer .btnMiddleToe:hover  {
+    background-color: red;
+  }
+  .leftFootContainer .btnFourthToe:hover  {
+    background-color: red;
+  }
+  .leftFootContainer .btnLittleToe:hover {
+    background-color: red;
+  }
+
+
+.rightFootContainer {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    margin-left: 38%;
+}
+  
+.rightFootContainer img {
+    width: 100%;
+    height: auto;
+}
+  
+.rightFootContainer .btnBigToe {
+    position: absolute;
+    top: 29%;
+    left: 32%;
+    transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    background-color: black;
+    color: white;
+    font-size: 16px;
+    padding: 23px 15px;
+    border: none;
+    cursor: pointer;
+    border-radius: 15px;
+    text-align: center;
+}
+
+.rightFootContainer .btnIndexToe {
+    position: absolute;
+    top: 25%;
+    left: 40%;
+    transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    background-color: black;
+    color: white;
+    font-size: 16px;
+    padding: 15px 8px;
+    border: none;
+    cursor: pointer;
+    border-radius: 15px;
+    text-align: center;
+}
+  
+.rightFootContainer .btnMiddleToe {
+    position: absolute;
+    top: 26%;
+    left: 47%;
+    transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    background-color: black;
+    color: white;
+    font-size: 16px;
+    padding: 13px 8px;
+    border: none;
+    cursor: pointer;
+    border-radius: 15px;
+    text-align: center;
+}
+
+.rightFootContainer .btnFourthToe {
+    position: absolute;
+    top: 32%;
+    left: 53%;
+    transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    background-color: black;
+    color: white;
+    font-size: 16px;
+    padding: 13px 7px;
+    border: none;
+    cursor: pointer;
+    border-radius: 15px;
+    text-align: center;
+}
+
+.rightFootContainer .btnLittleToe {
+    position: absolute;
+    top: 43%;
+    left: 60%;
+    transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    background-color: black;
+    color: white;
+    font-size: 16px;
+    padding: 10px 6px;
+    border: none;
+    cursor: pointer;
+    border-radius: 15px;
+    text-align: center;
+}
+
+.rightFootContainer .btnAlltoes {
+    position: absolute;
+    top: 77%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    background-color: black;
+    color: white;
+    font-size: 16px;
+    padding: 45px 45px;
+    border: none;
+    cursor: pointer;
+    border-radius: 40px;
+    text-align: center;
+}
+
+.rightFootContainer .btnBigToe:hover {
+    background-color: red;
+}
+.rightFootContainer .btnIndexToe:hover  {
+    background-color: red;
+}
+.rightFootContainer .btnMiddleToe:hover  {
+    background-color: red;
+}
+.rightFootContainer .btnFourthToe:hover  {
+    background-color: red;
+}
+.rightFootContainer .btnLittleToe:hover {
+    background-color: red;
+}  
+
+#activetoe{
+    background-color: red;
+}

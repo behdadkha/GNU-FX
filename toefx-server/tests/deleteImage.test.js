@@ -32,8 +32,8 @@ describe('deleteImage endpoint', () => {
     it('should be successful if image is in the database', async () => {
         let mockedUserSave = jest.fn();
         let mockedToeData = jest.fn();
-        utils.loadUserObject = jest.fn(() => Promise.resolve({user: {save: mockedUserSave, images: [{name: "0.PNG"}]}, id:"1"}));
-        utils.getToeData = jest.fn(() => Promise.resolve({save: mockedToeData, feet:[{ toes:[{images: [{name: "123"}, {name: "456"}] }] }]}));
+        utils.loadUserObject = jest.fn(() => Promise.resolve({ user: { save: mockedUserSave, images: [{ name: "0.PNG" }] }, id: "1" }));
+        utils.getToeData = jest.fn(() => Promise.resolve({ save: mockedToeData, feet: [{ toes: [{ images: [{ name: "123" }, { name: "456" }] }] }] }));
         utils.runCommand = jest.fn();
 
         const res = await request(app)
@@ -48,6 +48,40 @@ describe('deleteImage endpoint', () => {
         expect(mockedToeData).toHaveBeenCalled();
 
         expect(utils.runCommand).toHaveBeenCalledWith("del images\\1\\0.PNG");
+    });
+
+    /* 
+        Gets the image name from the command sent to utils.runCommand
+        If the image name in the mocked database is the same as the image in the command,
+        returns true, otherwise returns false.
+    */
+    function getImageNameTest(command, data) {
+        var res = command.split('\\');
+        res = res[res.length - 1];
+
+        if (data.user.images.name === res) {
+            return (true)
+        }
+        else {
+            return (false)
+        }
+    }
+
+    it('should fail if image is not in the database', async () => {
+        let mockedUserSave = jest.fn();
+        let mockedToeData = jest.fn();
+        const mockedData = { user: { save: mockedUserSave, images: [{ name: "0.PNG" }] }, id: "1" };
+        utils.loadUserObject = jest.fn(() => Promise.resolve(mockedData));
+        utils.getToeData = jest.fn(() => Promise.resolve({ save: mockedToeData, feet: [{ toes: [{ images: [{ name: "123" }, { name: "456" }] }] }] }));
+        utils.runCommand = jest.fn(command => getImageNameTest(command, mockedData));
+
+        const res = await request(app)
+            .get('/deleteImage/?footIndex=0&toeIndex=0&imageIndex=0&imageName=1.PNG')
+            .set('Authorization', TestAuthToken)
+
+        expect(utils.runCommand).toHaveBeenCalledWith("del images\\1\\1.PNG");
+        //If the returned result is false, it means that the image does not exist in the server.
+        expect(utils.runCommand.mock.results[0].value).toBe(false)
     });
 
     //Edge cases
@@ -67,7 +101,7 @@ describe('deleteImage endpoint', () => {
         expect(res.statusCode).toEqual(400);
         expect(res.body.msg).toBe("specified toe or foot does not exist");
     });
-    
+
     it('should fail if foot index is not either 0 or 1', async () => {
         const res = await request(app)
             .get('/deleteImage/?footIndex=2&toeIndex=0&imageIndex=1&imageName=0.PNG')

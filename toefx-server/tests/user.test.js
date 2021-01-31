@@ -6,14 +6,6 @@ const jestConfig = require("./jest.config");
 
 const TestAuthToken = jestConfig.TestAuthToken;
 describe('/user/getUserInfo endpoint', () => {
-    beforeAll(async () => {
-        await mongoose.connect(config.database, { useNewUrlParser: true, useCreateIndex: true }, (err) => {
-            if (err) {
-                console.error(err);
-                process.exit(1);
-            }
-        });
-    });
     it('Should fail if authorization header is not set', async () => {
         const res = await request(app).get('/user/getUserInfo');
         expect(res.statusCode).toEqual(400);
@@ -41,14 +33,6 @@ describe('/user/getUserInfo endpoint', () => {
 });
 
 describe('/user/getschedule endpoint', () => {
-    beforeAll(async () => {
-        await mongoose.connect(config.database, { useNewUrlParser: true, useCreateIndex: true }, (err) => {
-            if (err) {
-                console.error(err);
-                process.exit(1);
-            }
-        });
-    });
     it('Should fail if authorization header is not set', async () => {
         const res = await request(app).get('/user/getschedule');
         expect(res.statusCode).toEqual(400);
@@ -78,14 +62,6 @@ describe('/user/getschedule endpoint', () => {
 });
 
 describe('/user/resetPassword endpoint', () => {
-    beforeAll(async () => {
-        await mongoose.connect(config.database, { useNewUrlParser: true, useCreateIndex: true }, (err) => {
-            if (err) {
-                console.error(err);
-                process.exit(1);
-            }
-        });
-    });
     it('Should fail if currentPassword is empty', async () => {
         const res = await request(app)
             .post('/user/resetPassword')

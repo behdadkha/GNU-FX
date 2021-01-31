@@ -67,7 +67,6 @@ function createNewUser(name, email, password, age) {
         bcrypt.genSalt(rounds, (err, salt) => {
             bcrypt.hash(password, salt, (err, hash) => {
                 if (err) throw err;
-
                 //creating a new user with the hashed password
                 const newUser = new userSchema({ email: email, name: name, password: hash, images: [], age: age });
                 newUser.save().then(() => {
@@ -170,6 +169,12 @@ function checkInput(name, email, password, age) {
         return ("NOERROR");
     }
 }
+
+function validateEmail(email){
+    const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(String(email).toLowerCase());
+}
+
 /*
     signup endpoint.
     Creates a new user and an image folder for the new user. 
@@ -185,6 +190,10 @@ app.post('/signup', (req, res) => {
     if (inputValidMsg !== "NOERROR") {
         return res.status(400).json({ msg: inputValidMsg });
     }
+    if(!validateEmail(email)){
+        return res.status(400).json({ msg: "invalid email address" });
+    }
+
     try {
         userSchema.findOne({ email: email }).then(async (user) => {
             //the email address already exists

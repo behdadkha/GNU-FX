@@ -7,7 +7,6 @@ const utils = require('../utils');
 
 let TestAuthToken = jestConfig.TestAuthToken;
 describe('/imageValidation/loggedin endpoint', () => {
-
     it('should fail if there is no token', async () => {
         const res = await request(app).get('/imageValidation/loggedin');
         expect(res.statusCode).toEqual(400);
@@ -46,7 +45,6 @@ describe('/imageValidation/loggedin endpoint', () => {
 });
 
 describe('imageValidation/notloggedin endpoint', () => {
-
     it('should fail if image name is not sent as a parameter', async () => {
         const res = await request(app).post('/imageValidation/notloggedin');
         expect(res.statusCode).toEqual(400);

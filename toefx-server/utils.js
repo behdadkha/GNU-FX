@@ -72,7 +72,7 @@ function getToeData(userId) {
             if(data)
                 resolve(data);
             else
-                reject();
+                reject("Data not found");
         });
     });
 }
@@ -87,7 +87,7 @@ function runCommand(command) {
         exec(command, (err, stdout, stderr) => {
             if (err) {
                 console.log(err);
-                reject();
+                reject("Can't run this command");
             }
             else {
                 resolve(stdout);

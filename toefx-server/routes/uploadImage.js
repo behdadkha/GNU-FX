@@ -2,7 +2,6 @@ const express = require('express');
 const uploadImage = express.Router();
 const utils = require('../utils');
 let toeData = require('../database/toe-dataSchema');
-
 var fs = require('fs');
 const { resolve } = require('path');
 
@@ -17,10 +16,10 @@ const { resolve } = require('path');
     param toeIndex: 0 to 4 referring to the toes.["Big Toe", "Index Toe", "Middle Toe", "Fourth Toe", "Little Toe"]
     param imageName: The name of the image to be saved in DB. Must be the saved as the image's actual name.
 */
-function SaveToeData(userId, date, footIndex, toeIndex, imageName) {
+function SaveToeData(userId, date, footIndex, toeIndex, imageName, res=undefined) {
     //Find the user's images in the database and add to them
     //User slot is automatically created on sign-up
-    toeData.findOne({userID: userId}, (err, item) => {
+    toeData.findOne({ userID: userId }, (err, item) => {
         if (item) {
             item.feet[footIndex].toes[toeIndex].images.push({
                 date: date,
@@ -29,7 +28,12 @@ function SaveToeData(userId, date, footIndex, toeIndex, imageName) {
             })
 
             item.save();
-        }        
+        }
+        else{
+            if(res !== undefined){
+                return res.status(400).json({msg: "Oops! user does not exist in the toe database"})
+            }
+        }
     });
 }
 
@@ -62,7 +66,7 @@ function moveImageToUserImages(image, userId, imageName) {
                 }
             });
         }
-        catch(e) {
+        catch (e) {
             PrintImageMovementError(e);
         }
     });
@@ -110,7 +114,7 @@ function GetImageExtension(image) {
 }
 
 /*
-    Endpoint: /uploadImage/loggedin
+    Endpoint: /upload/loggedin
     Saves the uploaded toe image in the database and moves the image to the user's folder in /images.
     param req: The request object containing:
         files.file: The image to upload.
@@ -120,38 +124,46 @@ function GetImageExtension(image) {
     returns: The reponse being an object {msg: uploaded} for success.
 */
 uploadImage.route('/loggedin').post(async (req, res) => {
-    const image = req.files.file;
-    var userObject = await utils.loadUserObject(req, res);
-    var user = userObject.user;
-    var userId = userObject.id;
-    var extension = GetImageExtension(image); //Used in the image name later
+    try {
+        if (req.files.file === undefined) { return res.status(400).json({ msg: "Oops, can't read the image" }) }
+        const image = req.files.file;
+        var userObject = await utils.loadUserObject(req, res);
+        var user = userObject.user;
+        var userId = userObject.id;
+        var extension = GetImageExtension(image); //Used in the image name later
 
-    //user.images.length is the number of images the user has uploaded
-    //This gives each new image a unique number
-    //BUG: Deleting some images can overwrite old images
-    const imageName = user.images.length + "." + extension;
+        //user.images.length is the number of images the user has uploaded
+        //This gives each new image a unique number
+        //BUG: Deleting some images can overwrite old images
+        const imageName = user.images.length + "." + extension;
 
-    //Save the new image under user
-    user.images.push(imageName);
-    user.save()
+        //Save the new image under user
+        user.images.push(imageName);
+        user.save()
 
-    //Prep the data to be saved in the toe-data collection 
-    var date = new Date(); //Use the current date as the image's date
-    var datetoString = date.toString();
-    var footIndex = parseInt(req.body.foot)
-    var toeIndex = parseInt(req.body.toe);
+        //Prep the data to be saved in the toe-data collection 
+        var date = new Date(); //Use the current date as the image's date
+        if(req.body.foot === undefined || req.body.toe === undefined) {return res.status(400).json({msg: "Foot or toe is undefined"})}
+        var datetoString = date.toString();
+        var footIndex = parseInt(req.body.foot)
+        var toeIndex = parseInt(req.body.toe);
 
-    //Save the data itself
-    SaveToeData(userId, datetoString, footIndex, toeIndex, imageName)
+        //Save the data itself
+        SaveToeData(userId, datetoString, footIndex, toeIndex, imageName, res)
 
-    //Move it to the database
-    moveImageToUserImages(image, userId, imageName).then(() => {
-        res.send({msg: "uploaded"})
-    }).catch(() => res.status(500).send({msg: "Error occured"}));
+        //Move it to the database
+        moveImageToUserImages(image, userId, imageName, res).then(() => {
+            return res.send({ msg: "uploaded" })
+        }).catch(() => res.status(500).send({ msg: "Error occured" }));
+    }
+    catch {
+        return res.status(400).json({ msg: "Invalid token" });
+    }
+
 })
 
 /*
-    Endpoint: /uploadImage/notloggedin
+    Endpoint: /upload/notloggedin
     Saves the uploaded image to a temp folder when the user is not logged in.
         Eventually it will delete the image after the fungal coverage percentage is calculated (not implemented yet).
     param req: The request object containing:
@@ -169,8 +181,10 @@ uploadImage.route('/notloggedin').post(async (req, res) => {
 
     //Move it to a temp folder for later
     moveImageToTempFolder(image, imageName).then(() => {
-        res.send({msg: "uploaded", img: imageName})
+        res.send({ msg: "uploaded", img: imageName })
     }).catch(() => res.status(500).send({ msg: "Error occured" }));
 })
 
 module.exports = uploadImage;
+
+

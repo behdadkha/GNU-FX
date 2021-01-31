@@ -1,10 +1,9 @@
 const request = require("supertest");
 const app = require('../app');
 const config = require('../config');
-const mongoose = require("mongoose");
+//const mongoose = require("mongoose");
 const jestConfig = require("./jest.config");
 const utils = require('../utils');
-const { GetAndSendDiagnosisOutput } = require("../routes/diagnose");
 
 let TestAuthToken = jestConfig.TestAuthToken;
 describe('diagnose/loggedin endpoint', () => {
@@ -47,7 +46,6 @@ describe('diagnose/loggedin endpoint', () => {
 });
 
 describe('diagnose/notloggedin endpoint', () => {
-
     it('should fail if image name is not sent as a query param', async () => {
         const res = await request(app).get('/diagnose/notloggedin');
         expect(res.statusCode).toEqual(400);

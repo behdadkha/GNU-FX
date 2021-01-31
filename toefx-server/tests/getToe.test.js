@@ -8,15 +8,6 @@ const toeDataSchema = require("../database/toe-dataSchema");
 
 let TestAuthToken = jestConfig.TestAuthToken;
 describe('getToe endpoint', () => {
-    beforeAll(async () => {
-        await mongoose.connect(config.database, { useNewUrlParser: true, useCreateIndex: true }, (err) => {
-            if (err) {
-                console.error(err);
-                process.exit(1);
-            }
-        });
-        
-    });
     it('should fail if there is no token', async () => {
         const res = await request(app).get('/getToe');
         expect(res.statusCode).toEqual(400);
@@ -34,7 +25,6 @@ describe('getToe endpoint', () => {
         const expected = {"feet": [{"toes": [{"images": [{"date": "2021-01-27", "fungalCoverage": "43%", "name": "0.PNG"}]}]}]};
         const res = await request(app)
             .get('/getToe')
-            .set('Authorization', TestAuthToken);
         expect(res.statusCode).toEqual(200);
         expect(res.body[0].userId).toBe('1');
         expect(res.body[0].feet).toMatchObject(expected.feet);
@@ -49,7 +39,6 @@ describe('getToe endpoint', () => {
         toeDataSchema.findOne = jest.fn().mockResolvedValue();
         const res = await request(app)
             .get('/getToe')
-            .set('Authorization', TestAuthToken);
         expect(res.statusCode).toEqual(400);
         expect(res.body.msg).toEqual("Data not found");
     });

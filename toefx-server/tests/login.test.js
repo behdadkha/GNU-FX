@@ -3,24 +3,16 @@ const app = require('../app');
 const config = require('../config');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const mongoose = require("mongoose");
+//const mongoose = require("mongoose");
 const UserModel = require('../database/userSchema');
 describe('Login endpoint', () => {
-    beforeAll(async () => {
-        await mongoose.connect(config.database, { useNewUrlParser: true, useCreateIndex: true }, (err) => {
-            if (err) {
-                console.error(err);
-                process.exit(1);
-            }
-        });
-    });
     // Correct information entered
-    it('Login should fail if correct information is entered', async () => {
+    it('Login should pass if correct information is entered', async () => {
         const res = await request(app)
             .post('/login')
             .send({
-                email: "demo@gmail.com",
-                password: "123"
+                email: "demoTEST@gmail.com",
+                password: "123test"
             });
         expect(res.statusCode).toEqual(200);
         expect(res.body.success).toBe(true);

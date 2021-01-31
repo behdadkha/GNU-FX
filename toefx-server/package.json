@@ -3,8 +3,11 @@
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
+  "jest":{
+    "testEnvironment": "node"
+  },
   "scripts": {
-    "test": "jest --testEnvironment=node --verbose --forceExit --watchAll --maxWorkers=1 --silent --coverage",
+    "test": "jest --silent --coverage",
     "start": "node server.js"
   },
   "author": "",
@@ -18,7 +21,8 @@
     "express-fileupload": "^1.2.0",
     "jsonwebtoken": "^8.5.1",
     "mongodb": "^3.6.2",
-    "mongoose": "^5.10.11"
+    "mongoose": "^5.10.11",
+    "rewire": "^5.0.0"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",

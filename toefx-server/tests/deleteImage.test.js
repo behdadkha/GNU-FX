@@ -7,14 +7,6 @@ const utils = require('../utils');
 
 let TestAuthToken = jestConfig.TestAuthToken;
 describe('deleteImage endpoint', () => {
-    beforeAll(async () => {
-        await mongoose.connect(config.database, { useNewUrlParser: true, useCreateIndex: true }, (err) => {
-            if (err) {
-                console.error(err);
-                process.exit(1);
-            }
-        });
-    });
     it('should fail if token is not set', async () => {
         const res = await request(app).get('/deleteImage');
         expect(res.statusCode).toEqual(400);

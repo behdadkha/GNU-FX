@@ -1,20 +1,12 @@
 const request = require("supertest");
 const app = require('../app');
 const config = require('../config');
-const mongoose = require("mongoose");
+//const mongoose = require("mongoose");
 const jestConfig = require('./jest.config');
 const utils = require('../utils');
 
 let TestAuthToken = jestConfig.TestAuthToken;
 describe('getImage endpoint', () => {
-    beforeAll(async () => {
-        await mongoose.connect(config.database, { useNewUrlParser: true, useCreateIndex: true }, (err) => {
-            if (err) {
-                console.error(err);
-                process.exit(1);
-            }
-        });
-    });
     it('should fail if there is no token', async () => {
         const res = await request(app).get('/getImage/?imageName=0.PNG');
         expect(res.statusCode).toEqual(400);

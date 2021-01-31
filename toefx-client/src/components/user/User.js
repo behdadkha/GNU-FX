@@ -2,15 +2,15 @@
     A class for displaying the user's home dashboard.
 */
 
-import React, {Component} from "react";
-import {Row, Table} from "react-bootstrap";
-import {connect} from "react-redux";
+import React, { Component } from "react";
+import { Row, Table } from "react-bootstrap";
+import { connect } from "react-redux";
 import Axios from "axios";
 
-import {config} from "../../config";
-import {GetFootName, GetToeName, GetImageSrcByURLsAndName, LEFT_FOOT_ID, RIGHT_FOOT_ID, TOE_COUNT} from "../../Utils";
+import { config } from "../../config";
+import { GetFootName, GetToeName, GetImageSrcByURLsAndName, LEFT_FOOT_ID, RIGHT_FOOT_ID, TOE_COUNT } from "../../Utils";
 import store from "../../Redux/store";
-import {getAndSaveImages, getAndSaveToeData} from "../../Redux/Actions/setFootAction";
+import { getAndSaveImages, getAndSaveToeData } from "../../Redux/Actions/setFootAction";
 import ApexChart from './ApexChart';
 import Sidebar from './Sidebar';
 
@@ -30,14 +30,10 @@ class User extends Component {
         this.state = {
             selectedFoot: 0, //0 if the user is viewing the left foot, 1 for right foot
             selectedTreatment: 0, //Point on graph user selected to view
-            //leftFootImages : [], //Images of toes on the left foot
-            //rightFootImages : [], //Images of toes on the right foot
             rightFootData: [],
             leftFootData: [],
             leftFootDates: [], //Dates images were taken of toes on the left foot
-            rightFootDates : [], //Dates images were taken of toes on the right foot
-            //leftFootFungalCoverage: [], //Fungal coverage percent of the images of toes on the left foot
-            //rightFootFungalCoverage : [], //Fungal coverage percent of the images of toes on the right foot
+            rightFootDates: [], //Dates images were taken of toes on the right foot
             toeData: {}, //Data recieved from the server
             imageUrls: [], //List of data like: {imageName: "1.PNG", url : ""}
             dataLoaded: false, //Used for showing the loading screen until all data are loaded
@@ -50,33 +46,28 @@ class User extends Component {
     */
     async componentDidMount() {
         //Redirect to login page if user not logged in
-        if (!this.props.auth.isAuth)
-            this.props.history.push("/login");
-        
-        //Redux data gets erased after a refresh, so if the data is gone we need to get it again
-        if (this.props.foot.images.length === 0) {
-            await store.dispatch(getAndSaveImages()); //Load image URLs
-            await store.dispatch(getAndSaveToeData());//Load toe data
+        try {
+
+            if (!this.props.auth.isAuth) {
+                this.props.history.push("/login");
+                return
+            }
+            //Redux data gets erased after a refresh, so if the data is gone we need to get it again
+            if (this.props.foot.images.length === 0) {
+                await store.dispatch(getAndSaveImages()); //Load image URLs
+                await store.dispatch(getAndSaveToeData());//Load toe data
+            }
+
+            this.setState({
+                imageUrls: this.props.foot.images,
+                toeData: this.props.foot.toeData
+            },
+                this.organizeDataforGraph //Only call once date is saved to state
+            );
+        } catch {
+            console.log("Couldn't get the required data");
         }
 
-        this.setState({
-            imageUrls : this.props.foot.images,
-            toeData: this.props.foot.toeData
-        },
-            this.organizeDataforGraph //Only call once date is saved to state
-        );
-    }
-
-    /*
-        Converts an image name into its corresponding URL for access.
-        param imageName: The name of the image to get the URL for.
-        returns: The URL for the image given.
-    */
-    async getImageURL(imageName) {
-        await Axios.get(`${config.dev_server}/getImage?imageName=${imageName}`, { responseType: "blob" })
-            .then((image) => {
-                return URL.createObjectURL(image.data);
-            });
     }
 
     /*
@@ -97,7 +88,10 @@ class User extends Component {
                 let toe = this.state.toeData.feet[footId].toes[toeId];
 
                 for (let image of toe.images) { //Each of image of the toe
-                    let imageURL = GetImageSrcByURLsAndName(this.state.imageUrls, image.name); //Finds the URL based on the image name and URLs loaded
+                    let imageURL
+                    if (this.state.imageUrls)
+                        imageURL = GetImageSrcByURLsAndName(this.state.imageUrls, image.name); //Finds the URL based on the image name and URLs loaded
+
                     let date = image.date.split("T")[0] //Format: 2020-11-21T00:00:00.000Z, split("T")[0] returns the yyyy-mm-dd
 
                     images[toeId].push(imageURL);
@@ -114,7 +108,7 @@ class User extends Component {
                 }
             }
         }
-        
+
         return {
             images: images,
             dates: dates,
@@ -127,33 +121,32 @@ class User extends Component {
         The data recieved from the server has format: feet: [{toes: [{images:[]}]}] so we need to change it for the graph
     */
     organizeDataforGraph() {
-        if (this.state.toeData.feet !== undefined && this.state.leftFootData.length === 0) { 
+        if (this.state.toeData.feet !== undefined && this.state.leftFootData.length === 0) {
             //Seperate the fungal coverage and images (required for the Apexchart)
             var allLeftFootData = this.processServerFeetData(LEFT_FOOT_ID);
             var allRightFootData = this.processServerFeetData(RIGHT_FOOT_ID);
-            
+
             //Toe data standarized for the graph
             var leftFootData = [];
             var rightFootData = [];
 
-            for (let i = 0; i < TOE_COUNT; ++i)
-            {
+            for (let i = 0; i < TOE_COUNT; ++i) {
                 leftFootData.push(
-                {
-                    name: GetToeName(i),
-                    data: allLeftFootData.fungalCoverage[i],
-                    images: allLeftFootData.images[i]
-                });
+                    {
+                        name: GetToeName(i),
+                        data: allLeftFootData.fungalCoverage[i],
+                        images: allLeftFootData.images[i]
+                    });
 
                 rightFootData.push(
-                {
-                    name: GetToeName(i),
-                    data: allRightFootData.fungalCoverage[i],
-                    images: allRightFootData.images[i]
-                });
+                    {
+                        name: GetToeName(i),
+                        data: allRightFootData.fungalCoverage[i],
+                        images: allRightFootData.images[i]
+                    });
             }
-            
-            this.setState({ 
+
+            this.setState({
                 leftFootData: leftFootData,
                 rightFootData: rightFootData,
                 leftFootDates: allLeftFootData.dates,
@@ -181,7 +174,7 @@ class User extends Component {
             for (var i = 0; i < percentageData.length - 1; ++i)
                 fungalCoverage += percentageData[i] + " -> ";
 
-            fungalCoverage += percentageData[i];              
+            fungalCoverage += percentageData[i];
         }
 
         return (
@@ -210,7 +203,7 @@ class User extends Component {
         if (this.state.dataLoaded) { //The data is ready to be displayed
             return (
                 <div className="page">
-                    <Sidebar {...this.props}/>
+                    <Sidebar {...this.props} />
 
                     <div className="main-container">
                         <div className="welcome-bar">
@@ -221,7 +214,7 @@ class User extends Component {
                             {/* Graph */}
                             {
                                 <ApexChart leftFootData={this.state.leftFootData} rightFootData={this.state.rightFootData}
-                                    leftFootDates={this.state.leftFootDates} rightFootDates={this.state.rightFootDates}>    
+                                    leftFootDates={this.state.leftFootDates} rightFootDates={this.state.rightFootDates}>
                                 </ApexChart>
                             }
 
@@ -238,11 +231,11 @@ class User extends Component {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                    {
-                                        footData.map(({name, data}, id) =>
-                                            this.printToeData(id, name, data.filter(item => item !== null)))
-                                    }
-                                    </tbody>  
+                                        {
+                                            footData.map(({ name, data }, id) =>
+                                                this.printToeData(id, name, data.filter(item => item !== null)))
+                                        }
+                                    </tbody>
                                 </Table>
                             </div>
                         </div>
@@ -253,7 +246,7 @@ class User extends Component {
         else { //If data isn't loaded, display "Loading..." to the user
             return (
                 <div>
-                    <Sidebar {...this.props}/>
+                    <Sidebar {...this.props} />
                     <div className="main-container">
                         <div className="welcome-bar">
                             <h6 className="welcome">Dashboard</h6>

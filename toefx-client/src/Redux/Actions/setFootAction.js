@@ -78,7 +78,7 @@ export const saveToeData = (data) => {
 export const getAndSaveImages = () => async (dispatch) => {
     //Recieve the images from the backend server
     let images = await GetAllImages();
-
+    
     //saves the image urls in the redux store
     dispatch(saveImages(images));
 }

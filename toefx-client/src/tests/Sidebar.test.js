@@ -8,29 +8,75 @@ import * as authAction from '../Redux/Actions/authAction.js';
 
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
+import * as deviceDetect from 'react-device-detect';
+import { compose } from 'redux';
 const middlewares = [thunk];
 const mockStore = configureMockStore(middlewares);
 
+
+
 describe("Side bar Bar UI", () => {
+    let component, mockedHistory;
+    beforeEach(() => {
+        
+        mockedHistory = { push: jest.fn() }
+        component = mount(<Provider store={store}><Sidebar history={mockedHistory} /></Provider>);
+    });
+
     it('Renders', () => {
-        let mockedHistory = {push: jest.fn()}
-        shallow(<Provider store={store}><Sidebar history={mockedHistory}/></Provider>);
+        shallow(<Provider store={store}><Sidebar history={mockedHistory} /></Provider>);
     });
 
     it('clicking on upload image redirects to /upload', () => {
-        let mockedHistory = {push: jest.fn()}
         window.location.reload = jest.fn();
-        let component = mount(<Provider store={store}><Sidebar history={mockedHistory}/></Provider>);
         component.find('.uploadButton').first().simulate('click');
         expect(mockedHistory.push).toHaveBeenCalledWith('/upload');
     });
-    
+
 
     it('clicking on logout button removes the user and redirects to /', () => {
-        let mockedHistory = {push: jest.fn()}
         jest.spyOn(authAction, 'LogOutUser');
-        let component = mount(<Provider store={store}><Sidebar history={mockedHistory}/></Provider>);
         component.find('[test-id="logOut"]').first().simulate('click');
         expect(authAction.LogOutUser).toHaveBeenCalled();
+        expect(mockedHistory.push).toHaveBeenCalledWith('/');
     });
+
+    it('clicking on Dashboard redirects to /user', () => {
+        component.find('[test-id="dashboard"]').first().simulate('click');
+        expect(mockedHistory.push).toHaveBeenCalledWith('/user');
+    });
+
+    it('clicking on Treatment Schedule redirects to /user/schedule', () => {
+        component.find('[test-id="TreatmentSchedule"]').first().simulate('click');
+        expect(mockedHistory.push).toHaveBeenCalledWith('/user/schedule');
+    });
+
+    it('clicking on Treatment Schedule redirects to /user/myAccount', () => {
+        
+        
+        component.find('[test-id="myAccount"]').first().simulate('click');
+        expect(mockedHistory.push).toHaveBeenCalledWith('/user/myAccount');
+    });
+
+    it('buttons work when mobile is detected', () => {
+
+        deviceDetect.isMobile = true;
+        jest.spyOn(authAction, 'LogOutUser');
+        component = mount(<Provider store={store}><Sidebar history={mockedHistory} /></Provider>);
+
+        component.find('[test-id="mobile-dashboard"]').first().simulate('click');
+        expect(mockedHistory.push).toHaveBeenCalledWith('/user');
+
+        component.find('[test-id="mobile-treatmentSchedule"]').first().simulate('click');
+        expect(mockedHistory.push).toHaveBeenCalledWith('/user/schedule');
+
+        component.find('[test-id="mobile-myAccount"]').first().simulate('click');
+        expect(mockedHistory.push).toHaveBeenCalledWith('/user/myAccount');
+
+        
+        component.find('[test-id="mobile-logOut"]').first().simulate('click');
+        expect(mockedHistory.push).toHaveBeenCalledWith('/');
+        expect(authAction.LogOutUser).toHaveBeenCalled();
+    });
+
 });

@@ -25,6 +25,7 @@ export default class ResetPassword extends Component {
             incorrectPasswordError: false, //Helps with error message user enters an incorrect password
             passwordMismatchError: false, //Helps with error message when user enters password and confirm password that don't match
             emptyFieldError: false, //Helps with error message user leaves fields blank
+            errorMsg: "" // To display error messages
         };
     }
     /*
@@ -51,10 +52,13 @@ export default class ResetPassword extends Component {
     */
     handleSubmit(e) {
         e.preventDefault(); //Prevents page reload on form submission
-
         //Depending on the result of this function, different errors may be
         //set to be displayed to the user.
-        if (this.isAnyFieldLeftBlank())
+        if (/^\s/.test(this.state.newPassword1)){
+            
+            this.setState({errorMsg: "Password can't start with a space"})
+        }
+        else if (this.isAnyFieldLeftBlank())
         {
             //Some field was left empty
             this.setState({
@@ -73,23 +77,25 @@ export default class ResetPassword extends Component {
         }
         else {
             //Try to reset the password
-            Axios.post(`${config.dev_server}/user/resetPassword`, {
-                currentPassword: this.state.currentPassword,
-                newPassword1: this.state.newPassword1,
-                newPassword2: this.state.newPassword2
-            }).then((data) => {
-                if(data.data.msg === "password changed") { //Successfully reset password
-                    this.props.history.push('/login');
-                }
-                else {
-                    //User's password was incorrect
-                    this.setState({
-                        incorrectPasswordError: true,
-                        passwordMismatchError: false,
-                        emptyFieldError: false,
-                    });
-                } 
-            });
+                Axios.post(`${config.dev_server}/user/resetPassword`, {
+                    currentPassword: this.state.currentPassword,
+                    newPassword1: this.state.newPassword1,
+                    newPassword2: this.state.newPassword2
+                }).then((data) => {
+                    if(data.data.msg === "password changed") { //Successfully reset password
+                        this.props.history.push('/login');
+                    }
+                    else {
+                        //User's password was incorrect
+                        this.setState({
+                            incorrectPasswordError: true,
+                            passwordMismatchError: false,
+                            emptyFieldError: false,
+                        });
+                    } 
+                }).catch(() => {
+                    console.log("error")
+                });  
         }
     }
 
@@ -112,7 +118,6 @@ export default class ResetPassword extends Component {
     */
     render() {
         var errorText = this.getErrorText();
-
         return (
             <div className="reset-password-container">
                 <div className="reset-password-header"></div> {/* Grey header */ }
@@ -126,7 +131,7 @@ export default class ResetPassword extends Component {
                     </div>
 
                     <div className="reset-password-form">
-                        <Form onSubmit={this.handleSubmit.bind(this)}>
+                        <Form test-id="resetPasswordFrom" onSubmit={this.handleSubmit.bind(this)}>
                             <Form.Group controlId="formBasicPassword">
                                 <Form.Label>Current Password</Form.Label>
                                 <Form.Control type="password"
@@ -170,6 +175,7 @@ export default class ResetPassword extends Component {
                                 Submit
                             </Button>
                         </Form>
+                        <h6>{this.state.errorMsg}</h6>
                     </div>
                 </div>
             </div>

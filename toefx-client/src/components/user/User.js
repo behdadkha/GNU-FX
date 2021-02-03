@@ -83,7 +83,7 @@ class User extends Component {
         var fungalCoverage = [[], [], [], [], []];
         var dates = [];
 
-        if (this.state.toeData.feet[footId] !== undefined) { //Error handling
+        if (this.state.toeData.feet !== undefined && this.state.toeData.feet[footId] !== undefined) { //Error handling
             for (let toeId = 0; toeId < this.state.toeData.feet[footId].toes.length; ++toeId) { //Each toe
                 let toe = this.state.toeData.feet[footId].toes[toeId];
 

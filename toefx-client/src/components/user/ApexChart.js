@@ -99,7 +99,7 @@ class ApexChart extends React.Component {
         },
             this.resetShownToesData //Call the function when state is changed
         );
-
+        
         //Save the selected foot globally in the redux store
         //Need to know the selected foot to change the bottom cell
         store.dispatch(setSelectedFoot(showLeftFoot ? LEFT_FOOT_ID : RIGHT_FOOT_ID));
@@ -115,7 +115,7 @@ class ApexChart extends React.Component {
         var dates = (this.state.showLeftFoot) ? this.props.leftFootDates : this.props.rightFootDates;
         
         for (let i = 0; i < this.state.shownToes.length; ++i) {
-            if (this.state.shownToes[i]) { //The user wants to see this toe
+            if (this.state.shownToes[i] && data[i]) { //The user wants to see this toe
                 toeData.push(data[i]); //Original data is stored in props
             }
             else {
@@ -142,6 +142,10 @@ class ApexChart extends React.Component {
     */
     showToe(num) {
         let shownToes = [false, false, false, false, false]; //Hide all toes
+
+        if (shownToes[num] === undefined)//error handling 
+            return
+
         shownToes[num] = true; //Except toe clicked on
 
         let selectedFoot = (this.state.showLeftFoot) ? this.props.leftFootData : this.props.rightFootData;
@@ -200,10 +204,11 @@ class ApexChart extends React.Component {
         var activeToeButtonClass = defaultToeButtonClass + " active-toe-button"; //When the toe's data is being shown on the chart
         var allClasses = ["btnBigToe", "btnIndexToe", "btnMiddleToe", "btnFourthToe", "btnLittleToe"]
         //(this.state.shownToes[toeId] ? activeToeButtonClass : defaultToeButtonClass)
+        if (allClasses[toeId] === undefined)
+            return ""
         return (
             <button key={toeId} onClick={this.showToe.bind(this, toeId)}
                 className={allClasses[toeId]} id={this.state.shownToes[toeId] ? "activetoe" : ""}>
-                
             </button>
         );
     }

@@ -135,7 +135,6 @@ class Upload extends Component {
     */
     handleUpload(e) {
         let file = e.target.files[0];
-
         if (gPossibleFileTypes.findIndex(item => item === file.type) === -1) {
             //Invalid file type
             this.setState({invalidFileTypeError: true});
@@ -146,7 +145,6 @@ class Upload extends Component {
             //Remove the error in case it was there before
             this.setState({invalidFileTypeError: false});
         }
-
         this.setState({
             files: [
                 ...this.state.files, //Append new image onto end of old file list
@@ -155,13 +153,11 @@ class Upload extends Component {
             uploaded: true,
             input: file.name,
         });
-
         //Now that the file has been confirmed, upload it to the database -- THIS SHOULD COME AFTER VALIDATION!!!
         const formData = new FormData(); //formData contains the image to be uploaded
         formData.append("file", e.target.files[0]);
         formData.append("foot", this.state.selectedFootId);
         formData.append("toe", this.state.selectedToeId);
-
         if (this.props.auth.isAuth) { //User is logged in
             axios.post(`${config.dev_server}/upload/loggedin`, formData, {
                 onUploadProgress: (ProgressEvent) => this.updateUploadProgress(ProgressEvent)
@@ -179,6 +175,7 @@ class Upload extends Component {
                 this.validateImage(res.data.img);
             });
         }
+        
     }
 
     /*

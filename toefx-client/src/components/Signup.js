@@ -78,7 +78,6 @@ export default class Signup extends Component {
             this.setState({errorMessage: "Invalid Password"})
             return;
         }
-       console.log("her")
         //Try to sign up the user
         let response;
         try {
@@ -89,15 +88,10 @@ export default class Signup extends Component {
                 age: this.state.age
             })
         } catch (res) {//Account already exists
-            console.log("here")
             this.setState({emptyFieldError: false, accountExistsError: true, passwordMismatchError: false});
             return;
         }
-<<<<<<< HEAD
         
-=======
-        console.log(Axios.post);
->>>>>>> 19e1edde9f1c8ce99e128af3452363a206cc02f7
         //Process response from server
         if (response.status === 200) { //Sign-up was a success
             

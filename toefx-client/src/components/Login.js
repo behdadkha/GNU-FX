@@ -35,9 +35,10 @@ export default class Login extends Component {
         param e: The login submission event.
     */
     handleLoginPatient = async (e) => {
+        
         e.preventDefault(); //Prevents page reload on form submission
         //Try to log in user
-            
+           
         if (!isValidEmail(this.state.email)) {
             this.setState({email: "", errorMessage: "Invalid Email Address"});
             return
@@ -46,7 +47,7 @@ export default class Login extends Component {
             this.setState({password: "", errorMessage: "Invalid Password"})
             return
         }
-    
+        
         let response
         try {
             response = await Axios.post(`${config.dev_server}/login`,{
@@ -59,7 +60,7 @@ export default class Login extends Component {
             });
             return
         }
-        
+
         //Process response from server
         if (response.status === 200 && response.data) { //The login was a success
             let body = response.data;

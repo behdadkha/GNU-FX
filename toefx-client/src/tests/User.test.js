@@ -63,7 +63,7 @@ describe("Testing componentDidMount", () => {
 
     it("should call redux store to get toe data and images if currently dont exist", (done) => {
         //const stores = mockStore({ auth: { isAuth: true }, foot: {selectedFoot: 0, images: [], toeData: []} })
-
+        Axios.get = jest.fn(() => Promise.resolve({data: []}));
         store.dispatch(SetCurrentUser("someone"));
         jest.spyOn(setFootAction, 'getAndSaveImages');
         jest.spyOn(setFootAction, 'getAndSaveToeData');

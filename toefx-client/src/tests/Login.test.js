@@ -5,12 +5,11 @@ import thunk from 'redux-thunk'
 
 import { render } from '@testing-library/react';
 import { shallow, mount } from "enzyme";
-import mockAxios from '../__mocks__/axios';
 import Login from '../components/Login';
-import axios from 'axios';
 import store from '../Redux/store'
 import * as footAction from '../Redux/Actions/setFootAction.js';
 import {config} from "../config";
+import Axios from 'axios';
 
 const middlewares = [thunk];
 const mockStore = configureMockStore(middlewares);
@@ -19,7 +18,7 @@ const mockStore = configureMockStore(middlewares);
 let email = "demo@gmail.com";
 let password = "123";
 
-//jest.mock(axios);
+//jest.mock(Axios);
 
 describe("login states are initialized correctly", () => {
 
@@ -54,7 +53,8 @@ describe("handleLoginPatient works correctly", () => {
     let instance
 
     beforeEach(() => {
-
+        Axios.post = jest.fn(() => Promise.resolve({status: 200, data: { success: true, token: "Bearer asdf"}}));
+        Axios.get = jest.fn(() => Promise.resolve({data: []}));
         mockedHistory = {push: jest.fn()}
         component = shallow(<Login history={mockedHistory}/>);
         component.setState({email: email, password: password});
@@ -62,19 +62,15 @@ describe("handleLoginPatient works correctly", () => {
         window.location.reload = jest.fn();
         
     });
-
-    afterEach(() => {
-        axios.post.mockClear();
-    });
     
 
     it("calls the api for login", async () => {
 
-        //jest.spyOn(instance, 'dispatchToStore').mockImplementation((e) => console.log("here"));
+        
         await instance.handleLoginPatient({preventDefault: () => {}});
         
-        expect(axios.post).toHaveBeenCalledWith(`${config.dev_server}/login`, {email: email, password: password})
-        expect(axios.get).toHaveBeenCalled();
+        expect(Axios.post).toHaveBeenCalledWith(`${config.dev_server}/login`, {email: email, password: password})
+        expect(Axios.get).toHaveBeenCalled();
         expect(window.location.reload).toHaveBeenCalled();
         expect(mockedHistory.push).toHaveBeenCalled();
 
@@ -90,7 +86,7 @@ describe("handleLoginPatient works correctly", () => {
 
     it("handles invalid user", async() => {
 
-        mockAxios.post.mockImplementationOnce(() => Promise.resolve({status: 404, data: { success: false, token: "Bearer asdf"}}));
+        Axios.post = jest.fn(() => Promise.resolve({status: 404, data: { success: false, token: "Bearer asdf"}}));
         await instance.handleLoginPatient({preventDefault: () => {}});
 
         expect(component.state('invalidUser')).toEqual(true);
@@ -99,7 +95,7 @@ describe("handleLoginPatient works correctly", () => {
 
     it("handles server rejection", async() => {
 
-        mockAxios.post.mockRejectedValueOnce();
+        Axios.post.mockRejectedValueOnce();
         await instance.handleLoginPatient({preventDefault: () => {}});
 
         expect(component.state('invalidUser')).toEqual(true);
@@ -109,7 +105,7 @@ describe("handleLoginPatient works correctly", () => {
 
     it("handles login request resolved but no data", async() => {
 
-        mockAxios.post.mockImplementationOnce(() => Promise.resolve({status: 200}));
+        Axios.post = jest.fn(() => Promise.resolve({status: 200}));
         await instance.handleLoginPatient({preventDefault: () => {}});
         
         expect(component.state('invalidUser')).toEqual(true);
@@ -141,7 +137,7 @@ describe("handleLoginPatient works correctly", () => {
         
         expect(component.state('email')).toEqual("");
         expect(component.state('password')).toEqual("");
-        expect(axios.post).toHaveBeenCalledTimes(0);// post request is not called
+        expect(Axios.post).toHaveBeenCalledTimes(0);// post request is not called
 
     });
 
@@ -152,7 +148,7 @@ describe("handleLoginPatient works correctly", () => {
         
         expect(component.state('email')).toEqual("");
         expect(component.state('password')).toEqual("");
-        expect(axios.post).toHaveBeenCalledTimes(0);// post request is not called
+        expect(Axios.post).toHaveBeenCalledTimes(0);// post request is not called
 
     });
 
@@ -163,7 +159,7 @@ describe("handleLoginPatient works correctly", () => {
         
         expect(component.state('email')).toEqual("");
         expect(component.state('password')).toEqual("123");
-        expect(axios.post).toHaveBeenCalledTimes(0);// post request is not called
+        expect(Axios.post).toHaveBeenCalledTimes(0);// post request is not called
 
     });
 
@@ -174,7 +170,7 @@ describe("handleLoginPatient works correctly", () => {
         
         expect(component.state('email')).toEqual("some@gmail.com");
         expect(component.state('password')).toEqual("");
-        expect(axios.post).toHaveBeenCalledTimes(0);// post request is not called
+        expect(Axios.post).toHaveBeenCalledTimes(0);// post request is not called
 
     });
 
@@ -185,7 +181,7 @@ describe("handleLoginPatient works correctly", () => {
         
         expect(component.state('email')).toEqual("");
         expect(component.state('password')).toEqual("123");
-        expect(axios.post).toHaveBeenCalledTimes(0);// post request is not called
+        expect(Axios.post).toHaveBeenCalledTimes(0);// post request is not called
         
     });
 
@@ -233,7 +229,7 @@ describe('testing the Login UI functionalities', () => {
 
         expect(component.state('email')).toEqual("");
         expect(component.state('password')).toEqual("");
-        expect(axios.post).toHaveBeenCalledTimes(0);// post request is not called
+        expect(Axios.post).toHaveBeenCalledTimes(0);// post request is not called
     });
 
     it("inputs remove white spaces", async() => {
@@ -260,7 +256,7 @@ describe('testing the Login UI functionalities', () => {
 
     it("shows 'Please enter valid credentials.' if the server doesnt find the user", async() => {
 
-        mockAxios.post.mockImplementationOnce(() => Promise.resolve({status: 404}));
+        Axios.post = jest.fn(() => Promise.resolve({status: 404}));
         component.setState({email: "fake@gmail.com", password: "123"});
 
         await component.find('Form').simulate('submit');

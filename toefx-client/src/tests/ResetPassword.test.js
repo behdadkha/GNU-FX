@@ -1,6 +1,5 @@
 import { mount, shallow } from 'enzyme';
 import React from 'react';
-import mockAxios from '../__mocks__/axios';
 import { config } from '../config';
 import ResetPassword from '../components/user/ResetPassword';
 import Axios from 'axios';
@@ -95,22 +94,23 @@ describe("ResetPassword method: handleSubmit", () => {
     it('Can successfully reset password', async () => {
         
         component.setState(allStates);
-        mockAxios.post = jest.fn(() => Promise.resolve({status: 200}));
+        Axios.post = jest.fn(() => Promise.resolve({status: 200, data : {msg: "password changed"}}));
         await component.instance().handleSubmit({preventDefault: () => {}});
 
-        expect(mockAxios.post).toHaveBeenCalledTimes(1);
-        expect(mockAxios.post).toHaveBeenCalledWith(`${config.dev_server}/user/resetPassword`, {
+        expect(Axios.post).toHaveBeenCalledTimes(1);
+        expect(Axios.post).toHaveBeenCalledWith(`${config.dev_server}/user/resetPassword`, {
             currentPassword : "123", 
             newPassword1: "NewStrongPassword123", 
             newPassword2: "NewStrongPassword123", 
         });
+        expect(mockedHistory.push).toHaveBeenCalledWith('/login');
 
     });
 
     it('Server error if incorrect password entered', async () => {
         const incorrectCredential = {currentPassword: "12345", newPassword1: "abc", newPassword2: "abc"};
         component.setState(incorrectCredential);
-        mockAxios.post = jest.fn(() => Promise.resolve({data : {msg: "password incorrect"}}))
+        Axios.post = jest.fn(() => Promise.resolve({data : {msg: "password incorrect"}}))
         await component.instance().handleSubmit({preventDefault: () => {}});
         expect(component.state('incorrectPasswordError')).toEqual(true);
         
@@ -118,7 +118,7 @@ describe("ResetPassword method: handleSubmit", () => {
 
     it('State variables are empty', async () => {
 
-        mockAxios.post = jest.fn(() => Promise.resolve({status: 200}));
+        Axios.post = jest.fn(() => Promise.resolve({status: 200}));
         await component.instance().handleSubmit({preventDefault: () => {}});
 
         expect(component.state('emptyFieldError')).toEqual(true); //<----
@@ -129,7 +129,7 @@ describe("ResetPassword method: handleSubmit", () => {
         const incorrectCredential = {currentPassword: "12345", newPassword1: "abcdef", newPassword2: "abc"};
         component.setState(incorrectCredential);
 
-        mockAxios.post = jest.fn(() => Promise.resolve({status: 200}));
+        Axios.post = jest.fn(() => Promise.resolve({status: 200}));
         await component.instance().handleSubmit({preventDefault: () => {}});
         expect(component.state('emptyFieldError')).toEqual(false);
         expect(component.state('incorrectPasswordError')).toEqual(false);
@@ -206,7 +206,7 @@ describe("ResetPassword UI Functionalities", () => {
             preventDefault: () => {}
         })
 
-        expect(mockAxios.post).toHaveBeenCalledTimes(0);// the post request is not called
+        expect(Axios.post).toHaveBeenCalledTimes(0);// the post request is not called
         expect(component.state('errorMsg')).toEqual("Password can't start with a space");
         
     });

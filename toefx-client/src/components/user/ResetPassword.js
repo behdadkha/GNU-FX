@@ -93,8 +93,8 @@ export default class ResetPassword extends Component {
                             emptyFieldError: false,
                         });
                     } 
-                }).catch(() => {
-                    console.log("error")
+                }).catch((e) => {
+                    console.log(e)
                 });  
         }
     }

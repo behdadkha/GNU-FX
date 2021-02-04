@@ -92,7 +92,7 @@ export default class Signup extends Component {
             this.setState({emptyFieldError: false, accountExistsError: true, passwordMismatchError: false});
             return;
         }
-
+        
         //Process response from server
         if (response.status === 200) { //Sign-up was a success
             

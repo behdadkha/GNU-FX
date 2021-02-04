@@ -185,6 +185,7 @@ function validateEmail(email){
     Param age: user's age.
 */
 app.post('/signup', (req, res) => {
+
     const { name, email, password, age } = req.body;
     const inputValidMsg = checkInput(name, email, password, age);
     if (inputValidMsg !== "NOERROR") {

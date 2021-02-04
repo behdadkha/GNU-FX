@@ -42,13 +42,11 @@ class MyAccount extends Component {
         //Redirect to login page if user not logged in
         if (!this.props.auth.isAuth)
             this.props.history.push("/login");
-
         //Redux data gets erased after a refresh, so if the data is gone we need to get it again
         if (this.props.foot.images.length === 0) {
             await store.dispatch(getAndSaveImages()); //Load the user's images
             await store.dispatch(getAndSaveToeData()); //Load the user's toe data
         }
-
         //Get the user's info from the server
         let userInfo = (await Axios.get(`${config.dev_server}/user/getUserInfo`)).data;
         

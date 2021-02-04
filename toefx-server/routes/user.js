@@ -10,6 +10,7 @@ const jwt = require('jsonwebtoken');
 const config = require('../config');
 const utils = require('../utils')
 const userSchema = require("../database/userSchema");
+const toeDataSchema = require('../database/toe-dataSchema');
 
 
 /*
@@ -47,10 +48,10 @@ userRoutes.route('/getUserInfo').get(async (req, res) => {
         var user = (await utils.loadUserObject(req, res)).user;
 
         //Return the data
-        res.json({email: user.email, age: user.age});
+        res.json({ email: user.email, age: user.age });
     }
     catch {
-        res.status(400).json({msg: "Couldnt get user's info at /getUserInfo."});
+        res.status(400).json({ msg: "Couldnt get user's info at /getUserInfo." });
     }
 });
 
@@ -65,12 +66,12 @@ userRoutes.route('/getschedule').get(async (req, res) => {
     try {
         //Get the user
         var user = (await utils.loadUserObject(req, res)).user;
-        
+
         //Return the data
         res.json(user.schedule);
     }
     catch (e) {
-        res.status(400).json({msg: "An error occurred while attempting to retrieve a user's schedule. Possibly due to an invalid user."})
+        res.status(400).json({ msg: "An error occurred while attempting to retrieve a user's schedule. Possibly due to an invalid user." })
     }
 });
 
@@ -85,11 +86,11 @@ userRoutes.route('/getschedule').get(async (req, res) => {
 */
 userRoutes.post('/resetPassword', async (req, res) => {
     try {
-        const {currentPassword, newPassword1, newPassword2} = req.body;
-        if (currentPassword === "" || newPassword1 === "" || newPassword2 === ""){return res.status(400).json({msg: "All the inputs have to be filled"})}
-        
+        const { currentPassword, newPassword1, newPassword2 } = req.body;
+        if (currentPassword === "" || newPassword1 === "" || newPassword2 === "") { return res.status(400).json({ msg: "All the inputs have to be filled" }) }
+
         var user = (await utils.loadUserObject(req, res)).user;
-        try{
+        try {
             if (user) {
                 bcrypt.compare(currentPassword, user.password).then(async (valid) => { //Check if the current password is correct
                     if (valid) {
@@ -100,26 +101,49 @@ userRoutes.post('/resetPassword', async (req, res) => {
 
                             //Save the new encrypted password for security reasons
                             user.save().then(() => {
-                                res.status(200).json({msg: "password changed"});
+                                res.status(200).json({ msg: "password changed" });
                             }).catch(err => console.log(err));
                         }
-                        else{
-                            return res.status(400).json({msg: "New passwords don't match"})
+                        else {
+                            return res.status(400).json({ msg: "New passwords don't match" })
                         }
                     }
                     else {
-                        return res.status(400).json({msg: "Invalid password"});
+                        return res.status(400).json({ msg: "Invalid password" });
                     }
                 });
             }
         }
-        catch{
-            return res.status(400).json({msg: "Invalid password"})
+        catch {
+            return res.status(400).json({ msg: "Invalid password" })
         }
     }
     catch {
-        return res.status(400).json({msg: "Something went wrong"})
+        return res.status(400).json({ msg: "Something went wrong" })
     }
+});
+
+// For testing purposes(not implemented in the react app yet)
+// Delets a user from the db.
+userRoutes.delete('/delete', async (req, res) => {
+    const name = "Validation Test";
+    userSchema.findOneAndDelete({ name: name }, (err, user) => {
+        if (err) {
+            return res.status(400).json({ msg: "Can't delete the user" })
+        }
+        toeDataSchema.deleteOne({ userID: user._id }, (err) => {
+            if (err) {
+                return res.status(400).json({ msg: "Can't delete the user" })
+            }
+        });
+        let command = `rm -rf images/${user._id}`
+        if (config.hostType.includes("Windows"))
+            command = `rmdir /s /q images\\${user._id}`
+        utils.runCommand(command);
+        return res.status(200).json({msg: `User ${user._id} deleted`})
+    });
+
+
 });
 
 module.exports = userRoutes;

@@ -35,7 +35,6 @@ export default class Login extends Component {
         param e: The login submission event.
     */
     handleLoginPatient = async (e) => {
-        
         e.preventDefault(); //Prevents page reload on form submission
         //Try to log in user
            
@@ -60,7 +59,6 @@ export default class Login extends Component {
             });
             return
         }
-
         //Process response from server
         if (response.status === 200 && response.data) { //The login was a success
             let body = response.data;

@@ -50,7 +50,7 @@ export default class ResetPassword extends Component {
         Processes the user's reset password submission. Redirects to the login page upon a successful submission.
         param e: The rest password submission event.
     */
-    handleSubmit(e) {
+    async handleSubmit(e) {
         e.preventDefault(); //Prevents page reload on form submission
         //Depending on the result of this function, different errors may be
         //set to be displayed to the user.
@@ -76,26 +76,26 @@ export default class ResetPassword extends Component {
             });
         }
         else {
+        
             //Try to reset the password
-                Axios.post(`${config.dev_server}/user/resetPassword`, {
-                    currentPassword: this.state.currentPassword,
-                    newPassword1: this.state.newPassword1,
-                    newPassword2: this.state.newPassword2
-                }).then((data) => {
-                    if(data.data.msg === "password changed") { //Successfully reset password
-                        this.props.history.push('/login');
-                    }
-                    else {
-                        //User's password was incorrect
-                        this.setState({
-                            incorrectPasswordError: true,
-                            passwordMismatchError: false,
-                            emptyFieldError: false,
-                        });
-                    } 
-                }).catch((e) => {
-                    console.log(e)
-                });  
+            let data = await Axios.post(`${config.dev_server}/user/resetPassword`, {
+                currentPassword: this.state.currentPassword,
+                newPassword1: this.state.newPassword1,
+                newPassword2: this.state.newPassword2
+            }).catch(() => console.log("No response from server"));
+            
+            if(data.data.msg === "password changed") { //Successfully reset password
+                this.props.history.push('/login');
+            }
+            else {
+                //User's password was incorrect
+                this.setState({
+                    incorrectPasswordError: true,
+                    passwordMismatchError: false,
+                    emptyFieldError: false,
+                });
+            } 
+            
         }
     }
 

@@ -78,7 +78,6 @@ export default class Signup extends Component {
             this.setState({errorMessage: "Invalid Password"})
             return;
         }
-       
         //Try to sign up the user
         let response;
         try {

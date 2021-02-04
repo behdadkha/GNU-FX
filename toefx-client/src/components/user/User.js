@@ -83,7 +83,7 @@ class User extends Component {
         var fungalCoverage = [[], [], [], [], []];
         var dates = [];
 
-        if (this.state.toeData.feet[footId] !== undefined) { //Error handling
+        if (this.state.toeData.feet !== undefined && this.state.toeData.feet[footId] !== undefined) { //Error handling
             for (let toeId = 0; toeId < this.state.toeData.feet[footId].toes.length; ++toeId) { //Each toe
                 let toe = this.state.toeData.feet[footId].toes[toeId];
 
@@ -121,7 +121,7 @@ class User extends Component {
         The data recieved from the server has format: feet: [{toes: [{images:[]}]}] so we need to change it for the graph
     */
     organizeDataforGraph() {
-        if (this.state.toeData.feet !== undefined && this.state.leftFootData.length === 0) {
+        if (this.state.toeData.feet !== undefined && (this.state.leftFootData.length === 0 || this.state.rightFootData.length === 0)) {
             //Seperate the fungal coverage and images (required for the Apexchart)
             var allLeftFootData = this.processServerFeetData(LEFT_FOOT_ID);
             var allRightFootData = this.processServerFeetData(RIGHT_FOOT_ID);
@@ -210,7 +210,7 @@ class User extends Component {
                             <h6 className="welcome">Dashboard</h6>
                         </div>
 
-                        <div className="sub-container user-sub-container">
+                        <div test-id="shownDataUser" className="sub-container user-sub-container">
                             {/* Graph */}
                             {
                                 <ApexChart leftFootData={this.state.leftFootData} rightFootData={this.state.rightFootData}
@@ -253,7 +253,7 @@ class User extends Component {
                         </div>
 
                         <div className="sub-container user-sub-container">
-                            <h4 className="dashboard-loading">Loading...</h4>
+                            <h4 test-id="loading" className="dashboard-loading">Loading...</h4>
                         </div>
                     </div>
                 </div>

@@ -12,6 +12,7 @@ import thunk from 'redux-thunk';
 import { SetCurrentUser } from '../Redux/Actions/authAction';
 import Axios from 'axios';
 import { config } from '../config';
+import { compose } from 'redux';
 const middlewares = [thunk];
 const mockStore = configureMockStore(middlewares);
 
@@ -291,7 +292,7 @@ describe('organizeDataforGraph method', () => {
         expect(instance.processServerFeetData).toHaveBeenCalledWith(1);
     });
 
-    it("calls the processServerFeetData function for both left foot and right foot", () => {
+    it("populates the state variables by the data recieved from processServerFeetData", () => {
         let mockedHistory = { push: jest.fn() }
         let component = mount(<Provider store={store}><User history={mockedHistory} /></Provider>);
         component = component.find(User).children();
@@ -303,36 +304,36 @@ describe('organizeDataforGraph method', () => {
 
         const expectedLeftFootData = [
             {
-              name: 'Big Toe',
-              data: [ '30%', '10%' ],
-              images: [ 'thisURL', 'randomImageURL' ]
+                name: 'Big Toe',
+                data: ['30%', '10%'],
+                images: ['thisURL', 'randomImageURL']
             },
-            { name: 'Index Toe', data: [ null, null ], images: [] },
-            { name: 'Middle Toe', data: [ null, null ], images: [] },
+            { name: 'Index Toe', data: [null, null], images: [] },
+            { name: 'Middle Toe', data: [null, null], images: [] },
             {
-              name: 'Fourth Toe',
-              data: [ null, null, '10%' ],
-              images: [ 'forthImageURL' ]
+                name: 'Fourth Toe',
+                data: [null, null, '10%'],
+                images: ['forthImageURL']
             },
-            { name: 'Little Toe', data: [ null, null, null ], images: [] }
-          ]
-        const expectedLeftFootDates = [ '2020-11-02', '2010-11-02', '2010-11-02' ]
+            { name: 'Little Toe', data: [null, null, null], images: [] }
+        ]
+        const expectedLeftFootDates = ['2020-11-02', '2010-11-02', '2010-11-02']
         const expectedRightFootData = [
             { name: 'Big Toe', data: [], images: [] },
             { name: 'Index Toe', data: [], images: [] },
             {
-              name: 'Middle Toe',
-              data: [ '30%', '10%' ],
-              images: [ 'righFootURL', 'secondImageURL' ]
+                name: 'Middle Toe',
+                data: ['30%', '10%'],
+                images: ['righFootURL', 'secondImageURL']
             },
-            { name: 'Fourth Toe', data: [ null, null ], images: [] },
+            { name: 'Fourth Toe', data: [null, null], images: [] },
             {
-              name: 'Little Toe',
-              data: [ null, null, '10%' ],
-              images: [ 'rightSmallURL' ]
+                name: 'Little Toe',
+                data: [null, null, '10%'],
+                images: ['rightSmallURL']
             }
-          ]
-        const expectedRightFootDates = [ '2020-11-02', '2010-11-02', '2010-11-02' ];
+        ]
+        const expectedRightFootDates = ['2020-11-02', '2010-11-02', '2010-11-02'];
 
         expect(component.state('leftFootData')).toEqual(expectedLeftFootData);
         expect(component.state('leftFootDates')).toEqual(expectedLeftFootDates);
@@ -340,6 +341,148 @@ describe('organizeDataforGraph method', () => {
         expect(component.state('rightFootDates')).toEqual(expectedRightFootDates);
         expect(component.state('dataLoaded')).toEqual(true);
     });
+
+    it("toeData is empty", () => {
+        let mockedHistory = { push: jest.fn() }
+        let component = mount(<Provider store={store}><User history={mockedHistory} /></Provider>);
+        component = component.find(User).children();
+        let instance = component.instance();
+
+        instance.organizeDataforGraph();
+
+        expect(component.state('leftFootData')).toEqual([]);
+        expect(component.state('leftFootDates')).toEqual([]);
+        expect(component.state('rightFootData')).toEqual([]);
+        expect(component.state('rightFootDates')).toEqual([]);
+        expect(component.state('dataLoaded')).toEqual(false);
+    });
+
+    it("leftFootData is empty but rightFootData has data", () => {
+        let mockedHistory = { push: jest.fn() }
+        let component = mount(<Provider store={store}><User history={mockedHistory} /></Provider>);
+        component = component.find(User).children();
+        let instance = component.instance();
+
+        instance.setState({ leftFootData: [{ feet: [] }], toeData: bigArrayofToeData, imageUrls: bigArrayofImages });
+        instance.organizeDataforGraph();
+
+        const expectedLeftFootData = [
+            {
+                name: 'Big Toe',
+                data: ['30%', '10%'],
+                images: ['thisURL', 'randomImageURL']
+            },
+            { name: 'Index Toe', data: [null, null], images: [] },
+            { name: 'Middle Toe', data: [null, null], images: [] },
+            {
+                name: 'Fourth Toe',
+                data: [null, null, '10%'],
+                images: ['forthImageURL']
+            },
+            { name: 'Little Toe', data: [null, null, null], images: [] }
+        ]
+        const expectedLeftFootDates = ['2020-11-02', '2010-11-02', '2010-11-02']
+        const expectedRightFootData = [
+            { name: 'Big Toe', data: [], images: [] },
+            { name: 'Index Toe', data: [], images: [] },
+            {
+                name: 'Middle Toe',
+                data: ['30%', '10%'],
+                images: ['righFootURL', 'secondImageURL']
+            },
+            { name: 'Fourth Toe', data: [null, null], images: [] },
+            {
+                name: 'Little Toe',
+                data: [null, null, '10%'],
+                images: ['rightSmallURL']
+            }
+        ]
+        const expectedRightFootDates = ['2020-11-02', '2010-11-02', '2010-11-02'];
+
+        expect(component.state('leftFootData')).toEqual(expectedLeftFootData);
+        expect(component.state('leftFootDates')).toEqual(expectedLeftFootDates);
+        expect(component.state('rightFootData')).toEqual(expectedRightFootData);
+        expect(component.state('rightFootDates')).toEqual(expectedRightFootDates);
+        expect(component.state('dataLoaded')).toEqual(true);
+    });
+
+    it("Both rightFootData and leftFootData have value", () => {
+        let mockedHistory = { push: jest.fn() }
+        let component = mount(<Provider store={store}><User history={mockedHistory} /></Provider>);
+        component = component.find(User).children();
+        let instance = component.instance();
+
+        instance.setState({ leftFootData: [{ feet: [] }], rightFootData: [{ feet: [] }], toeData: bigArrayofToeData, imageUrls: bigArrayofImages });
+        instance.organizeDataforGraph();
+
+
+        expect(component.state('leftFootData')).toEqual([{ feet: [] }]);
+        expect(component.state('leftFootDates')).toEqual([]);
+        expect(component.state('rightFootData')).toEqual([{ feet: [] }]);
+        expect(component.state('rightFootDates')).toEqual([]);
+        expect(component.state('dataLoaded')).toEqual(false);
+    });
+});
+
+describe('printToeData method', () => {
+
+    it("correctly outputs fungal coverage in format: 20% -> 10% -> ...",() => {
+        let mockedHistory = { push: jest.fn() }
+        let component = mount(<Provider store={store}><User history={mockedHistory} /></Provider>);
+        component = component.find(User).children();
+        let instance = component.instance();
+        instance.setState({toeData: bigArrayofToeData, imageUrls: bigArrayofImages });
+        const output = instance.printToeData("1", "Big toe", ["20%", "10%", "1%"]);
+        
+        expect(output).toEqual(
+            <tr key="1">
+                <td className="total-details-left-col">Big toe</td>
+                <td>20% -> 10% -> 1%</td>
+            </tr>
+        );
+    });
+
+    it("param percentageData is an empty array",() => {
+        let mockedHistory = { push: jest.fn() }
+        let component = mount(<Provider store={store}><User history={mockedHistory} /></Provider>);
+        component = component.find(User).children();
+        let instance = component.instance();
+        instance.setState({ toeData: bigArrayofToeData, imageUrls: bigArrayofImages });
+        const output = instance.printToeData("1", "Big toe", []);
+        
+        expect(output).toEqual(
+            <tr key="1">
+                <td className="total-details-left-col">Big toe</td>
+                <td>No Data</td>
+            </tr>
+        );
+    });
+    
+    it("instead of a string for name int is passed ",() => {
+        let mockedHistory = { push: jest.fn() }
+        let component = mount(<Provider store={store}><User history={mockedHistory} /></Provider>);
+        component = component.find(User).children();
+        let instance = component.instance();
+        instance.setState({ toeData: bigArrayofToeData, imageUrls: bigArrayofImages });
+        const output = instance.printToeData("1", 200, ["20%", "10%", "1%"]);
+        
+        expect(output.props.children[0].props.children).toEqual(200);
+    });
+
 })
+
+describe('Testing user.js UI', () => {
+    it("shows loading when toe data are not loaded", () => {
+        let mockedHistory = { push: jest.fn() }
+        let component = mount(<Provider store={store}><User history={mockedHistory} /></Provider>);
+        component = component.find(User).children();
+
+        expect(component.find("[test-id='loading']").props().children).toEqual("Loading...");
+    });
+});
+
+
+
+
 
 

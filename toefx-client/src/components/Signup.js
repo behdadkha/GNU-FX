@@ -56,7 +56,7 @@ export default class Signup extends Component {
     */
     handleSignup = async (e)=> {
         e.preventDefault(); //Prevents page reload on form submission
-
+        
         if (this.isAnyFieldLeftBlank())
         {
             this.setState({emptyFieldError: true, accountExistsError: false, passwordMismatchError: false});
@@ -78,7 +78,7 @@ export default class Signup extends Component {
             this.setState({errorMessage: "Invalid Password"})
             return;
         }
-
+       console.log("her")
         //Try to sign up the user
         let response;
         try {
@@ -89,10 +89,11 @@ export default class Signup extends Component {
                 age: this.state.age
             })
         } catch (res) {//Account already exists
+            console.log("here")
             this.setState({emptyFieldError: false, accountExistsError: true, passwordMismatchError: false});
             return;
         }
-
+        console.log(Axios.post);
         //Process response from server
         if (response.status === 200) { //Sign-up was a success
             

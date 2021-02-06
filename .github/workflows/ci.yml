@@ -1,0 +1,35 @@
+name: CI
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [10.x, 8.x]
+    steps:
+    - uses: actions/checkout@v1
+    - name: npm install client
+      run: |
+        cd toefx-client
+        npm install
+    - name: npm install server
+      run: |
+        cd toefx-server
+        npm install
+    - name: npm test client
+      run: |
+        cd toefx-client
+        npm test
+    - name: npm test server
+      run: |
+        cd toefx-server
+        npm test
+    
+    - name: npm run build for deployment not implemented
+      run: |
+        cd toefx-client
+        npm run build

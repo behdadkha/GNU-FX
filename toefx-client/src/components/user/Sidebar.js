@@ -63,7 +63,7 @@ class Sidebar extends Component {
                     {/* Nav Options - Highlight when seleected */}
                     <Container className="main-sidebar-options">
                         {/* Dashboard */}
-                        <Row className={window.location.pathname === "/user" ? activeItemClass : itemClass}>
+                        <Row test-id="dashboardRow" className={window.location.pathname === "/user" ? activeItemClass : itemClass}>
                             <span test-id="dashboard" onClick={() => this.props.history.push("/user")}>
                                 <img src={dashboardIcon} alt="Dashboard-Icon" className={iconClass}></img>
                                 <h6 className={navLinkClass}>Dashboard</h6>
@@ -71,7 +71,7 @@ class Sidebar extends Component {
                         </Row>
 
                         {/* Treatment Schedule */}
-                        <Row className={window.location.pathname === "/user/schedule" ? activeItemClass : itemClass}>
+                        <Row test-id="TreatmentScheduleRow" className={window.location.pathname === "/user/schedule" ? activeItemClass : itemClass}>
                             <span test-id="TreatmentSchedule" onClick={() => this.props.history.push("/user/schedule")}>
                                 <img src={scheduleIcon} alt="Schedule-Icon" className={iconClass}></img>
                                 <h6 className={navLinkClass}>Treatment Schedule</h6>
@@ -79,7 +79,7 @@ class Sidebar extends Component {
                         </Row>
 
                         {/* My Account */}
-                        <Row className={window.location.pathname === "/user/myAccount" ? activeItemClass : itemClass}>
+                        <Row test-id="myAccountRow" className={window.location.pathname === "/user/myAccount" ? activeItemClass : itemClass}>
                             <span test-id="myAccount" onClick={() => this.props.history.push("/user/myAccount")}>
                                 <img src={myAccountIcon} alt="Account-Icon" className={iconClass}></img>
                                 <h6 className={navLinkClass}>My Account</h6>

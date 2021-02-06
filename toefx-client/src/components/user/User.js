@@ -54,8 +54,13 @@ class User extends Component {
             }
             //Redux data gets erased after a refresh, so if the data is gone we need to get it again
             if (this.props.foot.images.length === 0) {
-                await store.dispatch(getAndSaveImages()); //Load image URLs
-                await store.dispatch(getAndSaveToeData());//Load toe data
+                try{
+                    await store.dispatch(getAndSaveImages()); //Load image URLs
+                    await store.dispatch(getAndSaveToeData());//Load toe data
+                }catch{
+                    console.log("not working");
+                }
+                
             }
 
             this.setState({

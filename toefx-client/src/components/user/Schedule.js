@@ -30,16 +30,22 @@ class Schedule extends Component {
     */
     async componentDidMount() {
         //Redirect to login page if user not logged in
-        if (!this.props.auth.isAuth)
+        
+        if (!this.props.auth.isAuth){
             this.props.history.push("/Login");
-
+            return;
+        }
+        try{
         //Gets user's schedule from the server
-        Axios.get("http://localhost:3001/user/getschedule")
-            .then((data) => {
-                this.setState({
-                    scheduleData: data.data
-                })
-            });
+        let response = await Axios.get("http://localhost:3001/user/getschedule")
+        
+        this.setState({
+            scheduleData: response.data
+        })
+
+        }catch{
+            console.log("couldnt mount the component");
+        }
     }
 
     /*
@@ -62,7 +68,7 @@ class Schedule extends Component {
         Prints user's treatment schedule on the page.
     */
     render() {
-        if (!this.state.scheduleData) { //Data hasn't been loaded from the server yet
+        if (this.state.scheduleData.length === 0) { //Data hasn't been loaded from the server yet
             //Display loading message to the user
             return (
                 <div>

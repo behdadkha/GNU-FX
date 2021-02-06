@@ -1,17 +1,10 @@
 import { mount, shallow } from 'enzyme';
 import React from 'react';
-import { Nav, Navbar } from 'react-bootstrap';
-import { Provider } from "react-redux";
 import ApexChart from '../components/user/ApexChart';
 import store from '../Redux/store'
-import * as setFootAction from '../Redux/Actions/setFootAction'
 
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import { SetCurrentUser } from '../Redux/Actions/authAction';
-import Axios from 'axios';
-import { config } from '../config';
-import { compose } from 'redux';
 const middlewares = [thunk];
 const mockStore = configureMockStore(middlewares);
 
@@ -367,6 +360,20 @@ describe('printToeData', () => {
         expect(output.props.children[1].props.children).toEqual('Big Toe');
     });
 
+    it('leftfoot is selected', () => {
+        let component = mount(
+            <ApexChart store={store} leftFootData={LeftFootData} rightFootData={RightFootData}
+                leftFootDates={LeftFootDates} rightFootDates={RightFootDates}>
+            </ApexChart>
+        );
+
+        let instance = component.instance();
+        component.setState({shownToes: [true, false, true, true, true], right: true});
+        const output = instance.printToeData(0, "Big Toe", ['thisURL', 'randomImageURL'], ["10%", "20%"]);
+
+        expect(output.props.children[1].props.children).toEqual('Big Toe');
+    });
+
 })
 
 describe('printSelectedDateDetails', () => {
@@ -384,4 +391,17 @@ describe('printSelectedDateDetails', () => {
         expect(output.props.className).toEqual('selected-details-container split-graph');
     });
 
+})
+
+describe('showingDetails is true', () => {
+    let component = mount(
+        <ApexChart store={store} leftFootData={LeftFootData} rightFootData={RightFootData}
+            leftFootDates={LeftFootDates} rightFootDates={RightFootDates}>
+        </ApexChart>
+    );
+
+    jest.spyOn(component.instance(), 'printSelectedDateDetails');
+    component.setState({showingDetails: true});
+
+    expect(component.instance().printSelectedDateDetails).toHaveBeenCalled();
 })

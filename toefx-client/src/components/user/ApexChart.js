@@ -258,7 +258,7 @@ class ApexChart extends React.Component {
         for (let i = 0; i < TOE_COUNT; ++i)
             toeNames.push(GetToeName(i)) //Initial order in based on right foot
 
-        if (this.state.rightFootData)
+        if (this.state.showLeftFoot)
             toeNames.reverse(); //Toes go in opposite order on left foot
 
         var isToeNotIncluded = this.state.shownToes[toeNames.findIndex(toeName => toeName === name)];

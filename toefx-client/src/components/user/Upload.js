@@ -74,6 +74,9 @@ class Upload extends Component {
         param res: The result of the image validation.
     */
     processImageValidationResult(res) {
+        if (res.data === undefined) 
+            return
+
         var valid, text;
         var currentImageIndex = this.state.files.length - 1;
         var tempFiles = this.state.files; //A copy so setState can be used later
@@ -125,6 +128,8 @@ class Upload extends Component {
         param progressEvent: An object containing the current state of the upload.
     */
     updateUploadProgress(progressEvent) {
+        if (progressEvent.loaded <= 0 || progressEvent.total <= 0)
+            return
         let progress = Math.round((progressEvent.loaded / progressEvent.total) * 100) + "%";
         this.setState({uploadProgress: progress});
     }
@@ -135,16 +140,17 @@ class Upload extends Component {
     */
     handleUpload(e) {
         let file = e.target.files[0];
+
         if (gPossibleFileTypes.findIndex(item => item === file.type) === -1) {
             //Invalid file type
             this.setState({invalidFileTypeError: true});
             return;
         }
-        else
-        {
+        else {
             //Remove the error in case it was there before
             this.setState({invalidFileTypeError: false});
         }
+
         this.setState({
             files: [
                 ...this.state.files, //Append new image onto end of old file list
@@ -161,7 +167,7 @@ class Upload extends Component {
         if (this.props.auth.isAuth) { //User is logged in
             axios.post(`${config.dev_server}/upload/loggedin`, formData, {
                 onUploadProgress: (ProgressEvent) => this.updateUploadProgress(ProgressEvent)
-            }).then((res) => {
+            }).then(() => {
                 console.log("Done, now validating the image")
                 this.validateImage(file);
             });
@@ -187,6 +193,9 @@ class Upload extends Component {
 
         //The image name is sent as a query string imageName=
         if (this.props.auth.isAuth) {
+            if (this.state.files[index] === undefined || this.state.files[index].name === undefined)
+                return;
+
             let imageName = this.state.files[index].name;
             await axios.get(`${config.dev_server}/diagnose/loggedin/?imageName=${imageName}`)
                 .then((res) => {responseText = res.data})
@@ -194,6 +203,8 @@ class Upload extends Component {
         else {
             //tempfilename would have been set earlier
             let imageName = this.state.tempfileName;
+            if (imageName === "")
+                return
             await axios.get(`${config.dev_server}/diagnose/notloggedin/?imageName=${imageName}`)
                 .then((res) => {responseText = res.data})
         }
@@ -218,14 +229,16 @@ class Upload extends Component {
         Sets the chosen foot in the system to the user's chosen foot.
     */
     setFoot(footId) {
-        this.setState({selectedFootId: footId});
+        if (footId === 0 || footId === 1)
+            this.setState({selectedFootId: footId});
     }
 
     /*
         Sets the chosen toe in the system to the user's chosen toe.
     */
     setToe(toeId) {
-        this.setState({selectedToeId: toeId});
+        if (toeId >= 0 && toeId <= 4)
+            this.setState({selectedToeId: toeId});
     }
 
     /*
@@ -240,7 +253,7 @@ class Upload extends Component {
         var activeToeButtonClass = defaultToeButtonClass + " active-toe-button"; //When the toe's data is being shown on the chart
 
         return (
-            <button onClick={this.setToe.bind(this, toeId)}
+            <button key={toeId} onClick={this.setToe.bind(this, toeId)}
                     className={(this.state.selectedToeId === toeId ? activeToeButtonClass : defaultToeButtonClass)}>
                 {GetToeName(toeId)}
             </button>

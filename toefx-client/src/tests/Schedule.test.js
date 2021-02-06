@@ -1,18 +1,12 @@
-import { mount, shallow } from 'enzyme';
+import { mount } from 'enzyme';
 import React from 'react';
-import { Nav, Navbar } from 'react-bootstrap';
 import { Provider } from "react-redux";
 import Schedule from '../components/user/Schedule';
 import store from '../Redux/store'
-import * as setFootAction from '../Redux/Actions/setFootAction'
 
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import { SetCurrentUser } from '../Redux/Actions/authAction';
 import Axios from 'axios';
-import { config } from '../config';
-import { compose } from 'redux';
-import { isTablet } from 'react-device-detect';
 const middlewares = [thunk];
 const mockStore = configureMockStore(middlewares);
 
@@ -69,6 +63,7 @@ describe('Schedule component', () => {
         let component = mount(<Provider store={store}><Schedule history={mockedHistory} /></Provider>);
         component.find(Schedule).children().setState({scheduleData: [{ date: "2020-10-10", doctor: "Mr. tester", comment: "very good" }]});
 
+        expect(component.find(Schedule).children().state('scheduleData')).toEqual([{ date: "2020-10-10", doctor: "Mr. tester", comment: "very good" }]);
     });
 
     it('schedule data is still not loaded', () => {
@@ -78,7 +73,19 @@ describe('Schedule component', () => {
 
         let component = mount(<Provider store={store}><Schedule history={mockedHistory} /></Provider>);
         component.find(Schedule).children().setState({scheduleData: []});
+        
 
+
+    });
+
+    it('server responds with 400', () => {
+        let mockedHistory = { push: jest.fn() };
+        Axios.get = jest.fn(() => Promise.reject({status: 404, data: [{ date: "2020-10-10", doctor: "Mr. tester", comment: "very good" }] }));
+        const store = mockStore({ auth: { isAuth: true } });
+
+        let component = mount(<Provider store={store}><Schedule history={mockedHistory} /></Provider>);
+
+        expect(component.find(Schedule).children().instance).toThrow();//throws exception
     });
 
 })

@@ -31,7 +31,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "validationTest": "./node_modules/.bin/jest ./src/tests/validationTests",
+    "testCoverage": "npm test -- --testPathIgnorePatterns=src/tests/validationTests/* --coverage  --collectCoverageFrom=src/components/** --watchAll",
+    "validationTest": "npm test ./tests/validationTests/Functional.test.js",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {

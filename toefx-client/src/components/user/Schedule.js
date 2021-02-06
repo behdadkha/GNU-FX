@@ -39,8 +39,6 @@ class Schedule extends Component {
         //Gets user's schedule from the server
         let response = await Axios.get("http://localhost:3001/user/getschedule")
         
-        response.catch((e) => console.log(e));
-
         this.setState({
             scheduleData: response.data
         })
@@ -70,7 +68,7 @@ class Schedule extends Component {
         Prints user's treatment schedule on the page.
     */
     render() {
-        if (!this.state.scheduleData) { //Data hasn't been loaded from the server yet
+        if (this.state.scheduleData.length === 0) { //Data hasn't been loaded from the server yet
             //Display loading message to the user
             return (
                 <div>

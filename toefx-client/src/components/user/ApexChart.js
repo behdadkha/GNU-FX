@@ -200,8 +200,8 @@ class ApexChart extends React.Component {
         param toeId: The toe the button is for.
     */
     printToeButton(toeId) {
-        var defaultToeButtonClass = "graph-toe-button";
-        var activeToeButtonClass = defaultToeButtonClass + " active-toe-button"; //When the toe's data is being shown on the chart
+        //var defaultToeButtonClass = "graph-toe-button";
+        //var activeToeButtonClass = defaultToeButtonClass + " active-toe-button"; //When the toe's data is being shown on the chart
         var allClasses = ["btnBigToe", "btnIndexToe", "btnMiddleToe", "btnFourthToe", "btnLittleToe"]
         //(this.state.shownToes[toeId] ? activeToeButtonClass : defaultToeButtonClass)
         if (allClasses[toeId] === undefined)
@@ -217,8 +217,8 @@ class ApexChart extends React.Component {
         Adds buttons to the page where user can select toes.
     */
     printToeButtons() {
-        var defaultToeButtonClass = "graph-toe-button";
-        var activeToeButtonClass = defaultToeButtonClass + " active-toe-button"; //For when all toe data is being shown on the chart
+        //var defaultToeButtonClass = "graph-toe-button";
+        //var activeToeButtonClass = defaultToeButtonClass + " active-toe-button"; //For when all toe data is being shown on the chart
         var toeOrder = [];
         for (let i = 0; i < TOE_COUNT; ++i)
             toeOrder.push(i); //Initial view in order of ids (based on right foot)
@@ -239,7 +239,7 @@ class ApexChart extends React.Component {
                 }
             </span>*/
             <div className={this.state.showLeftFoot ? "leftFootContainer" : "rightFootContainer"}>
-                <img src={this.state.showLeftFoot ? leftFootCroppedLogo : rightFootCroppedLogo} />
+                <img src={this.state.showLeftFoot ? leftFootCroppedLogo : rightFootCroppedLogo} alt="left foot"/>
                 
                 <button onClick={this.showHideAllToes.bind(this)} className="btnAlltoes"></button>
                 {
@@ -340,12 +340,12 @@ class ApexChart extends React.Component {
                 <div className="graph-feet-buttons">
                     <button onClick={this.viewFoot.bind(this, true)}
                         className={(this.state.showLeftFoot ? activeFootButtonClass : defaultFootButtonClass)}>
-                        <img src={leftFootLogo} className="footlogo" />
+                        <img src={leftFootLogo} className="footlogo" alt="left foot logo"/>
                     </button>
 
                     <button onClick={this.viewFoot.bind(this, false)}
                         className={(!this.state.showLeftFoot ? activeFootButtonClass : defaultFootButtonClass)}>
-                        <img src={rightFootLogo} className="footlogo" />
+                        <img src={rightFootLogo} className="footlogo" alt="right food logo"/>
                     </button>
                 </div>
 

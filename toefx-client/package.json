@@ -31,7 +31,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "testCoverage": "npm test -- --testPathIgnorePatterns=src/tests/validationTests/* --coverage  --collectCoverageFrom=src/components/** --watchAll",
+    "testCoverage": "npm test -- --testPathIgnorePatterns=src/tests/validationTests/* --coverage  --collectCoverageFrom=src/components/** --watchAll --silent --timeout 10000 --exit",
     "validationTest": "npm test ./tests/validationTests/Functional.test.js",
     "eject": "react-scripts eject"
   },

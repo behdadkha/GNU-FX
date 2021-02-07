@@ -30,8 +30,7 @@ jobs:
     - name: testing server
       run: |
         cd toefx-server
-        npm test
-    
+        npm test 
     - name: npm run build for deployment not implemented
       run: |
         cd toefx-client

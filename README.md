@@ -42,4 +42,5 @@ Note: Make sure you have python3 alias set as python. Running ```python``` shoul
 * To run the **validation tests** , first go to `toefx-server` and run `npm start`. Then go to `toefx-client` and run `npm run validationTest`.
 * To run the unit-tests for the node app, go to `toefx-server` and run `npm test`. The output is  a table showing the percentage of statements coverage, branch coverage, function coverage and line coverage.
 ## Instruction to run the bot (continue validation and stress test)
-* Go to `TestingSelenium` and run `python ./test.py`.
+1. Run both frontend and backend. Go to `toefx-client` and run `npm start`, then go to `toefx-server` and run `npm start`.
+2. Go to `TestingSelenium` and run `python ./test.py`.

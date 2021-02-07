@@ -37,5 +37,5 @@ Note: Make sure you have python3 alias set as python. Running ```python``` shoul
 * Go to `toefx-server` and run `npm install`
 ### Run
 * To run the **unit tests** for the React app, go to `toefx-client` and run `npm run unittests`.  The output is  a table showing the percentage of statements coverage, branch coverage, function coverage and line coverage.
-* To run the **validation tests** , go to `toefx-client` and run `npm run validationtest` to run the validation tests.
+* To run the **validation tests** , go to `toefx-client` and run `npm run validationtest`.
 * To run the unit-tests for the node app, go to `toefx-server` and run `npm test`. The output is  a table showing the percentage of statements coverage, branch coverage, function coverage and line coverage.

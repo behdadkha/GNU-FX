@@ -38,8 +38,7 @@ describe("Functional: Users must be able to create accounts", () => {
         await component.instance().handleSignup({ preventDefault: () => { } })
         expect(component.state('accountExistsError')).toBe(true);
 
-        //deleting the test account
-        await Axios.delete(`${config.dev_server}/user/delete`)
+        
     });
 
 });
@@ -47,12 +46,15 @@ describe("Functional: Users must be able to create accounts", () => {
 describe("Functional: The program must let the user log into their existing account", () => {
     let mockedHistory, component;
     let ValidUser;
+
     beforeEach(() => {
         ValidUser = { email: "demoTEST@gmail.com", password: "123test" }
         mockedHistory = { push: jest.fn() }
         component = shallow(<Login history={mockedHistory} />);
     })
+
     it("User login", async () => {
+
         window.location.reload = jest.fn();
         component.setState({ email: ValidUser.email, password: ValidUser.password });
 
@@ -61,9 +63,11 @@ describe("Functional: The program must let the user log into their existing acco
 
         //InvalidUser state remained false
         expect(component.state('invalidUser')).toBe(false);
+
     });
 
     it("User should be redirected to their dashboard /user", async () => {
+
         window.location.reload = jest.fn();
         component.setState({ email: ValidUser.email, password: ValidUser.password });
 
@@ -76,22 +80,14 @@ describe("Functional: The program must let the user log into their existing acco
 
 });
 
-/*import appointment from '../../icons/appointment.png';
-describe.only("Functional: The program must accept images uploaded by users", () => {
 
-    it.only("User upload image", async () => {
-        const ValidUser = { email: "demoTEST@gmail.com", password: "123test" }
-        let mockedHistory = { push: jest.fn() }
-        let component = mount(<Provider store={store}><Upload history={mockedHistory} /></Provider>);
-        component = component.find(Upload).children();
+ /*it('deleting the test account', async () => {    
+        await Axios.delete(`${config.dev_server}/user/delete`)
+    })*/
 
-        window.URL.createObjectURL = jest.fn()
-        const file = new File(['(⌐□_□)'], 'chucknorris.png', { type: 'image/png' })
-        console.log(file)
-        component.setState({selectedFootId : 0 , selectedToeId: 0});
-        await component.instance().handleUpload({ target: { files: [file] } })
-    });
-    it("The program must notify the user if the uploaded image is not a valid image", async () => {
+describe("The program must notify the user if the uploaded image is not a valid image", () => {
+
+    it('', async () => {
         const ValidUser = { email: "demoTEST@gmail.com", password: "123test" }
         let mockedHistory = { push: jest.fn() }
         let component = mount(<Provider store={store}><Upload history={mockedHistory} /></Provider>);
@@ -107,7 +103,11 @@ describe.only("Functional: The program must accept images uploaded by users", ()
         expect(component.state('invalidFileTypeError')).toBe(true);
     });
 
-});*/
+    it('deleting the test account', async () => {    
+        await Axios.delete(`${config.dev_server}/user/delete`)
+    })
+});
+
 /*
 describe.only("Functional(F-11): User should be able to see their treatment schedule", () => {
     it.only("My Account sidebar", async () => {
@@ -124,6 +124,9 @@ describe.only("Functional(F-11): User should be able to see their treatment sche
     });
 });
 */
+
+
+/*
 //K
 describe("Functional(F-12): User must be able to view account details such as their email", () => {
     it("My Account sidebar", async () => {
@@ -239,4 +242,4 @@ describe("Performance(p-3): Loading a storyline for viewing should take no more 
     });
 });
 
-
+*/

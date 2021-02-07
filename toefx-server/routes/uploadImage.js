@@ -172,17 +172,20 @@ uploadImage.route('/loggedin').post(async (req, res) => {
     returns as the response: msg: "uploaded" and img: the name of the saved image
 */
 uploadImage.route('/notloggedin').post(async (req, res) => {
+    
     const image = req.files.file;
+    
     var extension = GetImageExtension(image);
     var timeInMs = new Date().getTime()
 
     //Image name is the time in milisonds and it is going to be stored in the tempImages folder.
     const imageName = timeInMs + "." + extension;
-
+    
     //Move it to a temp folder for later
     moveImageToTempFolder(image, imageName).then(() => {
         res.send({ msg: "uploaded", img: imageName })
     }).catch(() => res.status(500).send({ msg: "Error occured" }));
+
 })
 
 module.exports = uploadImage;

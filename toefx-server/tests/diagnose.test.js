@@ -1,21 +1,26 @@
 const request = require("supertest");
 const app = require('../app');
-const config = require('../config');
-//const mongoose = require("mongoose");
 const jestConfig = require("./jest.config");
 const utils = require('../utils');
-
 let TestAuthToken = jestConfig.TestAuthToken;
+
+
+
 describe('diagnose/loggedin endpoint', () => {
+    beforeEach(() => {
+        jest.useFakeTimers();
+    });
     it('should fail if token is not set', async () => {
+
         const res = await request(app).get('/diagnose/loggedin');
         expect(res.statusCode).toEqual(400);
         expect(res.body.msg).toBe("Failed! Token or user not valid");
+
     });
 
     it('should fail if there is no image in the database', async () => {
         let mockedUserSave = jest.fn();
-        const mockedData = { user: { save: mockedUserSave, images: [{ }] }, id: "1" };
+        const mockedData = { user: { save: mockedUserSave, images: [{}] }, id: "1" };
         utils.loadUserObject = jest.fn(() => Promise.resolve(mockedData));
 
         const res = await request(app)

@@ -138,7 +138,7 @@ class Upload extends Component {
         Processes the requested upload of an image by the user.
         param e: The upload event.
     */
-    handleUpload(e) {
+    async handleUpload(e) {
         let file = e.target.files[0];
 
         if (gPossibleFileTypes.findIndex(item => item === file.type) === -1) {
@@ -161,6 +161,7 @@ class Upload extends Component {
         });
         //Now that the file has been confirmed, upload it to the database -- THIS SHOULD COME AFTER VALIDATION!!!
         const formData = new FormData(); //formData contains the image to be uploaded
+        console.log(e.target.files[0]);
         formData.append("file", e.target.files[0]);
         formData.append("foot", this.state.selectedFootId);
         formData.append("toe", this.state.selectedToeId);
@@ -173,13 +174,16 @@ class Upload extends Component {
             });
         }
         else { //User isn't logged in
+
             //It sends the temporary image name (time in ms) to validateImage
-            axios.post(`${config.dev_server}/upload/notloggedin`, formData, {
+            await axios.post(`${config.dev_server}/upload/notloggedin`, formData, {
                 onUploadProgress: (ProgressEvent) => this.updateUploadProgress(ProgressEvent)
             }).then((res) => {
                 console.log("Done, now validating the image")
                 this.validateImage(res.data.img);
             });
+
+            //console.log(response);
         }
         
     }

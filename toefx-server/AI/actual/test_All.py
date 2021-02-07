@@ -1,3 +1,4 @@
+import cv2
 import numpy as np
 from pytest import *
 
@@ -46,6 +47,27 @@ class TestNailRecognition:
 
     def test_GetNailsFromImage_Stress_3(self):
         assert len(NailRecognition.GetNailsFromImage([TEST_IMG_PATH + RECOGNITION_IMG_PATH + "5.jpg"])) == 0
+
+    def test_IsolateHand_Unit_1(self):
+        image = cv2.imread(TEST_IMG_PATH + RECOGNITION_IMG_PATH + "FindHand_Base1.png", 1)
+        result = NailRecognition.IsolateHand(image.copy())
+        processed = cv2.imread(TEST_IMG_PATH + RECOGNITION_IMG_PATH + "FindHand_Processed1.png", 1)
+        numEqualElems = np.sum(processed == result)  # Make sure both numpy arrays are equal
+        assert numEqualElems == result.size
+
+    def test_IsolateHand_Unit_2(self):
+        image = cv2.imread(TEST_IMG_PATH + RECOGNITION_IMG_PATH + "FindHand_Base2.jpg", 1)
+        result = NailRecognition.IsolateHand(image.copy())
+        processed = cv2.imread(TEST_IMG_PATH + RECOGNITION_IMG_PATH + "FindHand_Processed2.png", 1)
+        numEqualElems = np.sum(processed == result)  # Make sure both numpy arrays are equal
+        assert numEqualElems == result.size
+
+    def test_IsolateHand_Unit_3(self):
+        image = cv2.imread(TEST_IMG_PATH + RECOGNITION_IMG_PATH + "FindHand_Base3.jpg", 1)
+        result = NailRecognition.IsolateHand(image.copy())
+        processed = cv2.imread(TEST_IMG_PATH + RECOGNITION_IMG_PATH + "FindHand_Processed3.png", 1)
+        numEqualElems = np.sum(processed == result)  # Make sure both numpy arrays are equal
+        assert numEqualElems == result.size
 
     def test_DoesImageContainNail_Unit_1(self):
         nailImages = NailRecognition.GetNailsFromImage(TEST_IMG_PATH + RECOGNITION_IMG_PATH + "1.jpg")

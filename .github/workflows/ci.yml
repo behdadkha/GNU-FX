@@ -27,9 +27,6 @@ jobs:
         cd ..
         cd toefx-server
         npm start
-        cd ..
-        cd toefx-client
-        npm run validationTest
     - name: testing server
       run: |
         cd toefx-server

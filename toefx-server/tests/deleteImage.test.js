@@ -39,7 +39,12 @@ describe('deleteImage endpoint', () => {
         expect(utils.getToeData).toHaveBeenCalledTimes(1);
         expect(mockedToeData).toHaveBeenCalled();
 
-        expect(utils.runCommand).toHaveBeenCalledWith("del images\\1\\0.PNG");
+        if(config.hostType.includes("Windows")){
+            expect(utils.runCommand).toHaveBeenCalledWith("del images\\1\\0.PNG");
+        }
+        else{
+            expect(utils.runCommand).toHaveBeenCalledWith("rm images/1/0.PNG");
+        }
     });
 
     /* 
@@ -71,7 +76,13 @@ describe('deleteImage endpoint', () => {
             .get('/deleteImage/?footIndex=0&toeIndex=0&imageIndex=0&imageName=1.PNG')
             .set('Authorization', TestAuthToken)
 
-        expect(utils.runCommand).toHaveBeenCalledWith("del images\\1\\1.PNG");
+        if(config.hostType.includes("Windows")){
+            expect(utils.runCommand).toHaveBeenCalledWith("del images\\1\\1.PNG");
+        }
+        else{
+            expect(utils.runCommand).toHaveBeenCalledWith("rm images/1/1.PNG");
+        }
+        
         //If the returned result is false, it means that the image does not exist in the server.
         expect(utils.runCommand.mock.results[0].value).toBe(false)
     });

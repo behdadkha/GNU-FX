@@ -9,8 +9,9 @@ A web application that helps patients detect fungal toe infection, and allows th
 * Pillow
 * [Tensorflow](https://www.tensorflow.org/install/pip)
 * [OpenCV](https://pypi.org/project/opencv-python/)
-<br>
-Note: Make sure you have python3 alias set as python. Running ```python``` should open an interactive CI.
+<br><br/>
+Note: Make sure you have python3 alias set as python. Running `python` should open an interactive CI.
+
 **A docker file for running server with AI is in the `toefx-server` folder.**
 ## Running the Application:
 1. Open a terminal.

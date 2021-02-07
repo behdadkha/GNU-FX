@@ -23,10 +23,7 @@ jobs:
     - name: testing client
       run: |
         cd toefx-client
-        npm run testCoverage
-        cd ..
-        cd toefx-server
-        npm start
+        npm run unitTest
     - name: testing server
       run: |
         cd toefx-server
@@ -35,3 +32,5 @@ jobs:
       run: |
         cd toefx-client
         npm run build
+      env: 
+        CI: true

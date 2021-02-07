@@ -24,9 +24,10 @@ Note: Make sure you have python3 alias set as python. Running ```python``` shoul
 8. Open up a web browser and go to http://localhost:3000/
 9. Click ``Login`` at the top of the page. Use the default login username ```demo@example.com``` and the default login password ```123``` to access the application. 
 
-# Tests
+# Tests (unit-test, validation-test, stress and secutirty test)
 * Used Jest to test the react app and the node app.
 * Used Burp suite professional for security and stress tests.
+* Created a bot for validation test (Some part of the validation test is done using Jest but because of security reasons, react/jest does not allow image upload).
 ## Test reports
 * To access the test report generated for the React app, from the root directory, go to `toefx-client` -> `coverage` -> `icov-report` -> `index.html`. 
 * To access the test report generated for the Node app, from the root directory, go to `toefx-server` -> `coverage` -> `icov-report` -> `index.html`.
@@ -39,3 +40,5 @@ Note: Make sure you have python3 alias set as python. Running ```python``` shoul
 * To run the **unit tests** for the React app, go to `toefx-client` and run `npm run unittests`.  The output is  a table showing the percentage of statements coverage, branch coverage, function coverage and line coverage.
 * To run the **validation tests** , go to `toefx-client` and run `npm run validationtest`.
 * To run the unit-tests for the node app, go to `toefx-server` and run `npm test`. The output is  a table showing the percentage of statements coverage, branch coverage, function coverage and line coverage.
+## Instruction to run the bot
+* Go to `TestingSelenium` and run `python ./test.py`.

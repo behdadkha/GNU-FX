@@ -1,0 +1,911 @@
+<html><head><title>Burp Scanner Report</title>
+<meta http-equiv="Content-Security-Policy" content="default-src 'none';img-src 'self' data:;style-src 'unsafe-inline'" />
+<style type="text/css">
+body { background: #dedede; font-family: 'Droid sans', Helvetica, Arial, sans-serif; color: #404042; -webkit-font-smoothing: antialiased; }
+#container { width: 930px; padding: 0 15px; margin: 20px auto; background-color: #ffffff; }
+table { font-family: Arial, sans-serif; }
+a:link, a:visited { color: #ff6633; text-decoration: none; transform: 0.3s; }
+a:hover, a:active { color: #e24920; text-decoration: underline; }
+h1 { font-size: 1.6em; line-height: 1.4em; font-weight: normal; color: #404042; }
+h2 { font-size: 1.3em; line-height: 1.2em; padding: 0; margin: 0.8em 0 0.3em 0; font-weight: normal; color: #404042;}
+h4 { font-size: 1.0em; line-height: 1.2em; padding: 0; margin: 0.8em 0 0.3em 0; font-weight: bold; color: #404042;}
+.rule { height: 0px; border-top: 1px solid #404042; padding: 0; margin: 20px -15px 0 -15px; }
+.title { color: #ffffff; background: #1e517e; margin: 0 -15px 10px -15px; overflow: hidden; }
+.title h1 { color: #ffffff; padding: 10px 15px; margin: 0; font-size: 1.8em; }
+.title img { float: right; display: inline; padding: 1px; }
+.heading { background: #404042; margin: 0 -15px 10px -15px; padding: 0; display: inline-block; overflow: hidden; }
+.heading img { float: right; display: inline; margin: 8px 10px 0 10px; padding: 0; }
+.code { font-family: 'Courier New', Courier, monospace; }
+table.overview_table { border: 2px solid #e6e6e6; margin: 0; padding: 5px;}
+table.overview_table td.info { padding: 5px; background: #dedede; text-align: right; border-top: 2px solid #ffffff; border-right: 2px solid #ffffff; }
+table.overview_table td.info_end { padding: 5px; background: #dedede; text-align: right; border-top: 2px solid #ffffff; }
+table.overview_table td.colour_holder { padding: 0px; border-top: 2px solid #ffffff; border-right: 2px solid #ffffff; }
+table.overview_table td.colour_holder_end { padding: 0px; border-top: 2px solid #ffffff; }
+table.overview_table td.label { padding: 5px; font-weight: bold; }
+table.summary_table td { padding: 5px; background: #dedede; text-align: left; border-top: 2px solid #ffffff; border-right: 2px solid #ffffff; }
+table.summary_table td.icon { background: #404042; }
+.colour_block { padding: 5px; text-align: right; display: block; font-weight: bold; }
+.high_certain { border: 2px solid #f32a4c; color: #ffffff; background: #f32a4c; }
+.high_firm { border: 2px solid #f997a7; background: #f997a7; }
+.high_tentative { border: 2px solid #fddadf; background: #fddadf; }
+.medium_certain { border: 2px solid #ff6633; color: #ffffff; background: #ff6633; }
+.medium_firm { border: 2px solid #ffb299; background: #ffb299; }
+.medium_tentative { border: 2px solid #ffd9cc; background: #ffd9cc; }
+.low_certain { border: 2px solid #0094ff; color: #ffffff; background: #0094ff; }
+.low_firm { border: 2px solid #7fc9ff; background: #7fc9ff; }
+.low_tentative { border: 2px solid #bfe4ff; background: #bfe4ff; }
+.info_certain { border: 2px solid #7e8993; color: #ffffff; background: #7e8993; }
+.info_firm { border: 2px solid #b9ced2; background: #b9ced2; }
+.info_tentative { border: 2px solid #dae9ef; background: #dae9ef; }
+.row_total { border: 1px solid #dedede; background: #fff; }
+.grad_mark { padding: 4px; border-left: 1px solid #404042; display: inline-block; }
+.bar { margin-top: 3px; }
+.TOCH0 { font-size: 1.0em; font-weight: bold; word-wrap: break-word; }
+.TOCH1 { font-size: 0.8em; text-indent: -20px; padding-left: 50px; margin: 0; word-wrap: break-word; }
+.TOCH2 { font-size: 0.8em; text-indent: -20px; padding-left: 70px; margin: 0; word-wrap: break-word; }
+.BODH0 { font-size: 1.6em; line-height: 1.2em; font-weight: normal; padding: 10px 15px; margin: 0 -15px 10px -15px; display: inline-block; color: #ffffff; background-color: #1e517e; width: 100%; word-wrap: break-word; }
+.BODH0 a:link, .BODH0 a:visited, .BODH0 a:hover, .BODH0 a:active { color: #ffffff; text-decoration: none; }
+.BODH1 { font-size: 1.3em; line-height: 1.2em; font-weight: normal; padding: 13px 15px; margin: 0 -15px 0 -15px; display: inline-block; width: 100%; word-wrap: break-word; }
+.BODH1 a:link, .BODH1 a:visited, .BODH1 a:hover, .BODH1 a:active { color: #404042; text-decoration: none; }
+.BODH2 { font-size: 1.0em; font-weight: bold; line-height: 2.0em; width: 100%; word-wrap: break-word; }
+.PREVNEXT { font-size: 0.7em; font-weight: bold; color: #ffffff; padding: 3px 10px; border-radius: 10px;}
+.PREVNEXT:link, .PREVNEXT:visited { color: #ff6633 !important; background: #ffffff !important; border: 1px solid #ff6633 !important; text-decoration: none; }
+.PREVNEXT:hover, .PREVNEXT:active { color: #fff !important; background: #e24920 !important; border: 1px solid #e24920 !important; text-decoration: none; }
+.TEXT { font-size: 0.8em; padding: 0; margin: 0; word-wrap: break-word; }
+TD { font-size: 0.8em; }
+.HIGHLIGHT { background-color: #fcf446; }
+.rr_div { border: 2px solid #1e517e; width: 916px; word-wrap: break-word; -ms-word-wrap: break-word; margin: 0.8em 0; padding: 5px; font-size: 0.8em; max-height: 300px; overflow-y: auto; }
+
+div.scan_issue_false_positive_rpt{width: 32px; height: 32px; background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAflBMVEUAAAAmZZ4oaJ8gcJ8gaJcgYJ8mZJ4mZZ4lZZ0lZZ4mZJ4lZp8lZZolZJ4lZZ0lY54lYp0mZp4lZZ4mZZ4lZ50mZZ7///9BeKqSss7y9fnk6/PJ2OdPgrCFqMgzb6SgvNR3n8Lx9fnj6/OgvNXk7POuxduFqMlPgbBqlby7z+G84v1ZAAAAFXRSTlMA3yAQIBDv75+QoI8wz2CQYF/Pz59uwaPjAAAA9ElEQVR4Xo2T6a7CIBBGR5EW0PZWvR90Ue++vf8L3kwmikIlnj+04cySMEMR1T3vKqDama2inKWtEDGrRFBrJKxvwxfIWFwl2fB9bmzy+PkcKt6nhiYm6S/rdIkCXMShgCXSon5PwgHhj8+vAKbW1IoweeEVvXy8HcC05M5CgND7Hgi9n8AYamYFYPAnPvZUl4WacBZG5igCTh/+U/wovDMvLAzj6P3wI8JciYFN+UU932RkT64sGOpS4XgjbElLE7+XsCDlBWiiJxQwDzx3MYUlRt8fOfXY0JbHvrw4EZ11alW6vA6Ryq4oR7Wu4fVvTHcV/Q/fH0MdlmXRNwAAAABJRU5ErkJggg==)}
+div.scan_issue_high_certain_rpt{width: 32px; height: 32px; background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAmVBMVEUAAADyKUv0Kk3vKEjvKFDvIEDzKkzzK0z0Kk3vMFDvIFDzKUryKkryKkzzKkz0KkvvKkr0K0vyK03yKUvxKUrzKkvyKUzzKkz0JUr0KEvxKUvvKkryKk30K0v0KkrxKkzzKUzyKEr////zKkz+8vT0RWL8ytL+5ej+5Oj0RGL6r7z3eo/95On5laX1Um795en7r7v2X3n8ydJaHpD9AAAAInRSTlMA398gIBDP758QEJBg7++fMI+PoJDPoJAwX6BgYF8wkJBgwBNNlQAAAPhJREFUeF51z9duwzAMBdBry5I8k7Rp071IO3N0/P/HFQQKmIzq83ZBcQij+qkMkTmG+UuNVNFEHs0LWPU1X7iy7TkncjVkIfVEfm/7p2fUqm7lHsLel15asLLrj2edZcmSlS3RXucboNL5REQHVmYerV5AMsB4xtIu+BzYKBGSBcYt4hjWRHS8eDGDCgcS6x1r0GHYkzixgsjasJEXZkVgqyf6MUc+SrB3fJtvtmxs7QB+QBXTAYoH3nT+uhhQAnCsnDf9oLMDgDue1EBUGU/IPARcNlF3+POa/VtfQNgZtl+pkksbD8uteNS9O6T8xyp0zF0oW9X9C4iOa/iBbgxLAAAAAElFTkSuQmCC)}
+div.scan_issue_high_firm_rpt{width: 32px; height: 32px; background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAhFBMVEUAAAD5l6f3l6f/n5/5lqf4lqb6l6f3lqb3laX5lqb/j5/5l6f0laX6l6f5lqf6lqj6mKj6lqb6mqr6man3l6f3laf5l6fzKkz4iZz4iZv3boX0N1f0OFf1U272boXzN1f0RWL4g5b3fJD0MVH3g5b1Um70RWP2YHnzMVLzOFfzMVH2YHqGbj61AAAAFnRSTlMA3yAQ75CfoGDPEO8wz8+Pj18wX2BgP044xgAAAOlJREFUeNqFk8eSwzAMQxE1lyTbl3J6trf//7+1TgGsmfjdMAJB2pRwwbdpHczCOt171LgY7EJyUPydTbjV8oVVLChkRefkeLhSLxmez9XhUdD56kmdEZu3/Tvr0qQxYpfzgXUEetZfOeejEUuPlhvkEiC0aLTBz2BCQlc1EG5AKzqPhv3WhCVIHHPhc2MMWAyHXPgTQzCxnIpDWnSmfI9NZMjGhO0Y8Cqf2Zqw0wB7RB/qAMIDkfXHJCBN1/1y+h2m69YIJaLQX7lyc5d25tqvZh8O0cdqPg/F8T8P0aHGPzVdef5deqbqf8ZhRLeSKLoMAAAAAElFTkSuQmCC)}
+div.scan_issue_high_tentative_rpt{width: 32px; height: 32px; background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAqFBMVEUAAAD92t//19/92t/+2t/82t//29//z9/72t382tz92d/+2t/719//2eH72d/729v/2uH719v829//39/82d/72N3/2+H/39/+2d/729/82dz62t/82N792t/62N/62N3/3N/+29/zKkz92t/5mKj6rrr0QF75jZ78z9b1VnH0NVX1VnD5o7H8xM37xMz8xMz2bIL5jZ/4gpX3bIP7ucP0S2f3d4z2YXn2HrXpAAAAInRSTlMA7yDfv79/EJBg389AX4BAb0CvEFCQfyCvQFAwsM9wcF+vUwdi6QAAAQpJREFUeF59ktdywjAQRa9sY2NMIJT0vitXSmr5/z+LgsOyo1E4L344R3fkGUGDi2l+Pb1BmCxPDO8wl48BnRpWxKnnr2L2iCPtTzmAGjnnIKk6H+ak95FhYWvXWxZMf49CdNmSoz0kCRy5eEs93YcUMwDJ3j93zr18/xaNmoikfieqnNlURG8yEeFeB7vtkqiV4AFzCTZftv+6JQluccc+r0QrCWKEPFkJjB/YyvlP1cPz5Fg1OohZUxN1NStiJN6EbVgzwJCPcobx8WAGGNbYutF+BGCi/Zqo9p/MQk+URFYPZHAsWRdl4M0N//+FP4qwL7Bn8RTygwwCJsF9TTTyjo/hs5yLNUr/ABoobH68aKB9AAAAAElFTkSuQmCC)}
+div.scan_issue_info_certain_rpt{width: 32px; height: 32px; background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAhFBMVEUAAACAh4+AgI9+iJN+iJJ+iJN+h5N/iJR9h5JwgI98hpN+iJJ9iZSAio9+iZR/iZJ9iJR+iJN+h5N+iZN8h5N8hpF+h5F+iJF9h496ipWAipV+hpN+iJP///+Gj5qOl6C+w8nv8PHX2t2WnqfP0tfn6OuutbvGy9C/w8nO0tb39/jO0tcnfh0VAAAAHHRSTlMAIBDv39/Pn2AQkO+PMF+Pn5Cgz6CQoJBgMDCQZRfokwAAAN1JREFUeF59kclyxCAMRFvCA9gTT2bLLuzs6///XxJfpoEa3q2rn1SiwAm9Dd6ZOb/dKGpkcHZiK8jRSyu4ACMrq1jRkpF6Mu5a87xDqS+MfhHy++pLhYv5LX1yFgBHFj5SSpyvADXmMaUnzq5HtIz319mYiKM1CfB5MU15PsAZM3/nrzAHs/oVTCH81IJrCw6+LRxw3RYCYlvYQF1T6IGblhAASOuzBAB2JExfzy8UB/yjnZ2hUywIG9wLFoB7MqgfsUA7ynlCd2U/KHJkT+36QVCjce/Xf6UPkaZ/AS2vVnk+h4BOAAAAAElFTkSuQmCC)}
+div.scan_issue_info_firm_rpt{width: 32px; height: 32px; background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAgVBMVEUAAAC3z8+vz8+5ztG5ztK4zdG6ztG4z9K3z9K5ztO6ys+/z8+3ztG6ztK5ztK6z9K5z9K3zNK6ztG5ztG5ztG7z9K5z9S5z9G2zdG5ztJsbHCvwcW0x8uTnaF6foKIkJSNl5ucqa20yMyJkZWSnaGvwsaEio6qvMCIkZV1eHxxcnYIkmRZAAAAGXRSTlMAIBDf35Dvn2DPMBCg7++fj2DPoM+PX1+QeBiCrwAAANxJREFUeF59k8lyAyEMRFvCwOyOlyxi7Oz7/39gai62ZGK9W1c/qaAocIab3I4iY7u+Y9RQHOXMmmDhG7ng1o6vpGKllnSqV0bnzJsdrHtrMBbs+eqTki7mx/KuMwHYaeG5lKJzBHrRHEv50XliNGJ4efoweYOduGS0tjgcbN4imTz/2lvIBJHqFgbY+F0LyRcmtL6wxeALGY0v3KNPrsBA9IQMgLzHIsCueH37/DKvvdAHuUJgLICuGOH0e7p/jdDhBAVvfqGPl31kWGhQbXog1HAz7JNI2ueNmv4DalVNxarh/iUAAAAASUVORK5CYII=)}
+div.scan_issue_info_tentative_rpt{width: 32px; height: 32px; background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAn1BMVEUAAADX5+/P3+/a6u/Z6e/a6e/a6e/a6O/a6u/f7+/a6O3a6e/a5+zZ5+3Y6O3b6u/a6+/Z6e3Z6u/X5+/Y6O/a6u/a5+/c6e/Z6fLY5u1sbHDa6e/M2d+Hi5Cjq6++yc++ys+co6jF0deqsrd5fIB6fIB6e4DT4edzdHjF0te/ys+coqeqs7eco6exur9zc3iPk5iVm6CVm5+wur+Ok5eKFCXrAAAAGnRSTlMAIBDv39/PnzAQkO9goJCPj6DPYJCfYF9fkJ3ygSsAAAERSURBVHhefZPVbgMxEEXH9mI20AYKdxaCUMb//7bKajX2TpqcN+vo3jHIFLA3eeaYXba4tXSKGTsOLIzSdsKKq3485RPSqKQQH5MWKn+2w8a+PsQdljyTYFdHYPeqdmrEr4/wYBda/JBryW8BbN8ANJIZE5Wy+AD2j8wbAEv+o7I0lLp34MGLFlhJahgm8Lp5Zs8ynpFTxpov4FsWU3Lad0cgnLQirRsAew6Qrve+5oAa8QRgFd92pTZZf77UHDOlEV8kpyFf5I5K1xNdxz0s0UCdYtmfQGQ4YiOXJM/drzi0bezn5CkTPkNiyUMmOePl9xTJv74gQTp0XigH2s/1Bzbxnbt7Q6fY2ej3++ezKP0D8TBUfq96UnoAAAAASUVORK5CYII=)}
+div.scan_issue_low_certain_rpt{width: 32px; height: 32px; background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAYFBMVEUAAAAAj/8Ak/8Aj/8Ak/8AlP8AlP8Ak/8Akv8Ak/8AlP8AlP8Alf8AlP8Alf8Aj/////8AlP8gof/f8v+g1//P6/+/5P+Q0P/v+P9wwv9gvP9Qtv+Ayf8Qm/+v3f8wqP/ySeDQAAAAEHRSTlMAIN8QkM/v72Cgj5+fXzAw/UOOQwAAAMVJREFUeNqFk8cSwzAIRFGQJblrXdLL//9lJuODMc7gd2VBKwqtcGqKCMSibpn2OB+xUjsV5gqKapt+wo6TKNKLuFB0Vr6swSKuFMtvtD/t1EEwzPkGwe+REoJLzlcIPBFDMuWcIQhMyRQgUWkLGipsQUHBFgSCLcCxIMDqA4IyOZzHuzJZwqSmBJOWOGyfmB+QMJG3TNZ63M+cRzXubYnX9P7IaR+u3PHSLnT/174/PBwBeyg86+OVPY/e0R5O5XL+TRLZX2B8NJQVuJVHAAAAAElFTkSuQmCC)}
+div.scan_issue_low_firm_rpt{width: 32px; height: 32px; background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAb1BMVEUAAACAx/9/yf+Az/9/yP9+yP9/yf9/yv99x/9+x/9/yf+AxP9/yv9+yf+Ayv+Byf+Ax/9/yP9/yf8iXJBzu/EzcKVEhLk5d6staZ1doNVKi8A5d6xip9xWmc4tap55wvhFhbk/frJQkscoY5dtteoPADXOAAAAEnRSTlMAIN8Q75DPn2CgjzDPXzBfYJ8fNPO+AAAAxElEQVR42oWTyRIDIQhEMeCo2dNm37f//8bUnIJMFfOuNNBlI/3hnOYCyDwtmIaEKPiTginzFIZp2z7BgIkaMlN1pVh6/XoGq7pRMPVYf9ZpgGK7qzco+iUFinOtHygiEUOzr7VCIUzZFSBT8QWJOl/QkfgCIfgCjAsE3jtAjMnt4XgyJgtcEmW4rIilWXHZXaFhouiZTDbud613E3c74vF8fdu0x0/OP1r/7GejH0fBEYbI1BKKjigGGsLr0gkg3Sar7h84sDf+AKBGfAAAAABJRU5ErkJggg==)}
+div.scan_issue_low_tentative_rpt{width: 32px; height: 32px; background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAllBMVEUAAAC/5P+/5P+/4/+/3/+/4/+/5/+/5f+/5f+/5P+/5f/B5/+94/+/5v+95P+/4v+/4/+94/+/5P+/5/+95P+/4/++4//B5v8iXJC/5P+EsdV6qM6r0/G13PiYwuNJfqwsZJdJfqs1bZ6Nutw2bZ5ThrJ6qM8/dqVnmMB7qM6XwuOiyuqOudxwoMeEsdZdj7pcj7ldj7mab9u9AAAAGHRSTlMAv+/fEEAgf6/Pn1+Qb3BQkIBgX2CAsG/21PZQAAABC0lEQVR4Xn2T2W7DIBBFL2DsuE2TpusMXrJ13/v/P1caV8MI0ZwXW/cMF5BsCNWFsXzAzi4hiG4sK1yTee84w9Xan3EBVdJwkUatL3M6+dom0e/3PQt2Okcr+mVNkXUaMYhcif+gic2rRB6AkfpNdN/3vxODqqhl+pPoLpp+R/QuYY2FvH8RHbpHorWEC8zSDZ7C9IxNEt6g5ZwHoq0EDiVPQQKbD4Rd9I8qQOYpsh30gGNNR7R51oGDySrCwBqDOR9lDs9H8YBlTegG7R2AlfZvRF3+yVS6YiQKuqBCZMmKccwLgP8vco4/2rJv0281K3lTIXFd7NfULlvukbNM+1ilNZVfnURuvd78B3uRTgWpeU5cAAAAAElFTkSuQmCC)}
+div.scan_issue_medium_certain_rpt{width: 32px; height: 32px; background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAeFBMVEUAAAD/aDD/ZjL/ZjL/ZjP/cDD/YDD/ZzP/ZTL/ZTP/ZjP/ZTP/ZjP/ZTL/ZjP/ZjT/ZTD/ZzP/ZjL/ZTL/ZTX/ZjH/ZjP/////eU3/xbP/49n/2Mz/6+b/9fL/2cz/lnP/spn/7OX/vKb/cED/zr//gln/n4D/qYxgOhqeAAAAFnRSTlMAIN/P3xAQn2DvoJDv71+PMJCPkDCgYtn9CAAAANZJREFUeNqF0eluAjEMBODJhlx7UCh0stD7fv83rFaqFOMt7vfXY2uUoAk5+UIWn7YBa25f2CSHS+GWyg0kt+HKRhzZiblIHK19eSOIuUpELHQ/3dRRmM/1m4ID0FN4q/WRwgGIlE61VgpjRDYDzOjtQIK3Ax7FDoygHeD/gULrHTiqkvP9w5cqeUdTQqZpi1gozE/nZ0oROFglk/7ul1pf9XdjYPN++vhkM2ARO17RBWDhuitzh1/H7s/5Dgt5Q+8LcaAyBFxyPZtp77AWcu8ncvIpi+0fHNNEfWYK8y8AAAAASUVORK5CYII=)}
+div.scan_issue_medium_firm_rpt{width: 32px; height: 32px; background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAaVBMVEUAAAD/r5f/r5//spn/spn/sZj/spr/r5f/sZf/sZn/sZn/spn/r5X/sZr/s5n/tJn/r5r/spf/spj/spmuYTG4az71qIzMf1i9cEThlHLRhF7CdUvmmXjWiWX6rZPHelLwo4bbjmuzZjelNpjxAAAAE3RSTlMAIBDf75CfYKDP348wz89fMGCfOqvSBAAAAM1JREFUeF6FktlywzAIRa8wWlzbTVvInq7//5EZPwXhDjmvHNAdAR5QLQuL8FJ2hC0pszwoyQk0iWPq2wfZMJghs6kb4y3qtzPI1J1BWPH5fNIkhsNJf62RADQrXFT/rJABEstRVa3AhBoK8o4WCwWvsTCCY4EhsSDPBZboH4RdyMN1f3Yhm4QU1FjYgbh/4nQTCwE5Cln8uj9V927d/Yiv4/dPt+0VeolPDkjO2B7+/K8xzFixM3y/gbIXMqEnNSNwTthCtY0swuNHNd13h8o6/7vP6mgAAAAASUVORK5CYII=)}
+div.scan_issue_medium_tentative_rpt{width: 32px; height: 32px; background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAilBMVEUAAAD/2cz/18v/z8//2sz/2Mz/283/2c3/2cv/2cz/2cz/2c//2M3/2Mz/18f/2sz/18//18v/2Mv/2cz/18z/38//2MuuYTH/2czls5v1yrnru6X60cK4cETgrJLCf1izaDvbpIjhrJLMjmvwwq/1yri9d07cpIjHh2LWnX7qu6X0yrjRlXTbpIli+wnsAAAAF3RSTlMA70AQv5B/39/Pr1+fvyBvIIBwUGAQsEInEDcAAAEISURBVHhefZLncsIwEIRXcneCwZTcuRZIL+//elEwyIdG4fujmd3V3mlGsAT7UPEZlT/ABUGsWJDGjq8Tdkg3EKzZgyiJ2Uss7vu57FqI9b6q6oUtat4js8LnQIZhiYQw7K3f08z4bCUNILz69Wi80/tfohUVhU2fiDrj1B3RhxU32MrAubshGqy4RW4D9Xc/n6bJik/I2OVHNiTw+dRbQbmBY2f8VyHA8ckwtDKQsGQiGt+kkCB0Ko4tS1aI+C4RNN9FA+p2xHQzIgVQSqEimtwvc5AVDVEvCwIYdiwTjefPRf8/4ULm9zNcOeQ+fxVgofT2S4rEua7hslvmKGFLAl0+GtZaDv8FOclLmfNpm4sAAAAASUVORK5CYII=)}
+
+
+@media print {
+    body { width: 100%; color: #000000; position: relative; }
+    #container { width: 98%; padding: 0; margin: 0; }
+    h1 { color: #000000; }
+    h2 { color: #000000;}
+    .rule { margin: 20px 0 0 0; }
+    .title { color: #000000; margin: 0 0 10px 0; padding: 10px 0; }
+    .title h1 { color: #000000; }
+    .title img { margin: -3px 0; }
+    .heading { margin: 0 0 10px 0; }
+    .BODH0 { color: #000000; }
+    .BODH1 { color: #000000; }
+    .PREVNEXT { visibility: hidden; display: none; }
+    .rr_div { width: 98%; margin: 0.8em auto; max-height: none !important; overflow: hidden; }
+}
+
+</style>
+</head>
+<body>
+<div id="container">
+<div class="title"><img src="data:image/png;base64,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" width="184" height="58"><h1>Burp Scanner Report</h1></div>
+<h1>Summary</h1>
+<span class="TEXT">The table below shows the numbers of issues identified in different categories. Issues are classified according to severity as High, Medium, Low or Information. This reflects the likely impact of each issue for a typical organization. Issues are also classified according to confidence as Certain, Firm or Tentative. This reflects the inherent reliability of the technique that was used to identify the issue.</span><br><br><table cellpadding="0" cellspacing="0" class="overview_table">
+    <tr>
+        <td width="70">&nbsp;</td>
+        <td width="90">&nbsp;</td>
+        <td colspan="4" height="40" align="center" class="label">Confidence</td>
+    </tr>
+    <tr>
+        <td width="70">&nbsp;</td>
+        <td width="90">&nbsp;</td>
+        <td width="82" height="30" class="info">Certain</td>
+        <td width="82" height="30" class="info">Firm</td>
+        <td width="82" height="30" class="info">Tentative</td>
+        <td width="82" height="30" class="info_end">Total</td>
+    </tr>
+    <tr>
+        <td rowspan="4" valign="middle" class="label">Severity</td>
+        <td class="info" height="30">High</td>
+        <td class="colour_holder"><span class="colour_block high_certain">0</span></td>
+        <td class="colour_holder"><span class="colour_block high_firm">0</span></td>
+        <td class="colour_holder"><span class="colour_block high_tentative">0</span></td>
+        <td class="colour_holder_end"><span class="colour_block row_total">0</span></td>
+    </tr>
+    <tr>
+        <td class="info" height="30">Medium</td>
+        <td class="colour_holder"><span class="colour_block medium_certain">0</span></td>
+        <td class="colour_holder"><span class="colour_block medium_firm">0</span></td>
+        <td class="colour_holder"><span class="colour_block medium_tentative">0</span></td>
+        <td class="colour_holder_end"><span class="colour_block row_total">0</span></td>
+    </tr>
+    <tr>
+        <td class="info" height="30">Low</td>
+        <td class="colour_holder"><span class="colour_block low_certain">1</span></td>
+        <td class="colour_holder"><span class="colour_block low_firm">0</span></td>
+        <td class="colour_holder"><span class="colour_block low_tentative">0</span></td>
+        <td class="colour_holder_end"><span class="colour_block row_total">1</span></td>
+    </tr>
+    <tr>
+        <td class="info" height="30">Information</td>
+        <td class="colour_holder"><span class="colour_block info_certain">17</span></td>
+        <td class="colour_holder"><span class="colour_block info_firm">1</span></td>
+        <td class="colour_holder"><span class="colour_block info_tentative">0</span></td>
+        <td class="colour_holder_end"><span class="colour_block row_total">18</span></td>
+    </tr>
+</table><br>
+<span class="TEXT">The chart below shows the aggregated numbers of issues identified in each category. Solid colored bars represent issues with a confidence level of Certain, and the bars fade as the confidence level falls.</span><br><br><table cellpadding="0" cellspacing="0" class="overview_table">
+    <tr>
+        <td width="70">&nbsp;</td>
+        <td width="90">&nbsp;</td>
+        <td colspan="6" height="40" align="center" class="label">Number of issues</td>
+    </tr>
+    <tr>
+        <td width="70">&nbsp;</td>
+        <td width="90">&nbsp;</td>
+        <td width="125"><span class="grad_mark">0</span></td>
+        <td width="125"><span class="grad_mark">1</span></td>
+        <td width="125"><span class="grad_mark">2</span></td>
+        <td width="125"><span class="grad_mark">3</span></td>
+        <td width="125"><span class="grad_mark">4</span></td>
+    </tr>
+    <tr>
+        <td rowspan="3" valign="middle" class="label">Severity</td>
+        <td class="info">High</td>
+        <td colspan="5" height="30">
+            <table cellpadding="0" cellspacing="0"><tr><td><img class="bar" src="data:image/png;base64,R0lGODlhAQABAPAAAPMqTAAAACH/C1hNUCBEYXRhWE1QPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNi4wLWMwMDMgNzkuMTY0NTI3LCAyMDIwLzEwLzE1LTE3OjQ4OjMyICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOnhtcE1NPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIiB4bWxuczpzdFJlZj0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL3NUeXBlL1Jlc291cmNlUmVmIyIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgMjIuMSAoTWFjaW50b3NoKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDo2MUE2RjA3OTMzQzAxMUVCQkZDMEJFODVBQTNBQzcwMCIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDo2MUE2RjA3QTMzQzAxMUVCQkZDMEJFODVBQTNBQzcwMCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjYxQTZGMDc3MzNDMDExRUJCRkMwQkU4NUFBM0FDNzAwIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjYxQTZGMDc4MzNDMDExRUJCRkMwQkU4NUFBM0FDNzAwIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+Af/+/fz7+vn49/b19PPy8fDv7u3s6+rp6Ofm5eTj4uHg397d3Nva2djX1tXU09LR0M/OzczLysnIx8bFxMPCwcC/vr28u7q5uLe2tbSzsrGwr66trKuqqainpqWko6KhoJ+enZybmpmYl5aVlJOSkZCPjo2Mi4qJiIeGhYSDgoGAf359fHt6eXh3dnV0c3JxcG9ubWxramloZ2ZlZGNiYWBfXl1cW1pZWFdWVVRTUlFQT05NTEtKSUhHRkVEQ0JBQD8+PTw7Ojk4NzY1NDMyMTAvLi0sKyopKCcmJSQjIiEgHx4dHBsaGRgXFhUUExIREA8ODQwLCgkIBwYFBAMCAQAALAAAAAABAAEAQAICRAEAOw==" width="0" height="16"></td><td><img class="bar" src="data:image/png;base64,R0lGODlhAQABAIAAAPmXpwAAACH/C1hNUCBEYXRhWE1QPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNi4wLWMwMDMgNzkuMTY0NTI3LCAyMDIwLzEwLzE1LTE3OjQ4OjMyICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOnhtcE1NPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIiB4bWxuczpzdFJlZj0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL3NUeXBlL1Jlc291cmNlUmVmIyIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgMjIuMSAoTWFjaW50b3NoKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDo0OTM5RkM5NzMzQzExMUVCQkZDMEJFODVBQTNBQzcwMCIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDo0OTM5RkM5ODMzQzExMUVCQkZDMEJFODVBQTNBQzcwMCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjQ5MzlGQzk1MzNDMTExRUJCRkMwQkU4NUFBM0FDNzAwIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjQ5MzlGQzk2MzNDMTExRUJCRkMwQkU4NUFBM0FDNzAwIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+Af/+/fz7+vn49/b19PPy8fDv7u3s6+rp6Ofm5eTj4uHg397d3Nva2djX1tXU09LR0M/OzczLysnIx8bFxMPCwcC/vr28u7q5uLe2tbSzsrGwr66trKuqqainpqWko6KhoJ+enZybmpmYl5aVlJOSkZCPjo2Mi4qJiIeGhYSDgoGAf359fHt6eXh3dnV0c3JxcG9ubWxramloZ2ZlZGNiYWBfXl1cW1pZWFdWVVRTUlFQT05NTEtKSUhHRkVEQ0JBQD8+PTw7Ojk4NzY1NDMyMTAvLi0sKyopKCcmJSQjIiEgHx4dHBsaGRgXFhUUExIREA8ODQwLCgkIBwYFBAMCAQAAIfkEAAAAAAAsAAAAAAEAAQAAAgJEAQA7" width="0" height="16"></td><td><img class="bar" src="data:image/png;base64,R0lGODlhAQABAIAAAP3a3wAAACH/C1hNUCBEYXRhWE1QPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNi4wLWMwMDMgNzkuMTY0NTI3LCAyMDIwLzEwLzE1LTE3OjQ4OjMyICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOnhtcE1NPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIiB4bWxuczpzdFJlZj0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL3NUeXBlL1Jlc291cmNlUmVmIyIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgMjIuMSAoTWFjaW50b3NoKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDo0OTM5RkM5QjMzQzExMUVCQkZDMEJFODVBQTNBQzcwMCIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDo0OTM5RkM5QzMzQzExMUVCQkZDMEJFODVBQTNBQzcwMCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjQ5MzlGQzk5MzNDMTExRUJCRkMwQkU4NUFBM0FDNzAwIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjQ5MzlGQzlBMzNDMTExRUJCRkMwQkU4NUFBM0FDNzAwIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+Af/+/fz7+vn49/b19PPy8fDv7u3s6+rp6Ofm5eTj4uHg397d3Nva2djX1tXU09LR0M/OzczLysnIx8bFxMPCwcC/vr28u7q5uLe2tbSzsrGwr66trKuqqainpqWko6KhoJ+enZybmpmYl5aVlJOSkZCPjo2Mi4qJiIeGhYSDgoGAf359fHt6eXh3dnV0c3JxcG9ubWxramloZ2ZlZGNiYWBfXl1cW1pZWFdWVVRTUlFQT05NTEtKSUhHRkVEQ0JBQD8+PTw7Ojk4NzY1NDMyMTAvLi0sKyopKCcmJSQjIiEgHx4dHBsaGRgXFhUUExIREA8ODQwLCgkIBwYFBAMCAQAAIfkEAAAAAAAsAAAAAAEAAQAAAgJEAQA7" width="0" height="16"></td></tr></table>
+        </td>
+        <td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td class="info">Medium</td>
+        <td colspan="5" height="30">
+            <table cellpadding="0" cellspacing="0"><tr><td><img class="bar" src="data:image/png;base64,R0lGODlhAQABAPAAAP9mMwAAACH/C1hNUCBEYXRhWE1QPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNi4wLWMwMDMgNzkuMTY0NTI3LCAyMDIwLzEwLzE1LTE3OjQ4OjMyICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOnhtcE1NPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIiB4bWxuczpzdFJlZj0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL3NUeXBlL1Jlc291cmNlUmVmIyIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgMjIuMSAoTWFjaW50b3NoKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDo5NkRGMzMxMDMzQzAxMUVCQkZDMEJFODVBQTNBQzcwMCIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDo5NkRGMzMxMTMzQzAxMUVCQkZDMEJFODVBQTNBQzcwMCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjk2REYzMzBFMzNDMDExRUJCRkMwQkU4NUFBM0FDNzAwIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjk2REYzMzBGMzNDMDExRUJCRkMwQkU4NUFBM0FDNzAwIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+Af/+/fz7+vn49/b19PPy8fDv7u3s6+rp6Ofm5eTj4uHg397d3Nva2djX1tXU09LR0M/OzczLysnIx8bFxMPCwcC/vr28u7q5uLe2tbSzsrGwr66trKuqqainpqWko6KhoJ+enZybmpmYl5aVlJOSkZCPjo2Mi4qJiIeGhYSDgoGAf359fHt6eXh3dnV0c3JxcG9ubWxramloZ2ZlZGNiYWBfXl1cW1pZWFdWVVRTUlFQT05NTEtKSUhHRkVEQ0JBQD8+PTw7Ojk4NzY1NDMyMTAvLi0sKyopKCcmJSQjIiEgHx4dHBsaGRgXFhUUExIREA8ODQwLCgkIBwYFBAMCAQAALAAAAAABAAEAQAICRAEAOw==" width="0" height="16"></td><td><img class="bar" src="data:image/png;base64,R0lGODlhAQABAPAAAP+ymQAAACH/C1hNUCBEYXRhWE1QPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNi4wLWMwMDMgNzkuMTY0NTI3LCAyMDIwLzEwLzE1LTE3OjQ4OjMyICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOnhtcE1NPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIiB4bWxuczpzdFJlZj0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL3NUeXBlL1Jlc291cmNlUmVmIyIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgMjIuMSAoTWFjaW50b3NoKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDo5NkRGMzMwQzMzQzAxMUVCQkZDMEJFODVBQTNBQzcwMCIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDo5NkRGMzMwRDMzQzAxMUVCQkZDMEJFODVBQTNBQzcwMCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjYxQTZGMDdGMzNDMDExRUJCRkMwQkU4NUFBM0FDNzAwIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjYxQTZGMDgwMzNDMDExRUJCRkMwQkU4NUFBM0FDNzAwIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+Af/+/fz7+vn49/b19PPy8fDv7u3s6+rp6Ofm5eTj4uHg397d3Nva2djX1tXU09LR0M/OzczLysnIx8bFxMPCwcC/vr28u7q5uLe2tbSzsrGwr66trKuqqainpqWko6KhoJ+enZybmpmYl5aVlJOSkZCPjo2Mi4qJiIeGhYSDgoGAf359fHt6eXh3dnV0c3JxcG9ubWxramloZ2ZlZGNiYWBfXl1cW1pZWFdWVVRTUlFQT05NTEtKSUhHRkVEQ0JBQD8+PTw7Ojk4NzY1NDMyMTAvLi0sKyopKCcmJSQjIiEgHx4dHBsaGRgXFhUUExIREA8ODQwLCgkIBwYFBAMCAQAALAAAAAABAAEAAAICRAEAOw==" width="0" height="16"></td><td><img class="bar" src="data:image/png;base64,R0lGODlhAQABAPAAAP/ZzAAAACH/C1hNUCBEYXRhWE1QPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNi4wLWMwMDMgNzkuMTY0NTI3LCAyMDIwLzEwLzE1LTE3OjQ4OjMyICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOnhtcE1NPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIiB4bWxuczpzdFJlZj0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL3NUeXBlL1Jlc291cmNlUmVmIyIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgMjIuMSAoTWFjaW50b3NoKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDo2MUE2RjA3RDMzQzAxMUVCQkZDMEJFODVBQTNBQzcwMCIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDo2MUE2RjA3RTMzQzAxMUVCQkZDMEJFODVBQTNBQzcwMCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjYxQTZGMDdCMzNDMDExRUJCRkMwQkU4NUFBM0FDNzAwIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjYxQTZGMDdDMzNDMDExRUJCRkMwQkU4NUFBM0FDNzAwIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+Af/+/fz7+vn49/b19PPy8fDv7u3s6+rp6Ofm5eTj4uHg397d3Nva2djX1tXU09LR0M/OzczLysnIx8bFxMPCwcC/vr28u7q5uLe2tbSzsrGwr66trKuqqainpqWko6KhoJ+enZybmpmYl5aVlJOSkZCPjo2Mi4qJiIeGhYSDgoGAf359fHt6eXh3dnV0c3JxcG9ubWxramloZ2ZlZGNiYWBfXl1cW1pZWFdWVVRTUlFQT05NTEtKSUhHRkVEQ0JBQD8+PTw7Ojk4NzY1NDMyMTAvLi0sKyopKCcmJSQjIiEgHx4dHBsaGRgXFhUUExIREA8ODQwLCgkIBwYFBAMCAQAALAAAAAABAAEAQAICRAEAOw==" width="0" height="16"></td></tr></table>
+        </td>
+        <td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td class="info">Low</td>
+        <td colspan="5" height="30">
+            <table cellpadding="0" cellspacing="0"><tr><td><img class="bar" src="data:image/png;base64,R0lGODlhAQABAPAAAACU/wAAACH/C1hNUCBEYXRhWE1QPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNi4wLWMwMDMgNzkuMTY0NTI3LCAyMDIwLzEwLzE1LTE3OjQ4OjMyICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOnhtcE1NPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIiB4bWxuczpzdFJlZj0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL3NUeXBlL1Jlc291cmNlUmVmIyIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgMjIuMSAoTWFjaW50b3NoKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpERDdCQTNGNTMzQzAxMUVCQkZDMEJFODVBQTNBQzcwMCIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpERDdCQTNGNjMzQzAxMUVCQkZDMEJFODVBQTNBQzcwMCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjk2REYzMzE2MzNDMDExRUJCRkMwQkU4NUFBM0FDNzAwIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOkREN0JBM0Y0MzNDMDExRUJCRkMwQkU4NUFBM0FDNzAwIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+Af/+/fz7+vn49/b19PPy8fDv7u3s6+rp6Ofm5eTj4uHg397d3Nva2djX1tXU09LR0M/OzczLysnIx8bFxMPCwcC/vr28u7q5uLe2tbSzsrGwr66trKuqqainpqWko6KhoJ+enZybmpmYl5aVlJOSkZCPjo2Mi4qJiIeGhYSDgoGAf359fHt6eXh3dnV0c3JxcG9ubWxramloZ2ZlZGNiYWBfXl1cW1pZWFdWVVRTUlFQT05NTEtKSUhHRkVEQ0JBQD8+PTw7Ojk4NzY1NDMyMTAvLi0sKyopKCcmJSQjIiEgHx4dHBsaGRgXFhUUExIREA8ODQwLCgkIBwYFBAMCAQAALAAAAAABAAEAQAICRAEAOw==" width="125" height="16"></td><td><img class="bar" src="data:image/png;base64,R0lGODlhAQABAPAAAH/J/wAAACH/C1hNUCBEYXRhWE1QPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNi4wLWMwMDMgNzkuMTY0NTI3LCAyMDIwLzEwLzE1LTE3OjQ4OjMyICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOnhtcE1NPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIiB4bWxuczpzdFJlZj0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL3NUeXBlL1Jlc291cmNlUmVmIyIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgMjIuMSAoTWFjaW50b3NoKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDo5NkRGMzMxNDMzQzAxMUVCQkZDMEJFODVBQTNBQzcwMCIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDo5NkRGMzMxNTMzQzAxMUVCQkZDMEJFODVBQTNBQzcwMCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjk2REYzMzEyMzNDMDExRUJCRkMwQkU4NUFBM0FDNzAwIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjk2REYzMzEzMzNDMDExRUJCRkMwQkU4NUFBM0FDNzAwIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+Af/+/fz7+vn49/b19PPy8fDv7u3s6+rp6Ofm5eTj4uHg397d3Nva2djX1tXU09LR0M/OzczLysnIx8bFxMPCwcC/vr28u7q5uLe2tbSzsrGwr66trKuqqainpqWko6KhoJ+enZybmpmYl5aVlJOSkZCPjo2Mi4qJiIeGhYSDgoGAf359fHt6eXh3dnV0c3JxcG9ubWxramloZ2ZlZGNiYWBfXl1cW1pZWFdWVVRTUlFQT05NTEtKSUhHRkVEQ0JBQD8+PTw7Ojk4NzY1NDMyMTAvLi0sKyopKCcmJSQjIiEgHx4dHBsaGRgXFhUUExIREA8ODQwLCgkIBwYFBAMCAQAALAAAAAABAAEAQAICRAEAOw==" width="0" height="16"></td><td><img class="bar" src="data:image/png;base64,R0lGODlhAQABAPABAL/k/wAAACH/C05FVFNDQVBFMi4wAwEAAAAh+QQFAAABACwAAAAAAQABAAACAkQBADs=" width="0" height="16"></td></tr></table>
+        </td>
+        <td>&nbsp;</td>
+    </tr>
+</table>
+
+<div class="rule"></div>
+<h1>Contents</h1>
+<p class="TOCH0"><a href="#1">1.&nbsp;Unencrypted communications</a></p>
+<p class="TOCH0"><a href="#2">2.&nbsp;Cross-origin resource sharing</a></p>
+<p class="TOCH1"><a href="#2.1">2.1.&nbsp;http://localhost:3000/login</a></p>
+<p class="TOCH1"><a href="#2.2">2.2.&nbsp;http://localhost:3000/signup</a></p>
+<p class="TOCH1"><a href="#2.3">2.3.&nbsp;http://localhost:3000/upload</a></p>
+<p class="TOCH0"><a href="#3">3.&nbsp;Cross-origin resource sharing: arbitrary origin trusted</a></p>
+<p class="TOCH1"><a href="#3.1">3.1.&nbsp;http://localhost:3000/login</a></p>
+<p class="TOCH1"><a href="#3.2">3.2.&nbsp;http://localhost:3000/signup</a></p>
+<p class="TOCH1"><a href="#3.3">3.3.&nbsp;http://localhost:3000/upload</a></p>
+<p class="TOCH0"><a href="#4">4.&nbsp;Input returned in response (reflected)</a></p>
+<p class="TOCH1"><a href="#4.1">4.1.&nbsp;http://localhost:3000/login [URL path filename]</a></p>
+<p class="TOCH1"><a href="#4.2">4.2.&nbsp;http://localhost:3000/manifest.json [URL path filename]</a></p>
+<p class="TOCH1"><a href="#4.3">4.3.&nbsp;http://localhost:3000/robots.txt [URL path filename]</a></p>
+<p class="TOCH1"><a href="#4.4">4.4.&nbsp;http://localhost:3000/signup [URL path filename]</a></p>
+<p class="TOCH1"><a href="#4.5">4.5.&nbsp;http://localhost:3000/static/js/bundle.js [URL path filename]</a></p>
+<p class="TOCH1"><a href="#4.6">4.6.&nbsp;http://localhost:3000/static/js/bundle.js [URL path folder 1]</a></p>
+<p class="TOCH1"><a href="#4.7">4.7.&nbsp;http://localhost:3000/static/js/bundle.js [URL path folder 2]</a></p>
+<p class="TOCH1"><a href="#4.8">4.8.&nbsp;http://localhost:3000/upload [URL path filename]</a></p>
+<p class="TOCH0"><a href="#5">5.&nbsp;Frameable response (potential Clickjacking)</a></p>
+<p class="TOCH0"><a href="#6">6.&nbsp;Email addresses disclosed</a></p>
+<p class="TOCH1"><a href="#6.1">6.1.&nbsp;http://localhost:3000/static/js/0.chunk.js</a></p>
+<p class="TOCH1"><a href="#6.2">6.2.&nbsp;http://localhost:3000/static/js/main.chunk.js</a></p>
+<p class="TOCH0"><a href="#7">7.&nbsp;Robots.txt file</a></p>
+<br><div class="rule"></div>
+<span class="BODH0" id="1">1.&nbsp;<a href="https://portswigger.net/knowledgebase/issues/details/01000200_unencryptedcommunications">Unencrypted communications</a></span>
+<br><a class="PREVNEXT" href="#2">Next</a>
+<br>
+<h2>Summary</h2>
+<table cellpadding="0" cellspacing="0" class="summary_table">
+<tr>
+<td rowspan="4" class="icon" valign="top" align="center"><div class='scan_issue_low_certain_rpt'></div></td>
+<td>Severity:&nbsp;&nbsp;</td>
+<td><b>Low</b></td>
+</tr>
+<tr>
+<td>Confidence:&nbsp;&nbsp;</td>
+<td><b>Certain</b></td>
+</tr>
+<tr>
+<td>Host:&nbsp;&nbsp;</td>
+<td><b>http://localhost:3000</b></td>
+</tr>
+<tr>
+<td>Path:&nbsp;&nbsp;</td>
+<td><b>/</b></td>
+</tr>
+</table>
+<h2>Issue description</h2>
+<span class="TEXT"><p>The application allows users to connect to it over unencrypted connections.  An attacker suitably positioned to view a legitimate user's network traffic could record and monitor their interactions with the application and obtain any information the user supplies. Furthermore, an attacker able to modify traffic could use the application as a platform for attacks against its users and third-party websites. Unencrypted connections have been exploited by ISPs and governments to track users, and to inject adverts and malicious JavaScript. Due to these concerns, web browser vendors are planning to visually flag unencrypted connections as hazardous.</p>
+<p>
+To exploit this vulnerability, an attacker must be suitably positioned to eavesdrop on the victim's network traffic. This scenario typically occurs when a client communicates with the server over an insecure connection such as public Wi-Fi, or a corporate or home network that is shared with a compromised computer. Common defenses such as switched networks are not sufficient to prevent this. An attacker situated in the user's ISP or the application's hosting infrastructure could also perform this attack. Note that an advanced adversary could potentially target any connection made over the Internet's core infrastructure.
+</p>
+<p>Please note that using a mixture of encrypted and unencrypted communications is an ineffective defense against active attackers, because they can easily remove references to encrypted resources when these references are transmitted over an unencrypted connection.</p></span>
+<h2>Issue remediation</h2>
+<span class="TEXT"><p>Applications should use transport-level encryption (SSL/TLS) to protect all communications passing between the client and the server. The Strict-Transport-Security HTTP header should be used to ensure that clients refuse to access the server over an insecure connection.</p></span>
+<h2>References</h2>
+<span class="TEXT"><ul>
+<li><a href="https://www.chromium.org/Home/chromium-security/marking-http-as-non-secure">Marking HTTP as non-secure</a></li>
+<li><a href="https://wiki.mozilla.org/Security/Server_Side_TLS">Configuring Server-Side SSL/TLS</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/Security/HTTP_strict_transport_security">HTTP Strict Transport Security</a></li>
+</ul></span>
+<h2>Vulnerability classifications</h2><span class="TEXT"><ul>
+<li><a href="https://cwe.mitre.org/data/definitions/326.html">CWE-326: Inadequate Encryption Strength</a></li>
+</ul></span>
+<div class="rule"></div>
+<span class="BODH0" id="2">2.&nbsp;<a href="https://portswigger.net/knowledgebase/issues/details/00200600_crossoriginresourcesharing">Cross-origin resource sharing</a></span>
+<br><a class="PREVNEXT" href="#1">Previous</a>
+&nbsp;<a class="PREVNEXT" href="#3">Next</a>
+<br>
+<br><span class="TEXT">There are 3 instances of this issue:
+<ul>
+<li><a href="#2.1">/login</a></li>
+<li><a href="#2.2">/signup</a></li>
+<li><a href="#2.3">/upload</a></li>
+</ul></span>
+<h2>Issue background</h2>
+<span class="TEXT"><p>An HTML5 cross-origin resource sharing (CORS) policy controls whether and how content running on other domains can perform two-way interaction with the domain that publishes the policy. The policy is fine-grained and can apply access controls per-request based on the URL and other features of the request.</p><p>If another domain is allowed by the policy, then that domain can potentially attack users of the application. If a user is logged in to the application, and visits a domain allowed by the policy, then any malicious content running on that domain can potentially retrieve content from the application, and sometimes carry out actions within the security context of the logged in user.</p>
+<p>Even if an allowed domain is not overtly malicious in itself, security vulnerabilities within that domain could potentially be leveraged by an attacker to exploit the trust relationship and attack the application that allows access. CORS policies on pages containing sensitive information should be reviewed to determine whether it is appropriate for the application to trust both the intentions and security posture of any domains granted access.</p></span>
+<h2>Issue remediation</h2>
+<span class="TEXT"><p>Any inappropriate domains should be removed from the CORS policy.</p></span>
+<h2>References</h2>
+<span class="TEXT"><ul>
+    <li><a href="https://blog.portswigger.net/2016/10/exploiting-cors-misconfigurations-for.html">Exploiting CORS
+        Misconfigurations</a></li>
+</ul></span>
+<h2>Vulnerability classifications</h2><span class="TEXT"><ul>
+<li><a href="https://cwe.mitre.org/data/definitions/942.html">CWE-942: Overly Permissive Cross-domain Whitelist</a></li>
+</ul></span>
+<br><br><div class="rule"></div>
+<span class="BODH1" id="2.1">2.1.&nbsp;http://localhost:3000/login</span>
+<br><a class="PREVNEXT" href="#2.2">Next</a>
+<br>
+<h2>Summary</h2>
+<table cellpadding="0" cellspacing="0" class="summary_table">
+<tr>
+<td rowspan="4" class="icon" valign="top" align="center"><div class='scan_issue_info_certain_rpt'></div></td>
+<td>Severity:&nbsp;&nbsp;</td>
+<td><b>Information</b></td>
+</tr>
+<tr>
+<td>Confidence:&nbsp;&nbsp;</td>
+<td><b>Certain</b></td>
+</tr>
+<tr>
+<td>Host:&nbsp;&nbsp;</td>
+<td><b>http://localhost:3000</b></td>
+</tr>
+<tr>
+<td>Path:&nbsp;&nbsp;</td>
+<td><b>/login</b></td>
+</tr>
+</table>
+<h2>Issue detail</h2>
+<span class="TEXT">The application implements an HTML5 cross-origin resource sharing (CORS) policy for this request.<br><br>If the application relies on network firewalls or other IP-based access controls, this policy is likely to present a security risk.<br><br>Since the Vary: Origin header was not present in the response, reverse proxies and intermediate servers may cache it. This may enable an attacker to carry out cache poisoning attacks.</span>
+<h2>Request</h2>
+<div class="rr_div"><span>GET /login HTTP/1.1<br>Host: localhost:3000<br>Upgrade-Insecure-Requests: 1<br>Referer: http://localhost:3000/<br>Accept: */*<br>Accept-Language: en-US,en-GB;q=0.9,en;q=0.8<br>User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36<br>Connection: close<br>Cache-Control: max-age=0<br>Accept-Encoding: gzip, deflate<br><span class="HIGHLIGHT">Origin: http://localhost:3000</span><br><br></span></div>
+<h2>Response</h2>
+<div class="rr_div"><span>HTTP/1.1 404 Not Found<br>x-powered-by: Express<br><span class="HIGHLIGHT">access-control-allow-origin: *</span><br>content-security-policy: default-src 'none'<br>x-content-type-options: nosniff<br><span class="HIGHLIGHT">content-type: text/html; charset=utf-8</span><br>content-length: 144<br>date: Sun, 07 Feb 2021 15:10:26 GMT<br>connection: close<br>Vary: Accept-Encoding<br><br>&lt;!DOCTYPE html&gt;<br>&lt;html lang="en"&gt;<br>&lt;head&gt;<br>&lt;meta charset="utf-8"&gt;<br>&lt;title&gt;Error&lt;/title&gt;<br>&lt;/head&gt;<br>&lt;body&gt;<br>&lt;pre&gt;Cannot GET /login&lt;/pre&gt;<br>&lt;/body&gt;<br>&lt;/html&gt;<br></span></div>
+<div class="rule"></div>
+<span class="BODH1" id="2.2">2.2.&nbsp;http://localhost:3000/signup</span>
+<br><a class="PREVNEXT" href="#2.1">Previous</a>
+&nbsp;<a class="PREVNEXT" href="#2.3">Next</a>
+<br>
+<h2>Summary</h2>
+<table cellpadding="0" cellspacing="0" class="summary_table">
+<tr>
+<td rowspan="4" class="icon" valign="top" align="center"><div class='scan_issue_info_certain_rpt'></div></td>
+<td>Severity:&nbsp;&nbsp;</td>
+<td><b>Information</b></td>
+</tr>
+<tr>
+<td>Confidence:&nbsp;&nbsp;</td>
+<td><b>Certain</b></td>
+</tr>
+<tr>
+<td>Host:&nbsp;&nbsp;</td>
+<td><b>http://localhost:3000</b></td>
+</tr>
+<tr>
+<td>Path:&nbsp;&nbsp;</td>
+<td><b>/signup</b></td>
+</tr>
+</table>
+<h2>Issue detail</h2>
+<span class="TEXT">The application implements an HTML5 cross-origin resource sharing (CORS) policy for this request.<br><br>If the application relies on network firewalls or other IP-based access controls, this policy is likely to present a security risk.<br><br>Since the Vary: Origin header was not present in the response, reverse proxies and intermediate servers may cache it. This may enable an attacker to carry out cache poisoning attacks.</span>
+<h2>Request</h2>
+<div class="rr_div"><span>GET /signup HTTP/1.1<br>Host: localhost:3000<br>Upgrade-Insecure-Requests: 1<br>Referer: http://localhost:3000/<br>Accept: */*<br>Accept-Language: en-US,en-GB;q=0.9,en;q=0.8<br>User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36<br>Connection: close<br>Cache-Control: max-age=0<br>Accept-Encoding: gzip, deflate<br><span class="HIGHLIGHT">Origin: http://localhost:3000</span><br><br></span></div>
+<h2>Response</h2>
+<div class="rr_div"><span>HTTP/1.1 404 Not Found<br>x-powered-by: Express<br><span class="HIGHLIGHT">access-control-allow-origin: *</span><br>content-security-policy: default-src 'none'<br>x-content-type-options: nosniff<br><span class="HIGHLIGHT">content-type: text/html; charset=utf-8</span><br>content-length: 145<br>date: Sun, 07 Feb 2021 15:10:26 GMT<br>connection: close<br>Vary: Accept-Encoding<br><br>&lt;!DOCTYPE html&gt;<br>&lt;html lang="en"&gt;<br>&lt;head&gt;<br>&lt;meta charset="utf-8"&gt;<br>&lt;title&gt;Error&lt;/title&gt;<br>&lt;/head&gt;<br>&lt;body&gt;<br>&lt;pre&gt;Cannot GET /signup&lt;/pre&gt;<br>&lt;/body&gt;<br>&lt;/html&gt;<br></span></div>
+<div class="rule"></div>
+<span class="BODH1" id="2.3">2.3.&nbsp;http://localhost:3000/upload</span>
+<br><a class="PREVNEXT" href="#2.2">Previous</a>
+&nbsp;<a class="PREVNEXT" href="#3.1">Next</a>
+<br>
+<h2>Summary</h2>
+<table cellpadding="0" cellspacing="0" class="summary_table">
+<tr>
+<td rowspan="4" class="icon" valign="top" align="center"><div class='scan_issue_info_certain_rpt'></div></td>
+<td>Severity:&nbsp;&nbsp;</td>
+<td><b>Information</b></td>
+</tr>
+<tr>
+<td>Confidence:&nbsp;&nbsp;</td>
+<td><b>Certain</b></td>
+</tr>
+<tr>
+<td>Host:&nbsp;&nbsp;</td>
+<td><b>http://localhost:3000</b></td>
+</tr>
+<tr>
+<td>Path:&nbsp;&nbsp;</td>
+<td><b>/upload</b></td>
+</tr>
+</table>
+<h2>Issue detail</h2>
+<span class="TEXT">The application implements an HTML5 cross-origin resource sharing (CORS) policy for this request.<br><br>If the application relies on network firewalls or other IP-based access controls, this policy is likely to present a security risk.<br><br>Since the Vary: Origin header was not present in the response, reverse proxies and intermediate servers may cache it. This may enable an attacker to carry out cache poisoning attacks.</span>
+<h2>Request</h2>
+<div class="rr_div"><span>GET /upload HTTP/1.1<br>Host: localhost:3000<br>Upgrade-Insecure-Requests: 1<br>Referer: http://localhost:3000/<br>Accept: */*<br>Accept-Language: en-US,en-GB;q=0.9,en;q=0.8<br>User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36<br>Connection: close<br>Cache-Control: max-age=0<br>Accept-Encoding: gzip, deflate<br><span class="HIGHLIGHT">Origin: http://localhost:3000</span><br><br></span></div>
+<h2>Response</h2>
+<div class="rr_div"><span>HTTP/1.1 404 Not Found<br>x-powered-by: Express<br><span class="HIGHLIGHT">access-control-allow-origin: *</span><br>content-security-policy: default-src 'none'<br>x-content-type-options: nosniff<br><span class="HIGHLIGHT">content-type: text/html; charset=utf-8</span><br>content-length: 145<br>date: Sun, 07 Feb 2021 15:10:26 GMT<br>connection: close<br>Vary: Accept-Encoding<br><br>&lt;!DOCTYPE html&gt;<br>&lt;html lang="en"&gt;<br>&lt;head&gt;<br>&lt;meta charset="utf-8"&gt;<br>&lt;title&gt;Error&lt;/title&gt;<br>&lt;/head&gt;<br>&lt;body&gt;<br>&lt;pre&gt;Cannot GET /upload&lt;/pre&gt;<br>&lt;/body&gt;<br>&lt;/html&gt;<br></span></div>
+<div class="rule"></div>
+<span class="BODH0" id="3">3.&nbsp;<a href="https://portswigger.net/knowledgebase/issues/details/00200601_crossoriginresourcesharingarbitraryorigintrusted">Cross-origin resource sharing: arbitrary origin trusted</a></span>
+<br><a class="PREVNEXT" href="#2">Previous</a>
+&nbsp;<a class="PREVNEXT" href="#4">Next</a>
+<br>
+<br><span class="TEXT">There are 3 instances of this issue:
+<ul>
+<li><a href="#3.1">/login</a></li>
+<li><a href="#3.2">/signup</a></li>
+<li><a href="#3.3">/upload</a></li>
+</ul></span>
+<h2>Issue background</h2>
+<span class="TEXT"><p>An HTML5 cross-origin resource sharing (CORS) policy controls whether and how content running on other domains can perform two-way interaction with the domain that publishes the policy. The policy is fine-grained and can apply access controls per-request based on the URL and other features of the request.</p><p>
+Trusting arbitrary origins effectively disables the same-origin policy, allowing two-way interaction by third-party web sites. Unless the response consists only of unprotected public content, this policy is likely to present a security risk.</p>
+<p>If the site  specifies the header Access-Control-Allow-Credentials: true, third-party sites may be able to carry out privileged actions and retrieve sensitive information. Even if it does not, attackers may be able to  bypass any IP-based access controls by proxying through users'  browsers.</p></span>
+<h2>Issue remediation</h2>
+<span class="TEXT"><p>Rather than using a wildcard or programmatically verifying supplied origins, use a whitelist of trusted domains.</p></span>
+<h2>References</h2>
+<span class="TEXT"><ul>
+    <li><a href="https://blog.portswigger.net/2016/10/exploiting-cors-misconfigurations-for.html">Exploiting CORS
+        Misconfigurations</a></li>
+</ul></span>
+<h2>Vulnerability classifications</h2><span class="TEXT"><ul>
+<li><a href="https://cwe.mitre.org/data/definitions/942.html">CWE-942: Overly Permissive Cross-domain Whitelist</a></li>
+</ul></span>
+<br><br><div class="rule"></div>
+<span class="BODH1" id="3.1">3.1.&nbsp;http://localhost:3000/login</span>
+<br><a class="PREVNEXT" href="#2.3">Previous</a>
+&nbsp;<a class="PREVNEXT" href="#3.2">Next</a>
+<br>
+<h2>Summary</h2>
+<table cellpadding="0" cellspacing="0" class="summary_table">
+<tr>
+<td rowspan="4" class="icon" valign="top" align="center"><div class='scan_issue_info_certain_rpt'></div></td>
+<td>Severity:&nbsp;&nbsp;</td>
+<td><b>Information</b></td>
+</tr>
+<tr>
+<td>Confidence:&nbsp;&nbsp;</td>
+<td><b>Certain</b></td>
+</tr>
+<tr>
+<td>Host:&nbsp;&nbsp;</td>
+<td><b>http://localhost:3000</b></td>
+</tr>
+<tr>
+<td>Path:&nbsp;&nbsp;</td>
+<td><b>/login</b></td>
+</tr>
+</table>
+<h2>Issue detail</h2>
+<span class="TEXT">The application implements an HTML5 cross-origin resource sharing (CORS) policy for this request that allows access from any domain.<br><br>The application allowed access from the requested origin <strong>http://tlbhixeemzme.com</strong><br><br>If the application relies on network firewalls or other IP-based access controls, this policy is likely to present a security risk.<br><br>Since the Vary: Origin header was not present in the response, reverse proxies and intermediate servers may cache it. This may enable an attacker to carry out cache poisoning attacks.</span>
+<h2>Request</h2>
+<div class="rr_div"><span>GET /login HTTP/1.1<br>Host: localhost:3000<br>Upgrade-Insecure-Requests: 1<br>Referer: http://localhost:3000/<br>Accept: */*<br>Accept-Language: en-US,en-GB;q=0.9,en;q=0.8<br>User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36<br>Connection: close<br>Cache-Control: max-age=0<br>Accept-Encoding: gzip, deflate<br><span class="HIGHLIGHT">Origin: http://tlbhixeemzme.com</span><br><br></span></div>
+<h2>Response</h2>
+<div class="rr_div"><span>HTTP/1.1 404 Not Found<br>x-powered-by: Express<br><span class="HIGHLIGHT">access-control-allow-origin: *</span><br>content-security-policy: default-src 'none'<br>x-content-type-options: nosniff<br><span class="HIGHLIGHT">content-type: text/html; charset=utf-8</span><br>content-length: 144<br>date: Sun, 07 Feb 2021 15:10:26 GMT<br>connection: close<br>Vary: Accept-Encoding<br><br>&lt;!DOCTYPE html&gt;<br>&lt;html lang="en"&gt;<br>&lt;head&gt;<br>&lt;meta charset="utf-8"&gt;<br>&lt;title&gt;Error&lt;/title&gt;<br>&lt;/head&gt;<br>&lt;body&gt;<br>&lt;pre&gt;Cannot GET /login&lt;/pre&gt;<br>&lt;/body&gt;<br>&lt;/html&gt;<br></span></div>
+<div class="rule"></div>
+<span class="BODH1" id="3.2">3.2.&nbsp;http://localhost:3000/signup</span>
+<br><a class="PREVNEXT" href="#3.1">Previous</a>
+&nbsp;<a class="PREVNEXT" href="#3.3">Next</a>
+<br>
+<h2>Summary</h2>
+<table cellpadding="0" cellspacing="0" class="summary_table">
+<tr>
+<td rowspan="4" class="icon" valign="top" align="center"><div class='scan_issue_info_certain_rpt'></div></td>
+<td>Severity:&nbsp;&nbsp;</td>
+<td><b>Information</b></td>
+</tr>
+<tr>
+<td>Confidence:&nbsp;&nbsp;</td>
+<td><b>Certain</b></td>
+</tr>
+<tr>
+<td>Host:&nbsp;&nbsp;</td>
+<td><b>http://localhost:3000</b></td>
+</tr>
+<tr>
+<td>Path:&nbsp;&nbsp;</td>
+<td><b>/signup</b></td>
+</tr>
+</table>
+<h2>Issue detail</h2>
+<span class="TEXT">The application implements an HTML5 cross-origin resource sharing (CORS) policy for this request that allows access from any domain.<br><br>The application allowed access from the requested origin <strong>http://pqivzqkslaew.com</strong><br><br>If the application relies on network firewalls or other IP-based access controls, this policy is likely to present a security risk.<br><br>Since the Vary: Origin header was not present in the response, reverse proxies and intermediate servers may cache it. This may enable an attacker to carry out cache poisoning attacks.</span>
+<h2>Request</h2>
+<div class="rr_div"><span>GET /signup HTTP/1.1<br>Host: localhost:3000<br>Upgrade-Insecure-Requests: 1<br>Referer: http://localhost:3000/<br>Accept: */*<br>Accept-Language: en-US,en-GB;q=0.9,en;q=0.8<br>User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36<br>Connection: close<br>Cache-Control: max-age=0<br>Accept-Encoding: gzip, deflate<br><span class="HIGHLIGHT">Origin: http://pqivzqkslaew.com</span><br><br></span></div>
+<h2>Response</h2>
+<div class="rr_div"><span>HTTP/1.1 404 Not Found<br>x-powered-by: Express<br><span class="HIGHLIGHT">access-control-allow-origin: *</span><br>content-security-policy: default-src 'none'<br>x-content-type-options: nosniff<br><span class="HIGHLIGHT">content-type: text/html; charset=utf-8</span><br>content-length: 145<br>date: Sun, 07 Feb 2021 15:10:26 GMT<br>connection: close<br>Vary: Accept-Encoding<br><br>&lt;!DOCTYPE html&gt;<br>&lt;html lang="en"&gt;<br>&lt;head&gt;<br>&lt;meta charset="utf-8"&gt;<br>&lt;title&gt;Error&lt;/title&gt;<br>&lt;/head&gt;<br>&lt;body&gt;<br>&lt;pre&gt;Cannot GET /signup&lt;/pre&gt;<br>&lt;/body&gt;<br>&lt;/html&gt;<br></span></div>
+<div class="rule"></div>
+<span class="BODH1" id="3.3">3.3.&nbsp;http://localhost:3000/upload</span>
+<br><a class="PREVNEXT" href="#3.2">Previous</a>
+&nbsp;<a class="PREVNEXT" href="#4.1">Next</a>
+<br>
+<h2>Summary</h2>
+<table cellpadding="0" cellspacing="0" class="summary_table">
+<tr>
+<td rowspan="4" class="icon" valign="top" align="center"><div class='scan_issue_info_certain_rpt'></div></td>
+<td>Severity:&nbsp;&nbsp;</td>
+<td><b>Information</b></td>
+</tr>
+<tr>
+<td>Confidence:&nbsp;&nbsp;</td>
+<td><b>Certain</b></td>
+</tr>
+<tr>
+<td>Host:&nbsp;&nbsp;</td>
+<td><b>http://localhost:3000</b></td>
+</tr>
+<tr>
+<td>Path:&nbsp;&nbsp;</td>
+<td><b>/upload</b></td>
+</tr>
+</table>
+<h2>Issue detail</h2>
+<span class="TEXT">The application implements an HTML5 cross-origin resource sharing (CORS) policy for this request that allows access from any domain.<br><br>The application allowed access from the requested origin <strong>http://rharkctjjtat.com</strong><br><br>If the application relies on network firewalls or other IP-based access controls, this policy is likely to present a security risk.<br><br>Since the Vary: Origin header was not present in the response, reverse proxies and intermediate servers may cache it. This may enable an attacker to carry out cache poisoning attacks.</span>
+<h2>Request</h2>
+<div class="rr_div"><span>GET /upload HTTP/1.1<br>Host: localhost:3000<br>Upgrade-Insecure-Requests: 1<br>Referer: http://localhost:3000/<br>Accept: */*<br>Accept-Language: en-US,en-GB;q=0.9,en;q=0.8<br>User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36<br>Connection: close<br>Cache-Control: max-age=0<br>Accept-Encoding: gzip, deflate<br><span class="HIGHLIGHT">Origin: http://rharkctjjtat.com</span><br><br></span></div>
+<h2>Response</h2>
+<div class="rr_div"><span>HTTP/1.1 404 Not Found<br>x-powered-by: Express<br><span class="HIGHLIGHT">access-control-allow-origin: *</span><br>content-security-policy: default-src 'none'<br>x-content-type-options: nosniff<br><span class="HIGHLIGHT">content-type: text/html; charset=utf-8</span><br>content-length: 145<br>date: Sun, 07 Feb 2021 15:10:26 GMT<br>connection: close<br>Vary: Accept-Encoding<br><br>&lt;!DOCTYPE html&gt;<br>&lt;html lang="en"&gt;<br>&lt;head&gt;<br>&lt;meta charset="utf-8"&gt;<br>&lt;title&gt;Error&lt;/title&gt;<br>&lt;/head&gt;<br>&lt;body&gt;<br>&lt;pre&gt;Cannot GET /upload&lt;/pre&gt;<br>&lt;/body&gt;<br>&lt;/html&gt;<br></span></div>
+<div class="rule"></div>
+<span class="BODH0" id="4">4.&nbsp;<a href="https://portswigger.net/knowledgebase/issues/details/00400c00_inputreturnedinresponsereflected">Input returned in response (reflected)</a></span>
+<br><a class="PREVNEXT" href="#3">Previous</a>
+&nbsp;<a class="PREVNEXT" href="#5">Next</a>
+<br>
+<br><span class="TEXT">There are 8 instances of this issue:
+<ul>
+<li><a href="#4.1">/login [URL path filename]</a></li>
+<li><a href="#4.2">/manifest.json [URL path filename]</a></li>
+<li><a href="#4.3">/robots.txt [URL path filename]</a></li>
+<li><a href="#4.4">/signup [URL path filename]</a></li>
+<li><a href="#4.5">/static/js/bundle.js [URL path filename]</a></li>
+<li><a href="#4.6">/static/js/bundle.js [URL path folder 1]</a></li>
+<li><a href="#4.7">/static/js/bundle.js [URL path folder 2]</a></li>
+<li><a href="#4.8">/upload [URL path filename]</a></li>
+</ul></span>
+<h2>Issue background</h2>
+<span class="TEXT"><p>Reflection of input arises when data is copied from a request and echoed into the application's immediate response.</p><p>Input being returned in application responses is not a vulnerability in its own right. However, it is a prerequisite for many client-side vulnerabilities, including cross-site scripting, open redirection, content spoofing, and response header injection. Additionally, some server-side vulnerabilities such as SQL injection are often easier to identify and exploit when input is returned in responses. In applications where input retrieval is rare and the environment is resistant to automated testing (for example, due to a web application firewall), it might be worth subjecting instances of it to focused manual testing. </p></span>
+<h2>Vulnerability classifications</h2><span class="TEXT"><ul>
+<li><a href="https://cwe.mitre.org/data/definitions/20.html">CWE-20: Improper Input Validation</a></li>
+<li><a href="https://cwe.mitre.org/data/definitions/116.html">CWE-116: Improper Encoding or Escaping of Output</a></li>
+</ul></span>
+<br><br><div class="rule"></div>
+<span class="BODH1" id="4.1">4.1.&nbsp;http://localhost:3000/login [URL path filename]</span>
+<br><a class="PREVNEXT" href="#3.3">Previous</a>
+&nbsp;<a class="PREVNEXT" href="#4.2">Next</a>
+<br>
+<h2>Summary</h2>
+<table cellpadding="0" cellspacing="0" class="summary_table">
+<tr>
+<td rowspan="4" class="icon" valign="top" align="center"><div class='scan_issue_info_certain_rpt'></div></td>
+<td>Severity:&nbsp;&nbsp;</td>
+<td><b>Information</b></td>
+</tr>
+<tr>
+<td>Confidence:&nbsp;&nbsp;</td>
+<td><b>Certain</b></td>
+</tr>
+<tr>
+<td>Host:&nbsp;&nbsp;</td>
+<td><b>http://localhost:3000</b></td>
+</tr>
+<tr>
+<td>Path:&nbsp;&nbsp;</td>
+<td><b>/login</b></td>
+</tr>
+</table>
+<h2>Issue detail</h2>
+<span class="TEXT">The value of the URL path filename is copied into the application's response.</span>
+<h2>Request</h2>
+<div class="rr_div"><span>GET /login<span class="HIGHLIGHT">utohbswg3n</span> HTTP/1.1<br>Host: localhost:3000<br>Upgrade-Insecure-Requests: 1<br>Referer: http://localhost:3000/<br>Accept: */*<br>Accept-Language: en-US,en-GB;q=0.9,en;q=0.8<br>User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36<br>Connection: close<br>Cache-Control: max-age=0<br>Accept-Encoding: gzip, deflate<br><br></span></div>
+<h2>Response</h2>
+<div class="rr_div"><span>HTTP/1.1 404 Not Found<br>x-powered-by: Express<br>access-control-allow-origin: *<br>content-security-policy: default-src 'none'<br>x-content-type-options: nosniff<br>content-type: text/html; charset=utf-8<br>content-length: 154<br>date: Sun, 07 Feb 2021 15:10:26 GMT<br>connection: close<br>Vary: Accept-Encoding<br><br>&lt;!DOCTYPE html&gt;<br>&lt;html lang="en"&gt;<br>&lt;head&gt;<br>&lt;meta charset="utf-8"&gt;<br>&lt;title&gt;Error&lt;/title&gt;<br>&lt;/head&gt;<br>&lt;body&gt;<br>&lt;pre&gt;Cannot GET /login<span class="HIGHLIGHT">utohbswg3n</span>&lt;/pre&gt;<br>&lt;/body&gt;<br>&lt;/html&gt;<br></span></div>
+<div class="rule"></div>
+<span class="BODH1" id="4.2">4.2.&nbsp;http://localhost:3000/manifest.json [URL path filename]</span>
+<br><a class="PREVNEXT" href="#4.1">Previous</a>
+&nbsp;<a class="PREVNEXT" href="#4.3">Next</a>
+<br>
+<h2>Summary</h2>
+<table cellpadding="0" cellspacing="0" class="summary_table">
+<tr>
+<td rowspan="4" class="icon" valign="top" align="center"><div class='scan_issue_info_certain_rpt'></div></td>
+<td>Severity:&nbsp;&nbsp;</td>
+<td><b>Information</b></td>
+</tr>
+<tr>
+<td>Confidence:&nbsp;&nbsp;</td>
+<td><b>Certain</b></td>
+</tr>
+<tr>
+<td>Host:&nbsp;&nbsp;</td>
+<td><b>http://localhost:3000</b></td>
+</tr>
+<tr>
+<td>Path:&nbsp;&nbsp;</td>
+<td><b>/manifest.json</b></td>
+</tr>
+</table>
+<h2>Issue detail</h2>
+<span class="TEXT">The value of the URL path filename is copied into the application's response.</span>
+<h2>Request</h2>
+<div class="rr_div"><span>GET /manifest.json<span class="HIGHLIGHT">9xhrejc21j</span> HTTP/1.1<br>Host: localhost:3000<br>Upgrade-Insecure-Requests: 1<br>Accept: */*<br>Accept-Language: en-US,en-GB;q=0.9,en;q=0.8<br>User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36<br>Connection: close<br>Cache-Control: max-age=0<br>Accept-Encoding: gzip, deflate<br><br></span></div>
+<h2>Response</h2>
+<div class="rr_div"><span>HTTP/1.1 404 Not Found<br>x-powered-by: Express<br>access-control-allow-origin: *<br>content-security-policy: default-src 'none'<br>x-content-type-options: nosniff<br>content-type: text/html; charset=utf-8<br>content-length: 162<br>date: Sun, 07 Feb 2021 15:10:25 GMT<br>connection: close<br>Vary: Accept-Encoding<br><br>&lt;!DOCTYPE html&gt;<br>&lt;html lang="en"&gt;<br>&lt;head&gt;<br>&lt;meta charset="utf-8"&gt;<br>&lt;title&gt;Error&lt;/title&gt;<br>&lt;/head&gt;<br>&lt;body&gt;<br>&lt;pre&gt;Cannot GET /manifest.json<span class="HIGHLIGHT">9xhrejc21j</span>&lt;/pre&gt;<br>&lt;/body&gt;<br>&lt;/html&gt;<br></span></div>
+<div class="rule"></div>
+<span class="BODH1" id="4.3">4.3.&nbsp;http://localhost:3000/robots.txt [URL path filename]</span>
+<br><a class="PREVNEXT" href="#4.2">Previous</a>
+&nbsp;<a class="PREVNEXT" href="#4.4">Next</a>
+<br>
+<h2>Summary</h2>
+<table cellpadding="0" cellspacing="0" class="summary_table">
+<tr>
+<td rowspan="4" class="icon" valign="top" align="center"><div class='scan_issue_info_certain_rpt'></div></td>
+<td>Severity:&nbsp;&nbsp;</td>
+<td><b>Information</b></td>
+</tr>
+<tr>
+<td>Confidence:&nbsp;&nbsp;</td>
+<td><b>Certain</b></td>
+</tr>
+<tr>
+<td>Host:&nbsp;&nbsp;</td>
+<td><b>http://localhost:3000</b></td>
+</tr>
+<tr>
+<td>Path:&nbsp;&nbsp;</td>
+<td><b>/robots.txt</b></td>
+</tr>
+</table>
+<h2>Issue detail</h2>
+<span class="TEXT">The value of the URL path filename is copied into the application's response.</span>
+<h2>Request</h2>
+<div class="rr_div"><span>GET /robots.txt<span class="HIGHLIGHT">hbqywyu69k</span> HTTP/1.1<br>Host: localhost:3000<br>Upgrade-Insecure-Requests: 1<br>Accept: */*<br>Accept-Language: en-US,en-GB;q=0.9,en;q=0.8<br>User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36<br>Connection: close<br>Cache-Control: max-age=0<br>Accept-Encoding: gzip, deflate<br><br></span></div>
+<h2>Response</h2>
+<div class="rr_div"><span>HTTP/1.1 404 Not Found<br>x-powered-by: Express<br>access-control-allow-origin: *<br>content-security-policy: default-src 'none'<br>x-content-type-options: nosniff<br>content-type: text/html; charset=utf-8<br>content-length: 159<br>date: Sun, 07 Feb 2021 15:10:24 GMT<br>connection: close<br>Vary: Accept-Encoding<br><br>&lt;!DOCTYPE html&gt;<br>&lt;html lang="en"&gt;<br>&lt;head&gt;<br>&lt;meta charset="utf-8"&gt;<br>&lt;title&gt;Error&lt;/title&gt;<br>&lt;/head&gt;<br>&lt;body&gt;<br>&lt;pre&gt;Cannot GET /robots.txt<span class="HIGHLIGHT">hbqywyu69k</span>&lt;/pre&gt;<br>&lt;/body&gt;<br>&lt;/html&gt;<br></span></div>
+<div class="rule"></div>
+<span class="BODH1" id="4.4">4.4.&nbsp;http://localhost:3000/signup [URL path filename]</span>
+<br><a class="PREVNEXT" href="#4.3">Previous</a>
+&nbsp;<a class="PREVNEXT" href="#4.5">Next</a>
+<br>
+<h2>Summary</h2>
+<table cellpadding="0" cellspacing="0" class="summary_table">
+<tr>
+<td rowspan="4" class="icon" valign="top" align="center"><div class='scan_issue_info_certain_rpt'></div></td>
+<td>Severity:&nbsp;&nbsp;</td>
+<td><b>Information</b></td>
+</tr>
+<tr>
+<td>Confidence:&nbsp;&nbsp;</td>
+<td><b>Certain</b></td>
+</tr>
+<tr>
+<td>Host:&nbsp;&nbsp;</td>
+<td><b>http://localhost:3000</b></td>
+</tr>
+<tr>
+<td>Path:&nbsp;&nbsp;</td>
+<td><b>/signup</b></td>
+</tr>
+</table>
+<h2>Issue detail</h2>
+<span class="TEXT">The value of the URL path filename is copied into the application's response.</span>
+<h2>Request</h2>
+<div class="rr_div"><span>GET /signup<span class="HIGHLIGHT">h9nws6f9td</span> HTTP/1.1<br>Host: localhost:3000<br>Upgrade-Insecure-Requests: 1<br>Referer: http://localhost:3000/<br>Accept: */*<br>Accept-Language: en-US,en-GB;q=0.9,en;q=0.8<br>User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36<br>Connection: close<br>Cache-Control: max-age=0<br>Accept-Encoding: gzip, deflate<br><br></span></div>
+<h2>Response</h2>
+<div class="rr_div"><span>HTTP/1.1 404 Not Found<br>x-powered-by: Express<br>access-control-allow-origin: *<br>content-security-policy: default-src 'none'<br>x-content-type-options: nosniff<br>content-type: text/html; charset=utf-8<br>content-length: 155<br>date: Sun, 07 Feb 2021 15:10:26 GMT<br>connection: close<br>Vary: Accept-Encoding<br><br>&lt;!DOCTYPE html&gt;<br>&lt;html lang="en"&gt;<br>&lt;head&gt;<br>&lt;meta charset="utf-8"&gt;<br>&lt;title&gt;Error&lt;/title&gt;<br>&lt;/head&gt;<br>&lt;body&gt;<br>&lt;pre&gt;Cannot GET /signup<span class="HIGHLIGHT">h9nws6f9td</span>&lt;/pre&gt;<br>&lt;/body&gt;<br>&lt;/html&gt;<br></span></div>
+<div class="rule"></div>
+<span class="BODH1" id="4.5">4.5.&nbsp;http://localhost:3000/static/js/bundle.js [URL path filename]</span>
+<br><a class="PREVNEXT" href="#4.4">Previous</a>
+&nbsp;<a class="PREVNEXT" href="#4.6">Next</a>
+<br>
+<h2>Summary</h2>
+<table cellpadding="0" cellspacing="0" class="summary_table">
+<tr>
+<td rowspan="4" class="icon" valign="top" align="center"><div class='scan_issue_info_certain_rpt'></div></td>
+<td>Severity:&nbsp;&nbsp;</td>
+<td><b>Information</b></td>
+</tr>
+<tr>
+<td>Confidence:&nbsp;&nbsp;</td>
+<td><b>Certain</b></td>
+</tr>
+<tr>
+<td>Host:&nbsp;&nbsp;</td>
+<td><b>http://localhost:3000</b></td>
+</tr>
+<tr>
+<td>Path:&nbsp;&nbsp;</td>
+<td><b>/static/js/bundle.js</b></td>
+</tr>
+</table>
+<h2>Issue detail</h2>
+<span class="TEXT">The value of the URL path filename is copied into the application's response.</span>
+<h2>Request</h2>
+<div class="rr_div"><span>GET /static/js/bundle.js<span class="HIGHLIGHT">zz4q0qsd4r</span> HTTP/1.1<br>Host: localhost:3000<br>Upgrade-Insecure-Requests: 1<br>Accept: */*<br>Accept-Language: en-US,en-GB;q=0.9,en;q=0.8<br>User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36<br>Connection: close<br>Cache-Control: max-age=0<br>Accept-Encoding: gzip, deflate<br><br></span></div>
+<h2>Response</h2>
+<div class="rr_div"><span>HTTP/1.1 404 Not Found<br>x-powered-by: Express<br>access-control-allow-origin: *<br>content-security-policy: default-src 'none'<br>x-content-type-options: nosniff<br>content-type: text/html; charset=utf-8<br>content-length: 168<br>date: Sun, 07 Feb 2021 15:10:26 GMT<br>connection: close<br>Vary: Accept-Encoding<br><br>&lt;!DOCTYPE html&gt;<br>&lt;html lang="en"&gt;<br>&lt;head&gt;<br>&lt;meta charset="utf-8"&gt;<br>&lt;title&gt;Error&lt;/title&gt;<br>&lt;/head&gt;<br>&lt;body&gt;<br>&lt;pre&gt;Cannot GET /static/js/bundle.js<span class="HIGHLIGHT">zz4q0qsd4r</span>&lt;/pre&gt;<br>&lt;/body&gt;<br>&lt;/html&gt;<br></span></div>
+<div class="rule"></div>
+<span class="BODH1" id="4.6">4.6.&nbsp;http://localhost:3000/static/js/bundle.js [URL path folder 1]</span>
+<br><a class="PREVNEXT" href="#4.5">Previous</a>
+&nbsp;<a class="PREVNEXT" href="#4.7">Next</a>
+<br>
+<h2>Summary</h2>
+<table cellpadding="0" cellspacing="0" class="summary_table">
+<tr>
+<td rowspan="4" class="icon" valign="top" align="center"><div class='scan_issue_info_certain_rpt'></div></td>
+<td>Severity:&nbsp;&nbsp;</td>
+<td><b>Information</b></td>
+</tr>
+<tr>
+<td>Confidence:&nbsp;&nbsp;</td>
+<td><b>Certain</b></td>
+</tr>
+<tr>
+<td>Host:&nbsp;&nbsp;</td>
+<td><b>http://localhost:3000</b></td>
+</tr>
+<tr>
+<td>Path:&nbsp;&nbsp;</td>
+<td><b>/static/js/bundle.js</b></td>
+</tr>
+</table>
+<h2>Issue detail</h2>
+<span class="TEXT">The value of the URL path folder 1 is copied into the application's response.</span>
+<h2>Request</h2>
+<div class="rr_div"><span>GET /static<span class="HIGHLIGHT">gil6ss70m8</span>/js/bundle.js HTTP/1.1<br>Host: localhost:3000<br>Upgrade-Insecure-Requests: 1<br>Accept: */*<br>Accept-Language: en-US,en-GB;q=0.9,en;q=0.8<br>User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36<br>Connection: close<br>Cache-Control: max-age=0<br>Accept-Encoding: gzip, deflate<br><br></span></div>
+<h2>Response</h2>
+<div class="rr_div"><span>HTTP/1.1 404 Not Found<br>x-powered-by: Express<br>access-control-allow-origin: *<br>content-security-policy: default-src 'none'<br>x-content-type-options: nosniff<br>content-type: text/html; charset=utf-8<br>content-length: 168<br>date: Sun, 07 Feb 2021 15:10:25 GMT<br>connection: close<br>Vary: Accept-Encoding<br><br>&lt;!DOCTYPE html&gt;<br>&lt;html lang="en"&gt;<br>&lt;head&gt;<br>&lt;meta charset="utf-8"&gt;<br>&lt;title&gt;Error&lt;/title&gt;<br>&lt;/head&gt;<br>&lt;body&gt;<br>&lt;pre&gt;Cannot GET /static<span class="HIGHLIGHT">gil6ss70m8</span>/js/bundle.js&lt;/pre&gt;<br>&lt;/body&gt;<br>&lt;/html&gt;<br></span></div>
+<div class="rule"></div>
+<span class="BODH1" id="4.7">4.7.&nbsp;http://localhost:3000/static/js/bundle.js [URL path folder 2]</span>
+<br><a class="PREVNEXT" href="#4.6">Previous</a>
+&nbsp;<a class="PREVNEXT" href="#4.8">Next</a>
+<br>
+<h2>Summary</h2>
+<table cellpadding="0" cellspacing="0" class="summary_table">
+<tr>
+<td rowspan="4" class="icon" valign="top" align="center"><div class='scan_issue_info_certain_rpt'></div></td>
+<td>Severity:&nbsp;&nbsp;</td>
+<td><b>Information</b></td>
+</tr>
+<tr>
+<td>Confidence:&nbsp;&nbsp;</td>
+<td><b>Certain</b></td>
+</tr>
+<tr>
+<td>Host:&nbsp;&nbsp;</td>
+<td><b>http://localhost:3000</b></td>
+</tr>
+<tr>
+<td>Path:&nbsp;&nbsp;</td>
+<td><b>/static/js/bundle.js</b></td>
+</tr>
+</table>
+<h2>Issue detail</h2>
+<span class="TEXT">The value of the URL path folder 2 is copied into the application's response.</span>
+<h2>Request</h2>
+<div class="rr_div"><span>GET /static/js<span class="HIGHLIGHT">5n394dioy8</span>/bundle.js HTTP/1.1<br>Host: localhost:3000<br>Upgrade-Insecure-Requests: 1<br>Accept: */*<br>Accept-Language: en-US,en-GB;q=0.9,en;q=0.8<br>User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36<br>Connection: close<br>Cache-Control: max-age=0<br>Accept-Encoding: gzip, deflate<br><br></span></div>
+<h2>Response</h2>
+<div class="rr_div"><span>HTTP/1.1 404 Not Found<br>x-powered-by: Express<br>access-control-allow-origin: *<br>content-security-policy: default-src 'none'<br>x-content-type-options: nosniff<br>content-type: text/html; charset=utf-8<br>content-length: 168<br>date: Sun, 07 Feb 2021 15:10:26 GMT<br>connection: close<br>Vary: Accept-Encoding<br><br>&lt;!DOCTYPE html&gt;<br>&lt;html lang="en"&gt;<br>&lt;head&gt;<br>&lt;meta charset="utf-8"&gt;<br>&lt;title&gt;Error&lt;/title&gt;<br>&lt;/head&gt;<br>&lt;body&gt;<br>&lt;pre&gt;Cannot GET /static/js<span class="HIGHLIGHT">5n394dioy8</span>/bundle.js&lt;/pre&gt;<br>&lt;/body&gt;<br>&lt;/html&gt;<br></span></div>
+<div class="rule"></div>
+<span class="BODH1" id="4.8">4.8.&nbsp;http://localhost:3000/upload [URL path filename]</span>
+<br><a class="PREVNEXT" href="#4.7">Previous</a>
+&nbsp;<a class="PREVNEXT" href="#6.1">Next</a>
+<br>
+<h2>Summary</h2>
+<table cellpadding="0" cellspacing="0" class="summary_table">
+<tr>
+<td rowspan="4" class="icon" valign="top" align="center"><div class='scan_issue_info_certain_rpt'></div></td>
+<td>Severity:&nbsp;&nbsp;</td>
+<td><b>Information</b></td>
+</tr>
+<tr>
+<td>Confidence:&nbsp;&nbsp;</td>
+<td><b>Certain</b></td>
+</tr>
+<tr>
+<td>Host:&nbsp;&nbsp;</td>
+<td><b>http://localhost:3000</b></td>
+</tr>
+<tr>
+<td>Path:&nbsp;&nbsp;</td>
+<td><b>/upload</b></td>
+</tr>
+</table>
+<h2>Issue detail</h2>
+<span class="TEXT">The value of the URL path filename is copied into the application's response.</span>
+<h2>Request</h2>
+<div class="rr_div"><span>GET /upload<span class="HIGHLIGHT">afi5iinrof</span> HTTP/1.1<br>Host: localhost:3000<br>Upgrade-Insecure-Requests: 1<br>Referer: http://localhost:3000/<br>Accept: */*<br>Accept-Language: en-US,en-GB;q=0.9,en;q=0.8<br>User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36<br>Connection: close<br>Cache-Control: max-age=0<br>Accept-Encoding: gzip, deflate<br><br></span></div>
+<h2>Response</h2>
+<div class="rr_div"><span>HTTP/1.1 404 Not Found<br>x-powered-by: Express<br>access-control-allow-origin: *<br>content-security-policy: default-src 'none'<br>x-content-type-options: nosniff<br>content-type: text/html; charset=utf-8<br>content-length: 155<br>date: Sun, 07 Feb 2021 15:10:26 GMT<br>connection: close<br>Vary: Accept-Encoding<br><br>&lt;!DOCTYPE html&gt;<br>&lt;html lang="en"&gt;<br>&lt;head&gt;<br>&lt;meta charset="utf-8"&gt;<br>&lt;title&gt;Error&lt;/title&gt;<br>&lt;/head&gt;<br>&lt;body&gt;<br>&lt;pre&gt;Cannot GET /upload<span class="HIGHLIGHT">afi5iinrof</span>&lt;/pre&gt;<br>&lt;/body&gt;<br>&lt;/html&gt;<br></span></div>
+<div class="rule"></div>
+<span class="BODH0" id="5">5.&nbsp;<a href="https://portswigger.net/knowledgebase/issues/details/005009a0_frameableresponsepotentialclickjacking">Frameable response (potential Clickjacking)</a></span>
+<br><a class="PREVNEXT" href="#4">Previous</a>
+&nbsp;<a class="PREVNEXT" href="#6">Next</a>
+<br>
+<h2>Summary</h2>
+<table cellpadding="0" cellspacing="0" class="summary_table">
+<tr>
+<td rowspan="4" class="icon" valign="top" align="center"><div class='scan_issue_info_firm_rpt'></div></td>
+<td>Severity:&nbsp;&nbsp;</td>
+<td><b>Information</b></td>
+</tr>
+<tr>
+<td>Confidence:&nbsp;&nbsp;</td>
+<td><b>Firm</b></td>
+</tr>
+<tr>
+<td>Host:&nbsp;&nbsp;</td>
+<td><b>http://localhost:3000</b></td>
+</tr>
+<tr>
+<td>Path:&nbsp;&nbsp;</td>
+<td><b>/</b></td>
+</tr>
+</table>
+<h2>Issue description</h2>
+<span class="TEXT"><p>If a page fails to set an appropriate X-Frame-Options or Content-Security-Policy HTTP header, it might be possible for a page controlled by an attacker to load it within an iframe. This may enable a clickjacking attack, in which the attacker's page overlays the target application's interface with a different interface provided by the attacker. By inducing victim users to perform actions such as mouse clicks and keystrokes, the attacker can cause them to unwittingly carry out actions within the application that is being targeted. This technique allows the attacker to circumvent defenses against cross-site request forgery, and may result in unauthorized actions.</p>
+<p>Note that some applications attempt to prevent these attacks from within the HTML page itself, using "framebusting" code. However, this type of defense is normally ineffective and can usually be circumvented by a skilled attacker.</p>
+<p>You should determine whether any functions accessible within frameable pages can be used by application users to perform any sensitive actions within the application. </p></span>
+<h2>Issue remediation</h2>
+<span class="TEXT"><p>To effectively prevent framing attacks, the application should return a response header with the name <b>X-Frame-Options</b> and the value <b>DENY</b> to prevent framing altogether, or the value <b>SAMEORIGIN</b> to allow framing only by pages on the same origin as the response itself. Note that the SAMEORIGIN header can be partially bypassed if the application itself can be made to frame untrusted websites.</p></span>
+<h2>References</h2>
+<span class="TEXT"><ul><li><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/X-Frame-Options">X-Frame-Options</a></li></ul></span>
+<h2>Vulnerability classifications</h2><span class="TEXT"><ul>
+<li><a href="https://cwe.mitre.org/data/definitions/693.html">CWE-693: Protection Mechanism Failure</a></li>
+</ul></span>
+<h2>Request</h2>
+<div class="rr_div"><span>GET / HTTP/1.1<br>Host: localhost:3000<br>Upgrade-Insecure-Requests: 1<br>Accept: */*<br>Accept-Language: en-US,en-GB;q=0.9,en;q=0.8<br>User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36<br>Connection: close<br>Cache-Control: max-age=0<br>Accept-Encoding: gzip, deflate<br><br></span></div>
+<h2>Response</h2>
+<div class="rr_div"><span>HTTP/1.1 200 OK<br>X-Powered-By: Express<br>Accept-Ranges: bytes<br>Content-Type: text/html; charset=UTF-8<br>ETag: W/"882-m86kJ/MTtZNDG6ZZcpH9W3rqRWQ"<br>Vary: Accept-Encoding<br>Date: Sun, 07 Feb 2021 15:10:07 GMT<br>Connection: close<br>Content-Length: 2178<br><br>&lt;!DOCTYPE html&gt;<br>&lt;html lang="en"&gt;<br>  &lt;head&gt;<br>    &lt;meta charset="utf-8" /&gt;<br>    &lt;link rel="icon" href="/favicon.ico" /&gt;<br>    &lt;meta name="viewport" content="width=device-width, initial-scale=1" /&gt;<br>    <br><b>...[SNIP]...</b><br></span></div>
+<div class="rule"></div>
+<span class="BODH0" id="6">6.&nbsp;<a href="https://portswigger.net/knowledgebase/issues/details/00600200_emailaddressesdisclosed">Email addresses disclosed</a></span>
+<br><a class="PREVNEXT" href="#5">Previous</a>
+&nbsp;<a class="PREVNEXT" href="#7">Next</a>
+<br>
+<br><span class="TEXT">There are 2 instances of this issue:
+<ul>
+<li><a href="#6.1">/static/js/0.chunk.js</a></li>
+<li><a href="#6.2">/static/js/main.chunk.js</a></li>
+</ul></span>
+<h2>Issue background</h2>
+<span class="TEXT"><p>The presence of email addresses within application responses does not necessarily constitute a security vulnerability. Email addresses may appear intentionally within contact information, and many applications (such as web mail) include arbitrary third-party email addresses within their core content.</p>
+<p>However, email addresses of developers and other individuals (whether appearing on-screen or hidden within page source) may disclose information that is useful to an attacker; for example, they may represent usernames that can be used at the application's login, and they may be used in social engineering attacks against the organization's personnel. Unnecessary or excessive disclosure of email addresses may also lead to an increase in the volume of spam email received.</p></span>
+<h2>Issue remediation</h2>
+<span class="TEXT"><p>Consider removing any email addresses that are unnecessary, or replacing personal addresses with anonymous mailbox addresses (such as helpdesk@example.com).</p>
+<p>To reduce the quantity of spam sent to anonymous mailbox addresses, consider hiding the email address and instead providing a form that generates the email server-side, protected by a CAPTCHA if necessary. </p></span>
+<h2>Vulnerability classifications</h2><span class="TEXT"><ul>
+<li><a href="https://cwe.mitre.org/data/definitions/200.html">CWE-200: Information Exposure</a></li>
+</ul></span>
+<br><br><div class="rule"></div>
+<span class="BODH1" id="6.1">6.1.&nbsp;http://localhost:3000/static/js/0.chunk.js</span>
+<br><a class="PREVNEXT" href="#4.8">Previous</a>
+&nbsp;<a class="PREVNEXT" href="#6.2">Next</a>
+<br>
+<h2>Summary</h2>
+<table cellpadding="0" cellspacing="0" class="summary_table">
+<tr>
+<td rowspan="4" class="icon" valign="top" align="center"><div class='scan_issue_info_certain_rpt'></div></td>
+<td>Severity:&nbsp;&nbsp;</td>
+<td><b>Information</b></td>
+</tr>
+<tr>
+<td>Confidence:&nbsp;&nbsp;</td>
+<td><b>Certain</b></td>
+</tr>
+<tr>
+<td>Host:&nbsp;&nbsp;</td>
+<td><b>http://localhost:3000</b></td>
+</tr>
+<tr>
+<td>Path:&nbsp;&nbsp;</td>
+<td><b>/static/js/0.chunk.js</b></td>
+</tr>
+</table>
+<h2>Issue detail</h2>
+<span class="TEXT">The following email address was disclosed in the response:<ul><li>f@faisalman.com</li></ul></span>
+<h2>Request</h2>
+<div class="rr_div"><span>GET /static/js/0.chunk.js HTTP/1.1<br>Host: localhost:3000<br>Upgrade-Insecure-Requests: 1<br>Accept: */*<br>Accept-Language: en-US,en-GB;q=0.9,en;q=0.8<br>User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36<br>Connection: close<br>Cache-Control: max-age=0<br>Accept-Encoding: gzip, deflate<br><br></span></div>
+<h2>Response</h2>
+<div class="rr_div"><span>HTTP/1.1 200 OK<br>X-Powered-By: Express<br>Accept-Ranges: bytes<br>Content-Type: application/javascript; charset=UTF-8<br>ETag: W/"35d51d-Z4oLviGxvnNa3qIB4fFbLyZcI0Q"<br>Vary: Accept-Encoding<br>Date: Sun, 07 Feb 2021 15:10:16 GMT<br>Connection: close<br>Content-Length: 3527965<br><br>(this["webpackJsonptoefx-client"] = this["webpackJsonptoefx-client"] || []).push([[0],{<br><br>/***/ "./node_modules/@babel/runtime/helpers/esm/extends.js":<br>/*!**********************************************<br><b>...[SNIP]...</b><br>&lt;<span class="HIGHLIGHT">f@faisalman.com</span>&gt;<br><b>...[SNIP]...</b><br></span></div>
+<div class="rule"></div>
+<span class="BODH1" id="6.2">6.2.&nbsp;http://localhost:3000/static/js/main.chunk.js</span>
+<br><a class="PREVNEXT" href="#6.1">Previous</a>
+<br>
+<h2>Summary</h2>
+<table cellpadding="0" cellspacing="0" class="summary_table">
+<tr>
+<td rowspan="4" class="icon" valign="top" align="center"><div class='scan_issue_info_certain_rpt'></div></td>
+<td>Severity:&nbsp;&nbsp;</td>
+<td><b>Information</b></td>
+</tr>
+<tr>
+<td>Confidence:&nbsp;&nbsp;</td>
+<td><b>Certain</b></td>
+</tr>
+<tr>
+<td>Host:&nbsp;&nbsp;</td>
+<td><b>http://localhost:3000</b></td>
+</tr>
+<tr>
+<td>Path:&nbsp;&nbsp;</td>
+<td><b>/static/js/main.chunk.js</b></td>
+</tr>
+</table>
+<h2>Issue detail</h2>
+<span class="TEXT">The following email address was disclosed in the response:<ul><li>example@gmail.com</li></ul></span>
+<h2>Request</h2>
+<div class="rr_div"><span>GET /static/js/main.chunk.js HTTP/1.1<br>Host: localhost:3000<br>Upgrade-Insecure-Requests: 1<br>Accept: */*<br>Accept-Language: en-US,en-GB;q=0.9,en;q=0.8<br>User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36<br>Connection: close<br>Cache-Control: max-age=0<br>Accept-Encoding: gzip, deflate<br><br></span></div>
+<h2>Response</h2>
+<div class="rr_div"><span>HTTP/1.1 200 OK<br>X-Powered-By: Express<br>Accept-Ranges: bytes<br>Content-Type: application/javascript; charset=UTF-8<br>ETag: W/"4f503-GYoGNLV5VJW0vOtO2PS+gPn9EJ0"<br>Vary: Accept-Encoding<br>Date: Sun, 07 Feb 2021 15:10:22 GMT<br>Connection: close<br>Content-Length: 324867<br><br>(this["webpackJsonptoefx-client"] = this["webpackJsonptoefx-client"] || []).push([["main"],{<br><br>/***/ "./node_modules/css-loader/dist/cjs.js?!./node_modules/postcss-loader/src/index.js?!./src/App.css":<br><br><b>...[SNIP]...</b><br>   }, "Email address"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_bootstrap__WEBPACK_IMPORTED_MODULE_1__["Form"].Control, {<br>      type: "email",<br>      placeholder: "<span class="HIGHLIGHT">example@gmail.com</span>",<br>      value: this.state.email,<br>      onChange: e =&gt;<br><b>...[SNIP]...</b><br></span></div>
+<div class="rule"></div>
+<span class="BODH0" id="7">7.&nbsp;<a href="https://portswigger.net/knowledgebase/issues/details/00600600_robotsdottxtfile">Robots.txt file</a></span>
+<br><a class="PREVNEXT" href="#6">Previous</a>
+<br>
+<h2>Summary</h2>
+<table cellpadding="0" cellspacing="0" class="summary_table">
+<tr>
+<td rowspan="4" class="icon" valign="top" align="center"><div class='scan_issue_info_certain_rpt'></div></td>
+<td>Severity:&nbsp;&nbsp;</td>
+<td><b>Information</b></td>
+</tr>
+<tr>
+<td>Confidence:&nbsp;&nbsp;</td>
+<td><b>Certain</b></td>
+</tr>
+<tr>
+<td>Host:&nbsp;&nbsp;</td>
+<td><b>http://localhost:3000</b></td>
+</tr>
+<tr>
+<td>Path:&nbsp;&nbsp;</td>
+<td><b>/robots.txt</b></td>
+</tr>
+</table>
+<h2>Issue detail</h2>
+<span class="TEXT">The web server contains a robots.txt file.</span>
+<h2>Issue background</h2>
+<span class="TEXT"><p>The file robots.txt is used to give instructions to web robots, such as search engine crawlers, about locations within the web site that robots are allowed, or not allowed, to crawl and index.</p>
+<p>The presence of the robots.txt does not in itself present any kind of security vulnerability. However, it is often used to identify restricted or private areas of a site's contents. The information in the file may therefore help an attacker to map out the site's contents, especially if some of the locations identified are not linked from elsewhere in the site. If the application relies on robots.txt to protect access to these areas, and does not enforce proper access control over them, then this presents a serious vulnerability.</p></span>
+<h2>Issue remediation</h2>
+<span class="TEXT"><p>The robots.txt file is not itself a security threat, and its correct use can represent good practice for non-security reasons. You should not assume that all web robots will honor the file's instructions. Rather, assume that attackers will pay close attention to any locations identified in the file. Do not rely on robots.txt to provide any kind of protection over unauthorized access.</p></span>
+<h2>Vulnerability classifications</h2><span class="TEXT"><ul>
+<li><a href="https://cwe.mitre.org/data/definitions/200.html">CWE-200: Information Exposure</a></li>
+</ul></span>
+<h2>Request</h2>
+<div class="rr_div"><span>GET <span class="HIGHLIGHT">/robots.txt</span> HTTP/1.1<br>Host: localhost<br>Connection: close<br><br></span></div>
+<h2>Response</h2>
+<div class="rr_div"><span>HTTP/1.1 200 OK<br>X-Powered-By: Express<br>Accept-Ranges: bytes<br>Cache-Control: public, max-age=0<br>Last-Modified: Tue, 05 Jan 2021 16:54:26 GMT<br>ETag: W/"46-176d378a197"<br>Content-Type: text/plain; charset=UTF-8<br>Content-Length: 70<br>Vary: Accept-Encoding<br>Date: Sun, 07 Feb 2021 15:10:22 GMT<br>Connection: close<br><br># https://www.robotstxt.org/robotstxt.html<br>User-agent: *<br>Disallow:<br></span></div>
+<div class="rule"></div>
+<span class="TEXT"><br>Report generated by Burp Suite <a href="https://portswigger.net/vulnerability-scanner/">web vulnerability scanner</a> v2020.12.1, at Sun Feb 07 10:18:50 EST 2021.<br><br></span>
+</div>
+</body>
+</html>

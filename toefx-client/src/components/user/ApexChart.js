@@ -200,7 +200,7 @@ class ApexChart extends React.Component {
         param toeId: The toe the button is for.
     */
     printToeButton(toeId) {
-        var defaultToeButtonClass = "graph-toe-button";
+        //var defaultToeButtonClass = "graph-toe-button";
         //var activeToeButtonClass = defaultToeButtonClass + " active-toe-button"; //When the toe's data is being shown on the chart
         var allClasses = ["btnBigToe", "btnIndexToe", "btnMiddleToe", "btnFourthToe", "btnLittleToe"]
         //(this.state.shownToes[toeId] ? activeToeButtonClass : defaultToeButtonClass)
@@ -217,7 +217,7 @@ class ApexChart extends React.Component {
         Adds buttons to the page where user can select toes.
     */
     printToeButtons() {
-        var defaultToeButtonClass = "graph-toe-button";
+        //var defaultToeButtonClass = "graph-toe-button";
         //var activeToeButtonClass = defaultToeButtonClass + " active-toe-button"; //For when all toe data is being shown on the chart
         var toeOrder = [];
         for (let i = 0; i < TOE_COUNT; ++i)

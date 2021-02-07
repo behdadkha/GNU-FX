@@ -27,7 +27,7 @@ jobs:
     - name: testing server
       run: |
         cd toefx-server
-        npm test 
+        npm run test
         echo "Exited with '$?'"
     - name: npm run build for deployment not implemented
       run: |

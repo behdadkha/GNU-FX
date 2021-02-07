@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">73.33% </span>
+                <span class="strong">59.32% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>33/45</span>
+                <span class='fraction'>35/59</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">69.23% </span>
+                <span class="strong">47.37% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>9/13</span>
+                <span class='fraction'>9/19</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">40% </span>
+                <span class="strong">30.77% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>4/10</span>
+                <span class='fraction'>4/13</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">72.73% </span>
+                <span class="strong">58.62% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>32/44</span>
+                <span class='fraction'>34/58</span>
             </div>
         
             
@@ -182,10 +182,35 @@
 <a name='L123'></a><a href='#L123'>123</a>
 <a name='L124'></a><a href='#L124'>124</a>
 <a name='L125'></a><a href='#L125'>125</a>
-<a name='L126'></a><a href='#L126'>126</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L126'></a><a href='#L126'>126</a>
+<a name='L127'></a><a href='#L127'>127</a>
+<a name='L128'></a><a href='#L128'>128</a>
+<a name='L129'></a><a href='#L129'>129</a>
+<a name='L130'></a><a href='#L130'>130</a>
+<a name='L131'></a><a href='#L131'>131</a>
+<a name='L132'></a><a href='#L132'>132</a>
+<a name='L133'></a><a href='#L133'>133</a>
+<a name='L134'></a><a href='#L134'>134</a>
+<a name='L135'></a><a href='#L135'>135</a>
+<a name='L136'></a><a href='#L136'>136</a>
+<a name='L137'></a><a href='#L137'>137</a>
+<a name='L138'></a><a href='#L138'>138</a>
+<a name='L139'></a><a href='#L139'>139</a>
+<a name='L140'></a><a href='#L140'>140</a>
+<a name='L141'></a><a href='#L141'>141</a>
+<a name='L142'></a><a href='#L142'>142</a>
+<a name='L143'></a><a href='#L143'>143</a>
+<a name='L144'></a><a href='#L144'>144</a>
+<a name='L145'></a><a href='#L145'>145</a>
+<a name='L146'></a><a href='#L146'>146</a>
+<a name='L147'></a><a href='#L147'>147</a>
+<a name='L148'></a><a href='#L148'>148</a>
+<a name='L149'></a><a href='#L149'>149</a>
+<a name='L150'></a><a href='#L150'>150</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">9x</span>
 <span class="cline-any cline-yes">9x</span>
 <span class="cline-any cline-yes">9x</span>
 <span class="cline-any cline-yes">9x</span>
@@ -303,6 +328,29 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">9x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -319,6 +367,7 @@ const jwt = require('jsonwebtoken');
 const config = require('../config');
 const utils = require('../utils')
 const userSchema = require("../database/userSchema");
+const toeDataSchema = require('../database/toe-dataSchema');
 &nbsp;
 &nbsp;
 /*
@@ -356,10 +405,10 @@ userRoutes.route('/getUserInfo').get(async (req, res) =&gt; {
         var user = (await utils.loadUserObject(req, res)).user;
 &nbsp;
         //Return the data
-        res.json({email: user.email, age: user.age});
+        res.json({ email: user.email, age: user.age });
     }
     catch {
-        res.status(400).json({msg: "Couldnt get user's info at /getUserInfo."});
+        res.status(400).json({ msg: "Couldnt get user's info at /getUserInfo." });
     }
 });
 &nbsp;
@@ -374,12 +423,12 @@ userRoutes.route('/getschedule').get(async (req, res) =&gt; {
     try {
         //Get the user
         var user = (await utils.loadUserObject(req, res)).user;
-        
+&nbsp;
         //Return the data
         res.json(user.schedule);
     }
     catch (e) {
-        res.status(400).json({msg: "An error occurred while attempting to retrieve a user's schedule. Possibly due to an invalid user."})
+        res.status(400).json({ msg: "An error occurred while attempting to retrieve a user's schedule. Possibly due to an invalid user." })
     }
 });
 &nbsp;
@@ -394,11 +443,11 @@ userRoutes.route('/getschedule').get(async (req, res) =&gt; {
 */
 userRoutes.post('/resetPassword', async (req, res) =&gt; {
     try {
-        const {currentPassword, newPassword1, newPassword2} = req.body;
-        if (currentPassword === "" || newPassword1 === "" || newPassword2 === ""){return res.status(400).json({msg: "All the inputs have to be filled"})}
-        
+        const { currentPassword, newPassword1, newPassword2 } = req.body;
+        if (currentPassword === "" || newPassword1 === "" || newPassword2 === "") { return res.status(400).json({ msg: "All the inputs have to be filled" }) }
+&nbsp;
         var user = (await utils.loadUserObject(req, res)).user;
-        try{
+        try {
             <span class="missing-if-branch" title="else path not taken" >E</span>if (user) {
                 bcrypt.compare(currentPassword, user.password).then(async (valid) =&gt; { //Check if the current password is correct
                     if (valid) {
@@ -409,26 +458,49 @@ userRoutes.post('/resetPassword', async (req, res) =&gt; {
 &nbsp;
                             //Save the new encrypted password for security reasons
 <span class="cstat-no" title="statement not covered" >                            user.save().then(<span class="fstat-no" title="function not covered" >()</span> =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >                                res.status(200).json({msg: "password changed"});</span>
+<span class="cstat-no" title="statement not covered" >                                res.status(200).json({ msg: "password changed" });</span>
                             }).catch(<span class="fstat-no" title="function not covered" >er</span>r =&gt; <span class="cstat-no" title="statement not covered" >console.log(err))</span>;
                         }
-                        else{
-                            return res.status(400).json({msg: "New passwords don't match"})
+                        else {
+                            return res.status(400).json({ msg: "New passwords don't match" })
                         }
                     }
                     else {
-                        return res.status(400).json({msg: "Invalid password"});
+                        return res.status(400).json({ msg: "Invalid password" });
                     }
                 });
             }
         }
-        catch{
-<span class="cstat-no" title="statement not covered" >            return res.status(400).json({msg: "Invalid password"})</span>
+        catch {
+<span class="cstat-no" title="statement not covered" >            return res.status(400).json({ msg: "Invalid password" })</span>
         }
     }
     catch {
-        return res.status(400).json({msg: "Something went wrong"})
+        return res.status(400).json({ msg: "Something went wrong" })
     }
+});
+&nbsp;
+// For testing purposes(not implemented in the react app yet)
+// Delets a user from the db.
+userRoutes.delete('/delete', <span class="fstat-no" title="function not covered" >as</span>ync (req, res) =&gt; {
+    const name = <span class="cstat-no" title="statement not covered" >"Validation Test";</span>
+<span class="cstat-no" title="statement not covered" >    userSchema.findOneAndDelete({ name: name }, <span class="fstat-no" title="function not covered" >(e</span>rr, user) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >        if (err) {</span>
+<span class="cstat-no" title="statement not covered" >            return res.status(400).json({ msg: "Can't delete the user" })</span>
+        }
+<span class="cstat-no" title="statement not covered" >        toeDataSchema.deleteOne({ userID: user._id }, <span class="fstat-no" title="function not covered" >(e</span>rr) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >            if (err) {</span>
+<span class="cstat-no" title="statement not covered" >                return res.status(400).json({ msg: "Can't delete the user" })</span>
+            }
+        });
+        let command = <span class="cstat-no" title="statement not covered" >`rm -rf images/${user._id}`</span>
+<span class="cstat-no" title="statement not covered" >        if (config.hostType.includes("Windows"))</span>
+<span class="cstat-no" title="statement not covered" >            command = `rmdir /s /q images\\${user._id}`</span>
+<span class="cstat-no" title="statement not covered" >        utils.runCommand(command);</span>
+<span class="cstat-no" title="statement not covered" >        return res.status(200).json({msg: `User ${user._id} deleted`})</span>
+    });
+&nbsp;
+&nbsp;
 });
 &nbsp;
 module.exports = userRoutes;
@@ -439,7 +511,7 @@ module.exports = userRoutes;
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank">istanbul</a>
-                at Sun Jan 31 2021 18:36:14 GMT-0500 (Eastern Standard Time)
+                at Sat Feb 06 2021 19:38:39 GMT-0500 (Eastern Standard Time)
             </div>
         </div>
         <script src="../../prettify.js"></script>

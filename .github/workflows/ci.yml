@@ -20,11 +20,17 @@ jobs:
       run: |
         cd toefx-server
         npm install
-    - name: npm test client
+    - name: testing client
       run: |
         cd toefx-client
-        npm test
-    - name: npm test server
+        npm run testCoverage
+        cd ..
+        cd toefx-server
+        npm start
+        cd ..
+        cd toefx-client
+        npm run validationTest
+    - name: testing server
       run: |
         cd toefx-server
         npm test

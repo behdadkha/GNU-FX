@@ -6,6 +6,18 @@ const jwt = require('jsonwebtoken');
 //const mongoose = require("mongoose");
 const UserModel = require('../database/userSchema');
 describe('Login endpoint', () => {
+    // Correct information entered
+    it('Login should pass if correct information is entered', async () => {
+        const res = await request(app)
+            .post('/login')
+            .send({
+                email: "demoTEST@gmail.com",
+                password: "123test"
+            });
+        expect(res.statusCode).toEqual(200);
+        expect(res.body.success).toBe(true);
+    });
+
     // Wrong information entered
     it('Login should fail if wrong information is entered', async () => {
         const res = await request(app)

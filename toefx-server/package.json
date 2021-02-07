@@ -7,7 +7,7 @@
     "testEnvironment": "node"
   },
   "scripts": {
-    "test": "jest --silent --coverage --forceExit",
+    "test": "jest --silent",
     "start": "node server.js"
   },
   "author": "",

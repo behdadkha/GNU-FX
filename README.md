@@ -29,7 +29,7 @@ Note: Make sure you have python3 alias set as python. Running ```python``` shoul
 # Tests (unit-test, validation-test, stress and security test)
 * Used **Jest** to test the react app and the node app.
 * Used **Burp suite professional** for security and stress tests.
-* Created a **bot** for validation test (Some part of the validation test is done using Jest but because of security reasons, react/jest does not allow image upload).
+* Created a **bot** for validation and stress test (Some part of the validation test is done using Jest but because of security reasons, react/jest does not allow image upload).
 * Used **pytest --cov** for machine learning tests.
 
 ## Test reports
@@ -46,10 +46,10 @@ Note: Make sure you have python3 alias set as python. Running ```python``` shoul
 
 ### Run
 * To run the **unit tests** for the React app, go to `toefx-client` and run `npm run unitTest`.  The output is  a table showing the percentage of statements coverage, branch coverage, function coverage and line coverage.
-* To run the **validation tests** , first go to `toefx-server` and run `npm start`. Then go to `toefx-client` and run `npm run validationTest`.
+* To run the **validation tests** (most of it done by the Bot (go to the next point to run the python Bot)), first go to `toefx-server` and run `npm start`. Then go to `toefx-client` and run `npm run validationTest`.
 * To run the unit-tests for the node app, go to `toefx-server` and run `npm run unitTest`. The output is  a table showing the percentage of statements coverage, branch coverage, function coverage and line coverage.
 * To run the **unit-tests** for the machine learning, go to `toefx-server` and run `pytest --cov`. The output is  a table showing the percentage of statement coverage, as well as tests passed or failed.
 
-## Instructions for Running the Bot
-1. Run both frontend and backend. Go to `toefx-client` and run `npm start`, then go to `toefx-server` and run `npm start`.
+## Instructions for Running the Bot (Continue Validation and Stress Test)
+1. Run both frontend and backend: Go to `toefx-client` and run `npm start`, then go to `toefx-server` and run `npm start`.
 2. Go to `TestingSelenium` and run `python ./test.py`.

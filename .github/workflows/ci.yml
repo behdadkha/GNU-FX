@@ -5,11 +5,11 @@ on: [push]
 jobs:
   build:
 
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        node-version: [10.x, 8.x]
+        node-version: [14.15.4, 10.x, 8.x]
     steps:
     - uses: actions/checkout@v1
     - name: npm install client
@@ -33,5 +33,4 @@ jobs:
       run: |
         cd toefx-client
         npm run build
-      env: 
-        CI: true
+      

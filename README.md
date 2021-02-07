@@ -1,3 +1,4 @@
+
 # ToeFX 
 #### Update: Instructions for tests and reports added to the bottom.
 A web application that helps patients detect fungal toe infection, and allows them to keep track of their treatment progress.
@@ -13,24 +14,28 @@ Note: Make sure you have python3 alias set as python. Running ```python``` shoul
 **A docker file for running server with AI is in the `toefx-server` folder.**
 ## Running the Application:
 1. Open a terminal.
-2. Navigate to the ```toefx-client``` folder.
+2. Navigate to the `toefx-client` folder.
 3. Install all the required dependencies:<br>
-``` Run "npm install" ```
+`Run "npm install"` 
 4. Start the front-end server.<br>
-``` Run "npm start" ```
-5. From the root directory (ToeFX), navigate to the ```toefx-server``` folder.
+`Run "npm start"`
+5. From the root directory (ToeFX), navigate to the `toefx-server` folder.
 6. Install all the required dependencies.<br>
-```Run "npm install"```
+`Run "npm install"`
 7. Start the back-end server.<br>
-```Run "npm start"```
+`Run "npm start"`
 8. Open up a web browser and go to http://localhost:3000/
-9. Click ``Login`` at the top of the page. Use the default login username ```demo@example.com``` and the default login password ```123``` to access the application. 
+9. Click `Login` at the top of the page. Use the default login username `demo@gmail.com` and the default login password `123` to access the application. 
 
 # Tests (unit-test, validation-test, stress and security test)
 * Used **Jest** to test the react app and the node app.
-* Used **Burp suite professional** for security and stress tests.
 * Created a **bot** for validation and stress test (Some part of the validation test is done using Jest but because of security reasons, react/jest does not allow image upload).
+*  Used **Burp suite professional** for security and stress tests.
 * Used **pytest --cov** for machine learning tests.
+
+Tests for the React app is in the `toefx-client` -> `src` -> `tests` folder.
+Tests for the Node app is in the `toefx-server` -> `tests` folder.
+Tests for the AI is in `toefx-server` -> `AI` -> `actual` folder.
 
 ## Test reports
 * To access the test report generated for the React app, from the root directory, go to `toefx-client` -> `coverage` -> `icov-report` -> `index.html`. 
@@ -46,7 +51,7 @@ Note: Make sure you have python3 alias set as python. Running ```python``` shoul
 
 ### Run
 * To run the **unit tests** for the React app, go to `toefx-client` and run `npm run unitTest`.  The output is  a table showing the percentage of statements coverage, branch coverage, function coverage and line coverage.
-* To run the **validation tests** (most of it done by the Bot (go to the next point to run the python Bot)), first go to `toefx-server` and run `npm start`. Then go to `toefx-client` and run `npm run validationTest`.
+* To run the **validation tests** (most of it done by the Bot (go to the next header to run the python Bot)), first go to `toefx-server` and run `npm start`. Then go to `toefx-client` and run `npm run validationTest`.
 * To run the unit-tests for the node app, go to `toefx-server` and run `npm run unitTest`. The output is  a table showing the percentage of statements coverage, branch coverage, function coverage and line coverage.
 * To run the **unit-tests** for the machine learning, go to `toefx-server` and run `pytest --cov`. The output is  a table showing the percentage of statement coverage, as well as tests passed or failed.
 

@@ -132,13 +132,13 @@ uploadImage.route('/loggedin').post(async (req, res) => {
         var userId = userObject.id;
         var extension = GetImageExtension(image); //Used in the image name later
 
-        //user.images.length is the number of images the user has uploaded
-        //This gives each new image a unique number
-        //BUG: Deleting some images can overwrite old images
-        const imageName = user.images.length + "." + extension;
+        //user.imageIndex is used to prevent image overwrite after deletion
+        if (user.imageIndex === undefined) user.imageIndex = user.images.length
+        const imageName = user.imageIndex + "." + extension;
 
         //Save the new image under user
         user.images.push(imageName);
+        user.imageIndex += 1;
         user.save()
 
         //Prep the data to be saved in the toe-data collection 

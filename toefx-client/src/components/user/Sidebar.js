@@ -52,7 +52,7 @@ class Sidebar extends Component {
                 <div className="sidebar">
                     {/* Upload Image Button */}
                     <div>
-                        <Button className="uploadButton"
+                        <Button id="uploadBtn" className="uploadButton"
                             onClick={() => {
                                 this.props.history.push('/upload');
                                 window.location.reload();
@@ -88,7 +88,7 @@ class Sidebar extends Component {
 
                         {/* Log out */}
                         <Row className={itemClass}>
-                            <span test-id="logOut" onClick={() => {
+                            <span test-id="logOut" id="logOut" onClick={() => {
                                 store.dispatch(LogOutUser());
                                 this.props.history.push('/');
                             }}>

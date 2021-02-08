@@ -14,6 +14,11 @@ import Sidebar from '../../components/user/Sidebar';
 import Schedule from '../../components/user/Schedule';
 import User from '../../components/user/User';
 
+import configureMockStore from 'redux-mock-store';
+import thunk from 'redux-thunk';
+const middlewares = [thunk];
+const mockStore = configureMockStore(middlewares);
+
 let allStates =
 {
     name: "Validation Test",
@@ -108,84 +113,23 @@ describe("The program must notify the user if the uploaded image is not a valid 
     })
 });
 
-/*
-describe.only("Functional(F-11): User should be able to see their treatment schedule", () => {
-    it.only("My Account sidebar", async () => {
+
+describe("Functional(F-11): User should be able to see their treatment schedule", () => {
+    it("My Account sidebar", async () => {
         
         const ValidUser = { email: "demoTEST@gmail.com", password: "123test" }
         let mockedHistory = { push: jest.fn() }
         //component.setState({email: "demo@gmail.com", age: "12"});
         window.location.reload = jest.fn();
-        let component = mount(<Schedule history={mockedHistory} />);
+        let mockedStore = mockStore({auth: {isAuth: true}});
+        let component = mount(<Provider store={mockedStore}><Schedule history={mockedHistory} /></Provider>);
         //Token for demo user
         SetAuthHeader('Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmYjZjYmE4N2Y5ODlkMDY0MDQ3NzAwZSIsIm5hbWUiOiJhc2RmIiwiaWF0IjoxNjExNzA1MzcwfQ.sIL_9vOUJPUNOrZeo1chQiKhhr2zZTSQuU3yGm5pKVU');
 
-        expect(component.state('scheduleData')).toBe('demo@gmail.com');
-    });
-});
-*/
-
-
-/*
-//K
-describe("Functional(F-12): User must be able to view account details such as their email", () => {
-    it("My Account sidebar", async () => {
-
-        //loggin in
-        jest.restoreAllMocks();
-        let mockedHistory = { push: jest.fn() }
-        const ValidUser = { email: "demoTEST@gmail.com", password: "123test" }
-        window.location.reload = jest.fn();
-        let component1 = shallow(<Login history={{ push: jest.fn() }} />);
-        component1.setState({ email: ValidUser.email, password: ValidUser.password });
-
-        //Logging in
-        await component1.instance().handleLoginPatient({ preventDefault: () => { } })
-
-        let component = mount(<Provider store={store}><Sidebar history={mockedHistory} /></Provider>);
-        await component.find('[test-id="myAccount"]').first().simulate('click');
-
-        let componentAccount = mount(<Provider store={store}><MyAccount history={mockedHistory} /></Provider>)
-        componentAccount.find(MyAccount).children().setState({ email: ValidUser.email })
-        expect(componentAccount.find(MyAccount).children().state('email')).toBe("demoTEST@gmail.com");
+        expect(component.find(Schedule).children().state('scheduleData')).toEqual([]);
     });
 });
 
-describe("Functional(F-13): User should be able to reset their password", () => {
-    it("Reset password", async () => {
-        jest.restoreAllMocks();
-        let mockedHistory = { push: jest.fn() }
-        let component = shallow(<ResetPassword history={mockedHistory} />);
-
-        component.setState({ currentPassword: "123", newPassword1: "123", newPassword2: "123" });
-
-        //Token for demo user
-        SetAuthHeader('Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmYjZjYmE4N2Y5ODlkMDY0MDQ3NzAwZSIsIm5hbWUiOiJhc2RmIiwiaWF0IjoxNjExNzA1MzcwfQ.sIL_9vOUJPUNOrZeo1chQiKhhr2zZTSQuU3yGm5pKVU');
-        await component.instance().handleSubmit({ preventDefault: () => { } })
-        expect(component.state('incorrectPasswordError')).toBe(false);
-
-        //If the password was reset successfuly the user will be redirected to the login page
-        expect(mockedHistory.push).toHaveBeenCalledWith('/login');
-    });
-});
-
-describe("Functional(F-16): Users should be able to log out when they're done using the program", () => {
-    it("should logout", async () => {
-        jest.restoreAllMocks();
-        let mockedHistory = { push: jest.fn() }
-        const ValidUser = { email: "demoTEST@gmail.com", password: "123test" }
-        window.location.reload = jest.fn();
-        let component1 = shallow(<Login history={{ push: jest.fn() }} />);
-        component1.setState({ email: ValidUser.email, password: ValidUser.password });
-
-        //Logging in
-        await component1.instance().handleLoginPatient({ preventDefault: () => { } })
-
-        let component = mount(<Provider store={store}><Sidebar history={mockedHistory} /></Provider>);
-        await component.find('[test-id="logOut"]').first().simulate('click');
-        expect(mockedHistory.push).toHaveBeenCalledWith("/")
-    });
-});
 
 describe("Performance(p-1): Login time must be less than 30 seconds", () => {
     it("User login", async () => {
@@ -224,13 +168,6 @@ describe("Performance(p-3): Loading a storyline for viewing should take no more 
     })
     it("storyline loading", async () => {
         jest.restoreAllMocks();
-        //window.location.reload = jest.fn();
-        //component.setState({ email: ValidUser.email, password: ValidUser.password });
-
-        //Logging in
-        //await component.instance().handleLoginPatient({ preventDefault: () => { } })
-        //If the page is redirected to /user, it means that the login was successful
-        //expect(mockedHistory.push).toHaveBeenCalledWith('/user');
 
         //get current time
         var t0 = performance.now();
@@ -242,4 +179,4 @@ describe("Performance(p-3): Loading a storyline for viewing should take no more 
     });
 });
 
-*/
+

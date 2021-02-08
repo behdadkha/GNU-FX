@@ -380,8 +380,8 @@ class Upload extends Component {
                             {/* Image Name & Diagnose Button */}
                             <Row>
                                 <Col>
-                                    <div>{source.text}</div>
-                                    <Button onClick={this.handleDiagnose.bind(this, index)}
+                                    <div id="uploadStatusText">{source.text}</div>
+                                    <Button id="diagnoseBtn" onClick={this.handleDiagnose.bind(this, index)}
                                         disabled={!source.valid}> {/* Only can diagnose valid images of toes */}
                                         Diagnose
                                     </Button>

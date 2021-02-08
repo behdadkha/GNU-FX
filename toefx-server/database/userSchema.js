@@ -29,6 +29,10 @@ const userSchema = new schema({
         type : Array,
         required : false
     },
+    imageIndex: {
+        type: Number,
+        default: 0
+    },
     date: {
         type : Date,
         default : Date.now

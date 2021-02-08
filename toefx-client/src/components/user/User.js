@@ -5,9 +5,9 @@
 import React, { Component } from "react";
 import { Row, Table } from "react-bootstrap";
 import { connect } from "react-redux";
-import Axios from "axios";
+//import Axios from "axios";
 
-import { config } from "../../config";
+//import { config } from "../../config";
 import { GetFootName, GetToeName, GetImageSrcByURLsAndName, LEFT_FOOT_ID, RIGHT_FOOT_ID, TOE_COUNT } from "../../Utils";
 import store from "../../Redux/store";
 import { getAndSaveImages, getAndSaveToeData } from "../../Redux/Actions/setFootAction";

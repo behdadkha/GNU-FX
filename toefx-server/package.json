@@ -7,7 +7,8 @@
     "testEnvironment": "node"
   },
   "scripts": {
-    "test": "jest --silent --coverage",
+    "test": "jest ./tests/deleteImage.test.js --silent --forceExit && jest ./tests/diagnose.test.js --silent --forceExit && jest ./tests/getImage.test.js --silent --forceExit && jest ./tests/getToe.test.js --silent --forceExit && jest ./tests/imageValidation.test.js --silent --forceExit && jest ./tests/login.test.js --silent --forceExit && jest ./tests/signup.test.js --silent --forceExit && jest ./tests/uploadImage.test.js --silent --forceExit && jest ./tests/user.test.js --silent --forceExit && jest ./tests/utils.test.js --silent --forceExit",
+    "unitTest": "jest --silent --forceExit --coverage",
     "start": "node server.js"
   },
   "author": "",

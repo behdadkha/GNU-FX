@@ -3,7 +3,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=emulateIE7" />
-    <title>Coverage for AI\actual\NailRecognition.py: 43%</title>
+    <title>Coverage for AI\actual\NailRecognition.py: 37%</title>
     <link rel="icon" sizes="32x32" href="favicon_32.png">
     <link rel="stylesheet" href="style.css" type="text/css">
     <script type="text/javascript" src="jquery.min.js"></script>
@@ -18,13 +18,13 @@
 <div id="header">
     <div class="content">
         <h1>Coverage for <b>AI\actual\NailRecognition.py</b> :
-            <span class="pc_cov">43%</span>
+            <span class="pc_cov">37%</span>
         </h1>
         <img id="keyboard_icon" src="keybd_closed.png" alt="Show keyboard shortcuts" />
         <h2 class="stats">
             63 statements &nbsp;
-            <button type="button" class="run shortkey_r button_toggle_run" title="Toggle lines run">27 run</button>
-            <button type="button" class="mis show_mis shortkey_m button_toggle_mis" title="Toggle lines missing">36 missing</button>
+            <button type="button" class="run shortkey_r button_toggle_run" title="Toggle lines run">23 run</button>
+            <button type="button" class="mis show_mis shortkey_m button_toggle_mis" title="Toggle lines missing">40 missing</button>
             <button type="button" class="exc show_exc shortkey_x button_toggle_exc" title="Toggle lines excluded">0 excluded</button>
         </h2>
     </div>
@@ -96,7 +96,7 @@
     <p id="t42" class="pln"><span class="n"><a href="#t42">42</a></span><span class="t"><span class="str">        @:return: A list of nail images for each nail found in the original image.</span>&nbsp;</span><span class="r"></span></p>
     <p id="t43" class="pln"><span class="n"><a href="#t43">43</a></span><span class="t"><span class="str">        """</span>&nbsp;</span><span class="r"></span></p>
     <p id="t44" class="pln"><span class="n"><a href="#t44">44</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p id="t45" class="run"><span class="n"><a href="#t45">45</a></span><span class="t">        <span class="key">if</span> <span class="nam">type</span><span class="op">(</span><span class="nam">imagePath</span><span class="op">)</span> <span class="op">==</span> <span class="nam">str</span> <span class="key">and</span> <span class="nam">os</span><span class="op">.</span><span class="nam">path</span><span class="op">.</span><span class="nam">isfile</span><span class="op">(</span><span class="nam">imagePath</span><span class="op">)</span><span class="op">:</span>  <span class="com"># Actual image</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t45" class="mis show_mis"><span class="n"><a href="#t45">45</a></span><span class="t">        <span class="key">if</span> <span class="nam">type</span><span class="op">(</span><span class="nam">imagePath</span><span class="op">)</span> <span class="op">==</span> <span class="nam">str</span> <span class="key">and</span> <span class="nam">os</span><span class="op">.</span><span class="nam">path</span><span class="op">.</span><span class="nam">isfile</span><span class="op">(</span><span class="nam">imagePath</span><span class="op">)</span><span class="op">:</span>  <span class="com"># Actual image</span>&nbsp;</span><span class="r"></span></p>
     <p id="t46" class="mis show_mis"><span class="n"><a href="#t46">46</a></span><span class="t">            <span class="nam">NailRecognition</span><span class="op">.</span><span class="nam">LoadModel</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p id="t47" class="pln"><span class="n"><a href="#t47">47</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p id="t48" class="mis show_mis"><span class="n"><a href="#t48">48</a></span><span class="t">            <span class="key">with</span> <span class="nam">NailRecognition</span><span class="op">.</span><span class="nam">model</span><span class="op">.</span><span class="nam">as_default</span><span class="op">(</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
@@ -143,7 +143,7 @@
     <p id="t89" class="pln"><span class="n"><a href="#t89">89</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p id="t90" class="mis show_mis"><span class="n"><a href="#t90">90</a></span><span class="t">                    <span class="key">return</span> <span class="nam">output</span>&nbsp;</span><span class="r"></span></p>
     <p id="t91" class="pln"><span class="n"><a href="#t91">91</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p id="t92" class="run"><span class="n"><a href="#t92">92</a></span><span class="t">        <span class="key">return</span> <span class="op">[</span><span class="op">]</span>  <span class="com"># No nails if not valid image path or input</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t92" class="mis show_mis"><span class="n"><a href="#t92">92</a></span><span class="t">        <span class="key">return</span> <span class="op">[</span><span class="op">]</span>  <span class="com"># No nails if not valid image path or input</span>&nbsp;</span><span class="r"></span></p>
     <p id="t93" class="pln"><span class="n"><a href="#t93">93</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p id="t94" class="run"><span class="n"><a href="#t94">94</a></span><span class="t">    <span class="op">@</span><span class="nam">staticmethod</span>&nbsp;</span><span class="r"></span></p>
     <p id="t95" class="pln"><span class="n"><a href="#t95">95</a></span><span class="t">    <span class="key">def</span> <span class="nam">IsolateHand</span><span class="op">(</span><span class="nam">image</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
@@ -171,16 +171,16 @@
     <p id="t117" class="pln"><span class="n"><a href="#t117">117</a></span><span class="t"><span class="str">        :return: Whether or not any nails were actually found in the original image.</span>&nbsp;</span><span class="r"></span></p>
     <p id="t118" class="pln"><span class="n"><a href="#t118">118</a></span><span class="t"><span class="str">        """</span>&nbsp;</span><span class="r"></span></p>
     <p id="t119" class="pln"><span class="n"><a href="#t119">119</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p id="t120" class="run"><span class="n"><a href="#t120">120</a></span><span class="t">        <span class="key">if</span> <span class="nam">type</span><span class="op">(</span><span class="nam">nailImages</span><span class="op">)</span> <span class="op">==</span> <span class="nam">list</span><span class="op">:</span>  <span class="com"># Error handling</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t120" class="mis show_mis"><span class="n"><a href="#t120">120</a></span><span class="t">        <span class="key">if</span> <span class="nam">type</span><span class="op">(</span><span class="nam">nailImages</span><span class="op">)</span> <span class="op">==</span> <span class="nam">list</span><span class="op">:</span>  <span class="com"># Error handling</span>&nbsp;</span><span class="r"></span></p>
     <p id="t121" class="mis show_mis"><span class="n"><a href="#t121">121</a></span><span class="t">            <span class="key">return</span> <span class="nam">len</span><span class="op">(</span><span class="nam">nailImages</span><span class="op">)</span> <span class="op">>=</span> <span class="num">1</span>&nbsp;</span><span class="r"></span></p>
     <p id="t122" class="pln"><span class="n"><a href="#t122">122</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p id="t123" class="run"><span class="n"><a href="#t123">123</a></span><span class="t">        <span class="key">return</span> <span class="key">False</span>  <span class="com"># No nails if not valid input</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t123" class="mis show_mis"><span class="n"><a href="#t123">123</a></span><span class="t">        <span class="key">return</span> <span class="key">False</span>  <span class="com"># No nails if not valid input</span>&nbsp;</span><span class="r"></span></p>
 </div>
 <div id="footer">
     <div class="content">
         <p>
             <a class="nav" href="index.html">&#xab; index</a> &nbsp; &nbsp; <a class="nav" href="https://coverage.readthedocs.io">coverage.py v5.4</a>,
-            created at 2021-02-07 19:05 -0500
+            created at 2021-02-07 20:34 -0500
         </p>
     </div>
 </div>

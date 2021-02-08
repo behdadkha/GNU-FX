@@ -1,0 +1,20 @@
+[0207/163610.961:ERROR:registration_protocol_win.cc(130)] TransactNamedPipe: The pipe has been ended. (0x6D)
+[0207/163611.085:ERROR:file_io.cc(90)] ReadExactly: expected 40, observed 0
+[0207/163612.210:ERROR:registration_protocol_win.cc(130)] TransactNamedPipe: The pipe has been ended. (0x6D)
+[0207/163612.211:ERROR:file_io.cc(90)] ReadExactly: expected 40, observed 0
+[0207/163612.458:ERROR:registration_protocol_win.cc(130)] TransactNamedPipe: The pipe has been ended. (0x6D)
+[0207/163612.459:ERROR:file_io.cc(90)] ReadExactly: expected 40, observed 0
+[0207/163612.833:ERROR:registration_protocol_win.cc(130)] TransactNamedPipe: The pipe has been ended. (0x6D)
+[0207/163614.566:ERROR:registration_protocol_win.cc(130)] TransactNamedPipe: The pipe has been ended. (0x6D)
+[0207/163614.568:ERROR:file_io.cc(90)] ReadExactly: expected 40, observed 0
+[0207/163614.669:ERROR:registration_protocol_win.cc(130)] TransactNamedPipe: The pipe has been ended. (0x6D)
+[0207/163614.670:ERROR:file_io.cc(90)] ReadExactly: expected 40, observed 0
+[0207/163615.690:ERROR:registration_protocol_win.cc(130)] TransactNamedPipe: The pipe has been ended. (0x6D)
+[0207/163615.699:ERROR:file_io.cc(90)] ReadExactly: expected 40, observed 0
+[0207/163615.703:ERROR:registration_protocol_win.cc(130)] TransactNamedPipe: The pipe has been ended. (0x6D)
+[0207/163616.165:ERROR:registration_protocol_win.cc(130)] TransactNamedPipe: The pipe has been ended. (0x6D)
+[0207/163616.166:ERROR:file_io.cc(90)] ReadExactly: expected 40, observed 0
+[0207/163616.234:ERROR:registration_protocol_win.cc(130)] TransactNamedPipe: The pipe has been ended. (0x6D)
+[0207/163616.508:ERROR:registration_protocol_win.cc(130)] TransactNamedPipe: The pipe has been ended. (0x6D)
+[0207/163617.465:ERROR:registration_protocol_win.cc(130)] TransactNamedPipe: The pipe has been ended. (0x6D)
+[0207/163617.466:ERROR:file_io.cc(90)] ReadExactly: expected 40, observed 0

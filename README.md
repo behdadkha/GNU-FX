@@ -31,12 +31,12 @@ Note: Make sure you have python3 alias set as python. Running `python` should op
 # Tests (unit-test, validation-test, stress and security test)
 * Used **Jest** to test the react app and the node app.
 * Created a **bot** for validation and stress test (Some part of the validation test is done using Jest but because of security reasons, react/jest does not allow image upload).
-*  Used **Burp suite professional** for security and stress tests.
+* Used **Burp suite professional** for security and stress tests.
 * Used **pytest --cov** for machine learning tests.
 
-Tests for the React app is in the `toefx-client` -> `src` -> `tests` folder.
-Tests for the Node app is in the `toefx-server` -> `tests` folder.
-Tests for the AI is in `toefx-server` -> `AI` -> `actual` folder.
+* Tests for the React app are in the `toefx-client` -> `src` -> `tests` folder.
+* Tests for the Node app are in the `toefx-server` -> `tests` folder.
+* Tests for the AI are in `toefx-server` -> `AI` -> `actual` folder.
 
 ## Test reports
 * To access the test report generated for the React app, from the root directory, go to `toefx-client` -> `coverage` -> `icov-report` -> `index.html`. 
@@ -46,7 +46,8 @@ Tests for the AI is in `toefx-server` -> `AI` -> `actual` folder.
 
 ## Running the Tests
 ### Setup
-* Make sure you have Python Selenium installed.(pip install selenium)
+* Make sure you have Python Selenium installed.(`pip install selenium`)
+* Make sure you have Pytest Coverage installed.(`pip install pytest-cov`)
 * Go to `toefx-client` and run `npm install`
 * Go to `toefx-server` and run `npm install`
 
@@ -54,7 +55,8 @@ Tests for the AI is in `toefx-server` -> `AI` -> `actual` folder.
 * To run the **unit tests** for the React app, go to `toefx-client` and run `npm run unitTest`.  The output is  a table showing the percentage of statements coverage, branch coverage, function coverage and line coverage.
 * To run the **validation tests** (most of it done by the Bot (go to the next header to run the python Bot)), first go to `toefx-server` and run `npm start`. Then go to `toefx-client` and run `npm run validationTest`.
 * To run the unit-tests for the node app, go to `toefx-server` and run `npm run unitTest`. The output is  a table showing the percentage of statements coverage, branch coverage, function coverage and line coverage.
-* To run the **unit-tests** for the machine learning, go to `toefx-server` and run `pytest --cov`. The output is  a table showing the percentage of statement coverage, as well as tests passed or failed.
+* To run the **unit-tests** for the machine learning, go to `toefx-server` and run `pytest AI/actual/test_Unit.py --cov`. The output is  a table showing the percentage of statement coverage, as well as tests passed or failed.
+* To run the **validation-tests** for the machine learning, go to `toefx-server` and run `pytest AI/actual/test_Validation.py --cov`. The output is  a table showing the percentage of statement coverage, as well as tests passed or failed.
 
 ## Instructions for Running the Bot (Continue Validation and Stress Test)
 1. Run both frontend and backend: Go to `toefx-client` and run `npm start`, then go to `toefx-server` and run `npm start`.

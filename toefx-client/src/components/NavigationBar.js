@@ -8,7 +8,7 @@ import {connect} from "react-redux";
 
 import store from "../Redux/store";
 import {LogOutUser} from "../Redux/Actions/authAction";
-
+import "../componentsStyle/Navbar.css";
 
 class NavigationBar extends Component {
     /*
@@ -21,7 +21,7 @@ class NavigationBar extends Component {
         //Show Dashboard and Log Out if user is logged in
         if (this.props.auth.isAuth) {
             loginSignup =
-            <Nav>
+            <Nav className="NavbarFont">
                 <Nav.Link test-id="logOut" onClick={() => {store.dispatch(LogOutUser()); window.location.href = "/";}}>
                     Log Out
                 </Nav.Link>
@@ -75,7 +75,7 @@ class NavigationBar extends Component {
             <div>
                 {
                     pagesWithNavbar.includes(window.location.pathname) ? //Navbar on this page
-                        <Navbar bg="light" expand="md">
+                        <Navbar bg="light" expand="md" className="shadow-sm p-3 mb-5 bg-white rounded NavbarFont">
                             {/* Potentially show ToeFX logo */}
                             {logo}
 

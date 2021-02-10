@@ -1,8 +1,15 @@
+#SignupTitle{
+    font-family: 'Balsamiq Sans', cursive
+}
+#SignupJoinMessage{
+    font-family: 'Pangolin', cursive;
+    color: orange;
+}
 .signup-form {
-    padding-top: 20px;
     margin: auto;
     text-align: left;
-    width: 50%;
+    width: 100%;
+    font-family: 'Nunito', sans-serif;
 }
 
 .signup-error {
@@ -12,4 +19,29 @@
 
 .signup-error-input {
     background-color: pink !important;
+}
+
+#SignUpContainer{
+    position: relative;
+    margin-left: 15%;
+    width: 35%;
+}
+.healthcareIcone{
+    margin-top: 10%;
+    width: 45%;
+    height: 45%;
+    position: absolute;
+    margin-right: 10%;
+}
+
+/* MOBILE DESIGN */
+.signup-formMobile{
+    margin: auto;
+    text-align: left;
+    width: 40vh;
+    font-family: 'Nunito', sans-serif;
+}
+#SignUpContainerMobile{
+    margin-left: 7vw;
+    width: 85vw;
 }

@@ -1,8 +1,9 @@
 /*CSS Relating to the Page */
 
-html {
-    overflow-y: hidden;
-}
+/*html {
+    /*overflow-y: hidden;
+    We can't have a mobile compatible app with this enabled*/
+
 
 .page {
     display: flex;

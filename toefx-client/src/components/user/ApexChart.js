@@ -258,13 +258,13 @@ class ApexChart extends React.Component {
         for (let i = 0; i < TOE_COUNT; ++i)
             toeNames.push(GetToeName(i)) //Initial order in based on right foot
 
-        if (this.state.showLeftFoot)
-            toeNames.reverse(); //Toes go in opposite order on left foot
+        //if (!this.state.showLeftFoot)
+         //   toeNames.reverse(); //Toes go in opposite order on left foot
 
         var isToeNotIncluded = this.state.shownToes[toeNames.findIndex(toeName => toeName === name)];
         var imageIndex = this.state.treatmentIndex - percentage.filter(item => item === null).length; //Need to subtract the number of nulls from the treatment index because images dont have nulls		
         var fungalCoverage = percentage[this.state.treatmentIndex]; //Gets the fungal coverage based on the selected point on the graph
-
+        console.log(images[imageIndex], toeNames.findIndex(toeName => toeName === name));
         return (
             ((images[imageIndex]) && isToeNotIncluded)
                 ?

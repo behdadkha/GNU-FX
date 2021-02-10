@@ -1,8 +1,18 @@
+#LoginTitle{
+    font-family: 'Balsamiq Sans', cursive
+}
 .login-form {
-    padding-top: 20px;
     margin: auto;
     text-align: left;
-    width: 50%;
+    width: 90%;
+    font-family: 'Nunito', sans-serif;
+}
+
+#LoginContainer{
+    margin-top: 15vh;
+    margin-right: 15%;
+    width: 30%;
+    height: 40%;
 }
 
 .login-error {
@@ -12,4 +22,24 @@
 
 .login-error-input {
     color: pink;
+}
+
+.LoginLogoPositon{
+    margin-right: 100%;
+}
+.LoginLogo{
+    width: 40%;
+    height: 40%;
+    position: absolute;
+    margin-left: 10%;
+}
+
+/* MOBILE */
+.LoginLogoMobile{
+    width: 25vh;
+    height: 25vh;
+}
+#LoginContainerMobile{
+    margin-left: 7vw;
+    width: 85vw;
 }

@@ -15,6 +15,14 @@ import leftFootLogo from '../../icons/leftfootlogo.png';
 import rightFootLogo from '../../icons/rightfootlogo.png';
 import leftFootCroppedLogo from '../../icons/leftfootCropped.png';
 import rightFootCroppedLogo from '../../icons/rightfootCropped.png';
+
+import rightAllToes from '../../icons/withTag/rightAllToes.png';
+import rightBigIndex from '../../icons/withTag/rightBigIndexToes.png';
+import rightBigSelected from '../../icons/withTag/rightBigToe.png';
+import rightIndexSelected from '../../icons/withTag/rightIndexToe.png';
+import rightMiddleSelected from '../../icons/withTag/rightMiddleToe.png';
+import rightFourthSelected from '../../icons/withTag/rightFourthToe.png';
+import rightLittleSelected from '../../icons/withTag/rightLittleToe.png';
 //BUG: Clicking on bottom labels changes graph view but not selected buttons
 
 const gInitialToeSelection = [true, true, false, false, false]; //Only first two toes start off shown (client request)
@@ -51,7 +59,8 @@ class ApexChart extends React.Component {
                     enabled: false
                 },
                 stroke: {
-                    curve: "straight"
+                    curve: "straight",
+                    lineCap: 'butt'
                 },
                 xaxis: {
                     type: "datetime",
@@ -208,7 +217,7 @@ class ApexChart extends React.Component {
             return ""
         return (
             <button key={toeId} onClick={this.showToe.bind(this, toeId)}
-                className={allClasses[toeId]} id={this.state.shownToes[toeId] ? "activetoe" : ""}>
+                className={allClasses[toeId]}>
             </button>
         );
     }
@@ -225,6 +234,15 @@ class ApexChart extends React.Component {
 
         if (this.state.showLeftFoot)
             toeOrder.reverse(); //Toes go in opposite order on left foot
+        
+        let images = [rightBigSelected, rightIndexSelected, rightMiddleSelected, rightFourthSelected, rightLittleSelected];
+        let selectedImage;
+        if (this.areAllToesShown()) {
+            selectedImage = rightAllToes;
+        }
+        else {
+            selectedImage = (this.state.shownToes[0] && this.state.shownToes[1]) ? rightBigIndex : images[this.state.shownToes.findIndex(item => item === true)]
+        }
 
         return (
             //Old toe selection
@@ -238,10 +256,19 @@ class ApexChart extends React.Component {
                     toeOrder.map((toeId) => this.printToeButton(toeId))
                 }
             </span>*/
-            <div className={this.state.showLeftFoot ? "leftFootContainer" : "rightFootContainer"}>
+            /*behzad<div className={this.state.showLeftFoot ? "leftFootContainer" : "rightFootContainer"}>
                 <img src={this.state.showLeftFoot ? leftFootCroppedLogo : rightFootCroppedLogo} alt="left foot"/>
                 
                 <button onClick={this.showHideAllToes.bind(this)} className="btnAlltoes"></button>
+                {
+                    toeOrder.map((toeId) => this.printToeButton(toeId))
+                }
+            </div>*/
+            
+            <div className={this.state.showLeftFoot ? "leftFootContainer" : "rightFootContainer"}>
+                <img src={this.state.showLeftFoot ? selectedImage : selectedImage} alt="left foot" style={{width: "500px"}}/>
+                
+                {<button onClick={this.showHideAllToes.bind(this)} className="btnAlltoes"></button>}
                 {
                     toeOrder.map((toeId) => this.printToeButton(toeId))
                 }
@@ -264,7 +291,7 @@ class ApexChart extends React.Component {
         var isToeNotIncluded = this.state.shownToes[toeNames.findIndex(toeName => toeName === name)];
         var imageIndex = this.state.treatmentIndex - percentage.filter(item => item === null).length; //Need to subtract the number of nulls from the treatment index because images dont have nulls		
         var fungalCoverage = percentage[this.state.treatmentIndex]; //Gets the fungal coverage based on the selected point on the graph
-        console.log(images[imageIndex], toeNames.findIndex(toeName => toeName === name));
+        
         return (
             ((images[imageIndex]) && isToeNotIncluded)
                 ?
@@ -275,13 +302,18 @@ class ApexChart extends React.Component {
                         />
                     </td>
                     <td>{name}</td>
-                    <td>{fungalCoverage}</td>
+                    <td>
+                        <div style={{backgroundColor: "#90EE90", border: "gray 1px solid", borderRadius: "7px"}}>
+                            <div style={{backgroundColor: "red", height: "20px", width: `${fungalCoverage}`, borderRadius: "7px"}}></div>
+                        </div>
+                        
+                    </td>
                 </tr>
                 :
                 <tr key={id}></tr>
         )
     }
-
+//<td>{fungalCoverage}</td>
     /*
         If the user wants to see data from a certain date in the graph,
         it is printed next to the graph.
@@ -348,7 +380,7 @@ class ApexChart extends React.Component {
                         <img src={rightFootLogo} className="footlogo" alt="right food logo"/>
                     </button>
                 </div>
-
+                {this.printToeButtons()}
                 {/*Buttons to filter toes*/}
                 <div lg="5" className="graph-container">
 
@@ -361,7 +393,7 @@ class ApexChart extends React.Component {
                         {/*Details off to the side about a specific date*/}
                         {dateDetails}
                     </div>
-                    {this.printToeButtons()}
+                    {/*this.printToeButtons()*/}
                 </div>
             </div>
         );

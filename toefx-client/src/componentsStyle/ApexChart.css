@@ -140,31 +140,31 @@
 }
   
 .rightFootContainer .btnBigToe {
-    position: absolute;
-    top: 29%;
-    left: 32%;
-    transform: translate(-50%, -50%);
-    -ms-transform: translate(-50%, -50%);
-    background-color: black;
-    color: white;
-    font-size: 16px;
-    padding: 23px 15px;
-    border: none;
-    cursor: pointer;
-    border-radius: 15px;
-    text-align: center;
+  position: absolute;
+  background-color: Transparent;
+  top: 64%;
+  left: 15%;
+  transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  color: white;
+  font-size: 16px;
+  padding: 50px 29px;
+  border: none;
+  cursor: pointer;
+  border-radius: 15px;
+  text-align: center;
 }
 
 .rightFootContainer .btnIndexToe {
     position: absolute;
-    top: 25%;
-    left: 40%;
+    background-color: Transparent;
+    top: 69%;
+    left: 30%;
     transform: translate(-50%, -50%);
     -ms-transform: translate(-50%, -50%);
-    background-color: black;
     color: white;
     font-size: 16px;
-    padding: 15px 8px;
+    padding: 45px 25px;
     border: none;
     cursor: pointer;
     border-radius: 15px;
@@ -173,14 +173,14 @@
   
 .rightFootContainer .btnMiddleToe {
     position: absolute;
-    top: 26%;
-    left: 47%;
+    background-color: Transparent;
+    top: 73%;
+    left: 44%;
     transform: translate(-50%, -50%);
     -ms-transform: translate(-50%, -50%);
-    background-color: black;
     color: white;
     font-size: 16px;
-    padding: 13px 8px;
+    padding: 37px 24px;
     border: none;
     cursor: pointer;
     border-radius: 15px;
@@ -189,14 +189,14 @@
 
 .rightFootContainer .btnFourthToe {
     position: absolute;
-    top: 32%;
-    left: 53%;
+    background-color: Transparent;
+    top: 78%;
+    left: 58%;
     transform: translate(-50%, -50%);
     -ms-transform: translate(-50%, -50%);
-    background-color: black;
     color: white;
     font-size: 16px;
-    padding: 13px 7px;
+    padding: 30px 24px;
     border: none;
     cursor: pointer;
     border-radius: 15px;
@@ -205,14 +205,14 @@
 
 .rightFootContainer .btnLittleToe {
     position: absolute;
-    top: 43%;
-    left: 60%;
+    background-color: Transparent;
+    top: 82%;
+    left: 70%;
     transform: translate(-50%, -50%);
     -ms-transform: translate(-50%, -50%);
-    background-color: black;
     color: white;
     font-size: 16px;
-    padding: 10px 6px;
+    padding: 25px 20px;
     border: none;
     cursor: pointer;
     border-radius: 15px;
@@ -221,36 +221,13 @@
 
 .rightFootContainer .btnAlltoes {
     position: absolute;
-    top: 77%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    -ms-transform: translate(-50%, -50%);
-    background-color: black;
+    top: 65%;
+    left: 104%;
+    background-color: transparent;
     color: white;
     font-size: 16px;
-    padding: 45px 45px;
+    padding: 30px 45px;
     border: none;
     cursor: pointer;
-    border-radius: 40px;
     text-align: center;
-}
-
-.rightFootContainer .btnBigToe:hover {
-    background-color: red;
-}
-.rightFootContainer .btnIndexToe:hover  {
-    background-color: red;
-}
-.rightFootContainer .btnMiddleToe:hover  {
-    background-color: red;
-}
-.rightFootContainer .btnFourthToe:hover  {
-    background-color: red;
-}
-.rightFootContainer .btnLittleToe:hover {
-    background-color: red;
-}  
-
-#activetoe{
-    background-color: red;
 }

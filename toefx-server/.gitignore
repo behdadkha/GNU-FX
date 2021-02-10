@@ -1,5 +1,6 @@
 /tempImages
 /node_modules
+/images
 /logs
 .ipynb_checkpoints/
 .idea/

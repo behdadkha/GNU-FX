@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import os
 from pytest import *
 
 from FungalCoverage import *
@@ -75,6 +76,73 @@ class TestNailRecognition:
 
     def test_DoesImageContainNail_Unit_5(self):  # Faulty input
         assert NailRecognition.DoesImageContainNail((np.array([]), np.array([]))) is False
+
+    @staticmethod
+    def setupSaveNailImagesLargeTest():
+        testImagePath = TEST_IMG_PATH + RECOGNITION_IMG_PATH + "SaveNailTest.png"
+
+        for i in range(3):  # Remove images from old tests
+            if os.path.isfile(TEST_IMG_PATH + RECOGNITION_IMG_PATH + "SaveNailTest_{}.png".format(i)):
+                os.remove(TEST_IMG_PATH + RECOGNITION_IMG_PATH + "SaveNailTest_{}.png".format(i))
+
+        testImages = [np.array([[[100, 100, 100]]]), np.array([[[50, 100, 150]]]),
+                      np.array([[[50, 100, 150], [20, 30, 40]]])]
+
+        return testImages, testImagePath
+
+    def test_SaveNailImages_Unit_1(self):
+        testImagePath = TEST_IMG_PATH + RECOGNITION_IMG_PATH + "SaveNailTest.png"
+
+        if os.path.isfile(TEST_IMG_PATH + RECOGNITION_IMG_PATH + "SaveNailTest_0.png"):
+            os.remove(TEST_IMG_PATH + RECOGNITION_IMG_PATH + "SaveNailTest_0.png")  # Remove image from old test
+
+        testImages = [np.array([[[50, 50, 50]]])]
+        imagePaths = NailRecognition.SaveNailImages(testImages, testImagePath)
+        assert imagePaths == [TEST_IMG_PATH + RECOGNITION_IMG_PATH + "SaveNailTest_0.png"]
+
+    def test_SaveNailImages_Unit_2(self):
+        testImages, testImagePath = TestNailRecognition.setupSaveNailImagesLargeTest()
+        imagePaths = NailRecognition.SaveNailImages(testImages, testImagePath)
+        assert imagePaths == [TEST_IMG_PATH + RECOGNITION_IMG_PATH + "SaveNailTest_0.png",
+                              TEST_IMG_PATH + RECOGNITION_IMG_PATH + "SaveNailTest_1.png",
+                              TEST_IMG_PATH + RECOGNITION_IMG_PATH + "SaveNailTest_2.png"]
+
+    def test_SaveNailImages_Unit_3(self):
+        testImages, testImagePath = TestNailRecognition.setupSaveNailImagesLargeTest()
+        imagePaths = NailRecognition.SaveNailImages(testImages, testImagePath)
+
+        newImage0 = cv2.imread(imagePaths[0])
+        numEqualElems = np.sum(newImage0 == np.array([[[100, 100, 100]]]))  # Make sure both numpy arrays are equal
+        assert numEqualElems == newImage0.size
+
+    def test_SaveNailImages_Unit_4(self):
+        testImages, testImagePath = TestNailRecognition.setupSaveNailImagesLargeTest()
+        imagePaths = NailRecognition.SaveNailImages(testImages, testImagePath)
+
+        newImage1 = cv2.imread(imagePaths[1])
+        numEqualElems = np.sum(newImage1 == np.array([[[50, 100, 150]]]))
+        assert numEqualElems == newImage1.size
+
+    def test_SaveNailImages_Unit_5(self):
+        testImages, testImagePath = TestNailRecognition.setupSaveNailImagesLargeTest()
+        imagePaths = NailRecognition.SaveNailImages(testImages, testImagePath)
+
+        newImage2 = cv2.imread(imagePaths[2])
+        numEqualElems = np.sum(newImage2 == np.array([[[50, 100, 150], [20, 30, 40]]]))
+        assert numEqualElems == newImage2.size
+
+    def test_SaveNailImages_Unit_6(self):  # Faulty input
+        assert len(NailRecognition.SaveNailImages("", TEST_IMG_PATH + RECOGNITION_IMG_PATH + "1.jpg")) == 0
+
+    def test_SaveNailImages_Unit_7(self):  # Faulty input
+        assert len(NailRecognition.SaveNailImages([], 5)) == 0
+
+    def test_SaveNailImages_Unit_8(self):  # Faulty input
+        assert len(NailRecognition.SaveNailImages([], "Not Real Path")) == 0
+
+    def test_SaveNailImages_Unit_9(self):  # Corrupted input
+        assert len(NailRecognition.SaveNailImages(np.array([[[[50, 100, 150, 200]]]]),
+                                                  TEST_IMG_PATH + RECOGNITION_IMG_PATH + "1.jpg")) == 0
 
 
 class TestNailExtraction:

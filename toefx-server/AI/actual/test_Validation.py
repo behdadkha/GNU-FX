@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import os
 from pytest import *
 
 from FungalCoverage import *
@@ -36,6 +37,54 @@ class TestNailRecognition:
     def test_DoesImageContainNail_Acceptance_6(self):
         noNail = NailRecognition.GetNailsFromImage(TEST_IMG_PATH + RECOGNITION_IMG_PATH + "NoNail.jpg")
         assert NailRecognition.DoesImageContainNail(noNail) is False
+
+    # Tests Functional Requirement:
+    @staticmethod
+    def setupSaveNailImagesTest():
+        originalPath = TEST_IMG_PATH + RECOGNITION_IMG_PATH + "5.jpg"
+
+        for i in range(5):  # Remove images from old tests
+            if os.path.isfile(TEST_IMG_PATH + RECOGNITION_IMG_PATH + "5_{}.png".format(i)):
+                os.remove(TEST_IMG_PATH + RECOGNITION_IMG_PATH + "5_{}.png".format(i))
+
+        nailImages = NailRecognition.GetNailsFromImage(originalPath)
+        imagePaths = NailRecognition.SaveNailImages(nailImages, originalPath)
+        return nailImages, imagePaths
+
+    def test_SaveNailImages_Acceptance_1(self):
+        nailImages, imagePaths = TestNailRecognition.setupSaveNailImagesTest()
+
+        newImage0 = cv2.imread(imagePaths[0])
+        numEqualElems = np.sum(newImage0 == nailImages[0])  # Make sure both numpy arrays are equal
+        assert numEqualElems == newImage0.size
+
+    def test_SaveNailImages_Acceptance_2(self):
+        nailImages, imagePaths = TestNailRecognition.setupSaveNailImagesTest()
+
+        newImage1 = cv2.imread(imagePaths[1])
+        numEqualElems = np.sum(newImage1 == nailImages[1])  # Make sure both numpy arrays are equal
+        assert numEqualElems == newImage1.size
+
+    def test_SaveNailImages_Acceptance_3(self):
+        nailImages, imagePaths = TestNailRecognition.setupSaveNailImagesTest()
+
+        newImage2 = cv2.imread(imagePaths[2])
+        numEqualElems = np.sum(newImage2 == nailImages[2])  # Make sure both numpy arrays are equal
+        assert numEqualElems == newImage2.size
+
+    def test_SaveNailImages_Acceptance_4(self):
+        nailImages, imagePaths = TestNailRecognition.setupSaveNailImagesTest()
+
+        newImage3 = cv2.imread(imagePaths[3])
+        numEqualElems = np.sum(newImage3 == nailImages[3])  # Make sure both numpy arrays are equal
+        assert numEqualElems == newImage3.size
+
+    def test_SaveNailImages_Acceptance_5(self):
+        nailImages, imagePaths = TestNailRecognition.setupSaveNailImagesTest()
+
+        newImage4 = cv2.imread(imagePaths[4])
+        numEqualElems = np.sum(newImage4 == nailImages[4])  # Make sure both numpy arrays are equal
+        assert numEqualElems == newImage4.size
 
 
 class TestNailExtraction:

@@ -38,8 +38,8 @@ class NailRecognition:
     def GetNailsFromImage(imagePath: str) -> [np.ndarray]:
         """
         Finds each nail in an image and returns them in a list.
-        @:param imagePath: The path to an image with nails to parse.
-        @:return: A list of nail images for each nail found in the original image.
+        :param imagePath: The path to an image with nails to parse.
+        :return: A list of nail images for each nail found in the original image.
         """
 
         if type(imagePath) == str and os.path.isfile(imagePath):  # Actual image
@@ -92,7 +92,7 @@ class NailRecognition:
         return []  # No nails if not valid image path or input
 
     @staticmethod
-    def IsolateHand(image):
+    def IsolateHand(image: np.ndarray):
         """
         Applies skin colour binarization to the image. Anything that isn't skin colour is blotted out.
         :param image: The image to process.
@@ -113,7 +113,7 @@ class NailRecognition:
     def DoesImageContainNail(nailImages: [np.ndarray]) -> bool:
         """
         Checks if there is at least one nail present in an image.
-        :param nailImages: A series of nail images created by GetNailsFromImage
+        :param nailImages: A series of nail images created by GetNailsFromImage.
         :return: Whether or not any nails were actually found in the original image.
         """
 
@@ -121,3 +121,33 @@ class NailRecognition:
             return len(nailImages) >= 1
 
         return False  # No nails if not valid input
+
+    @staticmethod
+    def SaveNailImages(nailImages: [np.ndarray], originalPath: str) -> [str]:
+        """
+        Saves a list of cropped nail images to the server. Images are saved in the same location
+        as the original image.
+        :param nailImages: The list of images to save.
+        :param originalPath: The path of the original image.
+        :return: A list of paths to the new images.
+        """
+
+        paths = []
+
+        if type(nailImages) != list \
+                or type(originalPath) != str \
+                or not os.path.isfile(originalPath):  # Error handling
+            return paths
+
+        baseSavePath = originalPath
+        if "." in originalPath:  # Original image had an extension
+            imageNameList = baseSavePath.split(".")
+            baseSavePath = ".".join(imageNameList[:-1])
+
+        for i, image in enumerate(nailImages):
+            suffix = "_{}".format(i)
+            savePath = baseSavePath + suffix + "." + "png"  # Add suffix before extension - PNG is extension for lossless image quality
+            if cv2.imwrite(savePath, image):  # Image was saved correctly
+                paths.append(savePath)
+
+        return paths

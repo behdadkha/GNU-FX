@@ -1,15 +1,17 @@
 import cv2
 import numpy as np
 import os
+from datetime import datetime
+from fastai.vision import *
 from pytest import *
 
 from FungalCoverage import *
-from NailExtraction import *
 from NailRecognition import *
 
-TEST_IMG_PATH = "images/test/"
+TEST_IMG_PATH = "AI/actual/test/"
 RECOGNITION_IMG_PATH = "recognition/"
 COVERAGE_IMG_PATH = "coverage/"
+MODELS_PATH = "AI/actual/models/"
 
 
 class TestNailRecognition:
@@ -145,53 +147,63 @@ class TestNailRecognition:
                                                   TEST_IMG_PATH + RECOGNITION_IMG_PATH + "1.jpg")) == 0
 
 
-class TestNailExtraction:
-    def test_TrainModel_Unit(self):
-        NailExtraction.TrainModel()
-        assert False  # Unclear how this is being handled at this point
-
-    def test_LoadModel_Unit(self):
-        NailExtraction.LoadModel()
-        assert NailExtraction.model
-
-    def test_GetNailBoundaryPoints_Unit_1(self):
-        # No dataset is available yet rendering a general test currently impossible
-        assert False
-
-    def test_GetNailBoundaryPoints_Unit_2(self):  # Faulty input
-        assert NailExtraction.GetNailBoundaryPoints("Hi") == []
-
-    def test_GetNailBoundaryPoints_Unit_3(self):  # Faulty input
-        assert NailExtraction.GetNailBoundaryPoints(55156) == []
-
-    def test_GetNailBoundaryPoints_Unit_4(self):  # Faulty input
-        assert NailExtraction.GetNailBoundaryPoints((np.array([]), np.array([]))) == []
-
-    def test_CreateSegmentedNailImage_Unit_1(self):
-        # No dataset is available yet rendering a general test currently impossible
-        assert False
-
-    def test_CreateSegmentedNailImage_Unit_2(self):  # Faulty input
-        assert NailExtraction.CreateSegmentedNailImage("Hi").size == 0
-
-    def test_CreateSegmentedNailImage_Unit_3(self):  # Faulty input
-        assert NailExtraction.CreateSegmentedNailImage("Not Real Path").size == 0
-
-    def test_CreateSegmentedNailImage_Unit_4(self):  # Faulty input
-        assert NailExtraction.CreateSegmentedNailImage(55156).size == 0
-
-    def test_CreateSegmentedNailImage_Unit_5(self):  # Faulty input
-        assert NailExtraction.CreateSegmentedNailImage((np.array([]), np.array([]))).size == 0
-
-
 class TestFungalCoverage:
+    # Takes too long to leave for now
+    '''
     def test_TrainModel_Unit(self):
+        startTime = datetime.now().timestamp()
         FungalCoverage.TrainModel()
-        assert False  # Unclear how this is being handled at this point
+        modelLastModifiedTime = os.path.getmtime(MODELS_PATH + FUNGAL_COVERAGE_MODEL_NAME + ".pth")
+        assert modelLastModifiedTime > startTime  # Training was success if model was updated
+    '''
+
+    def test_CreateBaseLearner_Unit(self):
+        learn = FungalCoverage.CreateBaseLearner()
+        assert type(learn) == Learner
+
+    def test_MaskPathFromBaseImagePath_Unit_1(self):
+        path = Path("0.png")
+        path = FungalCoverage.MaskPathFromBaseImagePath(path)
+        path.replace("\\", "/")
+        assert path.endswith("mask/0.png")
+
+    def test_MaskPathFromBaseImagePath_Unit_2(self):
+        path = Path("hi.jpg")
+        path = FungalCoverage.MaskPathFromBaseImagePath(path)
+        path.replace("\\", "/")
+        assert path.endswith("mask/hi.png")
+
+    def test_MaskPathFromBaseImagePath_Unit_3(self):
+        path = Path(TEST_IMG_PATH + COVERAGE_IMG_PATH + "1.png")
+        path = FungalCoverage.MaskPathFromBaseImagePath(path)
+        path.replace("\\", "/")
+        assert path.endswith("mask/1.png")
+
+    def test_MaskPathFromBaseImagePath_Unit_4(self):
+        path = 5  # Faulty input
+        assert FungalCoverage.MaskPathFromBaseImagePath(path) == path  # Still original input
+
+    def test_MaskPathFromBaseImagePath_Unit_5(self):
+        path = TEST_IMG_PATH + COVERAGE_IMG_PATH + "1.png"  # Faulty input
+        assert FungalCoverage.MaskPathFromBaseImagePath(path) == path  # Still original input
+
+    def test_TrainAccuracy_Unit_1(self):
+        inputVal = Tensor([[[[[0, 1, 0, 0]]]]])
+        target = Tensor([[[[[0, 1, 0, 0]]]]])
+        assert FungalCoverage.TrainAccuracy(inputVal, target).tolist() == 0
+
+    def test_TrainAccuracy_Unit_2(self):
+        assert FungalCoverage.TrainAccuracy(5, Tensor()).tolist() == Tensor().tolist()  # Faulty input
+
+    def test_TrainAccuracy_Unit_3(self):
+        assert FungalCoverage.TrainAccuracy(Tensor(), [5612]).tolist() == Tensor().tolist()  # Faulty input
+
+    def test_TrainAccuracy_Unit_4(self):
+        assert FungalCoverage.TrainAccuracy("hello", {}).tolist() == Tensor().tolist()  # Faulty input
 
     def test_LoadModel_Unit(self):
         FungalCoverage.LoadModel()
-        assert FungalCoverage.model
+        assert FungalCoverage.model is not None
 
     def test_CalculateCoverage_Unit_1(self):
         assert FungalCoverage.CalculateCoverage(TEST_IMG_PATH + COVERAGE_IMG_PATH + "0.jpg") == 0.0
@@ -200,10 +212,10 @@ class TestFungalCoverage:
         assert abs(FungalCoverage.CalculateCoverage(TEST_IMG_PATH + COVERAGE_IMG_PATH + "1.png") - 20.0) < 0.001
 
     def test_CalculateCoverage_Unit_3(self):  # Faulty input
-        assert FungalCoverage.CalculateCoverage("Blah") == 0
+        assert FungalCoverage.CalculateCoverage("Blah") == 0.0
 
     def test_CalculateCoverage_Unit_4(self):  # Faulty input
-        assert FungalCoverage.CalculateCoverage(75415) == 0
+        assert FungalCoverage.CalculateCoverage(75415) == 0.0
 
     def test_IsNailInfected_Unit_1(self):
         assert FungalCoverage.IsNailInfected(0) is False

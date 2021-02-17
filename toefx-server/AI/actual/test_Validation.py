@@ -4,10 +4,9 @@ import os
 from pytest import *
 
 from FungalCoverage import *
-from NailExtraction import *
 from NailRecognition import *
 
-TEST_IMG_PATH = "images/test/"
+TEST_IMG_PATH = "AI/actual/test/"
 RECOGNITION_IMG_PATH = "recognition/"
 COVERAGE_IMG_PATH = "coverage/"
 
@@ -85,12 +84,6 @@ class TestNailRecognition:
         newImage4 = cv2.imread(imagePaths[4])
         numEqualElems = np.sum(newImage4 == nailImages[4])  # Make sure both numpy arrays are equal
         assert numEqualElems == newImage4.size
-
-
-class TestNailExtraction:
-    # Not related to any functional requirement.
-    # Simply a stepping stone to help analyze fungal coverage.
-    pass
 
 
 class TestFungalCoverage:

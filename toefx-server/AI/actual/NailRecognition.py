@@ -9,7 +9,7 @@ import os
 
 # Load a pre-trained model downloaded from https://github.com/ManWingloeng/nailtracking
 # It is used instead of an image rotation model.
-RECOGNITION_MODEL_PATH = "models/NailRecognitionModel.pb"
+RECOGNITION_MODEL_PATH = os.path.dirname(os.path.realpath(__file__)) + "/models/NailRecognitionModel.pb"
 RECOGNITION_MODEL_MIN_CONFIDENCE = 0.6
 
 

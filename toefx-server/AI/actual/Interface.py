@@ -23,6 +23,7 @@ def main():
     """
     Input is Interface.py COMMAND FILE_PATH
     COMMAND can be:
+        TRAIN:     Trains the fungal coverage model.
         DECOMPOSE: Breaks an image into smaller images with single nails. If no nails are in the image loaded from
                    FILE_PATH, then this returns an empty list.
         COVERAGE:  Calculates the fungal coverage on a nail. Ideally should only be called on images that have gone
@@ -31,7 +32,9 @@ def main():
 
     if len(sys.argv) > 1:  # Has command
         command = sys.argv[1].upper()
-        if command == "DECOMPOSE":
+        if command == "TRAIN":
+            FungalCoverage.TrainModel()
+        elif command == "DECOMPOSE":
             if len(sys.argv) > 2:  # Has image path
                 imagePath = sys.argv[2]
                 images = NailRecognition.GetNailsFromImage(imagePath)

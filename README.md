@@ -8,6 +8,7 @@ A web application that helps patients detect fungal toe infection, and allows th
 * [Python3](https://www.python.org/downloads/)
 * Pillow
 * [Tensorflow](https://www.tensorflow.org/install/pip)
+* [FastAI](https://fastai1.fast.ai/install.html)
 * [OpenCV](https://pypi.org/project/opencv-python/)
 <br><br/>
 Note: Make sure you have python3 alias set as python. Running `python` should open an interactive CI.

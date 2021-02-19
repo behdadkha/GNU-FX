@@ -3,10 +3,9 @@ import numpy as np
 from pytest import *
 
 from FungalCoverage import *
-from NailExtraction import *
 from NailRecognition import *
 
-TEST_IMG_PATH = "images/test/"
+TEST_IMG_PATH = "AI/actual/test/"
 RECOGNITION_IMG_PATH = "recognition/"
 COVERAGE_IMG_PATH = "coverage/"
 
@@ -20,15 +19,6 @@ class TestNailRecognition:
         model = NailRecognition.model
         NailRecognition.LoadModel()
         assert model == NailRecognition.model
-
-
-class TestNailExtraction:
-    def test_LoadModel_Stress(self):
-        # Test model shouldn't be loaded more than once
-        NailExtraction.LoadModel()
-        model = NailExtraction.model
-        NailExtraction.LoadModel()
-        assert model == NailExtraction.model
 
 
 class TestFungalCoverage:

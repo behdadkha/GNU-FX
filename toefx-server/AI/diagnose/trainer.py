@@ -1,3 +1,8 @@
+# THIS FILE IS JUST TEMPORARY
+# No test cases have been written for the code in this file.
+# All AI code can be found in toefx-server/AI/actual
+# Please do not mark it.
+
 import tensorflow as tf 
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.preprocessing import image

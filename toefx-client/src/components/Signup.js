@@ -9,6 +9,8 @@ import { config } from "../config";
 import { isValidInput, isValidEmail } from "../Utils";
 import healthydrawing from "../icons/MedicalCare.svg";
 import "../componentsStyle/Signup.css";
+import CheckMark from "../icons/checkmark.png";
+import CrossMark from "../icons/crossmark.png"
 import { isMobile } from 'react-device-detect';
 
 export default class Signup extends Component {
@@ -27,9 +29,15 @@ export default class Signup extends Component {
             accountExistsError: false, //Helps with error message if account with email already exists
             passwordMismatchError: false, //Helps with error message when user enters password and confirm password that don't match
             emptyFieldError: false, //Helps with error message user leaves fields blank
+            //Is password strong?
+            IsPasswordLengthStrong: false, //Helps with showing the check mark for 'Password must be at least 8 characters long'
+            DoesPasswordHaveUpperandLowerCase: false, //Helps with showing the check mark for 'Password must contain uppercase(A-Z) and lowercase(a-z) characters'
+            DoesPasswordHaveNumber: false, //Helps with showing the check mark for 'Password must contain a number'
+            
         };
+        this.PasswordChecker = this.PasswordChecker.bind(this);
     }
-
+    
     /*
         Checks if the user didn't fill out all fields on the form.
         returns: true if there is an empty field, false if all fields are filled in.
@@ -76,6 +84,11 @@ export default class Signup extends Component {
             this.setState({ errorMessage: "Invalid Password" })
             return;
         }
+
+        if(!(this.state.IsPasswordLengthStrong && this.state.DoesPasswordHaveUpperandLowerCase && this.state.DoesPasswordHaveNumber)){
+            this.setState({ errorMessage: "Invalid Password" })
+            return;
+        }
         //Try to sign up the user
         let response;
         try {
@@ -115,6 +128,29 @@ export default class Signup extends Component {
                     : "";
     }
 
+    PasswordChecker(e) {
+        //checks password length
+        if(e.target.value.length >= 7){
+            this.setState({IsPasswordLengthStrong: true})
+        }
+        else{
+            this.setState({IsPasswordLengthStrong: false})
+        }
+        //Password contains one uppercase and one lowercase char
+        if(e.target.value.match(/[a-z]+/) && e.target.value.match(/[A-Z]+/)){
+            this.setState({DoesPasswordHaveUpperandLowerCase: true})
+        }
+        else{
+            this.setState({DoesPasswordHaveUpperandLowerCase: false})
+        }
+        //Password contains a number
+        if(e.target.value.match(/[0-9]+/)){
+            this.setState({DoesPasswordHaveNumber: true})
+        }
+        else{
+            this.setState({DoesPasswordHaveNumber: false})
+        }
+    }
     /*
         Print sign up page.
     */
@@ -122,7 +158,7 @@ export default class Signup extends Component {
         let signUpError = this.getErrorText();
         return (
             <div>
-                {isMobile ? '' : <img src={healthydrawing} className="healthcareIcone" alt="Drawing" /> }
+                {isMobile ? '' : <img src={healthydrawing} className="healthcareIcone" alt="Drawing" />}
                 <Container className="shadow p-3 mb-5 bg-white rounded" id={isMobile ? "SignUpContainerMobile" : "SignUpContainer"}>
                     <h2 id="SignupTitle">Sign Up</h2>
                     <h4>Join us to <span id="SignupJoinMessage">show off your toenails</span></h4>
@@ -153,7 +189,7 @@ export default class Signup extends Component {
                                     />
                                     <Form.Text className="text-muted">
                                         Your email is secure in our hands.
-                                </Form.Text>
+                                    </Form.Text>
                                 </Form.Group>
 
                                 {/* Password Input */}
@@ -163,17 +199,23 @@ export default class Signup extends Component {
                                         type="password"
                                         placeholder="12345678"
                                         value={this.state.password}
-                                        onChange={(e) =>
+                                        onChange={(e) => {
                                             this.setState({ password: e.target.value })
+                                            this.PasswordChecker(e)
+                                            }
                                         }
                                         className={(this.state.emptyFieldError && this.state.password === "")
                                             || this.state.passwordMismatchError ? "signup-error-input" : ""}
                                     />
+                                    <Form.Label id="StrongPassword"><Form.Text className="text-muted">{this.state.IsPasswordLengthStrong ? <img src={CheckMark} id="PasswordCheckMark" alt="checkmark"/> : <img src={CrossMark} id="PasswordCheckMark" alt="crosskmark"/>}Password must be at least 8 characters long</Form.Text></Form.Label>
+                                    <Form.Label id="StrongPassword"><Form.Text className="text-muted">{this.state.DoesPasswordHaveUpperandLowerCase ? <img src={CheckMark} id="PasswordCheckMark" alt="checkmark"/> : <img src={CrossMark} id="PasswordCheckMark" alt="crosskmark"/>}Password must contain uppercase(A-Z) and lowercase(a-z) characters</Form.Text></Form.Label>
+                                    <br></br>
+                                    <Form.Label ><Form.Text className="text-muted">{this.state.DoesPasswordHaveNumber ? <img src={CheckMark} id="PasswordCheckMark" alt="checkmark"/> : <img src={CrossMark} id="PasswordCheckMark" alt="crosskmark"/>}Password must contain a number</Form.Text></Form.Label>
                                 </Form.Group>
 
                                 {/* Confirm Password Input */}
-                                <Form.Group controlId="formBasicConfirmPassword">
-                                    <Form.Label>Password</Form.Label>
+                                <Form.Group controlId="formBasicConfirmPassword" className="ConfirmPasswordInput">
+                                    <Form.Label>Confirm Password</Form.Label>
                                     <Form.Control
                                         type="password"
                                         placeholder="12345678"

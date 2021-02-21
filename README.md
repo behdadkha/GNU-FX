@@ -3,7 +3,8 @@
 #### Update: Instructions for tests and reports added to the bottom.
 A web application that helps patients detect fungal toe infection, and allows them to keep track of their treatment progress.
 
-## Requirements:
+## Requirements 
+(Recommended: use the docker file to run the server in toefx-server (In this case, you do not need to install pillow, Tensorflow, FastAI, and OpenCV))
 * [Nodejs (15.5.1)](https://nodejs.org/en/)
 * [Python3](https://www.python.org/downloads/)
 * Pillow
@@ -14,6 +15,7 @@ A web application that helps patients detect fungal toe infection, and allows th
 Note: Make sure you have python3 alias set as python. Running `python` should open an interactive CI.
 
 **A docker file for running server with AI is in the `toefx-server` folder.**
+**In the toefx-server folder, run `docker build -t toefxserver` followed by `docker run -it -v $(pwd)/images:/toefx-server/images -p 3001:3001 toefxserver` to start the server.**
 ## Running the Application:
 1. Open a terminal.
 2. Navigate to the `toefx-client` folder.
@@ -21,7 +23,7 @@ Note: Make sure you have python3 alias set as python. Running `python` should op
 `Run "npm install"` 
 4. Start the front-end server.<br>
 `Run "npm start"`
-5. From the root directory (ToeFX), navigate to the `toefx-server` folder.
+5. From the root directory (ToeFX), navigate to the `toefx-server` folder. ( If you'd like to use the docker file, run `docker build -t toefxserver` followed by `docker run -it -v $(pwd)/images:/toefx-server/images -p 3001:3001 toefxserver` and skip number 6 and 7. 
 6. Install all the required dependencies.<br>
 `Run "npm install"`
 7. Start the back-end server.<br>

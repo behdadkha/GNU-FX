@@ -45,3 +45,12 @@
     margin-left: 7vw;
     width: 85vw;
 }
+#PasswordCheckMark{
+    width: 3%;
+}
+.ConfirmPasswordInput{
+    margin-top: -2%;
+}
+#StrongPassword{
+    margin-bottom: -2%;
+}

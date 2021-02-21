@@ -49,7 +49,6 @@ if (localStorage.jwt) {
 
 function App() {
     const pagesWithNavbar = ["/", "/signup", "/login", "/upload"];
-
     return (
         <Provider store={store}>
             <Router>

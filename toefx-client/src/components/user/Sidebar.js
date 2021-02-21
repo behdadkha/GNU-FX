@@ -90,7 +90,7 @@ class Sidebar extends Component {
                         <Row className={itemClass}>
                             <span test-id="logOut" id="logOut" onClick={() => {
                                 store.dispatch(LogOutUser());
-                                this.props.history.push('/');
+                                window.location.href = "/";
                             }}>
                                 <img src={logoutIcon} alt="Log-Out-Icon" className={iconClass}></img>
                                 <h6 className={navLinkClass}>Log Out</h6>

@@ -15,6 +15,7 @@ class NavigationBar extends Component {
         Prints the navigation bar to the top of the screen.
     */
     render() {
+        console.log(window.location.pathname);
         var loginSignup, logo, loggedInNav;
         var pagesWithNavbar = ["/", "/login", "/signup", "/upload"];
        

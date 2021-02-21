@@ -166,11 +166,6 @@ uploadImage.route('/save').post(async (req, res) => {
     var toeIndex = parseInt(req.body.toe);
     var imageName = req.body.imageName;
 
-    //Save the new image under user
-    user.images.push(imageName);
-    user.imageIndex += 1;
-    user.save()
-
     //Save the data in the database
     SaveToeData(userId, datetoString, footIndex, toeIndex, imageName, res);
 

@@ -22,10 +22,82 @@
     margin-top: 1%;
 }
 
-.diagnosis-img {
-    width : "40%"
+.diagnosisImg {
+    width : 400px;
 }
 
 .diagnosis-results-container {
     margin: auto;
+}
+
+.decomposeImage {
+    width: 150px;
+    height: 100px;
+    border: 1px solid gray;
+    margin: auto;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.decomposeImageRow {
+    padding-top: 10px;
+    max-width: 100%;
+    margin: auto;
+    margin-bottom: 10%;
+}
+.decomposeImageCol {
+    margin: auto;
+    border-radius: 5px;
+    background-color: #DEDEDE;
+    margin: 5px 5px;
+    max-width: 360px;
+    min-height: 200px;
+    padding: 20px 100px 0 100px;
+}
+
+#discardBtn {
+    background-color: red;
+}
+
+#keepBtn {
+    background-color: green;
+}
+
+.saveBtn {
+    margin: 10px 0 0 55px;
+    width: 100px;
+}
+
+.uploadToes0 {
+    height: 60px;
+    width: 40px;
+    border-radius: 50%;
+    background-color: black;
+}
+.uploadToes1 {
+    height: 50px;
+    width: 40px;
+    border-radius: 50%;
+    background-color: black;
+}
+.uploadToes2 {
+    height: 45px;
+    width: 38px;
+    border-radius: 50%;
+    vertical-align: bottom;
+    background-color: black;
+}
+.uploadToes3 {
+    height: 35px;
+    width: 25px;
+    border-radius: 50%;
+    vertical-align: bottom;
+    background-color: black;
+}
+.uploadToes4 {
+    display: inline-block;
+    height: 30px;
+    width: 25px;
+    border-radius: 50%;
+    background-color: black;
 }

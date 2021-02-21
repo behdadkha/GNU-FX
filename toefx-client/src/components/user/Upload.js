@@ -75,12 +75,14 @@ class Upload extends Component {
                 imagesToDelete.push(imageName);
             }
         }
+        
         //requesting to delete the images
-        await axios.delete(`${config.dev_server}/upload/deleteImage?images=${imagesToDelete}`)
-            .then(() => {
-                console.log("removed all unsaved images");
-            })
-            .catch((error) => console.log(error));
+        if (imagesToDelete.length > 0)
+            await axios.delete(`${config.dev_server}/upload/deleteImage?images=${imagesToDelete}`)
+                .then(() => {
+                    console.log("removed all unsaved images");
+                })
+                .catch((error) => console.log(error));
 
     }
 

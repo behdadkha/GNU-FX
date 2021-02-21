@@ -201,8 +201,10 @@ uploadImage.route('/deleteImage').delete(async (req, res) => {
         var userObject = await utils.loadUserObject(req, res);
         var user = userObject.user;
         var userId = userObject.id;
-
+        
         let imageNames = req.query.images.split(",");
+        if( imageNames.length <= 0) 
+            return res.status(400).json({ msg: "could not delete the images" });
 
         for (let i = 0; i < imageNames.length; i++) {
             let imageName = imageNames[i];

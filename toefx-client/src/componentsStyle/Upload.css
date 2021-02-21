@@ -43,7 +43,7 @@
     padding-top: 10px;
     max-width: 100%;
     margin: auto;
-    margin-bottom: 10%;
+    margin-bottom: 5%;
 }
 .decomposeImageCol {
     margin: auto;
@@ -55,11 +55,16 @@
     padding: 20px 100px 0 100px;
 }
 
+.keepDiscardSpan {
+    padding-left: 22px;
+}
+
 #discardBtn {
     background-color: red;
 }
 
 #keepBtn {
+    margin-left: 2px;
     background-color: green;
 }
 

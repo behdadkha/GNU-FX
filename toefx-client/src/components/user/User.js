@@ -8,7 +8,7 @@ import { connect } from "react-redux";
 //import Axios from "axios";
 
 //import { config } from "../../config";
-import { GetFootName, GetToeName, GetImageSrcByURLsAndName, LEFT_FOOT_ID, RIGHT_FOOT_ID, TOE_COUNT } from "../../Utils";
+import { GetFootName, GetToeName, GetImageURLByName, LEFT_FOOT_ID, RIGHT_FOOT_ID, TOE_COUNT } from "../../Utils";
 import store from "../../Redux/store";
 import { getAndSaveImages, getAndSaveToeData } from "../../Redux/Actions/setFootAction";
 import ApexChart from './ApexChart';
@@ -95,7 +95,7 @@ class User extends Component {
                 for (let image of toe.images) { //Each of image of the toe
                     let imageURL
                     if (this.state.imageUrls)
-                        imageURL = GetImageSrcByURLsAndName(this.state.imageUrls, image.name); //Finds the URL based on the image name and URLs loaded
+                        imageURL = GetImageURLByName(this.state.imageUrls, image.name); //Finds the URL based on the image name and URLs loaded
 
                     let date = image.date.split("T")[0] //Format: 2020-11-21T00:00:00.000Z, split("T")[0] returns the yyyy-mm-dd
 

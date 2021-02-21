@@ -180,7 +180,6 @@ describe('Upload.js', () => {
             await component.instance().handleUpload({ target: { files: [{ name: "first file", type: "image/png" }] } });
 
             expect(Axios.post).toHaveBeenCalled();
-            expect(component.instance().validateImage).toHaveBeenCalledWith({ name: "first file", type: "image/png" });
         });
 
         it('sends a post request to the server with the correct data, user not logged in', async () => {
@@ -275,7 +274,7 @@ describe('Upload.js', () => {
             component = component.find(Upload).children();
             component.setState({ selectedFootId: 1, selectedToeId: -1 });
 
-            expect(component.instance().isParamNotSet()).toEqual(true);
+            expect(component.instance().isParamNotSet()).toEqual(false);
         });
 
         it('selectedFootId and selectedToeId are -1', () => {
@@ -321,14 +320,6 @@ describe('Upload.js', () => {
     
             expect(component.state('selectedToeId')).toBe(-1);
         })
-    })
-
-    it('printToeButton', () => {
-        let component = mount(<Provider store={store}><Upload /></Provider>);
-        component = component.find(Upload).children();
-        const output = component.instance().printToeButton(0);
-
-        expect(output.key).toBe("0");
     })
 
     it('printToeButtons', () => {

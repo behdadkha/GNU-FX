@@ -10,7 +10,7 @@ import Axios from 'axios';
 import { config } from "../../config";
 import store from '../../Redux/store';
 import { getAndSaveImages, getAndSaveToeData } from '../../Redux/Actions/setFootAction';
-import { GetToeName, GetImageSrcByURLsAndName } from "../../Utils";
+import { GetToeName, GetImageURLByName } from "../../Utils";
 import Sidebar from "./Sidebar";
 
 import '../../componentsStyle/MyAccount.css'
@@ -110,7 +110,7 @@ class MyAccount extends Component {
         return (
             toe.images.map(({ name, date, fungalCoverage }, index) =>
                 <tr key={toe + ' ' + index}>
-                    <td><img src={GetImageSrcByURLsAndName(this.state.imageUrls, name)} alt="Loading..."
+                    <td><img src={GetImageURLByName(this.state.imageUrls, name)} alt="Loading..."
                         className="uploaded-image-table-toe-image" /></td>
                     <td>{GetToeName(id)}</td>
                     <td>{fungalCoverage}</td>

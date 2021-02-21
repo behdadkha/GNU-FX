@@ -15,7 +15,6 @@ class NavigationBar extends Component {
         Prints the navigation bar to the top of the screen.
     */
     render() {
-        console.log(window.location.pathname);
         var loginSignup, logo, loggedInNav;
         var pagesWithNavbar = ["/", "/login", "/signup", "/upload"];
        
@@ -68,7 +67,6 @@ class NavigationBar extends Component {
             loggedInNav =
             <Nav className="mr-auto">
                 <Nav.Link href="/">Home</Nav.Link>
-                <Nav.Link href="/upload">Diagnosis</Nav.Link>
             </Nav>;
         }
         

@@ -11,7 +11,10 @@ let allStates =
         email: "demo@gmail.com", 
         password: "somePasswordForTesting1234", 
         confirmedPassword: "somePasswordForTesting1234",
-        age: "12"
+        age: "12",
+        IsPasswordLengthStrong: true,
+        DoesPasswordHaveUpperandLowerCase: true,
+        DoesPasswordHaveNumber: true
     };
 
 describe("Signup states", () => {

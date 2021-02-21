@@ -35,10 +35,11 @@ describe("Side bar Bar UI", () => {
 
 
     it('clicking on logout button removes the user and redirects to /', () => {
+        window.location.href = jest.fn();
         jest.spyOn(authAction, 'LogOutUser');
         component.find('[test-id="logOut"]').first().simulate('click');
         expect(authAction.LogOutUser).toHaveBeenCalled();
-        expect(mockedHistory.push).toHaveBeenCalledWith('/');
+        expect(window.location.href).toEqual('http://localhost/');
     });
 
     it('clicking on Dashboard redirects to /user', () => {

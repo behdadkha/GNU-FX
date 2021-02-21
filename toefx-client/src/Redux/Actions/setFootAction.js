@@ -15,7 +15,7 @@ async function GetAllImages() {
                 await Axios.get(`${config.dev_server}/getImage?imageName=${imageNames.data[i]}`, { responseType: "blob" })
                     .then((image) => {
                         imageUrls.push({ imageName: imageNames.data[i], url: URL.createObjectURL(image.data) });
-                    });
+                    }).catch(() => console.log("couldnt get the images"));
             }
         });
 

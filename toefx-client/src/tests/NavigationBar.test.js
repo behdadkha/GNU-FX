@@ -72,7 +72,7 @@ describe("Navigation Bar UI", () => {
             )
         ).toBe(true)
 
-        expect(component.text()).toEqual("ToeFXHomeDiagnosisLog OutDashboard")
+        expect(component.text()).toEqual("ToeFXHomeLog OutDashboard")
 
     });
 

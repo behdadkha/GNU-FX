@@ -32,7 +32,7 @@ export function GetFootName(footId) {
 export function GetToeName(toeId) {
     if (toeId >= TOE_COUNT) //Error handling
         return "Error";
-        
+
     return gToeNames[toeId];
 }
 
@@ -41,25 +41,31 @@ export function GetToeName(toeId) {
     param input: string to be validated
     returns true if the input is acceptable, false otherwise
 */
-export function isValidInput(input){
+export function isValidInput(input) {
     if (input === undefined || input.length === 0 || input[0] === " ")
         return false
     return true
 }
 
-export function isValidEmail(email){
+export function isValidEmail(email) {
     const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(email);
 }
 
 /*
     Gets the image URL for displaying it on the page.
-    param urls: The list of URLs to search through.
+    param imagesArray: The list of images to search through, format: {imageName: "", url: ""}.
     param name: The saved name of the image.
     returns: The url for displaying an HTML image.
 */
-export function GetImageSrcByURLsAndName(urls, name) {
-    return urls.find(({imageName}) => imageName === name).url;
+export function GetImageURLByName(imagesArray, name) {
+    console.log(name);
+    try {
+        return imagesArray.find(({ imageName }) => imageName === name).url;
+    }
+    catch {
+        return undefined;
+    }
 }
 
 export function SetAuthHeader(token) {

@@ -134,13 +134,13 @@ describe('MyAccount component', () => {
             const store = mockStore({ auth: { isAuth: true, user: { name: "tester" } } });
             let component = mount(<Provider store={store}><MyAccount history={mockedHistory} /></Provider>);
             component = component.find(MyAccount).children();
-            jest.spyOn(utils, 'GetImageSrcByURLsAndName');
+            jest.spyOn(utils, 'GetImageURLByName');
             jest.spyOn(utils, 'GetToeName');
             component.setState({imageUrls: [{imageName: "this.png"}]});
             component.instance().printUploadedImage(1 ,{images: [{name: "this.png", date: "2020-11-20", fungalCoverage: "2%"}]}, 1);
 
 
-            expect(utils.GetImageSrcByURLsAndName).toHaveBeenCalled();
+            expect(utils.GetImageURLByName).toHaveBeenCalled();
             expect(utils.GetToeName).toHaveBeenCalled();
         })
 
@@ -152,13 +152,13 @@ describe('MyAccount component', () => {
             const store = mockStore({ auth: { isAuth: true, user: { name: "tester" } } });
             let component = mount(<Provider store={store}><MyAccount history={mockedHistory} /></Provider>);
             component = component.find(MyAccount).children();
-            jest.spyOn(utils, 'GetImageSrcByURLsAndName');
+            jest.spyOn(utils, 'GetImageURLByName');
             jest.spyOn(utils, 'GetToeName');
             component.setState({imageUrls: [{imageName: "this.png"}]});
             component.instance().printUploadedImage(1 ,{images: [{name: "this.png", date: "2020-11-20TD", fungalCoverage: "2%"}]}, 1);
 
 
-            expect(utils.GetImageSrcByURLsAndName).toHaveBeenCalled();
+            expect(utils.GetImageURLByName).toHaveBeenCalled();
             expect(utils.GetToeName).toHaveBeenCalled();
         })
         

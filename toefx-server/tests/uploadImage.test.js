@@ -32,8 +32,8 @@ describe('/upload/loggedin endpoint', () => {
         const res = await request(app)
             .post('/upload/loggedin')
             .attach('file', './tests/0.JPG');
-        expect(res.statusCode).toEqual(400);
-        expect(res.body.msg).toBe("Foot or toe is undefined");
+        expect(res.statusCode).toEqual(500);
+        expect(res.body.msg).toBe("Error occured");
         expect(mockedUserSave).toHaveBeenCalled();
     });
 

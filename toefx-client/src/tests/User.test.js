@@ -5,7 +5,7 @@ import { Provider } from "react-redux";
 import User from '../components/user/User';
 import store from '../Redux/store'
 import * as setFootAction from '../Redux/Actions/setFootAction'
-import { GetImageSrcByURLsAndName } from '../Utils';
+import { GetImageURLByName } from '../Utils';
 
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';

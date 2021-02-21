@@ -19,24 +19,39 @@ const config = require('../config');
     param imageName: The name of the image to be saved in DB. Must be the saved as the image's actual name.
 */
 function SaveToeData(userId, date, footIndex, toeIndex, imageName, res = undefined) {
-    //Find the user's images in the database and add to them
-    //User slot is automatically created on sign-up
-    toeData.findOne({ userID: userId }, (err, item) => {
-        if (item) {
-            item.feet[footIndex].toes[toeIndex].images.push({
-                date: date,
-                name: imageName,
-                fungalCoverage: '20%' //Temp data for now
-            })
+    return new Promise((resolve, reject) => {
+        try {
+            //Find the user's images in the database and add to them
+            //User slot is automatically created on sign-up
+            toeData.findOne({ userID: userId }, async (err, item) => {
+                if (item) {
+                    var imagePath = path.resolve(`images/${userId}/${imageName}`)
+                    var pythonFile = path.resolve('AI/actual/Interface.py');
+                    let fungalCoverage = await utils.runCommand(`python ${pythonFile} COVERAGE ${imagePath}`);
+                    fungalCoverage = JSON.parse(fungalCoverage).data[0]
 
-            item.save();
+                    item.feet[footIndex].toes[toeIndex].images.push({
+                        date: date,
+                        name: imageName,
+                        fungalCoverage: fungalCoverage + "%"
+                    })
+
+                    item.save();
+                    resolve();
+                }
+                else {
+                    if (res !== undefined) {
+                        return res.status(400).json({ msg: "Oops! user does not exist in the toe database" })
+                    }
+                }
+            });
         }
-        else {
-            if (res !== undefined) {
-                return res.status(400).json({ msg: "Oops! user does not exist in the toe database" })
-            }
+        catch {
+            return res.status(400).json({ msg: "Something went wrong, couldnt save the toe data" })
         }
     });
+
+
 }
 
 /*
@@ -118,7 +133,7 @@ function GetImageExtension(image) {
 /*
     Endpoint: /upload/decompose
     Using AI/actual/Interface.py, it extracts the toe nails from the uploaded image and saves it in images/userid
-    
+    returns as the response: the name of the created images
 */
 uploadImage.route('/decompose').get(async (req, res) => {
     var userObject = await utils.loadUserObject(req, res);
@@ -167,9 +182,11 @@ uploadImage.route('/save').post(async (req, res) => {
     var imageName = req.body.imageName;
 
     //Save the data in the database
-    SaveToeData(userId, datetoString, footIndex, toeIndex, imageName, res);
+    SaveToeData(userId, datetoString, footIndex, toeIndex, imageName, res).then(() => {
+        res.json({ msg: "successful" });
+    });
 
-    res.json({ msg: "successful" });
+    
 });
 
 /*

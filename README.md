@@ -1,6 +1,5 @@
 
 # ToeFX 
-#### Update: Instructions for tests and reports added to the bottom.
 A web application that helps patients detect fungal toe infection, and allows them to keep track of their treatment progress.
 
 ## Requirements 

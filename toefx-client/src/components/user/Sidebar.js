@@ -36,7 +36,7 @@ class Sidebar extends Component {
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav"> {/* Hamburger menu */}
                         <Nav className="mr-auto">
-                            <Nav.Link test-id="mobile-treatmentSchedule" onClick={() => this.props.history.push("/user/schedule") }>Treatment Schedule</Nav.Link>
+                            {/*<Nav.Link test-id="mobile-treatmentSchedule" onClick={() => this.props.history.push("/user/schedule") }>Treatment Schedule</Nav.Link>*/}
                             <Nav.Link test-id="mobile-myAccount" onClick={() => this.props.history.push("/user/myAccount")}>My Account</Nav.Link>
                             <Nav.Link test-id="mobile-logOut" onClick={() => {
                                 store.dispatch(LogOutUser());
@@ -71,12 +71,12 @@ class Sidebar extends Component {
                         </Row>
 
                         {/* Treatment Schedule */}
-                        <Row test-id="TreatmentScheduleRow" className={window.location.pathname === "/user/schedule" ? activeItemClass : itemClass}>
+                        {/*<Row test-id="TreatmentScheduleRow" className={window.location.pathname === "/user/schedule" ? activeItemClass : itemClass}>
                             <span test-id="TreatmentSchedule" onClick={() => this.props.history.push("/user/schedule")}>
                                 <img src={scheduleIcon} alt="Schedule-Icon" className={iconClass}></img>
                                 <h6 className={navLinkClass}>Treatment Schedule</h6>
                             </span>
-                        </Row>
+                        </Row>*/}
 
                         {/* My Account */}
                         <Row test-id="myAccountRow" className={window.location.pathname === "/user/myAccount" ? activeItemClass : itemClass}>

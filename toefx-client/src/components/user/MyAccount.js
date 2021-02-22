@@ -63,7 +63,7 @@ class MyAccount extends Component {
         Redirects the user to a page where they can reset their password.
     */
     navigateToResetPasswordPage() {
-        this.props.history.push('/user/resetPassword')
+        window.location.href = "/user/resetPassword";
     }
 
     /*

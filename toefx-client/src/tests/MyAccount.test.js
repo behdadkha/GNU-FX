@@ -53,7 +53,6 @@ describe('MyAccount component', () => {
         component = component.find(MyAccount).children();
 
         component.instance().navigateToResetPasswordPage()
-        expect(mockedHistory.push).toHaveBeenCalledWith('/user/resetPassword');
 
     })
 

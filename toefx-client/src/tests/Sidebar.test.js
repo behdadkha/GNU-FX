@@ -47,10 +47,6 @@ describe("Side bar Bar UI", () => {
         expect(mockedHistory.push).toHaveBeenCalledWith('/user');
     });
 
-    it('clicking on Treatment Schedule redirects to /user/schedule', () => {
-        component.find('[test-id="TreatmentSchedule"]').first().simulate('click');
-        expect(mockedHistory.push).toHaveBeenCalledWith('/user/schedule');
-    });
 
     it('clicking on Treatment Schedule redirects to /user/myAccount', () => {
         component.find('[test-id="myAccount"]').first().simulate('click');
@@ -65,9 +61,6 @@ describe("Side bar Bar UI", () => {
 
         component.find('[test-id="mobile-dashboard"]').first().simulate('click');
         expect(mockedHistory.push).toHaveBeenCalledWith('/user');
-
-        component.find('[test-id="mobile-treatmentSchedule"]').first().simulate('click');
-        expect(mockedHistory.push).toHaveBeenCalledWith('/user/schedule');
 
         component.find('[test-id="mobile-myAccount"]').first().simulate('click');
         expect(mockedHistory.push).toHaveBeenCalledWith('/user/myAccount');
@@ -89,15 +82,6 @@ describe("Side bar Bar UI", () => {
         component = mount(<Provider store={store}><Sidebar history={mockedHistory} /></Provider>);
 
         expect(component.find('[test-id="dashboardRow"]').first().props().className).toEqual("sidebar-items sidebar-active-item");
-    });
-
-    it('path = /user/schedule', () => {
-
-        window.location.pathname = "/user/schedule";
-        component = mount(<Provider store={store}><Sidebar history={mockedHistory} /></Provider>);
-
-        expect(component.find('[test-id="dashboardRow"]').first().props().className).toEqual("sidebar-items");
-        expect(component.find('[test-id="TreatmentScheduleRow"]').first().props().className).toEqual("sidebar-items sidebar-active-item");
     });
 
     it('path = /user/myAccount', () => {

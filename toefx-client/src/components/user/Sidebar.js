@@ -9,7 +9,6 @@ import {Container, Button, Row, Navbar, Nav} from 'react-bootstrap';
 import {connect} from "react-redux";
 import store from "../../Redux/store";
 import {LogOutUser} from "../../Redux/Actions/authAction";
-import scheduleIcon from '../../icons/appointment.png';
 import dashboardIcon from '../../icons/dashboard2.png';
 import myAccountIcon from '../../icons/myAccount.png';
 import logoutIcon from '../../icons/logout.png';

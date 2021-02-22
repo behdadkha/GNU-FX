@@ -10,6 +10,8 @@ import {config} from "../../config";
 import padlock from '../../icons/padlock.png';
 
 import '../../componentsStyle/ResetPassword.css';
+import store from '../../Redux/store';
+import { LogOutUser } from '../../Redux/Actions/authAction';
 
 export default class ResetPassword extends Component {
     /*
@@ -82,10 +84,16 @@ export default class ResetPassword extends Component {
                 currentPassword: this.state.currentPassword,
                 newPassword1: this.state.newPassword1,
                 newPassword2: this.state.newPassword2
-            }).catch(() => console.log("No response from server"));
-            
-            if(data.data.msg === "password changed") { //Successfully reset password
-                this.props.history.push('/login');
+            }).catch(() => {
+                console.log("No response from server")
+                this.setState({errorMsg: "Something is not right. Please try again."});
+                return;
+            });
+         
+                
+            if(data && data.data.msg === "password changed") { //Successfully reset password
+                window.location.href = "/login";
+                store.dispatch(LogOutUser());
             }
             else {
                 //User's password was incorrect
@@ -109,7 +117,7 @@ export default class ResetPassword extends Component {
             : (this.state.passwordMismatchError) ? //Passwords don't match
                 <h6>Please make sure passwords match.</h6>
             : (this.state.incorrectPasswordError) ? //User's old password was incorrect
-                <h6>Your password is incorrect.</h6>
+                <h6>The entered password is incorrect.</h6>
             : "";
     }
 

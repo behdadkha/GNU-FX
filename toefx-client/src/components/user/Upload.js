@@ -43,7 +43,8 @@ class Upload extends Component {
             showChooseFootAndToeError: false, //Helps display and error if either a foot or toe is not chosen
             invalidFileTypeError: false, //Helps display an error if the user tried uploading a non-image file
             calculatingFungalCoverage: false, //User clicks on the save button and the loading message "Calculating fungal coverage" is displayed
-            showUploadButton: true
+            showUploadButton: true,
+            alreadySelectedToes: [false, false, false, false, false] //to keep track of the selected toes, to prevent the user from saving multiple toenils as one toe.
         };
 
         this.validateImage = this.validateImage.bind(this); //Save for later use
@@ -327,7 +328,8 @@ class Upload extends Component {
                 showChooseFootAndToeError: false,
                 invalidFileTypeError: false,
                 calculatingFungalCoverage: false,
-                showUploadButton: true
+                showUploadButton: true,
+                alreadySelectedToes: [false, false, false, false, false]
 
             });
             //remove the unsaved images from the server
@@ -381,7 +383,7 @@ class Upload extends Component {
         }
         this.setState({
             decomposedImages: tempImages,
-            calculatingFungalCoverage: false
+            calculatingFungalCoverage: false,
         });
     }
 
@@ -417,11 +419,14 @@ class Upload extends Component {
                 {GetToeName(toeId)}
             </button><h6>{names[toeId]}</h6>
         );*/
+        var isDisabled = this.state.alreadySelectedToes[toeId];
+        var buttonClassName = ((this.state.selectedToeId === toeId && !isDisabled) ? activeToeButtonClass : defaultToeButtonClass)
         return (
-            <div style={{ display: "inline" }} className={`divToe${toeId}`}>
-                <button key={toeId} onClick={this.setToe.bind(this, toeId)}
-                    className={(this.state.selectedToeId === toeId ? activeToeButtonClass : defaultToeButtonClass)}>
-
+            <div key={toeId} style={{ display: "inline" }} className={`divToe${toeId}`}>
+                <button onClick={this.setToe.bind(this, toeId)}
+                    className={buttonClassName}
+                    disabled={isDisabled}
+                >
                 </button>
             </div>
         );
@@ -498,6 +503,10 @@ class Upload extends Component {
             .then(() => {
                 console.log("saved");
                 this.setImageSavedToTrue(imageIndex);
+
+                var tempSelectedToes = this.state.alreadySelectedToes;
+                tempSelectedToes[toeId] = true;
+                this.setState({alreadySelectedToes : tempSelectedToes});
             })
             .catch((error) => console.log(error));
     }

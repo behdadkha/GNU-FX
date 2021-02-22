@@ -103,7 +103,7 @@ describe("ResetPassword method: handleSubmit", () => {
             newPassword1: "NewStrongPassword123", 
             newPassword2: "NewStrongPassword123", 
         });
-        expect(mockedHistory.push).toHaveBeenCalledWith('/login');
+
 
     });
 
@@ -156,7 +156,7 @@ describe("ResetPassword method: getErrorText", () => {
     it('incorrectPasswordError is true', () => {
         const component = shallow(<ResetPassword />);
         component.setState({incorrectPasswordError: true});
-        expect(component.instance().getErrorText()).toEqual(<h6>Your password is incorrect.</h6>);
+        expect(component.instance().getErrorText()).toEqual(<h6>The entered password is incorrect.</h6>);
     });
     
     it('No error state is set to true', () => {

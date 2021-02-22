@@ -1,6 +1,6 @@
+**Note: To get the changes for the Testable Artifact: git checkout 54912ff89f09f927fec970cd3731a55d74a36e41**
 
 # ToeFX 
-#### Update: Instructions for tests and reports added to the bottom.
 A web application that helps patients detect fungal toe infection, and allows them to keep track of their treatment progress.
 
 ## Requirements 
@@ -14,22 +14,61 @@ A web application that helps patients detect fungal toe infection, and allows th
 <br><br/>
 Note: Make sure you have python3 alias set as python. Running `python` should open an interactive CI.
 
-**A docker file for running server with AI is in the `toefx-server` folder.**
-**In the toefx-server folder, run `docker build -t toefxserver` followed by `docker run -it -v $(pwd)/images:/toefx-server/images -p 3001:3001 toefxserver` to start the server.**
-## Running the Application:
-1. Open a terminal.
+## Running the Application using docker(recommended):
+**Make sure you have docker installed on your computer.**
+1. Open up a terminal.
 2. Navigate to the `toefx-client` folder.
 3. Install all the required dependencies:<br>
-`Run "npm install"` 
+`npm install` 
 4. Start the front-end server.<br>
-`Run "npm start"`
-5. From the root directory (ToeFX), navigate to the `toefx-server` folder. ( If you'd like to use the docker file, run `docker build -t toefxserver` followed by `docker run -it -v $(pwd)/images:/toefx-server/images -p 3001:3001 toefxserver` and skip number 6 and 7. 
+`npm start`
+5. Open a new terminal. From the root directory (ToeFX), navigate to the `toefx-server` folder. Run `docker build -t toefxserver .` (notice the "." at the end) then run `docker run -it -v $(pwd)/images:/toefx-server/images -p 3001:3001 toefxserver` <br>
+Note: if you are using powershell put the volume mount in "" like  `"$(pwd)/images:/toefx-server/images"`
+6. Open up a web browser and go to http://localhost:3000/
+
+## Running the Application without docker:
+**Make sure you have all the requirements installed to be able to run the AI without any errors.**
+**If you are using `pip`, make sure to install [Pytorch](https://pytorch.org/get-started/locally/) along with FastAI.**
+**Note:  make sure running "python" in your terminal opens up an interactive interface. (ie. you can run a python program using "python example.py")** 
+1. Open up a terminal.
+2. Navigate to the `toefx-client` folder.
+3. Install all the required dependencies:<br>
+`npm install` 
+4. Start the front-end server.<br>
+`npm start`
+5. From the root directory (ToeFX), navigate to the `toefx-server` folder.  
 6. Install all the required dependencies.<br>
-`Run "npm install"`
+`npm install`
 7. Start the back-end server.<br>
-`Run "npm start"`
+`npm start`
 8. Open up a web browser and go to http://localhost:3000/
-9. Click `Login` at the top of the page. Use the default login username `demo@gmail.com` and the default login password `123` to access the application. 
+
+**If you ran into any errors after uploading an image, try using these commands to install the requirements
+(for linux):**<br>
+`apt-get install -y python3-dev python3-pip` <br>
+`pip3 install pillow `<br>
+`apt-get install -y curl `<br>
+`apt-get install sudo \`<br>
+`pip3 install torch==1.1.0 torchvision==0.3.0`<br> 
+`pip3 install opencv-contrib-python-headless `<br>
+`pip3 install fastai==1.0.52`<br>
+
+## Usage
+1. Click on the signup button to create a new account.
+2. Use the same email address and password to login.
+3. Now, from the dashboard, click on the "Upload Image" button to upload an image of your foot (make sure your toenails are in the image).
+4. Wait for the AI to finish analyzing the image and finding your toes.
+5. Click on `save` or `discard` to save or discard any image.
+6. After successfully uploading images and selecting toes, go back to the dashboard to access your results.
+7. Click on the left or right foot button to change the selected foot.
+8. You can change the toes by clicking on the circles above the foot image bellow the graph.
+9. Clicking on the graph points shows more details on the right side of the graph.
+10. You may use the my-account button on the side-bar to delete your images or reset your password.
+11. Finally, use the "Log Out" button to log out.
+
+## Issues can be reported to us on GitHub
+To report an issue go to `https://github.com/Behdadkha/toefx`
+Click on issues and create a new issue.
 
 # Tests (unit-test, validation-test, stress and security test)
 **Screenshots are at the bottom.**

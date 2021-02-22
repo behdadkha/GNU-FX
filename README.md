@@ -1,4 +1,4 @@
-**Note: To get the changes for the Testable Artifact: git checkout 54912ff89f09f927fec970cd3731a55d74a36e41**
+**Note: You can use git checkout 54912ff89f09f927fec970cd3731a55d74a36e41 to get the changes made for the Testable Artifact or use the most recent version with the most number of fixed bugs**
 
 # ToeFX 
 A web application that helps patients detect fungal toe infection, and allows them to keep track of their treatment progress.

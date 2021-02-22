@@ -24,6 +24,7 @@ Note: Make sure you have python3 alias set as python. Running `python` should op
 5. Open a new terminal. From the root directory (ToeFX), navigate to the `toefx-server` folder. Run `docker build -t toefxserver .` (notice the "." at the end) then run `docker run -it -v $(pwd)/images:/toefx-server/images -p 3001:3001 toefxserver` <br>
 Note: if you are using powershell put the volume mount in "" like  `"$(pwd)/images:/toefx-server/images"`
 6. Open up a web browser and go to http://localhost:3000/
+
 ## Running the Application without docker:
 **Make sure you have all the requirements installed to be able to run the AI without any errors.**
 **If you are using `pip`, make sure to install [Pytorch](https://pytorch.org/get-started/locally/) along with FastAI.**
@@ -42,14 +43,31 @@ Note: if you are using powershell put the volume mount in "" like  `"$(pwd)/imag
 8. Open up a web browser and go to http://localhost:3000/
 
 **If you ran into any errors after uploading an image, try using these commands to install the requirements
-(for linux):**
-`apt-get install -y python3-dev python3-pip` 
-`pip3 install pillow `
-`apt-get install -y curl `
-`apt-get install sudo \`
-`pip3 install torch==1.1.0 torchvision==0.3.0` 
-`pip3 install opencv-contrib-python-headless `
-`pip3 install fastai==1.0.52`
+(for linux):**<br>
+`apt-get install -y python3-dev python3-pip` <br>
+`pip3 install pillow `<br>
+`apt-get install -y curl `<br>
+`apt-get install sudo \`<br>
+`pip3 install torch==1.1.0 torchvision==0.3.0`<br> 
+`pip3 install opencv-contrib-python-headless `<br>
+`pip3 install fastai==1.0.52`<br>
+
+## Usage
+1. Click on the signup button to create a new account.
+2. Use the same email address and password to login.
+3. Now, from the dashboard, click on the "Upload Image" button to upload an image of your foot (make sure your toenails are in the image).
+4. Wait for the AI to finish analyzing the image and finding your toes.
+5. Click on `save` or `discard` to save or discard any image.
+6. After successfully uploading images and selecting toes, go back to the dashboard to access your results.
+7. Click on the left or right foot button to change the selected foot.
+8. You can change the toes by clicking on the circles above the foot image bellow the graph.
+9. Clicking on the graph points shows more details on the right side of the graph.
+10. You may use the my-account button on the side-bar to delete your images or reset your password.
+11. Finally, use the "Log Out" button to log out.
+
+## Issues can be reported to us on GitHub
+To report an issue go to `https://github.com/Behdadkha/toefx`
+Click on issues and create a new issue.
 
 # Tests (unit-test, validation-test, stress and security test)
 **Screenshots are at the bottom.**

@@ -37,9 +37,9 @@ def main():
         elif command == "DECOMPOSE":
             if len(sys.argv) > 2:  # Has image path
                 imagePath = sys.argv[2]
-                images = NailRecognition.GetNailsFromImage(imagePath)
+                images, imageBoundaries = NailRecognition.GetNailsFromImage(imagePath)
                 imagePaths = NailRecognition.SaveNailImages(images, imagePath)
-                returnData(imagePaths)
+                returnData(list(zip(imagePaths, imageBoundaries)))  # Each element looks like (path, (x, y))
                 return
         elif command == "COVERAGE":
             if len(sys.argv) > 2:  # Has image path

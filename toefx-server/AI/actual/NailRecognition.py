@@ -35,7 +35,7 @@ class NailRecognition:
                     tf.import_graph_def(graphDef, name="")
 
     @staticmethod
-    def GetNailsFromImage(imagePath: str) -> [np.ndarray]:
+    def GetNailsFromImage(imagePath: str) -> [[np.ndarray], [(int, int)]]:
         """
         Finds each nail in an image and returns them in a list.
         :param imagePath: The path to an image with nails to parse.
@@ -60,6 +60,7 @@ class NailRecognition:
                     baseImage = image.copy()
                     (height, width) = image.shape[:2]
                     output = []  # A list of nail images
+                    boundaryOutput = []  # A list of starting crop coords
 
                     # Process the image
                     image = NailRecognition.IsolateHand(image.copy())
@@ -86,10 +87,11 @@ class NailRecognition:
                         endY = int(endY * height)
 
                         output.append(baseImage[startY:endY, startX:endX])  # Crop to the nail
+                        boundaryOutput.append((startX, startY))
 
-                    return output
+                    return output, boundaryOutput
 
-        return []  # No nails if not valid image path or input
+        return [[], []]  # No nails if not valid image path or input
 
     @staticmethod
     def IsolateHand(image: np.ndarray):

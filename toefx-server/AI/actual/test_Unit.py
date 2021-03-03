@@ -20,28 +20,28 @@ class TestNailRecognition:
         assert NailRecognition.model
 
     def test_GetNailsFromImage_Unit_1(self):
-        assert len(NailRecognition.GetNailsFromImage(TEST_IMG_PATH + RECOGNITION_IMG_PATH + "1.jpg")) == 1
+        assert len(NailRecognition.GetNailsFromImage(TEST_IMG_PATH + RECOGNITION_IMG_PATH + "1.jpg")[0]) == 1
 
     def test_GetNailsFromImage_Unit_2(self):
-        assert len(NailRecognition.GetNailsFromImage(TEST_IMG_PATH + RECOGNITION_IMG_PATH + "2.jpg")) == 2
+        assert len(NailRecognition.GetNailsFromImage(TEST_IMG_PATH + RECOGNITION_IMG_PATH + "2.jpg")[0]) == 2
 
     def test_GetNailsFromImage_Unit_3(self):
-        assert len(NailRecognition.GetNailsFromImage(TEST_IMG_PATH + RECOGNITION_IMG_PATH + "3.jpg")) == 3
+        assert len(NailRecognition.GetNailsFromImage(TEST_IMG_PATH + RECOGNITION_IMG_PATH + "3.jpg")[0]) == 3
 
     def test_GetNailsFromImage_Unit_4(self):
-        assert len(NailRecognition.GetNailsFromImage(TEST_IMG_PATH + RECOGNITION_IMG_PATH + "4.jpg")) == 4
+        assert len(NailRecognition.GetNailsFromImage(TEST_IMG_PATH + RECOGNITION_IMG_PATH + "4.jpg")[0]) == 4
 
     def test_GetNailsFromImage_Unit_5(self):
-        assert len(NailRecognition.GetNailsFromImage(TEST_IMG_PATH + RECOGNITION_IMG_PATH + "5.jpg")) == 5
+        assert len(NailRecognition.GetNailsFromImage(TEST_IMG_PATH + RECOGNITION_IMG_PATH + "5.jpg")[0]) == 5
 
     def test_GetNailsFromImage_Unit_6(self):  # Faulty input
-        assert len(NailRecognition.GetNailsFromImage("Not Real Path")) == 0
+        assert len(NailRecognition.GetNailsFromImage("Not Real Path")[0]) == 0
 
     def test_GetNailsFromImage_Unit_7(self):  # Faulty input
-        assert len(NailRecognition.GetNailsFromImage(87541)) == 0
+        assert len(NailRecognition.GetNailsFromImage(87541)[0]) == 0
 
     def test_GetNailsFromImage_Unit_8(self):  # Faulty input
-        assert len(NailRecognition.GetNailsFromImage([TEST_IMG_PATH + RECOGNITION_IMG_PATH + "5.jpg"])) == 0
+        assert len(NailRecognition.GetNailsFromImage([TEST_IMG_PATH + RECOGNITION_IMG_PATH + "5.jpg"])[0]) == 0
 
     def test_IsolateHand_Unit_1(self):
         image = cv2.imread(TEST_IMG_PATH + RECOGNITION_IMG_PATH + "FindHand_Base1.png", 1)

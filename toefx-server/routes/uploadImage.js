@@ -145,19 +145,22 @@ uploadImage.route('/decompose').get(async (req, res) => {
     var filePath = path.resolve(`images/${userId}/${imageName}`)
     var pythonFile = path.resolve('AI/actual/Interface.py');
     let decomposedNails = await utils.runCommand(`python ${pythonFile} DECOMPOSE ${filePath}`);
-
+    
     decomposedNails = JSON.parse(decomposedNails.split("\n")[1]).data; // need to get rid of the first line "loading nail recognition model..."
+    //image path: decomposedNails[i][0]
+    //images cordinates in the original image: decomposedNails[i][1]
+    //eg. the index toe is takes from x:20, y:30 of the original image
 
-    let createdImageNames = [];
+    let decomposedImages = [];
     for (let i = 0; i < decomposedNails.length; i++) {
-        createdImageNames.push(path.basename(decomposedNails[i]));
+        decomposedImages.push( {name: path.basename(decomposedNails[i][0]), cord: decomposedNails[i][1] } );
         //Save the new images under user in the database
-        user.images.push(path.basename(decomposedNails[i]));
+        user.images.push(path.basename(decomposedNails[i][0]));
     }
-
-    console.log(createdImageNames);
+    decomposedImages.sort((a,b) => a.cord[0] - b.cord[0])
+    console.log(decomposedImages);
     user.save();
-    res.json({ imageNames: createdImageNames });
+    res.json({ imagesInfo: decomposedImages });
 
 });
 

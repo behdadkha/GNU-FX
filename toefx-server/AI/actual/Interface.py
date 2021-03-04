@@ -24,8 +24,11 @@ def main():
     Input is Interface.py COMMAND FILE_PATH
     COMMAND can be:
         TRAIN:     Trains the fungal coverage model.
-        DECOMPOSE: Breaks an image into smaller images with single nails. If no nails are in the image loaded from
-                   FILE_PATH, then this returns an empty list.
+        DECOMPOSE: Breaks an image into smaller images with single nails.
+                   Also includes data of where the images were cropped from in the original image, as well as the
+                   colours they were marked with in the duplicate of the original image.
+                   Return format is [[imagePath], [(x-coord, y-coord)], [(r, g, b)]].
+                   If no nails are in the image loaded from FILE_PATH, then this returns empty lists.
         COVERAGE:  Calculates the fungal coverage on a nail. Ideally should only be called on images that have gone
                    through DECOMPOSE first. Returns a list of floats of the coverage values.
     """

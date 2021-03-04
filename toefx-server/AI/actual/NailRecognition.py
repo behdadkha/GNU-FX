@@ -11,6 +11,7 @@ import os
 # It is used instead of an image rotation model.
 RECOGNITION_MODEL_PATH = os.path.dirname(os.path.realpath(__file__)) + "/models/NailRecognitionModel.pb"
 RECOGNITION_MODEL_MIN_CONFIDENCE = 0.6
+NAIL_BORDER_COLOURS = [(255, 0, 0), (0, 255, 0), (0, 255, 255), (120, 0, 255), (184, 184, 0)]
 
 
 class NailRecognition:
@@ -148,8 +149,43 @@ class NailRecognition:
 
         for i, image in enumerate(nailImages):
             suffix = "_{}".format(i)
-            savePath = baseSavePath + suffix + "." + "png"  # Add suffix before extension - PNG is extension for lossless image quality
+            savePath = baseSavePath + suffix + ".png"  # Add suffix before extension - PNG is extension for lossless image quality
             if cv2.imwrite(savePath, image):  # Image was saved correctly
                 paths.append(savePath)
 
         return paths
+
+    @staticmethod
+    def SaveNailColours(nailImages: [np.ndarray], nailBounds: [(int, int)], originalPath: str) -> [str]:
+        """
+        DOCS TODO
+        """
+        colours = []
+
+        if type(nailImages) != list \
+                or type(originalPath) != str \
+                or not os.path.isfile(originalPath):  # Error handling
+            return colours
+
+        baseSavePath = originalPath
+        if "." in originalPath:  # Original image had an extension
+            imageNameList = baseSavePath.split(".")
+            baseSavePath = ".".join(imageNameList[:-1])
+
+        savePath = baseSavePath + "_CLR.png"
+
+        originalImage = cv2.imread(originalPath, 1)
+        for i, image in enumerate(nailImages):
+            startX, startY = nailBounds[i]
+            finalX = startX + image.shape[1]
+            finalY = startY + image.shape[0]
+
+            reversedColour = NAIL_BORDER_COLOURS[i][::-1]
+            originalImage = cv2.rectangle(originalImage, (startX, startY), (finalX, finalY), reversedColour, 2)
+            colours.append(NAIL_BORDER_COLOURS[i])
+
+        cv2.imwrite(savePath, originalImage)
+        return colours
+
+
+

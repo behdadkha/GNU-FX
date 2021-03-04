@@ -39,7 +39,8 @@ def main():
                 imagePath = sys.argv[2]
                 images, imageBoundaries = NailRecognition.GetNailsFromImage(imagePath)
                 imagePaths = NailRecognition.SaveNailImages(images, imagePath)
-                returnData(list(zip(imagePaths, imageBoundaries)))  # Each element looks like (path, (x, y))
+                imageColours = NailRecognition.SaveNailColours(images, imageBoundaries, imagePath)
+                returnData(list(zip(imagePaths, imageBoundaries, imageColours)))  # Each element looks like (path, (x, y), colour)
                 return
         elif command == "COVERAGE":
             if len(sys.argv) > 2:  # Has image path

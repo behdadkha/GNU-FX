@@ -149,18 +149,27 @@ uploadImage.route('/decompose').get(async (req, res) => {
     decomposedNails = JSON.parse(decomposedNails.split("\n")[1]).data; // need to get rid of the first line "loading nail recognition model..."
     //image path: decomposedNails[i][0]
     //images cordinates in the original image: decomposedNails[i][1]
+    //the color of the box in the original image: decomposedNails[i][2]
     //eg. the index toe is takes from x:20, y:30 of the original image
+    //eg. the index teo has a red box in the original image to make it easier for user to identify the toe
 
+    //adding the new created image that has boxes around toes to the user's images
+    let newCLRImageName = imageName.split(".")[0] + "_CLR.png";
+    user.images.push(newCLRImageName)
+    
     let decomposedImages = [];
     for (let i = 0; i < decomposedNails.length; i++) {
-        decomposedImages.push( {name: path.basename(decomposedNails[i][0]), cord: decomposedNails[i][1] } );
+        decomposedImages.push( {name: path.basename(decomposedNails[i][0]), cord: decomposedNails[i][1], color: decomposedNails[i][2] } );
         //Save the new images under user in the database
         user.images.push(path.basename(decomposedNails[i][0]));
     }
+    
+
+    //need to sort from left to right
     decomposedImages.sort((a,b) => a.cord[0] - b.cord[0])
     console.log(decomposedImages);
     user.save();
-    res.json({ imagesInfo: decomposedImages });
+    res.json({ imagesInfo: decomposedImages, CLRImage: newCLRImageName });
 
 });
 

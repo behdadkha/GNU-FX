@@ -173,7 +173,8 @@ class Upload extends Component {
     /*
 
     */
-    async getImage(imageName, cords) {
+    async getImage(imageName, cords, color) {
+        let imageInfo = {}
         await axios.get(`${config.dev_server}/getImage?imageName=${imageName}`, { responseType: "blob" })
             .then((image) => {
                 this.setState(
@@ -183,14 +184,29 @@ class Upload extends Component {
                             { 
                                 name: imageName, 
                                 url: URL.createObjectURL(image.data),
-                                cords: cords, 
+                                cord: cords, 
+                                color: color,
                                 keepClicked: false, 
                                 saved: false 
                             }
                         ] 
                         });
                     }
-            );
+                );
+        let temp = this.state.decomposedImages;
+        if (temp.length > 1)      
+            temp.sort((a,b) => a.cord[0] - b.cord[0])
+        this.setState({
+            decomposeImage: temp
+        })
+        /*this.setState({
+            decomposedImages:
+            [
+                ...this.state.decomposedImages,
+                temp
+            ]
+        })*/
+                
     }
     /*
         initiates nail decompose(extracts nails from the uploaded foot image)
@@ -201,13 +217,23 @@ class Upload extends Component {
         //2. change the upload msg text
 
         await axios.get(`${config.dev_server}/upload/decompose`)
-            .then(res => {
+            .then(async res => {
+
                 //Format: res.data.imagesInfo[{name: "", cord: []}]
-                res.data.imagesInfo.map(({name, cords}) => this.getImage(name, cords))
+                res.data.imagesInfo.map(({name, cord, color}) => this.getImage(name, cord, color))
+
+                let colorImage = "";
+                await axios.get(`${config.dev_server}/getImage?imageName=${res.data.CLRImage}`, { responseType: "blob" })
+                .then((image) => {
+                    colorImage = URL.createObjectURL(image.data);
+                });
 
                 let tempFiles = this.state.files;
                 tempFiles[0].text = "Please Choose the toe nails you would like to save";
-                this.setState({ files: tempFiles })
+                tempFiles[0].url = colorImage;
+                this.setState({ 
+                    files: tempFiles
+                 })
             })
             .catch((error) => this.printFileValidationErrorToConsole(error));
     }
@@ -406,9 +432,7 @@ class Upload extends Component {
             tempImages[index].keepClicked = true;
         }
         this.setState({
-            decomposedImages: tempImages,
-            cirleX: tempImages.cords[0],
-            cirleY: tempImages.cords[1]
+            decomposedImages: tempImages
         });
     }
 
@@ -640,8 +664,8 @@ class Upload extends Component {
                 </Row>
                 <Row className="decomposeImageRow">
                     {
-                        this.state.decomposedImages.map(({ name, url, keepClicked, saved }, index) =>
-                            <Col key={name} className="decomposeImageCol">
+                        this.state.decomposedImages.map(({ name, url, color, keepClicked, saved }, index) =>
+                            <Col key={name} className="decomposeImageCol" style={{backgroundColor: `rgb(${color})`}}>
                                 <Row>
                                     <img className="decomposeImage" src={url} alt="nail"></img>
                                 </Row>

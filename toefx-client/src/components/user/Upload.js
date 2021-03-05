@@ -33,7 +33,7 @@ class Upload extends Component {
             uploaded: false, //No file is uploaded to start
             files: [], //Currently uploaded files
             diagnosis: [], //List of {image: 0, text:""}
-            decomposedImages: [], //the decomposed images from the uploaded foot image {name: imageName, url:"blob", keepClicked: false, saved: false}
+            decomposedImages: [], //the decomposed images from the uploaded foot image {name: imageName, url:"blob", cords: [x,y] keepClicked: false, saved: false}
             uploadProgress: 0, //Percentage of upload of image completed
             tempfileName: "", //Helper with processing image
             foot: "", //The foot name the image is for. Sent to /uploadimage endpoint
@@ -44,7 +44,9 @@ class Upload extends Component {
             invalidFileTypeError: false, //Helps display an error if the user tried uploading a non-image file
             calculatingFungalCoverage: false, //User clicks on the save button and the loading message "Calculating fungal coverage" is displayed
             showUploadButton: true,
-            alreadySelectedToes: [false, false, false, false, false] //to keep track of the selected toes, to prevent the user from saving multiple toenils as one toe.
+            alreadySelectedToes: [false, false, false, false, false], //to keep track of the selected toes, to prevent the user from saving multiple toenils as one toe.
+            cirleX: 0,
+            cirleY: 0
         };
 
         this.validateImage = this.validateImage.bind(this); //Save for later use
@@ -100,8 +102,14 @@ class Upload extends Component {
         Helps with back button functionality on page load.
     */
     componentDidMount() {
+        if (!this.props.auth.isAuth){
+            this.props.history.push("/Login");
+            return;
+        }
         window.onpopstate = this.onBackButtonEvent.bind(this);
+        //making sure the unsaves images get deleted
         window.addEventListener('beforeunload', (() => this.remove_Unsaved_Images(this.state.decomposedImages)), false);
+        
     }
 
     componentWillUnmount() {
@@ -165,11 +173,40 @@ class Upload extends Component {
     /*
 
     */
-    async getImage(imageName) {
+    async getImage(imageName, cords, color) {
+        let imageInfo = {}
         await axios.get(`${config.dev_server}/getImage?imageName=${imageName}`, { responseType: "blob" })
             .then((image) => {
-                this.setState({ decomposedImages: [...this.state.decomposedImages, { name: imageName, url: URL.createObjectURL(image.data), keepClicked: false, saved: false }] });
-            });
+                this.setState(
+                    { 
+                    decomposedImages: 
+                        [...this.state.decomposedImages, 
+                            { 
+                                name: imageName, 
+                                url: URL.createObjectURL(image.data),
+                                cord: cords, 
+                                color: color,
+                                keepClicked: false, 
+                                saved: false 
+                            }
+                        ] 
+                        });
+                    }
+                );
+        let temp = this.state.decomposedImages;
+        if (temp.length > 1)      
+            temp.sort((a,b) => a.cord[0] - b.cord[0])
+        this.setState({
+            decomposeImage: temp
+        })
+        /*this.setState({
+            decomposedImages:
+            [
+                ...this.state.decomposedImages,
+                temp
+            ]
+        })*/
+                
     }
     /*
         initiates nail decompose(extracts nails from the uploaded foot image)
@@ -180,12 +217,23 @@ class Upload extends Component {
         //2. change the upload msg text
 
         await axios.get(`${config.dev_server}/upload/decompose`)
-            .then(res => {
-                res.data.imageNames.map(imageName => this.getImage(imageName))
+            .then(async res => {
+
+                //Format: res.data.imagesInfo[{name: "", cord: []}]
+                res.data.imagesInfo.map(({name, cord, color}) => this.getImage(name, cord, color))
+
+                let colorImage = "";
+                await axios.get(`${config.dev_server}/getImage?imageName=${res.data.CLRImage}`, { responseType: "blob" })
+                .then((image) => {
+                    colorImage = URL.createObjectURL(image.data);
+                });
 
                 let tempFiles = this.state.files;
                 tempFiles[0].text = "Please Choose the toe nails you would like to save";
-                this.setState({ files: tempFiles })
+                tempFiles[0].url = colorImage;
+                this.setState({ 
+                    files: tempFiles
+                 })
             })
             .catch((error) => this.printFileValidationErrorToConsole(error));
     }
@@ -249,19 +297,6 @@ class Upload extends Component {
                 //this.validateImage(file);
 
             });
-        }
-        else { //User isn't logged in
-
-            //It sends the temporary image name (time in ms) to validateImage
-            await axios.post(`${config.dev_server}/upload/notloggedin`, formData, {
-                onUploadProgress: (ProgressEvent) => this.updateUploadProgress(ProgressEvent)
-            }).then((res) => {
-
-                console.log("Done, now validating the image")
-                this.validateImage(res.data.img);
-
-            });
-
         }
 
     }
@@ -531,6 +566,11 @@ class Upload extends Component {
         else if (this.state.invalidFileTypeError)
             error = "Invalid file type. Please upload an IMAGE file."
 
+        let tops = this.state.cirleY + 100;
+        let lefts = this.state.cirleX;
+        console.log(tops, lefts);
+        let cirlceStyle = {position:"absolute", top: tops+"px", left: lefts+"px"};
+        
         return (
             <Container>
                 <h3 className="diagnosis-question">Which foot is the image for?</h3>
@@ -571,7 +611,7 @@ class Upload extends Component {
                     <h5>{uploadProgress}</h5>
                     <h5>{error}</h5>
                 </Row>
-
+                    
                 {/* List of Uploaded Images*/}
                 <Row>
                     {this.state.files.map((source, index) => (
@@ -624,8 +664,8 @@ class Upload extends Component {
                 </Row>
                 <Row className="decomposeImageRow">
                     {
-                        this.state.decomposedImages.map(({ name, url, keepClicked, saved }, index) =>
-                            <Col key={name} className="decomposeImageCol">
+                        this.state.decomposedImages.map(({ name, url, color, keepClicked, saved }, index) =>
+                            <Col key={name} className="decomposeImageCol" style={{backgroundColor: `rgb(${color})`}}>
                                 <Row>
                                     <img className="decomposeImage" src={url} alt="nail"></img>
                                 </Row>

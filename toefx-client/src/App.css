@@ -1,10 +1,35 @@
 .App {
   text-align: center;
-  --highlight-color: RGB(0, 143, 251);
-  --button-hover-color: RGB(2, 84, 230);
+  --button-color: rgb(36, 166, 154);
+  --button-hover-color: rgb(30, 138, 128);
+  --highlight-color: rgb(36, 166, 154);
 }
 
 .navBar {
   padding-left: 10%;
   padding-right: 10%;
+}
+
+.btn-primary {
+    background-color: var(--button-color); 
+    border-color: var(--button-color);
+}
+
+.btn-primary:hover, .btn-primary:active {
+    background-color: var(--button-hover-color); 
+    border-color: var(--button-hover-color);
+}
+
+.btn-primary:focus {
+    background-color: var(--button-hover-color); 
+    border-color: var(--button-hover-color);
+}
+
+.btn-primary:active {
+    background-color: var(--button-hover-color) !important; 
+    border-color: var(--button-hover-color) !important;
+}
+
+button:focus { /*Used in the mobile hamburger menu*/
+    outline-color: var(--button-hover-color);
 }

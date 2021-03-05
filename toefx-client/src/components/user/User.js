@@ -72,7 +72,6 @@ class User extends Component {
         } catch {
             console.log("Couldn't get the required data");
         }
-
     }
 
     /*

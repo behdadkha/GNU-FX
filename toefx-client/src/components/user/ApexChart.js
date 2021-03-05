@@ -4,15 +4,13 @@
 
 import React from "react";
 import ReactApexChart from "react-apexcharts"
-import { Row, Table } from "react-bootstrap";
+import { Row, Table, Button } from "react-bootstrap";
 
-import { GetFootName, GetToeName, LEFT_FOOT_ID, RIGHT_FOOT_ID, TOE_COUNT } from "../../Utils";
+import { GetFootSymbolByActive, GetFootName, GetToeName, LEFT_FOOT_ID, RIGHT_FOOT_ID, TOE_COUNT } from "../../Utils";
 import store from "../../Redux/store";
 import { setSelectedFoot } from "../../Redux/Actions/setFootAction";
 
 import '../../componentsStyle/ApexChart.css';
-import leftFootLogo from '../../icons/leftfootlogo.png';
-import rightFootLogo from '../../icons/rightfootlogo.png';
 import leftFootCroppedLogo from '../../icons/leftfootCropped.png';
 import rightFootCroppedLogo from '../../icons/rightfootCropped.png';
 //BUG: Clicking on bottom labels changes graph view but not selected buttons
@@ -321,7 +319,6 @@ class ApexChart extends React.Component {
     render() {
         var dateDetails;
         var defaultFootButtonClass = "graph-foot-button";
-        var activeFootButtonClass = defaultFootButtonClass + " active-toe-button";
 
         if (this.state.showingDetails) {
             dateDetails = this.printSelectedDateDetails();
@@ -337,15 +334,17 @@ class ApexChart extends React.Component {
             <div>
                 {/* Buttons to change which foot is being viewed */}
                 <div className="graph-feet-buttons">
-                    <button onClick={this.viewFoot.bind(this, true)}
-                        className={(this.state.showLeftFoot ? activeFootButtonClass : defaultFootButtonClass)}>
-                        <img src={leftFootLogo} className="footlogo" alt="left foot logo"/>
-                    </button>
+                    <Button onClick={this.viewFoot.bind(this, true)}
+                        className={defaultFootButtonClass}>
+                        <img src={GetFootSymbolByActive(LEFT_FOOT_ID, this.state.showLeftFoot ? LEFT_FOOT_ID : RIGHT_FOOT_ID)}
+                             className="footlogo" alt="Left Foot"/>
+                    </Button>
 
-                    <button onClick={this.viewFoot.bind(this, false)}
-                        className={(!this.state.showLeftFoot ? activeFootButtonClass : defaultFootButtonClass)}>
-                        <img src={rightFootLogo} className="footlogo" alt="right food logo"/>
-                    </button>
+                    <Button onClick={this.viewFoot.bind(this, false)}
+                        className={defaultFootButtonClass}>
+                        <img src={GetFootSymbolByActive(RIGHT_FOOT_ID, this.state.showLeftFoot ? LEFT_FOOT_ID : RIGHT_FOOT_ID)}
+                             className="footlogo" alt="Right Foot"/>
+                    </Button>
                 </div>
 
                 {/*Buttons to filter toes*/}

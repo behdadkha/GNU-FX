@@ -25,13 +25,16 @@ class Sidebar extends Component {
 
         if (isMobile) { //Adjust on mobile devices
             return (
-                <Navbar bg="dark" expand="lg" variant="dark">
-                    <Navbar.Brand test-id="mobile-dashboard" style={{ color: "white" }} 
+                <Navbar bg="light" expand="lg" variant="light" className="mobile-navbar">
+                    <Navbar.Brand test-id="mobile-dashboard"
                         onClick={() => {
                             this.props.history.push('/user');
                             window.location.reload();
                         }}
-                    >Dashboard</Navbar.Brand>
+                    >
+                        Home
+                    </Navbar.Brand>
+
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav"> {/* Hamburger menu */}
                         <Nav className="mr-auto">
@@ -40,7 +43,7 @@ class Sidebar extends Component {
                             <Nav.Link test-id="mobile-logOut" onClick={() => {
                                 store.dispatch(LogOutUser());
                                 this.props.history.push("/");
-                            }}>Log out</Nav.Link>
+                            }}>Log Out</Nav.Link>
                         </Nav>
                     </Navbar.Collapse>
                 </Navbar>

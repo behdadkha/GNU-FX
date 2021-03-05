@@ -17,12 +17,14 @@ import ResetPassword from "./components/user/ResetPassword";
 import Schedule from "./components/user/Schedule";
 import Upload from "./components/user/Upload";
 import User from "./components/user/User";
+import UserMobile from "./components/user/User-Mobile";
 import Component404 from "./components/Component404";
 import store from "./Redux/store";
 import { LogOutUser, SetCurrentUser } from "./Redux/Actions/authAction";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
+import { isMobile } from "react-device-detect";
 
 //If the browser has the user's login info,
 //set the data and go to the user's page
@@ -49,10 +51,11 @@ if (localStorage.jwt) {
 
 function App() {
     const pagesWithNavbar = ["/", "/signup", "/login", "/upload", "/user/resetPassword"];
+    var userPath = (isMobile) ? UserMobile : User; //Different UI depending on device
+
     return (
         <Provider store={store}>
             <Router>
-                
                     <div className="App">
                         {
                             //Only show the navigation bar on certain pages so no scrolling is required
@@ -71,7 +74,7 @@ function App() {
 
                             <Route path="/login" component={Login} exact />
                             <Route path="/signup" component={Signup} exact />
-                            <Route path="/user" component={User} exact />
+                            <Route path="/user" component={userPath} exact />
                             <Route path="/upload" component={Upload} exact />
                             <Route path="/user/schedule" component={Schedule} exact />
                             <Route path="/user/myAccount" component={MyAccount} exact />

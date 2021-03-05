@@ -74,7 +74,8 @@
 
 .active-toe-button {
     color: white;
-    background-color: var(--highlight-color);
+    background-color: var(--highlight-color) !important;
+    border-color: var(--highlight-color) !important;
 }
 
 .graph-toe-button:focus, .graph-foot-button:focus {

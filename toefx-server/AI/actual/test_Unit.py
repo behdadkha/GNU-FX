@@ -13,6 +13,9 @@ RECOGNITION_IMG_PATH = "recognition/"
 COVERAGE_IMG_PATH = "coverage/"
 MODELS_PATH = "AI/actual/models/"
 
+# TODO Test cases for NailRecognition.SaveNailColours
+# TODO Test cases for NailRecognition.GetNailsFromImage that check the bound output
+
 
 class TestNailRecognition:
     def test_LoadModel_Unit(self):

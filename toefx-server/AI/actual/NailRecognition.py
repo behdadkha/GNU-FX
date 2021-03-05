@@ -11,7 +11,14 @@ import os
 # It is used instead of an image rotation model.
 RECOGNITION_MODEL_PATH = os.path.dirname(os.path.realpath(__file__)) + "/models/NailRecognitionModel.pb"
 RECOGNITION_MODEL_MIN_CONFIDENCE = 0.6
-NAIL_BORDER_COLOURS = [(255, 0, 0), (0, 255, 0), (0, 255, 255), (120, 0, 255), (184, 184, 0)]
+RECOGNITION_MODEL_COORD_ADJUSTMENT = 0.01  # Take 1% more of image on each side
+
+# Colours for marking for nails located in an image
+NAIL_BORDER_COLOURS = [(255, 0, 0),    # Red
+                       (0, 255, 0),    # Green
+                       (0, 255, 255),  # Blue
+                       (120, 0, 255),  # Purple
+                       (184, 184, 0)]  # Gold
 
 
 class NailRecognition:
@@ -81,18 +88,19 @@ class NailRecognition:
                             continue
 
                         # Scale the bounding box from the range [0, 1] to [W, H]
+                        # Take bounds adding offset of RECOGNITION_MODEL_COORD_ADJUSTMENT
                         (startY, startX, endY, endX) = boundary
-                        startX = int(startX * width)
-                        startY = int(startY * height)
-                        endX = int(endX * width)
-                        endY = int(endY * height)
+                        startX = max(0, int((startX - RECOGNITION_MODEL_COORD_ADJUSTMENT) * width))
+                        startY = max(0, int((startY - RECOGNITION_MODEL_COORD_ADJUSTMENT) * height))
+                        endX = min(int((endX + RECOGNITION_MODEL_COORD_ADJUSTMENT) * width), width)
+                        endY = min(int((endY + RECOGNITION_MODEL_COORD_ADJUSTMENT) * height), height)
 
                         output.append(baseImage[startY:endY, startX:endX])  # Crop to the nail
-                        boundaryOutput.append((startX, startY))
+                        boundaryOutput.append((startX, startY, endX, endY))
 
                     return output, boundaryOutput
 
-        return [[], []]  # No nails if not valid image path or input
+        return [], []  # No nails if not valid image path or input
 
     @staticmethod
     def IsolateHand(image: np.ndarray):
@@ -101,6 +109,9 @@ class NailRecognition:
         :param image: The image to process.
         :return: A new image with the binarization applied.
         """
+
+        if type(image) != np.ndarray:  # Input checking
+            return image
 
         YCrCb_frame = cv2.cvtColor(image, cv2.COLOR_BGR2YCrCb)
         YCrCb_frame = cv2.GaussianBlur(YCrCb_frame, (3, 3), 0)
@@ -120,7 +131,7 @@ class NailRecognition:
         :return: Whether or not any nails were actually found in the original image.
         """
 
-        if type(nailImages) == list:  # Error handling
+        if type(nailImages) == list:  # Input checking
             return len(nailImages) >= 1
 
         return False  # No nails if not valid input
@@ -135,18 +146,21 @@ class NailRecognition:
         :return: A list of paths to the new images.
         """
 
-        paths = []
+        paths = []  # The list of paths to the new images
 
+        # Input checking
         if type(nailImages) != list \
                 or type(originalPath) != str \
                 or not os.path.isfile(originalPath):  # Error handling
             return paths
 
+        # Get base file names for the new images
         baseSavePath = originalPath
         if "." in originalPath:  # Original image had an extension
             imageNameList = baseSavePath.split(".")
             baseSavePath = ".".join(imageNameList[:-1])
 
+        # Save each image
         for i, image in enumerate(nailImages):
             suffix = "_{}".format(i)
             savePath = baseSavePath + suffix + ".png"  # Add suffix before extension - PNG is extension for lossless image quality
@@ -156,36 +170,40 @@ class NailRecognition:
         return paths
 
     @staticmethod
-    def SaveNailColours(nailImages: [np.ndarray], nailBounds: [(int, int)], originalPath: str) -> [str]:
+    def SaveNailColours(nailBounds: [(int, int)], originalPath: str) -> [(int, int, int)]:
         """
-        DOCS TODO
+        Marks the boundaries where decomposed images were cropped from in a duplicate of the original image.
+        The new image in saved in the same directory, with the format [ORIGINAL_NAME]_CLR.png where [ORIGINAL_NAME] is
+        the name of the original image file.
+        :param nailBounds: A list of (x, y) representing the starting coordinates for each cropping.
+        :param originalPath: The path of the original image.
+        :return: A list of colours (r, g, b) that each image was marked with.
         """
-        colours = []
 
-        if type(nailImages) != list \
+        colours = []  # The list of colours of the markings
+
+        # Input checking
+        if type(nailBounds) != list \
                 or type(originalPath) != str \
-                or not os.path.isfile(originalPath):  # Error handling
+                or not os.path.isfile(originalPath):
             return colours
 
-        baseSavePath = originalPath
+        # Get filename of marked image
+        savePath = originalPath
         if "." in originalPath:  # Original image had an extension
-            imageNameList = baseSavePath.split(".")
-            baseSavePath = ".".join(imageNameList[:-1])
+            imageNameList = savePath.split(".")
+            savePath = ".".join(imageNameList[:-1])
+        savePath += "_CLR.png"
 
-        savePath = baseSavePath + "_CLR.png"
+        # Add markings to the original image
+        markedImage = cv2.imread(originalPath, 1)
+        for i, image in enumerate(nailBounds):
+            startX, startY, finalX, finalY = nailBounds[i]
 
-        originalImage = cv2.imread(originalPath, 1)
-        for i, image in enumerate(nailImages):
-            startX, startY = nailBounds[i]
-            finalX = startX + image.shape[1]
-            finalY = startY + image.shape[0]
-
-            reversedColour = NAIL_BORDER_COLOURS[i][::-1]
-            originalImage = cv2.rectangle(originalImage, (startX, startY), (finalX, finalY), reversedColour, 2)
+            reversedColour = NAIL_BORDER_COLOURS[i][::-1]  # CV2 reads the colours (b, g, r) instead of (r, g, b)
+            markedImage = cv2.rectangle(markedImage, (startX, startY), (finalX, finalY), reversedColour, 10)
             colours.append(NAIL_BORDER_COLOURS[i])
 
-        cv2.imwrite(savePath, originalImage)
+        cv2.imwrite(savePath, markedImage)
         return colours
-
-
 

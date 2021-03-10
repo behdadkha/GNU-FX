@@ -17,6 +17,10 @@ import '../../componentsStyle/Sidebar.css';
 
 
 class Sidebar extends Component {
+    constructor(props) {
+        super(props);
+    }
+
     render() {
         var itemClass = "sidebar-items";
         var activeItemClass = itemClass + " sidebar-active-item"; //Highlight nav link when on page

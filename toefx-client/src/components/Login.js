@@ -38,29 +38,33 @@ export default class Login extends Component {
     */
     handleLoginPatient = async (e) => {
         e.preventDefault(); //Prevents page reload on form submission
+        
         //Try to log in user
-
         if (!isValidEmail(this.state.email)) {
             this.setState({ email: "", errorMessage: "Invalid Email Address" });
-            return
-        }
-        if (!isValidInput(this.state.password)) {
-            this.setState({ password: "", errorMessage: "Invalid Password" })
-            return
+            return;
         }
 
-        let response
+        if (!isValidInput(this.state.password)) {
+            this.setState({ password: "", errorMessage: "Invalid Password" });
+            return;
+        }
+
+        //User input passed basic checks so submit data to server
+        let response;
         try {
             response = await Axios.post(`${config.dev_server}/login`, {
                 email: this.state.email,
                 password: this.state.password
             })
-        } catch (res) {
+        }
+        catch (res) {
             this.setState({
                 invalidUser: true
             });
-            return
+            return;
         }
+
         //Process response from server
         if (response.status === 200 && response.data) { //The login was a success
             let body = response.data;
@@ -83,7 +87,8 @@ export default class Login extends Component {
 
             //By reloading the page, the true path becomes /user and the header bar disappears
             window.location.reload();
-        } else {
+        }
+        else {
             this.setState({
                 invalidUser: true
             });

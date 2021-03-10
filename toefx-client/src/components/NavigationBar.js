@@ -35,22 +35,24 @@ class NavigationBar extends Component {
             if (window.location.pathname !== "/login" && window.location.pathname !== "/signup") {
                 //On the home page show both Login and Sign Up
                 loginSignup =
-                <Nav>
-                    <Nav.Link href="/signup">Sign Up</Nav.Link>
-                    <Nav.Link href="/login">Login</Nav.Link>
-                </Nav>;
+                    <Nav>
+                        <Nav.Link href="/signup">Sign Up</Nav.Link>
+                        <Nav.Link href="/login">Login</Nav.Link>
+                    </Nav>;
             }
             else if (window.location.pathname === "/login") {
                 //On the login page only show Sign Up
-                loginSignup = <Nav>
-                    <Nav.Link href="/signup">Sign Up</Nav.Link>
-                </Nav>;
+                loginSignup =
+                    <Nav>
+                        <Nav.Link href="/signup">Sign Up</Nav.Link>
+                    </Nav>;
             }
             else if (window.location.pathname === "/signup") {
                 //On the signup page only show Login
-                loginSignup = <Nav>
-                    <Nav.Link href="/login">Login</Nav.Link>
-                </Nav>;
+                loginSignup =
+                    <Nav>
+                        <Nav.Link href="/login">Log In</Nav.Link>
+                    </Nav>;
             }
         }
 
@@ -63,11 +65,13 @@ class NavigationBar extends Component {
                 ToeFX
             </Navbar.Brand>;
 
-            //Only show special logged in options on the home page
-            loggedInNav =
-            <Nav className="mr-auto">
-                <Nav.Link href="/">Home</Nav.Link>
-            </Nav>;
+            //Only show home button when not on home page
+            if (window.location.pathname !== "/") {
+                loggedInNav =
+                <Nav className="mr-auto">
+                    <Nav.Link href="/">Home</Nav.Link>
+                </Nav>;
+            }
         }
         
         return (

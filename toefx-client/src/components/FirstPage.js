@@ -4,70 +4,116 @@
 */
 
 import React, {Component} from "react";
-import {Col, Container, Row} from "react-bootstrap";
+import {Container, Button} from "react-bootstrap";
+import { isMobile } from "react-device-detect";
+
 import "../componentsStyle/FirstPage.css";
+
+//Data for the boxes with descriptions that appear on the homepage
+const gBoxHeadings = [
+    "About ToeFX",
+    "Online Diagnosis",
+    "Create Your Storyline",
+];
+
+const gBoxDescriptions = [
+    <span>
+        ToeFX Inc. is a Canadian medical device
+        company that has created a safe, fast
+        solution for the treatment of toenail
+        fungus (onychomycosis). The solution is
+        based on photodynamic therapy. Visit our
+        online store at www.drtoe.com.
+    </span>,
+
+    <span>
+        With two easy steps, find out if your
+        toenails are infected.
+    </span>,
+
+    <span>
+        Take pictures of your toenails during
+        the course of your treatment and create
+        a storyline of your treatment progress.
+    </span>
+];
 
 
 export default class FirstPage extends Component {
+    /*
+        Reroutes the user to the Log In page and reloads the dashboard.
+    */
+    gotoLoginPage() {
+        this.props.history.push("/login");
+    }
+
+    /*
+        Reroutes the user to the Sign Up page and reloads the dashboard.
+    */
+    gotoSignUpPage() {
+        this.props.history.push("/signup");
+    }
+
+    /*
+        Prints the home page for desktop browsers.
+    */
+    desktopView() {
+        var boxes = []; //Holds boxes with text that appear on the lower half of the page
+
+        //Create each of the three boxes to be displayed
+        for (let i = 0; i < gBoxDescriptions.length; ++i) {
+            boxes.push(
+                <div className={"box box" + (i + 1).toString()}> {/* Each box has a class like "box1" or "box2" that determines its colour*/}
+                    <h6 className="boxHeading">{gBoxHeadings[i]}</h6>
+                    <div className="boxDescriptionDiv">
+                        <h6 className="boxDescription">{gBoxDescriptions[i]}</h6>
+                    </div>
+                </div>
+            )
+        }
+
+        return (
+            <div>
+                {/* Image form ToeFX homepage */}
+                <img className="image"
+                        src="https://toefx.com/wp-content/uploads/2019/09/pipette.jpg"
+                        alt="pipette"
+                ></img>
+
+                {/* Three boxes designed to look similar to the ones on the original ToeFX webpage */}
+                <Container fluid className="home-page-boxes">
+                    {boxes}
+                </Container>
+            </div>
+        );
+    }
+
+    /*
+        Prints the home page for mobile browsers.
+    */
+    mobileView() {
+        return (
+            <div>
+                <div className="homepage-mobile-buttons">
+                    <Button className="homepage-mobile-button" onClick={() => this.gotoLoginPage()}>
+                        Log In
+                    </Button>
+
+                    <Button className="homepage-mobile-button" onClick={() => this.gotoSignUpPage()}>
+                        Sign Up
+                    </Button>
+                </div>
+            </div>
+        );
+    }
 
     /*
         Prints the home page to the screen.
     */
     render() {
-        return (
-            <div>
-                {/* ToeFX Logo */}
-                <div>
-                    <img className="image"
-                         src="https://toefx.com/wp-content/uploads/2019/09/pipette.jpg"
-                         alt="pipette"
-                    ></img>
-                </div>
+        if (isMobile)
+            return this.mobileView();
 
-                {/* Three blue boxes taken from original ToeFX webpage */}
-                <Container className="home-page-boxes">
-                    <Row>
-                        <Col lg={4}>
-                            <div className="box box1">
-                                <h6 className="boxHeading">About ToeFX</h6>
-                                <div className="boxDescriptionDiv">
-                                    <h6 className="boxDescription">
-                                        ToeFX Inc. is a Canadian medical device
-                                        company that has created a safe, fast
-                                        solution for the treatment of toenail
-                                        fungus (onychomycosis). The solution is
-                                        based on photodynamic therapy. Visit our
-                                        online store at www.drtoe.com.
-                                    </h6>
-                                </div>
-                            </div>
-                        </Col>
-                        <Col lg={4}>
-                            <div className="box box2">
-                                <h6 className="boxHeading">Online Diagnosis</h6>
-                                <div className="boxDescriptionDiv">
-                                    <h6 className="boxDescription">
-                                        With two easy steps, find out if your
-                                        toenails are infected.
-                                    </h6>
-                                </div>
-                            </div>
-                        </Col>
-                        <Col lg={4}>
-                            <div className="box box3">
-                                <h6 className="boxHeading">Create Your Storyline</h6>
-                                <div className="boxDescriptionDiv">
-                                    <h6 className="boxDescription">
-                                        Take pictures of your toenails during
-                                        the course of your treatment and create
-                                        a storyline of your treatment progress.
-                                    </h6>
-                                </div>
-                            </div>
-                        </Col>
-                    </Row>
-                </Container>
-            </div>
-        );
+        return this.desktopView();
     }
 }

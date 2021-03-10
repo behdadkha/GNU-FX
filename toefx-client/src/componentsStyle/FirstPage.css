@@ -1,27 +1,28 @@
+/*CSS for Desktop View*/
+
 .image {
     margin-top: 2%;
 	display: block !important;
     position: relative !important;
     width: 100% !important;
 	height: auto;
+    max-height: 49vh;
 }
 
 .home-page-boxes { /*Ideally should centre them in the page */
     margin: auto;
+    margin-bottom: 20px;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
 }
 
 .box {
-    background-color: #085dce;
 	width: 410px;
 	min-height: 280px;
 	position: relative;
     text-align: justify;
 	float: left;
-	margin-bottom: 20px;
-}
-
-.col-lg-4 {
-	padding: 0px; /* Remove bootstrap default to mimic real ToeFX website */
 }
 
 .boxHeading {
@@ -47,13 +48,27 @@
 }
 
 .box1 {
-    background-color: #085dce;
+    background-color: var(--button-color);
 }
 
 .box2 {
-    background-color: #0051bb
+    background-color: var(--button-hover-color);
 }
 
 .box3 {
-    background-color: #004bad;
+    background-color: var(--darkest-theme-color);
+}
+
+/*CSS for Mobile View*/
+.homepage-mobile-buttons {
+    display: flex;
+    flex-flow: column wrap;
+    justify-content: center;
+}
+
+.homepage-mobile-button {
+    font-size: 200% !important;
+    width: 70%;
+    height: 20vh;
+    margin: 20% auto 0 auto;
 }

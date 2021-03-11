@@ -61,7 +61,7 @@ function App() {
                     <div className="App">
                         {
                             //Only show the navigation bar on certain pages so no scrolling is required
-                            pagesWithNavbar.includes(window.location.pathname)
+                            pagesWithNavbar.includes(window.location.pathname) || isMobile
                                 ?
                                 <div className="navBar">
                                     <Navbar></Navbar>

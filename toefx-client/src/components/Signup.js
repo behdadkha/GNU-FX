@@ -5,6 +5,7 @@
 import React, { Component } from "react";
 import { Col, Row, Container, Form, Button } from "react-bootstrap";
 import { isMobile } from 'react-device-detect';
+import { connect } from "react-redux";
 import Axios from 'axios';
 
 import { config } from "../config";
@@ -29,7 +30,7 @@ const gErrorMessages = {
 //TODO: Age field should really be birthday.
 //TODO: Error handling for when there's no internet connection.
 
-export default class Signup extends Component {
+class Signup extends Component {
     /*
         Sets base data for the page.
     */
@@ -44,6 +45,17 @@ export default class Signup extends Component {
             age: "", //User's age input
             errorMessage: "", //The type of error message to display (if any)
         };
+    }
+
+    /*
+        Redirects the user to the dashboard if they're already logged in.
+    */
+    componentDidMount() {
+        if (this.props.auth.isAuth)
+        {
+            this.props.history.push("/user");
+            window.location.reload(); //Helps fix navbar
+        }
     }
 
     /*
@@ -317,3 +329,8 @@ export default class Signup extends Component {
     }
 }
 
+const mapStateToProps = (state) => ({
+    auth: state.auth,
+});
+
+export default connect(mapStateToProps)(Signup);

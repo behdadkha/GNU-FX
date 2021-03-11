@@ -4,6 +4,7 @@
 
 import React, { Component } from 'react';
 import { Button, Table } from 'react-bootstrap';
+import { isMobile } from "react-device-detect";
 import { connect } from "react-redux";
 import Axios from 'axios';
 
@@ -180,14 +181,20 @@ class MyAccount extends Component {
 
         return (
             <div>
-                <Sidebar {...this.props} />
+                {
+                    !isMobile && //Only on desktop
+                        <Sidebar {...this.props} />
+                }
 
                 <div className="my-account-page">
                     {/* Main part */}
                     <div className="my-account-main-container">
-                        <div className="welcome-bar">
-                            <h6 className="welcome">My Account</h6>
-                        </div>
+                        {
+                            !isMobile && //Only on desktop
+                                <div className="welcome-bar">
+                                    <h6 className="welcome">My Account</h6>
+                                </div>
+                        }
 
                         <div className="my-account-sub-container">
                             {/* Account Details Bubble */}

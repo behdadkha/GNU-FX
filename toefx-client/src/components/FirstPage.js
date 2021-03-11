@@ -6,6 +6,7 @@
 import React, {Component} from "react";
 import {Container, Button} from "react-bootstrap";
 import { isMobile } from "react-device-detect";
+import { connect } from "react-redux";
 
 import "../componentsStyle/FirstPage.css";
 
@@ -39,7 +40,19 @@ const gBoxDescriptions = [
 ];
 
 
-export default class FirstPage extends Component {
+class FirstPage extends Component {
+    /*
+        Redirects the user to the dashboard if they're already logged in on a mobile device.
+        The only way to return to the original screen on mobile is by logging out.
+    */
+    componentDidMount() {
+        if (isMobile && this.props.auth.isAuth)
+        {
+            this.props.history.push("/user");
+            window.location.reload(); //Helps fix navbar
+        }
+    }
+
     /*
         Reroutes the user to the Log In page and reloads the dashboard.
     */
@@ -117,3 +130,9 @@ export default class FirstPage extends Component {
         return this.desktopView();
     }
 }
+
+const mapStateToProps = (state) => ({
+    auth: state.auth,
+});
+
+export default connect(mapStateToProps)(FirstPage);

@@ -5,6 +5,7 @@
 import React, { Component } from "react";
 import { Col, Row, Container, Form, Button } from "react-bootstrap";
 import { isMobile } from "react-device-detect";
+import { connect } from "react-redux";
 import Axios from 'axios';
 
 import jwt_decode from "jwt-decode";
@@ -28,7 +29,7 @@ const gErrorMessages = {
 }
 
 
-export default class Login extends Component {
+class Login extends Component {
     /*
         Sets base data for the page.
     */
@@ -40,6 +41,17 @@ export default class Login extends Component {
             password: "", //The user's password input
             errorMessage: "" //The error to be displayed to the user (if any)
         };
+    }
+
+    /*
+        Redirects the user to the dashboard if they're already logged in.
+    */
+    componentDidMount() {
+        if (this.props.auth.isAuth)
+        {
+            this.props.history.push("/user");
+            window.location.reload(); //Helps fix navbar
+        }
     }
 
     /*
@@ -144,6 +156,7 @@ export default class Login extends Component {
     */
     render() {
         var inputErrorClass = "login-error-input"; //Used to colour boxes with mistakes in pink
+        var containerClass = "p-3 mb-5 bg-white" + (!isMobile ? " shadow rounded" : "");
 
         return (
             <div>
@@ -151,7 +164,7 @@ export default class Login extends Component {
                     {isMobile? '' : <img src={loginImage} className="login-logo"  alt=""/>} {/*Remove image on mobile*/}
                 </div>
     
-                <Container className="shadow p-3 mb-5 bg-white rounded" id={"login-container" + (isMobile ? "-mobile" : "")}>
+                <Container className={containerClass} id={"login-container" + (isMobile ? "-mobile" : "")}>
                     <h3 className="login-form-title">Login</h3>
                     <Row>
                         <Col>
@@ -209,7 +222,12 @@ export default class Login extends Component {
                     </div>
                 </Container>
             </div>
-
         );
     }
 }
+
+const mapStateToProps = (state) => ({
+    auth: state.auth,
+});
+
+export default connect(mapStateToProps)(Login);

@@ -4,6 +4,7 @@
 
 import React, {Component} from "react";
 import {Navbar, Nav} from "react-bootstrap";
+import {isMobile} from "react-device-detect";
 import {connect} from "react-redux";
 
 import store from "../Redux/store";
@@ -12,83 +13,101 @@ import "../componentsStyle/Navbar.css";
 
 class NavigationBar extends Component {
     /*
-        Prints the navigation bar to the top of the screen.
+        Prints the list of links visible in the navigation bar for a given page.
     */
-    render() {
-        var loginSignup, logo, loggedInNav;
-        var pagesWithNavbar = ["/", "/login", "/signup", "/upload", "/user/resetPassword", "/forgotpassword"];
-       
-        //Show Dashboard and Log Out if user is logged in
+    getMenuLinks() {
+        var menuLinks;
+
+        //Show special options if user is logged in
         if (this.props.auth.isAuth) {
-            loginSignup =
-            <Nav className="NavbarFont">
-                <Nav.Link test-id="logOut" onClick={() => {store.dispatch(LogOutUser()); this.props.history.push('/'); window.location.reload();}}>
-                    Log Out
-                </Nav.Link>
-                {(window.location.pathname !== "/user" && window.location.pathname !== "/login") &&
-                <Nav.Link href="/user">
-                    Dashboard
-                </Nav.Link>}
-            </Nav>
+            menuLinks =
+                <Nav className="NavbarFont">
+                    {
+                        //Only show dashboard link on specific pages
+                        (window.location.pathname !== "/user" && !isMobile) &&
+                        <Nav.Link href="/user">
+                            {isMobile ? "Home" : "Dashboard"}
+                        </Nav.Link>
+                    }
+                    {
+                        //Only show upload link on specific pages
+                        (window.location.pathname !== "/upload") &&
+                        <Nav.Link href="/upload">
+                            Upload
+                        </Nav.Link>
+                    }
+                    {
+                        //Only show account link on specific pages
+                        (window.location.pathname !== "/user/myAccount") &&
+                        <Nav.Link href="/user/myAccount">
+                            My Account
+                        </Nav.Link>
+                    }
+                    <Nav.Link test-id="logOut" href="/" onClick={() => store.dispatch(LogOutUser())}>
+                        Log Out
+                    </Nav.Link>
+                </Nav>
         }
         else { //User is not logged in
-            if (window.location.pathname !== "/login" && window.location.pathname !== "/signup") {
+            if (window.location.pathname === "/") {
                 //On the home page show both Login and Sign Up
-                loginSignup =
+                menuLinks =
                     <Nav>
-                        <Nav.Link href="/signup">Sign Up</Nav.Link>
                         <Nav.Link href="/login">Login</Nav.Link>
+                        <Nav.Link href="/signup">Sign Up</Nav.Link>
                     </Nav>;
             }
             else if (window.location.pathname === "/login") {
-                //On the login page only show Sign Up
-                loginSignup =
+                //On the login page show Sign Up
+                menuLinks =
                     <Nav>
                         <Nav.Link href="/signup">Sign Up</Nav.Link>
                     </Nav>;
             }
             else if (window.location.pathname === "/signup") {
-                //On the signup page only show Login
-                loginSignup =
+                //On the signup page show Log In
+                menuLinks =
                     <Nav>
                         <Nav.Link href="/login">Log In</Nav.Link>
                     </Nav>;
             }
-        }
-
-        logo = "";
-        loggedInNav = "";
-        if (window.location.pathname !== "/user") {
-            //Only show the ToeFX logo on the home page
-            logo =
-            <Navbar.Brand href="https://www.toefx.com/">
-                ToeFX
-            </Navbar.Brand>;
-
-            //Only show home button when not on home page
-            if (window.location.pathname !== "/") {
-                loggedInNav =
-                <Nav className="mr-auto">
-                    <Nav.Link href="/">Home</Nav.Link>
-                </Nav>;
+            else {
+                //Probably unused
+                menuLinks =
+                    <Nav>
+                        <Nav.Link href="/login">Log In</Nav.Link>
+                        <Nav.Link href="/signup">Sign Up</Nav.Link>
+                    </Nav>;
             }
         }
-        
+
+        return menuLinks;
+    }
+
+    /*
+        Prints the navigation bar to the top of the screen.
+    */
+    render() {
+        var desktopPagesWithNavbar = ["/", "/login", "/signup", "/upload", "/user/resetPassword", "/forgotpassword"];
+        var navBarClass = "NavbarFont p-3" + (!isMobile ? " bg-white mb-3 shadow-sm rounded" : "");
+        var menuLinks = this.getMenuLinks();
+        var homeLink = isMobile && this.props.auth.isAuth ? "/user" : "/"; //Mobile logged in redirects to image page
+
         return (
             <div>
                 {
-                    pagesWithNavbar.includes(window.location.pathname) ? //Navbar on this page
-                        <Navbar bg="light" expand="md" className="shadow-sm p-3 mb-3 bg-white rounded NavbarFont">
-                            {/* Potentially show ToeFX logo */}
-                            {logo}
+                    desktopPagesWithNavbar.includes(window.location.pathname) || isMobile ? //Navbar on this page
+                        <Navbar bg="light" expand="md" className={navBarClass}>
+                            {/* Link to home page or dashboard on mobile*/}
+                            <Navbar.Brand href={homeLink}>
+                                Home
+                            </Navbar.Brand>
 
                             {/* Actual nav bar */}
                             <Navbar.Toggle aria-controls="basic-navbar-nav" />
                             <Navbar.Collapse id="basic-navbar-nav">
-                                {loggedInNav}
-
                                 <Nav className="ml-auto">
-                                    {loginSignup}
+                                    {menuLinks}
                                 </Nav>
                             </Navbar.Collapse>
                         </Navbar>

@@ -15,7 +15,6 @@ import Sidebar from './Sidebar';
 
 import '../../componentsStyle/User-Mobile.css';
 
-//TODO: Use NavBar instead of Sidebar
 
 class User extends Component {
     /*
@@ -237,7 +236,6 @@ class User extends Component {
         {
             return (
                 <div>
-                    <Sidebar {...this.props} className="mobile-header"/>
                     <h4 className="dashboard-loading">Loading...</h4>
                 </div>
             );
@@ -245,7 +243,6 @@ class User extends Component {
 
         return (
             <div>
-                <Sidebar {...this.props} className="mobile-header"/>
                 <Container className="mobile-image-page-container">
                     {/* Buttons to change which foot is being viewed */}
                     <Row className="mobile-image-button-row">

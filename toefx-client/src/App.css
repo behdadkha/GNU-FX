@@ -6,9 +6,11 @@
   --darkest-theme-color: rgb(24, 109, 101);
 }
 
-.navBar {
-  padding-left: 10%;
-  padding-right: 10%;
+@media (min-width: 1000px) { /*Width >= 1000px*/
+    .navBar {
+        padding-left: 10%;
+        padding-right: 10%;
+    }
 }
 
 .btn-primary {

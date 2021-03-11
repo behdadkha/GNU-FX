@@ -81,7 +81,7 @@ export function GetUnshadedFootSymbolImage(footId) {
     returns: An image of a foot symbol.
 */
 export function GetFootSymbolByActive(footId, activeFootId) {
-    if (footId == activeFootId) //This foot is selected
+    if (footId === activeFootId) //This foot is selected
         return GetFootSymbolImage(footId); //Return the shaded in image
     else
         return GetUnshadedFootSymbolImage(footId);
@@ -107,9 +107,7 @@ export function GetToeSymbolImage(footId, toeId) {
     returns true if the input is acceptable, false otherwise
 */
 export function isValidInput(input) {
-    if (input === undefined || input.length === 0 || input[0] === " ")
-        return false
-    return true
+    return input !== undefined && input.length > 0 && input[0] !== " ";
 }
 
 export function isValidEmail(email) {

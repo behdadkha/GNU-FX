@@ -4,6 +4,8 @@
 
 import React, { Component } from "react";
 import { Col, Row, Container, Form, Button } from "react-bootstrap";
+import { isMobile } from "react-device-detect";
+import Axios from 'axios';
 
 import jwt_decode from "jwt-decode";
 import { config } from "../config";
@@ -11,11 +13,19 @@ import store from "../Redux/store";
 import { SetCurrentUser } from "../Redux/Actions/authAction";
 import { getAndSaveImages, getAndSaveToeData } from "../Redux/Actions/setFootAction";
 import { SetAuthHeader, isValidInput, isValidEmail } from "../Utils";
-import Axios from 'axios';
 
 import loginImage from '../icons/Login.svg';
 import "../componentsStyle/Login.css";
-import { isMobile } from "react-device-detect";
+
+//Error messages displayed to the user
+const gErrorMessages = {
+    "": "",
+    "BLANK_FIELD": "Please fill in all fields.",
+    "INVALID_EMAIL": "Invalid email address.",
+    "INVALID_PASSWORD": "Invalid password.", 
+    "NO_SERVER_CONNECTION": "Couldn't connect to server.",
+    "INVALID_CREDENTIALS": "Incorrect email or password.",
+}
 
 
 export default class Login extends Component {
@@ -24,11 +34,11 @@ export default class Login extends Component {
     */
     constructor(props) {
         super(props);
+
         this.state = {
             email: "", //The user's email input
             password: "", //The user's password input
-            invalidUser: false, //Indicates whether or not an error message should be displayed
-            errorMessage: ""
+            errorMessage: "" //The error to be displayed to the user (if any)
         };
     }
 
@@ -38,20 +48,36 @@ export default class Login extends Component {
     */
     handleLoginPatient = async (e) => {
         e.preventDefault(); //Prevents page reload on form submission
-        
-        //Try to log in user
-        if (!isValidEmail(this.state.email)) {
-            this.setState({ email: "", errorMessage: "Invalid Email Address" });
-            return;
+
+        //Check if any field hasn't been filled in
+        if (this.isAnyFieldLeftBlank()) {
+            this.setState({errorMessage: "BLANK_FIELD"});
+            return; //Don't log in
         }
 
+        //Check if user entered bad email
+        if (!isValidEmail(this.state.email)) {
+            this.setState({
+                email: "",
+                errorMessage: "INVALID_EMAIL",
+            });
+
+            return; //Don't log in
+        }
+
+        //Check if user entered bad password
         if (!isValidInput(this.state.password)) {
-            this.setState({ password: "", errorMessage: "Invalid Password" });
-            return;
+            this.setState({
+                password: "",
+                errorMessage: "INVALID_PASSWORD",
+            });
+
+            return; //Don't log in
         }
 
         //User input passed basic checks so submit data to server
         let response;
+
         try {
             response = await Axios.post(`${config.dev_server}/login`, {
                 email: this.state.email,
@@ -60,8 +86,9 @@ export default class Login extends Component {
         }
         catch (res) {
             this.setState({
-                invalidUser: true
+                errorMessage: "INVALID_CREDENTIALS",
             });
+
             return;
         }
 
@@ -90,36 +117,47 @@ export default class Login extends Component {
         }
         else {
             this.setState({
-                invalidUser: true
+                errorMessage: "INVALID_CREDENTIALS",
             });
         }
     };
 
     /*
+        Checks if the user didn't fill out all fields on the form.
+        returns: true if there is an empty field, false if all fields are filled in.
+    */
+    isAnyFieldLeftBlank() {
+        return this.state.email === ""
+            || this.state.password === "";
+    }
+
+    /*
+        Gets the appropriate text to display to the user upon an error.
+        returns: Error text if error exists.
+    */
+    getErrorText() {
+        return gErrorMessages[this.state.errorMessage];
+    }
+
+    /*
         Displays the login page.
     */
     render() {
-        let loginError = (this.state.invalidUser) ? //Error displayed to the user if problem with login
-            "Please enter valid credentials." : "";
+        var inputErrorClass = "login-error-input"; //Used to colour boxes with mistakes in pink
 
         return (
             <div>
-                <div className="LoginLogoPositon">
-                    {isMobile? '' : <img src={loginImage} className="LoginLogo"  alt="login"/>}
+                <div className="login-logo-container">
+                    {isMobile? '' : <img src={loginImage} className="login-logo"  alt=""/>} {/*Remove image on mobile*/}
                 </div>
-                <Container className="shadow p-3 mb-5 bg-white rounded" id={isMobile ? "LoginContainerMobile" : "LoginContainer"}>
-                    <h3 id="LoginTitle">Login</h3>
-                    {isMobile?  <img src={loginImage} className="LoginLogoMobile"  alt="login"/> : ''}
+    
+                <Container className="shadow p-3 mb-5 bg-white rounded" id={"login-container" + (isMobile ? "-mobile" : "")}>
+                    <h3 className="login-form-title">Login</h3>
                     <Row>
                         <Col>
                             {/* Error message if needed */}
-                            <div className="login-error">
-                                <h6>
-                                    {loginError}
-                                </h6>
-                                <h6>
-                                    {this.state.errorMessage}
-                                </h6>
+                            <div className="login-form-error">
+                                <h6>{this.getErrorText()}</h6>
                             </div>
 
                             {/* Actual login form */}
@@ -129,15 +167,16 @@ export default class Login extends Component {
                             >
                                 {/* Email Input */}
                                 <Form.Group controlId="formBasicEmail">
-                                    <Form.Label>Email address</Form.Label>
+                                    <Form.Label>Email Address</Form.Label>
                                     <Form.Control
                                         type="email"
                                         placeholder=""
+                                        autoComplete="email"
                                         value={this.state.email}
-                                        onChange={(e) => {
-                                            this.setState({ email: e.target.value.trim() })
-                                        }
-                                        }
+                                        onChange={(e) => this.setState({email: e.target.value.trim()})}
+                                        className={(this.state.errorMessage === "BLANK_FIELD" && this.state.password === "")
+                                            || this.state.errorMessage === "INVALID_EMAIL"
+                                            || this.state.errorMessage === "INVALID_CREDENTIALS" ? inputErrorClass : ""}
                                     />
                                 </Form.Group>
 
@@ -145,12 +184,14 @@ export default class Login extends Component {
                                 <Form.Group controlId="formBasicPassword">
                                     <Form.Label>Password</Form.Label>
                                     <Form.Control
-                                        value={this.state.password}
-                                        onChange={(e) =>
-                                            this.setState({ password: e.target.value.trim() })
-                                        }
                                         type="password"
                                         placeholder=""
+                                        autoComplete="current-password"
+                                        value={this.state.password}
+                                        onChange={(e) => this.setState({password: e.target.value})}
+                                        className={(this.state.errorMessage === "BLANK_FIELD" && this.state.password === "")
+                                            || this.state.errorMessage === "INVALID_PASSWORD"
+                                            || this.state.errorMessage === "INVALID_CREDENTIALS" ? inputErrorClass : ""}
                                     />
                                 </Form.Group>
 

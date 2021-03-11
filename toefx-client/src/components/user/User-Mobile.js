@@ -15,6 +15,7 @@ import Sidebar from './Sidebar';
 
 import '../../componentsStyle/User-Mobile.css';
 
+//TODO: Use NavBar instead of Sidebar
 
 class User extends Component {
     /*
@@ -90,6 +91,14 @@ class User extends Component {
         this.setState({
             selectedToe: toeId,
         });
+    }
+
+    /*
+        Redirects the user to the upload page.
+    */
+    gotoUploadPage() {
+        this.props.history.push("/upload");
+        window.location.reload(); //Refreshes the nav bar
     }
 
     /*
@@ -260,7 +269,7 @@ class User extends Component {
                     </Row>
 
                     <Row className="mobile-image-upload-button-row">
-                        <Button onClick={() => this.props.history.push("/upload")} className="mobile-image-upload-button">
+                        <Button onClick={() => this.gotoUploadPage()} className="mobile-image-upload-button">
                             Upload New Toes
                         </Button>
                     </Row>

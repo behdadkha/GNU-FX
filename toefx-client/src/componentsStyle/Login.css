@@ -1,45 +1,45 @@
-#LoginTitle{
-    font-family: 'Balsamiq Sans', cursive
-}
-.login-form {
-    margin: auto;
-    text-align: left;
-    width: 90%;
-    font-family: 'Nunito', sans-serif;
-}
+/*CSS for the Login Page*/
 
-#LoginContainer{
-    margin-top: 15vh;
-    margin-right: 15%;
-    width: 30%;
-    height: 40%;
-}
-
-.login-error {
-    height: 30px;
-    margin-top: 20px;
-}
-
-.login-error-input {
-    color: pink;
-}
-
-.LoginLogoPositon{
+.login-logo-container {
     margin-right: 100%;
 }
-.LoginLogo{
+
+.login-logo{
     width: 40%;
     height: 40%;
     position: absolute;
     margin-left: 10%;
 }
 
-/* MOBILE */
-.LoginLogoMobile{
-    width: 25vh;
-    height: 25vh;
+#login-container { /*Uses id instead of class*/
+    margin-top: 15vh;
+    margin-right: 15%;
+    width: 30%;
+    height: 40%;
 }
-#LoginContainerMobile{
-    margin-left: 7vw;
-    width: 85vw;
+
+.login-form {
+    margin: auto;
+    text-align: left;
+    width: 90%;
+}
+
+.login-form-title {
+    font-family: 'Balsamiq Sans', cursive
+}
+
+.login-form-error {
+    height: 30px;
+    margin-top: 20px;
+}
+
+.login-error-input {
+    background-color: pink !important;
+}
+
+
+/* CSS specifically for mobile */
+
+#login-container-mobile { /*Uses id instead of class*/
+    margin-bottom: 0px !important;
 }

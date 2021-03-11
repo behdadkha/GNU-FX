@@ -22,7 +22,7 @@ class NavigationBar extends Component {
         if (this.props.auth.isAuth) {
             loginSignup =
             <Nav className="NavbarFont">
-                <Nav.Link test-id="logOut" onClick={() => {store.dispatch(LogOutUser()); window.location.href = "/";}}>
+                <Nav.Link test-id="logOut" onClick={() => {store.dispatch(LogOutUser()); this.props.history.push('/'); window.location.reload();}}>
                     Log Out
                 </Nav.Link>
                 {(window.location.pathname !== "/user" && window.location.pathname !== "/login") &&
@@ -78,7 +78,7 @@ class NavigationBar extends Component {
             <div>
                 {
                     pagesWithNavbar.includes(window.location.pathname) ? //Navbar on this page
-                        <Navbar bg="light" expand="md" className="shadow-sm p-3 mb-5 bg-white rounded NavbarFont">
+                        <Navbar bg="light" expand="md" className="shadow-sm p-3 mb-3 bg-white rounded NavbarFont">
                             {/* Potentially show ToeFX logo */}
                             {logo}
 

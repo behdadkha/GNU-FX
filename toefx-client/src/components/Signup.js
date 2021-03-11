@@ -4,14 +4,30 @@
 
 import React, { Component } from "react";
 import { Col, Row, Container, Form, Button } from "react-bootstrap";
+import { isMobile } from 'react-device-detect';
 import Axios from 'axios';
+
 import { config } from "../config";
 import { isValidInput, isValidEmail } from "../Utils";
-import healthydrawing from "../icons/MedicalCare.svg";
+
 import "../componentsStyle/Signup.css";
+import healthydrawing from "../icons/MedicalCare.svg";
 import CheckMark from "../icons/checkmark.png";
 import CrossMark from "../icons/crossmark.png"
-import { isMobile } from 'react-device-detect';
+
+//Error messages displayed to the user
+const gErrorMessages = {
+    "": "",
+    "BLANK_FIELD": "Please fill in all fields.",
+    "PASSWORD_MISMATCH": "Please make sure passwords match.", 
+    "INVALID_EMAIL": "Please enter a valid email address.",
+    "INVALID_PASSWORD": "Please enter a valid password.", 
+    "NO_SERVER_CONNECTION": "Couldn't connect to server.",
+    "ACCOUNT_EXISTS": "That email is already in use. Please choose another.",
+}
+
+//TODO: Age field should really be birthday.
+//TODO: Error handling for when there's no internet connection.
 
 export default class Signup extends Component {
     /*
@@ -19,25 +35,73 @@ export default class Signup extends Component {
     */
     constructor(props) {
         super(props);
+
         this.state = {
             name: "", //User's name input
             email: "", //User's email input
             password: "", //User's password input
             confirmedPassword: "", //User's confirmed password input
             age: "", //User's age input
-            errorMessage: "",
-            accountExistsError: false, //Helps with error message if account with email already exists
-            passwordMismatchError: false, //Helps with error message when user enters password and confirm password that don't match
-            emptyFieldError: false, //Helps with error message user leaves fields blank
-            //Is password strong?
-            IsPasswordLengthStrong: false, //Helps with showing the check mark for 'Password must be at least 8 characters long'
-            DoesPasswordHaveUpperandLowerCase: false, //Helps with showing the check mark for 'Password must contain uppercase(A-Z) and lowercase(a-z) characters'
-            DoesPasswordHaveNumber: false, //Helps with showing the check mark for 'Password must contain a number'
-            
+            errorMessage: "", //The type of error message to display (if any)
         };
-        this.PasswordChecker = this.PasswordChecker.bind(this);
     }
-    
+
+    /*
+        Processes the user's sign up submission. Redirects to the login page upon a successful submission.
+        param e: The sign up submission event.
+    */
+    handleSignup = async (e) => {
+        e.preventDefault(); //Prevents page reload on form submission
+
+        if (this.isAnyFieldLeftBlank()) {
+            this.setState({errorMessage: "BLANK_FIELD"});
+            return; //A field was left blank so don't finalize sign up
+        }
+
+        if (this.passwordMismatch()) {
+            this.setState({errorMessage: "PASSWORD_MISMATCH"});
+            return; //User's password and confirm password field don't match
+        }
+
+        if (!isValidEmail(this.state.email)) {
+            this.setState({errorMessage: "INVALID_EMAIL"});
+            return; //User didn't enter a proper email
+        }
+
+        if (!isValidInput(this.state.password)
+        || !(this.isPasswordLengthStrong() && this.doesPasswordHaveUpperandLowerCase() && this.doesPasswordHaveNumber())) {
+            this.setState({errorMessage: "INVALID_PASSWORD"})
+            return; //User didn't enter proper passwords
+        }
+
+        //Try to sign up the user
+        let response;
+
+        try {
+            response = await Axios.post(`${config.dev_server}/signup`, {
+                name: this.state.name,
+                email: this.state.email,
+                password: this.state.password,
+                age: this.state.age
+            })
+        }
+        catch (res) { //No internet connection
+            this.setState({errorMessage: "ACCOUNT_EXISTS"});
+            return;
+        }
+
+        //Process response from server
+        if (response.status === 200) { //Sign-up was a success
+            //Redirect to login page
+            this.props.history.push('/login');
+            window.location.reload(); //Update nav bar
+
+        }
+        else { //Account already exists
+            this.setState({errorMessage: "ACCOUNT_EXISTS"});
+        }
+    }
+
     /*
         Checks if the user didn't fill out all fields on the form.
         returns: true if there is an empty field, false if all fields are filled in.
@@ -59,59 +123,37 @@ export default class Signup extends Component {
     }
 
     /*
-        Processes the user's sign up submission. Redirects to the login page upon a successful submission.
-        param e: The sign up submission event.
+        Checks if the user entered a password of required length.
+        returns: true if the user's input password is long enough, false otherwise.
     */
-    handleSignup = async (e) => {
-        e.preventDefault(); //Prevents page reload on form submission
+    isPasswordLengthStrong() {
+        return this.state.password.length >= 8; //Min 8 characters.
+    }
 
-        if (this.isAnyFieldLeftBlank()) {
-            this.setState({ emptyFieldError: true, accountExistsError: false, passwordMismatchError: false });
-            return; //A field was left blank so don't finalize sign up
-        }
+    /*
+        Checks if the user entered a password with both a lowercase and uppercase letter.
+        returns: true if the user's input password has both a lowercase and uppercase letter, false otherwise.
+    */
+    doesPasswordHaveUpperandLowerCase() {
+        return this.state.password.match(/[a-z]+/) && this.state.password.match(/[A-Z]+/);
+    }
 
-        if (this.passwordMismatch()) {
-            this.setState({ emptyFieldError: false, accountExistsError: false, passwordMismatchError: true });
-            return; //User's password and confirm password field don't match
-        }
+    /*
+        Checks if the user entered a password with a number.
+        returns: true if the user's input password has a number, false otherwise.
+    */
+    doesPasswordHaveNumber() {
+        return this.state.password.match(/[0-9]+/);
+    }
 
-        if (!isValidEmail(this.state.email)) {
-            this.setState({ errorMessage: "Invalid Email Address" });
-            return;
-        }
+    /*
+        Updates the age field as the user types their input.
+    */
+    updateAge(age) {
+        if (age !== "") //Don't modify the input if the user is trying to wipe the field
+            age = Math.min(Math.max(1, age.toString()), 150); //Force a number between 1 and 150
 
-        if (!isValidInput(this.state.password)) {
-            this.setState({ errorMessage: "Invalid Password" })
-            return;
-        }
-
-        if(!(this.state.IsPasswordLengthStrong && this.state.DoesPasswordHaveUpperandLowerCase && this.state.DoesPasswordHaveNumber)){
-            this.setState({ errorMessage: "Invalid Password" })
-            return;
-        }
-        //Try to sign up the user
-        let response;
-        try {
-            response = await Axios.post(`${config.dev_server}/signup`, {
-                name: this.state.name,
-                email: this.state.email,
-                password: this.state.password,
-                age: this.state.age
-            })
-        } catch (res) {//Account already exists
-            this.setState({ emptyFieldError: false, accountExistsError: true, passwordMismatchError: false });
-            return;
-        }
-
-        //Process response from server
-        if (response.status === 200) { //Sign-up was a success
-
-            //Redirect to login page
-            this.props.history.push('/login');
-        }
-        else { //Account already exists
-            this.setState({ emptyFieldError: false, accountExistsError: true, passwordMismatchError: false });
-        }
+        this.setState({age: age});
     }
 
     /*
@@ -119,73 +161,49 @@ export default class Signup extends Component {
         returns: Error text if error exists.
     */
     getErrorText() {
-        return (this.state.emptyFieldError) ? //User left a field blank
-            <h6>Please fill in all fields.</h6>
-            : (this.state.passwordMismatchError) ? //Passwords don't match
-                <h6>Please make sure passwords match.</h6>
-                : (this.state.accountExistsError) ? //Entered email is already in use
-                    <h6>That email is already in use. Please choose another.</h6>
-                    : "";
+        return <h6>{gErrorMessages[this.state.errorMessage]}</h6>;
     }
 
-    PasswordChecker(e) {
-        //checks password length
-        if(e.target.value.length >= 7){
-            this.setState({IsPasswordLengthStrong: true})
-        }
-        else{
-            this.setState({IsPasswordLengthStrong: false})
-        }
-        //Password contains one uppercase and one lowercase char
-        if(e.target.value.match(/[a-z]+/) && e.target.value.match(/[A-Z]+/)){
-            this.setState({DoesPasswordHaveUpperandLowerCase: true})
-        }
-        else{
-            this.setState({DoesPasswordHaveUpperandLowerCase: false})
-        }
-        //Password contains a number
-        if(e.target.value.match(/[0-9]+/)){
-            this.setState({DoesPasswordHaveNumber: true})
-        }
-        else{
-            this.setState({DoesPasswordHaveNumber: false})
-        }
-    }
     /*
         Print sign up page.
     */
     render() {
-        let signUpError = this.getErrorText();
+        var inputErrorClass = "signup-error-input"; //Used to colour boxes with mistakes in pink
+        var signUpError = this.getErrorText();
+        var titleMessage = !isMobile ? <h4>Join us to <span className="signup-form-join-message">show off your toenails</span></h4> : []; //Don't show on mobile
+        var showPicture = !isMobile && window.innerWidth >= 1000;
+
         return (
             <div>
-                {isMobile ? '' : <img src={healthydrawing} className="healthcareIcone" alt="Drawing" />}
-                <Container className="shadow p-3 mb-5 bg-white rounded" id={isMobile ? "SignUpContainerMobile" : "SignUpContainer"}>
-                    <h2 id="SignupTitle">Sign Up</h2>
-                    <h4>Join us to <span id="SignupJoinMessage">show off your toenails</span></h4>
-                    <Row style={{ marginTop: "-3%" }}>
+                {showPicture ? <img src={healthydrawing} className="signup-picture" alt="" /> : ""}
+
+                <Container className="shadow p-3 mb-1 bg-white rounded" id={"signup-form-container" + (!showPicture ? "-mobile" : "")}>
+                    <h2 className="signup-form-title">Sign Up</h2>
+                    {titleMessage}
+
+                    <Row>
                         <Col>
                             {/* Error message if needed */}
                             <div className="signup-error">
                                 {signUpError}
-                                <h6>
-                                    {this.state.errorMessage}
-                                </h6>
                             </div>
 
-                            <Form className={isMobile ? "signup-formMobile" : "signup-form"} onSubmit={this.handleSignup.bind(this)}>
+                            <Form className={"signup-form" + (!showPicture ? "-mobile" : "")} onSubmit={this.handleSignup.bind(this)}>
 
                                 {/* Email Input */}
                                 <Form.Group controlId="formBasicEmail">
-                                    <Form.Label>Email address</Form.Label>
+                                    <Form.Label>Email Address</Form.Label>
                                     <Form.Control
                                         type="email"
                                         placeholder="example@gmail.com"
+                                        autoComplete="email"
                                         value={this.state.email}
                                         onChange={(e) =>
-                                            this.setState({ email: e.target.value })
+                                            this.setState({email: e.target.value})
                                         }
-                                        className={(this.state.emptyFieldError && this.state.email === "")
-                                            || this.state.accountExistsError ? "signup-error-input" : ""}
+                                        className={(this.state.errorMessage === "BLANK_FIELD" && this.state.email === "")
+                                            || this.state.errorMessage === "INVALID_EMAIL"
+                                            || this.state.errorMessage === "ACCOUNT_EXISTS" ? inputErrorClass : ""}
                                     />
                                     <Form.Text className="text-muted">
                                         Your email is secure in our hands.
@@ -197,34 +215,63 @@ export default class Signup extends Component {
                                     <Form.Label>Password</Form.Label>
                                     <Form.Control
                                         type="password"
-                                        placeholder="12345678"
+                                        placeholder="Example123"
+                                        autoComplete="new-password"
                                         value={this.state.password}
-                                        onChange={(e) => {
-                                            this.setState({ password: e.target.value })
-                                            this.PasswordChecker(e)
-                                            }
-                                        }
-                                        className={(this.state.emptyFieldError && this.state.password === "")
-                                            || this.state.passwordMismatchError ? "signup-error-input" : ""}
+                                        onChange={(e) => {this.setState({ password: e.target.value })}}
+                                        className={(this.state.errorMessage === "BLANK_FIELD" && this.state.password === "")
+                                            || this.state.errorMessage === "INVALID_PASSWORD"
+                                            || this.state.errorMessage === "PASSWORD_MISMATCH" ? inputErrorClass : ""}
                                     />
-                                    <Form.Label id="StrongPassword"><Form.Text className="text-muted">{this.state.IsPasswordLengthStrong ? <img src={CheckMark} id="PasswordCheckMark" alt="checkmark"/> : <img src={CrossMark} id="PasswordCheckMark" alt="crosskmark"/>}Password must be at least 8 characters long</Form.Text></Form.Label>
-                                    <Form.Label id="StrongPassword"><Form.Text className="text-muted">{this.state.DoesPasswordHaveUpperandLowerCase ? <img src={CheckMark} id="PasswordCheckMark" alt="checkmark"/> : <img src={CrossMark} id="PasswordCheckMark" alt="crosskmark"/>}Password must contain uppercase(A-Z) and lowercase(a-z) characters</Form.Text></Form.Label>
+
+                                    {/* Confirmations of good password */}
+                                    <Form.Label className="strong-password-desc">
+                                        <Form.Text className="text-muted">
+                                            {
+                                                this.isPasswordLengthStrong()
+                                                ? <img src={CheckMark} className="password-check-mark" alt="checkmark"/>
+                                                : <img src={CrossMark} className="password-check-mark" alt="crossmark"/>
+                                            }
+                                           {" Password must be at least 8 characters long."} {/*Writing it in a string keeps the space at the front*/}
+                                        </Form.Text>
+                                    </Form.Label>
+                                    <Form.Label className="strong-password-desc">
+                                        <Form.Text className="text-muted">
+                                            {
+                                                this.doesPasswordHaveUpperandLowerCase()
+                                                ? <img src={CheckMark} className="password-check-mark" alt="checkmark"/>
+                                                : <img src={CrossMark} className="password-check-mark" alt="crossmark"/>
+                                            }
+                                            {" Password must contain uppercase (A-Z) and lowercase (a-z) characters."}
+                                        </Form.Text>
+                                    </Form.Label>
                                     <br></br>
-                                    <Form.Label ><Form.Text className="text-muted">{this.state.DoesPasswordHaveNumber ? <img src={CheckMark} id="PasswordCheckMark" alt="checkmark"/> : <img src={CrossMark} id="PasswordCheckMark" alt="crosskmark"/>}Password must contain a number</Form.Text></Form.Label>
+                                    <Form.Label >
+                                        <Form.Text className="text-muted">
+                                            {
+                                                this.doesPasswordHaveNumber()
+                                                ? <img src={CheckMark} className="password-check-mark" alt="checkmark"/>
+                                                : <img src={CrossMark} className="password-check-mark" alt="crossmark"/>
+                                            }
+                                            {" Password must contain a number (0-9)."}
+                                        </Form.Text>
+                                    </Form.Label>
                                 </Form.Group>
 
                                 {/* Confirm Password Input */}
-                                <Form.Group controlId="formBasicConfirmPassword" className="ConfirmPasswordInput">
+                                <Form.Group controlId="formBasicConfirmPassword" className="confirm-password-input">
                                     <Form.Label>Confirm Password</Form.Label>
                                     <Form.Control
                                         type="password"
-                                        placeholder="12345678"
+                                        placeholder="Example123"
+                                        autoComplete="new-password"
                                         value={this.state.confirmedPassword}
                                         onChange={(e) =>
-                                            this.setState({ confirmedPassword: e.target.value })
+                                            this.setState({confirmedPassword: e.target.value})
                                         }
-                                        className={(this.state.emptyFieldError && this.state.confirmedPassword === "")
-                                            || this.state.passwordMismatchError ? "signup-error-input" : ""}
+                                        className={(this.state.errorMessage === "BLANK_FIELD" && this.state.password === "")
+                                            || this.state.errorMessage === "INVALID_PASSWORD"
+                                            || this.state.errorMessage === "PASSWORD_MISMATCH" ? inputErrorClass : ""}
                                     />
                                 </Form.Group>
 
@@ -234,11 +281,12 @@ export default class Signup extends Component {
                                     <Form.Control
                                         type="text"
                                         placeholder="Bob Smith"
+                                        autoComplete="name"
                                         value={this.state.name}
                                         onChange={(e) =>
-                                            this.setState({ name: e.target.value })
+                                            this.setState({name: e.target.value})
                                         }
-                                        className={(this.state.emptyFieldError && this.state.name === "") ? "signup-error-input" : ""}
+                                        className={(this.state.errorMessage === "BLANK_FIELD" && this.state.name === "") ? inputErrorClass : ""}
                                     />
                                 </Form.Group>
 
@@ -249,10 +297,8 @@ export default class Signup extends Component {
                                         type="number"
                                         placeholder="50"
                                         value={this.state.age}
-                                        onChange={(e) =>
-                                            this.setState({ age: e.target.value })
-                                        }
-                                        className={(this.state.emptyFieldError && this.state.age === "") ? "signup-error-input" : ""}
+                                        onChange={(e) => this.updateAge(e.target.value)}
+                                        className={(this.state.errorMessage === "BLANK_FIELD" && this.state.age === "") ? inputErrorClass : ""}
                                     />
                                 </Form.Group>
 

@@ -47,15 +47,11 @@
 }
 
 .password-check-mark {
-    width: 3%;
+    height: 1rem;
 }
 
 .strong-password-desc {
     margin-bottom: -2%;
-}
-
-.confirm-password-input {
-    margin-top: -2%; /*Make space for descriptions above it*/
 }
 
 .react-date-picker__wrapper {

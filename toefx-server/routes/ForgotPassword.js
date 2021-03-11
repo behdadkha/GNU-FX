@@ -24,7 +24,7 @@ function hashedURL(email) {
 forgotPasswordRoutes.route('').post((req, res) => {
     userSchema.findOne({ email: req.body.email }, async (err, user) => {
         if (err || user === null) {
-            return res.json({ msg: "Email address does not exist" })
+            return res.json({ msg: "INVALID_EMAIL" })
         }
         else {
             const email = req.body.email
@@ -36,18 +36,22 @@ forgotPasswordRoutes.route('').post((req, res) => {
                     pass: "Toefxdevteam123"
                 }
             });
+
             var mailOption = {
                 from: "toefxdevteam@gmail.com",
                 to: req.body.email,
-                subject: "ToeFX forgot password",
-                text: `Hi ${user.name}, please click on the link below to reset your password. If you have not requested to reset your password, simply ignore this email. ${urlTobeSent} Thank you`
+                subject: "ToeFX Password Recovery",
+                text: `${user.name},\n\nPlease click on the link below to reset your password. If you have not requested to reset your password, simply ignore this email.\n\n${urlTobeSent}\n\nThank you,\n\nToeFX Team`
             }
+            
+            //process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0; //Needed for testing
             smtpTransport.sendMail(mailOption, (err, resp) => {
                 if (err) {
-                    return res.json({ msg: "Something went wrong" })
+                    console.log(err);
+                    return res.json({ msg: "UNKNOWN_ERROR" })
                 }
                 else {
-                    return res.json({ msg: "An email has been sent to the email address." })
+                    return res.json({ msg: "" }) //Indication of success is no error message being returned
                 }
             })
         }
@@ -74,47 +78,43 @@ function hashPassword(password, hashRounds) {
     });
 }
 
-function checkEmails(HashedEmail, TextEmail) {
+function checkEmails(hashedEmail, textEmail) {
     return new Promise((Resolve, Reject) => {
-        bcrypt.compare(TextEmail, HashedEmail, (err, result) => {
-            if (result) {
-                Resolve("Valid email")
-            }
-            else {
-                Resolve("Invalid email")
-            }
+        bcrypt.compare(textEmail, hashedEmail, (err, result) => {
+            if (result)
+                Resolve("VALID_EMAIL")
+            else
+                Resolve("INVALID_EMAIL")
         })
     });
 }
+
 forgotPasswordRoutes.route('/checkEmails').post( async (req, res) => {
-    const response = await checkEmails(req.body.emailFromURL, req.body.emailInput)
-    const password1 = req.body.password
-    const password2 = req.body.confirmPassword
-    if (response === "Valid email") {
-        userSchema.findOne({ email: req.body.emailInput }, async (err, user) => {
+    const response = await checkEmails(req.body.emailFromURL, req.body.emailInput);
+    const password = req.body.password;
+
+    if (response === "VALID_EMAIL") {
+        userSchema.findOne({email: req.body.emailInput}, async (err, user) => {
             if (err || user === null) {
-                return res.json({ msg: "Email address does not exist" })
+                return res.json({errorMsg: "INVALID_EMAIL"}); //Should never actually get here
             }
             else {
-                const email = req.body.emailInput
-                if(password1 === password2){
-                    //Hash the password
-                    const rounds = 10; //10 rounds of hashing
-                    user.password = await hashPassword(password1, rounds);
+                const email = req.body.emailInput;
 
-                    //Save the new encrypted password for security reasons
-                    user.save().then(() => {
-                        res.status(200).json({ msg: "Password Changed. Redirecting to Login page..." });
-                    }).catch(err => console.log(err));
-                }
-                else{
-                    return res.json({msg: "Passwords do not match"})
-                }
+                //Hash the password
+                const rounds = 10; //10 rounds of hashing
+                user.password = await hashPassword(password, rounds);
+
+                //Save the new encrypted password for security reasons
+                user.save().then(() => {
+                    res.status(200).json({errorMsg: "" }); //No error - success
+                }).catch(err => console.log(err));
             }
         })
     }
-    else{
-        return res.json({ msg: "Email address is not valid"})
+    else {
+        return res.json({errorMsg: "INVALID_EMAIL"});
     }
 })
+
 module.exports = forgotPasswordRoutes;

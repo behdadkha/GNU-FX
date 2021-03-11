@@ -1,5 +1,5 @@
 /*
-    Class for the form user's can use to log in to the site.
+    Class for the form users can use to log in to the site.
 */
 
 import React, {Component} from "react";
@@ -167,7 +167,7 @@ class Login extends Component {
                     <h3 className={titleClass}>Welcome,</h3>
                     <h5 className={titleClass}>Sign in to ToeFX!</h5>
                     <Row>
-                        <Col>
+                        <Col> {/* Needed so error message always has space */}
                             {/* Error message if needed */}
                             <div className="login-form-error">
                                 <h6 className="error-text">{this.getErrorText()}</h6>

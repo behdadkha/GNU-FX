@@ -19,7 +19,7 @@ const userSchema = new schema({
     },
     birthday: {
         type : String,
-        required : true,
+        required : false,
     },
     images: {
         type : Array,

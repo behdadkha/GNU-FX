@@ -28,7 +28,7 @@ const gToeNames = ["Big Toe", "Index Toe", "Middle Toe", "Fourth Toe", "Little T
 const gToeImages = [LeftFootToe0, LeftFootToe1, LeftFootToe2, LeftFootToe3, LeftFootToe4]
 
 //Pages with the navigation bar at the top when using a desktop computer
-const gDesktopPagesWithNavbar = ["/", "/login", "/signup", "/upload", "/user/resetPassword", "/forgotpassword"];
+const gDesktopPagesWithoutNavbar = ["/user", "/myaccount"];
 
 //Pages without the navigation bar at the top when using a mobile device
 const gMobilePagesWithoutNavbar = ["/", "/login", "/signup"]
@@ -39,7 +39,7 @@ const gMobilePagesWithoutNavbar = ["/", "/login", "/signup"]
 */
 export function DoesPageHaveNavBar() {
     if (!isMobile) //Desktop
-        return gDesktopPagesWithNavbar.includes(window.location.pathname);
+        return !gDesktopPagesWithoutNavbar.includes(window.location.pathname);
 
     return !gMobilePagesWithoutNavbar.includes(window.location.pathname);
 }
@@ -135,6 +135,45 @@ export function IsValidInput(input) {
 export function IsValidEmail(email) {
     const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(email);
+}
+
+/*
+    Checks if the user entered a password of required length.
+    param password: The password to check.
+    returns: true if the user's input password is long enough, false otherwise.
+*/
+export function IsPasswordLengthStrong(password) {
+    return password.length >= 8; //Min 8 characters.
+}
+
+/*
+    Checks if the user entered a password with both a lowercase and uppercase letter.
+    param password: The password to check.
+    returns: true if the user's input password has both a lowercase and uppercase letter, false otherwise.
+*/
+export function DoesPasswordHaveUpperandLowerCase(password) {
+    return password.match(/[a-z]+/) && password.match(/[A-Z]+/);
+}
+
+/*
+    Checks if the user entered a password with a number.
+    param password: The password to check.
+    returns: true if the user's input password has a number, false otherwise.
+*/
+export function DoesPasswordHaveNumber(password) {
+    return password.match(/[0-9]+/);
+}
+
+/*
+    Checks if the user entered a good password that can be saved for them.
+    param password: The password to check.
+    returns: true if the user's input password is good, false otherwise.
+*/
+export function IsGoodPassword(password) {
+    return IsValidInput(password)
+        && IsPasswordLengthStrong(password)
+        && DoesPasswordHaveUpperandLowerCase(password)
+        && DoesPasswordHaveNumber(password);
 }
 
 /*

@@ -2,14 +2,14 @@
     Class for the form user's can use to sign up for the site.
 */
 
-import React, { Component } from "react";
-import { Col, Row, Container, Form, Button } from "react-bootstrap";
-import { isMobile } from 'react-device-detect';
-import { connect } from "react-redux";
+import React, {Component} from "react";
+import {Col, Row, Container, Form, Button} from "react-bootstrap";
+import {isMobile} from 'react-device-detect';
+import {connect} from "react-redux";
 import Axios from 'axios';
 
-import { config } from "../config";
-import { isValidInput, isValidEmail } from "../Utils";
+import {config} from "../config";
+import {IsValidInput, IsValidEmail} from "../Utils";
 
 import "../componentsStyle/Signup.css";
 import healthydrawing from "../icons/MedicalCare.svg";
@@ -75,12 +75,12 @@ class Signup extends Component {
             return; //User's password and confirm password field don't match
         }
 
-        if (!isValidEmail(this.state.email)) {
+        if (!IsValidEmail(this.state.email)) {
             this.setState({errorMessage: "INVALID_EMAIL"});
             return; //User didn't enter a proper email
         }
 
-        if (!isValidInput(this.state.password)
+        if (!IsValidInput(this.state.password)
         || !(this.isPasswordLengthStrong() && this.doesPasswordHaveUpperandLowerCase() && this.doesPasswordHaveNumber())) {
             this.setState({errorMessage: "INVALID_PASSWORD"})
             return; //User didn't enter proper passwords

@@ -33,8 +33,12 @@
     height: 30px;
 }
 
+.error-text {
+    color: var(--error-text);
+}
+
 .signup-error-input {
-    background-color: pink !important;
+    background-color: var(--error-input) !important;
 }
 
 .password-check-mark {

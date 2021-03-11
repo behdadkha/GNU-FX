@@ -5,8 +5,8 @@
 
 import React, {Component} from "react";
 import {Container, Button} from "react-bootstrap";
-import { isMobile } from "react-device-detect";
-import { connect } from "react-redux";
+import {isMobile} from "react-device-detect";
+import {connect} from "react-redux";
 
 import "../componentsStyle/FirstPage.css";
 
@@ -46,9 +46,13 @@ class FirstPage extends Component {
         The only way to return to the original screen on mobile is by logging out.
     */
     componentDidMount() {
-        if (isMobile && this.props.auth.isAuth)
+        if (isMobile) //There's no first page on mobile, so redirect to appropriate page
         {
-            this.props.history.push("/user");
+            if (this.props.auth.isAuth) //User is logged in
+                this.props.history.push("/user"); //Go to image view
+            else
+                this.props.history.push("/login"); //Go to login screen
+
             window.location.reload(); //Helps fix navbar
         }
     }

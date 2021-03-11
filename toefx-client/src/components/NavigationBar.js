@@ -7,6 +7,7 @@ import {Navbar, Nav} from "react-bootstrap";
 import {isMobile} from "react-device-detect";
 import {connect} from "react-redux";
 
+import {DoesPageHaveNavBar} from "../Utils";
 import store from "../Redux/store";
 import {LogOutUser} from "../Redux/Actions/authAction";
 import "../componentsStyle/Navbar.css";
@@ -88,15 +89,14 @@ class NavigationBar extends Component {
         Prints the navigation bar to the top of the screen.
     */
     render() {
-        var desktopPagesWithNavbar = ["/", "/login", "/signup", "/upload", "/user/resetPassword", "/forgotpassword"];
         var navBarClass = "NavbarFont p-3" + (!isMobile ? " bg-white mb-3 shadow-sm rounded" : "");
         var menuLinks = this.getMenuLinks();
-        var homeLink = isMobile && this.props.auth.isAuth ? "/user" : "/"; //Mobile logged in redirects to image page
+        var homeLink = isMobile && this.props.auth.isAuth ? "/user" : isMobile ? "login" : "/"; //Mobile logged in redirects to image page, otherwise mobile redirects to login page
 
         return (
             <div>
                 {
-                    desktopPagesWithNavbar.includes(window.location.pathname) || isMobile ? //Navbar on this page
+                    DoesPageHaveNavBar() ? //Navbar on this page
                         <Navbar bg="light" expand="md" className={navBarClass}>
                             {/* Link to home page or dashboard on mobile*/}
                             <Navbar.Brand href={homeLink}>

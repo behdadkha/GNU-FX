@@ -22,10 +22,16 @@
     margin: auto;
     text-align: left;
     width: 90%;
+    height: 100%;
 }
 
 .login-form-title {
     font-family: 'Balsamiq Sans', cursive
+}
+
+.login-form-title-mobile {
+    text-align: left;
+    margin-left: 5%;
 }
 
 .login-form-error {
@@ -34,12 +40,32 @@
 }
 
 .login-error-input {
-    background-color: pink !important;
+    background-color: var(--error-input) !important;
 }
 
+/*.forgot-password-button {
+    color: var(--button-color);
+}*/
+
+.login-button {
+    font-size: 1.5rem !important;
+    width: 100%;
+    margin-top: 10%;
+}
 
 /* CSS specifically for mobile */
 
 #login-container-mobile { /*Uses id instead of class*/
     margin-bottom: 0px !important;
+}
+
+.login-form-buttons {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 60%;
+}
+
+.login-form-signup-redirect {
+    text-align: center;
 }

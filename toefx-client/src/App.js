@@ -7,7 +7,7 @@ import { Provider } from "react-redux";
 import { Route, BrowserRouter as Router, Switch } from "react-router-dom";
 
 import jwt_decode from "jwt-decode";
-import { SetAuthHeader } from "./Utils";
+import {DoesPageHaveNavBar, SetAuthHeader} from "./Utils";
 import FirstPage from "./components/FirstPage";
 import Login from "./components/Login";
 import Navbar from "./components/NavigationBar";
@@ -52,7 +52,6 @@ if (localStorage.jwt) {
 }
 
 function App() {
-    const pagesWithNavbar = ["/", "/signup", "/login", "/upload", "/user/resetPassword", "/forgotpassword"];
     var userPath = (isMobile) ? UserMobile : User; //Different UI depending on device
 
     return (
@@ -61,8 +60,7 @@ function App() {
                     <div className="App">
                         {
                             //Only show the navigation bar on certain pages so no scrolling is required
-                            pagesWithNavbar.includes(window.location.pathname) || isMobile
-                                ?
+                            DoesPageHaveNavBar() ?
                                 <div className="navBar">
                                     <Navbar></Navbar>
                                 </div>

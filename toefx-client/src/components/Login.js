@@ -2,18 +2,18 @@
     Class for the form user's can use to log in to the site.
 */
 
-import React, { Component } from "react";
-import { Col, Row, Container, Form, Button } from "react-bootstrap";
-import { isMobile } from "react-device-detect";
-import { connect } from "react-redux";
+import React, {Component} from "react";
+import {Col, Row, Container, Form, Button} from "react-bootstrap";
+import {isMobile} from "react-device-detect";
+import {connect} from "react-redux";
 import Axios from 'axios';
 
 import jwt_decode from "jwt-decode";
-import { config } from "../config";
+import {config} from "../config";
 import store from "../Redux/store";
-import { SetCurrentUser } from "../Redux/Actions/authAction";
-import { getAndSaveImages, getAndSaveToeData } from "../Redux/Actions/setFootAction";
-import { SetAuthHeader, isValidInput, isValidEmail } from "../Utils";
+import {SetCurrentUser} from "../Redux/Actions/authAction";
+import {getAndSaveImages, getAndSaveToeData} from "../Redux/Actions/setFootAction";
+import {SetAuthHeader, IsValidInput, IsValidEmail} from "../Utils";
 
 import loginImage from '../icons/Login.svg';
 import "../componentsStyle/Login.css";
@@ -21,7 +21,6 @@ import "../componentsStyle/Login.css";
 //Error messages displayed to the user
 const gErrorMessages = {
     "": "",
-    "BLANK_FIELD": "Please fill in all fields.",
     "INVALID_EMAIL": "Invalid email address.",
     "INVALID_PASSWORD": "Invalid password.", 
     "NO_SERVER_CONNECTION": "Couldn't connect to server.",
@@ -63,12 +62,12 @@ class Login extends Component {
 
         //Check if any field hasn't been filled in
         if (this.isAnyFieldLeftBlank()) {
-            this.setState({errorMessage: "BLANK_FIELD"});
+            this.setState({errorMessage: "INVALID_CREDENTIALS"});
             return; //Don't log in
         }
 
         //Check if user entered bad email
-        if (!isValidEmail(this.state.email)) {
+        if (!IsValidEmail(this.state.email)) {
             this.setState({
                 email: "",
                 errorMessage: "INVALID_EMAIL",
@@ -78,7 +77,7 @@ class Login extends Component {
         }
 
         //Check if user entered bad password
-        if (!isValidInput(this.state.password)) {
+        if (!IsValidInput(this.state.password)) {
             this.setState({
                 password: "",
                 errorMessage: "INVALID_PASSWORD",
@@ -155,8 +154,8 @@ class Login extends Component {
         Displays the login page.
     */
     render() {
-        var inputErrorClass = "login-error-input"; //Used to colour boxes with mistakes in pink
-        var containerClass = "p-3 mb-5 bg-white" + (!isMobile ? " shadow rounded" : "");
+        var titleClass = "login-form-title" + (isMobile ? " login-form-title-mobile" : "");
+        var containerClass = "p-3 mb-5" + (!isMobile ? " bg-white shadow rounded" : "");
 
         return (
             <div>
@@ -165,12 +164,13 @@ class Login extends Component {
                 </div>
     
                 <Container className={containerClass} id={"login-container" + (isMobile ? "-mobile" : "")}>
-                    <h3 className="login-form-title">Login</h3>
+                    <h3 className={titleClass}>Welcome,</h3>
+                    <h4 className={titleClass}>Sign in to ToeFX!</h4>
                     <Row>
                         <Col>
                             {/* Error message if needed */}
                             <div className="login-form-error">
-                                <h6>{this.getErrorText()}</h6>
+                                <h6 className="error-text">{this.getErrorText()}</h6>
                             </div>
 
                             {/* Actual login form */}
@@ -187,9 +187,6 @@ class Login extends Component {
                                         autoComplete="email"
                                         value={this.state.email}
                                         onChange={(e) => this.setState({email: e.target.value.trim()})}
-                                        className={(this.state.errorMessage === "BLANK_FIELD" && this.state.password === "")
-                                            || this.state.errorMessage === "INVALID_EMAIL"
-                                            || this.state.errorMessage === "INVALID_CREDENTIALS" ? inputErrorClass : ""}
                                     />
                                 </Form.Group>
 
@@ -202,24 +199,36 @@ class Login extends Component {
                                         autoComplete="current-password"
                                         value={this.state.password}
                                         onChange={(e) => this.setState({password: e.target.value})}
-                                        className={(this.state.errorMessage === "BLANK_FIELD" && this.state.password === "")
-                                            || this.state.errorMessage === "INVALID_PASSWORD"
-                                            || this.state.errorMessage === "INVALID_CREDENTIALS" ? inputErrorClass : ""}
                                     />
                                 </Form.Group>
+                    
+                                <div className="mt-3 text-right">
+                                    <a className="forgot-password-button" href="/forgotpassword">Forgot Password?</a>
+                                </div>
 
                                 {/* Login Button */}
-                                <div style={{ textAlign: "center", marginTop: "10%" }}>
-                                    <Button variant="primary" type="submit">
+                                <div className = "login-form-buttons">
+                                    <Button className="login-button" type="submit">
                                         Login
-                                </Button>
+                                    </Button>
+
+                                    {/* Sign Up link on mobile */}
+                                    {
+                                        isMobile ?
+                                            <div className = "login-form-signup-redirect">
+                                                <span>
+                                                    {"I'm a new user, "}
+                                                    <Button onClick={() => this.props.history.push("/signup")}>
+                                                        Sign Up
+                                                    </Button>
+                                                </span>
+                                            </div>
+                                        : ""
+                                    }
                                 </div>
                             </Form>
                         </Col>
                     </Row>
-                    <div className="mt-3">
-                        <a href="/forgotpassword">Forgot Password?</a>
-                    </div>
                 </Container>
             </div>
         );

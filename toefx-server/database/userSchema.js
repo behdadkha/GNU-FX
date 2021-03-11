@@ -17,13 +17,9 @@ const userSchema = new schema({
         type : String,
         required : true
     },
-    age: {
-        type : Number,
+    birthday: {
+        type : String,
         required : true,
-        validate : {
-            validator : Number.isInteger,
-            message : '{value} is not an integer value'
-        }
     },
     images: {
         type : Array,

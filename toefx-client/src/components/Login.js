@@ -165,7 +165,7 @@ class Login extends Component {
     
                 <Container className={containerClass} id={"login-container" + (isMobile ? "-mobile" : "")}>
                     <h3 className={titleClass}>Welcome,</h3>
-                    <h4 className={titleClass}>Sign in to ToeFX!</h4>
+                    <h5 className={titleClass}>Sign in to ToeFX!</h5>
                     <Row>
                         <Col>
                             {/* Error message if needed */}

@@ -58,9 +58,9 @@ function createImageFolder(userId) {
     Param name: the name given by the user in the signup form.
     Param email: the email address given by the user.
     Param password: the password in text given by the user.
-    Param age: user's age.
+    Param birthday: user's birthday.
 */
-function createNewUser(name, email, password, age) {
+function createNewUser(name, email, password, birthday) {
     return new Promise((resolve, reject) => {
         //hash rounds
         const rounds = 10;
@@ -69,7 +69,7 @@ function createNewUser(name, email, password, age) {
             bcrypt.hash(password, salt, (err, hash) => {
                 if (err) throw err;
                 //creating a new user with the hashed password
-                const newUser = new userSchema({ email: email, name: name, password: hash, images: [], age: age });
+                const newUser = new userSchema({ email: email, name: name, password: hash, images: [], birthday: birthday });
                 newUser.save().then(() => {
                     console.log("new user added to db");
                     resolve(newUser);
@@ -157,13 +157,13 @@ app.post('/login', (req, res) => {
 /*
     If any of the required inputs are empty or undefined, returns an error message
 */
-function checkInput(name, email, password, age) {
+function checkInput(name, email, password, birthday) {
     // if required input is empty
-    if (name === "" || email === "" || password === "" || age === "") {
+    if (name === "" || email === "" || password === "" || birthday === "") {
         return ("Required input is empty");
     }
     //if required input is undefined
-    else if (name === undefined || email === undefined || password === undefined || age === undefined) {
+    else if (name === undefined || email === undefined || password === undefined || birthday === undefined) {
         return ("Required input is undefined");
     }
     else {
@@ -183,12 +183,12 @@ function validateEmail(email){
     Param name: the name given by the user in the signup form.
     Param email: the email address given by the user.
     Param password: the password in text given by the user.
-    Param age: user's age.
+    Param birthday: user's birthday.
 */
 app.post('/signup', (req, res) => {
+    const { name, email, password, birthday } = req.body;
+    const inputValidMsg = checkInput(name, email, password, birthday);
 
-    const { name, email, password, age } = req.body;
-    const inputValidMsg = checkInput(name, email, password, age);
     if (inputValidMsg !== "NOERROR") {
         return res.status(400).json({ msg: inputValidMsg });
     }
@@ -205,7 +205,7 @@ app.post('/signup', (req, res) => {
             else {
                 try {
                     //creating a new user
-                    const user = await createNewUser(name, email, password, age);
+                    const user = await createNewUser(name, email, password, birthday);
                     //creating a new image folder for the user
                     createImageFolder(user.id).then(() => {
                         createEmptyToeEntery(user.id).then(() => {

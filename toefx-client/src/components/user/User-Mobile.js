@@ -11,7 +11,6 @@ import { connect } from "react-redux";
 import { GetFootSymbolByActive, GetToeSymbolImage, GetImageURLByName, LEFT_FOOT_ID, RIGHT_FOOT_ID, TOE_COUNT } from "../../Utils";
 import store from "../../Redux/store";
 import { getAndSaveImages, getAndSaveToeData } from "../../Redux/Actions/setFootAction";
-import Sidebar from './Sidebar';
 
 import '../../componentsStyle/User-Mobile.css';
 

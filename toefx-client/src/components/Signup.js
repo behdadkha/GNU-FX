@@ -2,8 +2,9 @@
     Class for the form user's can use to sign up for the site.
 */
 
-import React, {Component} from "react";
+import React, {Component, useState} from "react";
 import {Col, Row, Container, Form, Button} from "react-bootstrap";
+import DatePicker from 'react-date-picker';
 import {isMobile} from 'react-device-detect';
 import {connect} from "react-redux";
 import Axios from 'axios';
@@ -24,10 +25,9 @@ const gErrorMessages = {
     "INVALID_EMAIL": "Please enter a valid email address.",
     "INVALID_PASSWORD": "Please enter a valid password.", 
     "NO_SERVER_CONNECTION": "Couldn't connect to server.",
-    "ACCOUNT_EXISTS": "That email is already in use. Please choose another.",
+    "ACCOUNT_EXISTS": "That email is already in use.\nPlease choose another.",
 }
 
-//TODO: Age field should really be birthday.
 //TODO: Error handling for when there's no internet connection.
 
 class Signup extends Component {
@@ -44,6 +44,7 @@ class Signup extends Component {
             confirmedPassword: "", //User's confirmed password input
             age: "", //User's age input
             errorMessage: "", //The type of error message to display (if any)
+            birthday: "",
         };
     }
 
@@ -94,7 +95,7 @@ class Signup extends Component {
                 name: this.state.name,
                 email: this.state.email,
                 password: this.state.password,
-                age: this.state.age
+                birthday: this.state.birthday.toJSON().split("T")[0], //Don't include time data
             })
         }
         catch (res) { //No internet connection
@@ -123,7 +124,7 @@ class Signup extends Component {
             || this.state.email === ""
             || this.state.password === ""
             || this.state.confirmedPassword === ""
-            || this.state.age === "";
+            || this.state.birthday === "";
     }
 
     /*
@@ -159,45 +160,37 @@ class Signup extends Component {
     }
 
     /*
-        Updates the age field as the user types their input.
-    */
-    updateAge(age) {
-        if (age !== "") //Don't modify the input if the user is trying to wipe the field
-            age = Math.min(Math.max(1, age.toString()), 150); //Force a number between 1 and 150
-
-        this.setState({age: age});
-    }
-
-    /*
         Gets the appropriate text to display to the user upon an error.
         returns: Error text if error exists.
     */
     getErrorText() {
-        return <h6>{gErrorMessages[this.state.errorMessage]}</h6>;
+        return gErrorMessages[this.state.errorMessage];
     }
 
     /*
         Print sign up page.
     */
     render() {
+        var titleClass = "signup-form-title" + (isMobile ? " signup-form-title-mobile" : "");
         var inputErrorClass = "signup-error-input"; //Used to colour boxes with mistakes in pink
         var signUpError = this.getErrorText();
-        var titleMessage = !isMobile ? <h4>Join us to <span className="signup-form-join-message">show off your toenails</span></h4> : []; //Don't show on mobile
         var showPicture = !isMobile && window.innerWidth >= 1000;
 
         return (
             <div>
                 {showPicture ? <img src={healthydrawing} className="signup-picture" alt="" /> : ""}
 
-                <Container className="shadow p-3 mb-1 bg-white rounded" id={"signup-form-container" + (!showPicture ? "-mobile" : "")}>
-                    <h2 className="signup-form-title">Sign Up</h2>
-                    {titleMessage}
+                <Container className={"p-3" + (!isMobile ? " mb-1 bg-white shadow rounded" : " mb-3")}
+                           id={"signup-form-container" + (!showPicture ? "-mobile" : "")}
+                >
+                    <h3 className={titleClass}>Create Account,</h3>
+                    <h5 className={titleClass}>Join us to <span className="signup-form-join-message">show off your toenails!</span></h5>
 
                     <Row>
                         <Col>
                             {/* Error message if needed */}
                             <div className="signup-error">
-                                {signUpError}
+                                <h6 className="error-text">{signUpError}</h6>
                             </div>
 
                             <Form className={"signup-form" + (!showPicture ? "-mobile" : "")} onSubmit={this.handleSignup.bind(this)}>
@@ -278,8 +271,7 @@ class Signup extends Component {
                                         placeholder="Example123"
                                         autoComplete="new-password"
                                         value={this.state.confirmedPassword}
-                                        onChange={(e) =>
-                                            this.setState({confirmedPassword: e.target.value})
+                                        onChange={(e) => this.setState({confirmedPassword: e.target.value})
                                         }
                                         className={(this.state.errorMessage === "BLANK_FIELD" && this.state.password === "")
                                             || this.state.errorMessage === "INVALID_PASSWORD"
@@ -295,30 +287,45 @@ class Signup extends Component {
                                         placeholder="Bob Smith"
                                         autoComplete="name"
                                         value={this.state.name}
-                                        onChange={(e) =>
-                                            this.setState({name: e.target.value})
-                                        }
+                                        onChange={(e) => this.setState({name: e.target.value})}
                                         className={(this.state.errorMessage === "BLANK_FIELD" && this.state.name === "") ? inputErrorClass : ""}
                                     />
                                 </Form.Group>
 
                                 {/* Age Input */}
                                 <Form.Group controlId="formAge">
-                                    <Form.Label>Age</Form.Label>
-                                    <Form.Control
-                                        type="number"
-                                        placeholder="50"
-                                        value={this.state.age}
-                                        onChange={(e) => this.updateAge(e.target.value)}
-                                        className={(this.state.errorMessage === "BLANK_FIELD" && this.state.age === "") ? inputErrorClass : ""}
-                                    />
+                                    <Form.Label>Birthday</Form.Label>
+                                    <br></br>
+                                    <DatePicker className={"form-control pointer "
+                                                          + ((this.state.errorMessage === "BLANK_FIELD" && this.state.birthday === "") ? inputErrorClass : "")}
+                                                selected={this.state.birthday}
+                                                value={this.state.birthday}
+                                                onChange={(date) => this.setState({birthday: date})}
+                                                dateFormat="MMMM d, yyyy"
+                                                maxDate={new Date()}
+                                                calendarIcon={null}
+                                                clearIcon={null}/>
                                 </Form.Group>
 
                                 {/* Sign Up Button */}
-                                <div style={{ textAlign: "center" }}>{/* This has to be in-line css to over write the bootstrap */}
-                                    <Button variant="primary" type="submit">
+                                <div className={isMobile ? "signup-form-buttons" : ""}>
+                                    <Button className="signup-button" type="submit">
                                         Create Account
-                                </Button>
+                                    </Button>
+
+                                    {/* Sign Up link on mobile */}
+                                    {
+                                        isMobile ?
+                                            <div className = "signup-form-login-redirect">
+                                                <span>
+                                                    {"I have an account, "}
+                                                    <Button onClick={() => this.props.history.push("/login")}>
+                                                        Login
+                                                    </Button>
+                                                </span>
+                                            </div>
+                                        : ""
+                                    }
                                 </div>
                             </Form>
                         </Col>

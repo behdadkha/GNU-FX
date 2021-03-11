@@ -46,7 +46,7 @@ if (localStorage.jwt) {
             store.dispatch(SetCurrentUser(decodedData));
     }
     catch (error) {
-        console.log("invalid jwt");
+        //console.log("invalid jwt");
         store.dispatch(LogOutUser());
     }
 }

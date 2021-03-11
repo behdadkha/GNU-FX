@@ -19,12 +19,14 @@ import Upload from "./components/user/Upload";
 import User from "./components/user/User";
 import UserMobile from "./components/user/User-Mobile";
 import Component404 from "./components/Component404";
+import ForgotPasswordReDirEmail from './components/ForgotPasswordReDirEmail';
 import store from "./Redux/store";
 import { LogOutUser, SetCurrentUser } from "./Redux/Actions/authAction";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 import { isMobile } from "react-device-detect";
+import ForgotPassword from "./components/ForgotPassword";
 
 //If the browser has the user's login info,
 //set the data and go to the user's page
@@ -50,7 +52,7 @@ if (localStorage.jwt) {
 }
 
 function App() {
-    const pagesWithNavbar = ["/", "/signup", "/login", "/upload", "/user/resetPassword"];
+    const pagesWithNavbar = ["/", "/signup", "/login", "/upload", "/user/resetPassword", "/forgotpassword"];
     var userPath = (isMobile) ? UserMobile : User; //Different UI depending on device
 
     return (
@@ -76,9 +78,11 @@ function App() {
                             <Route path="/signup" component={Signup} exact />
                             <Route path="/user" component={userPath} exact />
                             <Route path="/upload" component={Upload} exact />
+                            <Route path="/forgotpassword" component={ForgotPassword} exact />
                             <Route path="/user/schedule" component={Schedule} exact />
                             <Route path="/user/myAccount" component={MyAccount} exact />
                             <Route path="/user/resetPassword" component={ResetPassword} exact />
+                            <Route path="/forgotpassword/*" component={ForgotPasswordReDirEmail} exact/>
                             <Route component={Component404} />
                         </Switch>
                     </div>

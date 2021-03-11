@@ -13,6 +13,7 @@ const uploadImage = require('./routes/uploadImage');
 const imageValidationRoutes = require('./routes/ImageValidation');
 const diagnoseRouter = require('./routes/diagnose');
 const userRoutes = require('./routes/user');
+const forgotpasswordRoutes = require('./routes/ForgotPassword');
 
 app.use(cors());
 app.use(fileUpload());
@@ -349,5 +350,6 @@ app.use('/upload', uploadImage);
 app.use('/imageValidation', imageValidationRoutes);
 app.use('/diagnose', diagnoseRouter);
 app.use('/user', userRoutes);
+app.use('/forgotpassword', forgotpasswordRoutes);
 
 module.exports = app;

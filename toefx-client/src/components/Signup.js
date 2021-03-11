@@ -130,7 +130,7 @@ export default class Signup extends Component {
 
     PasswordChecker(e) {
         //checks password length
-        if(e.target.value.length >= 7){
+        if(e.target.value.length >= 8){
             this.setState({IsPasswordLengthStrong: true})
         }
         else{

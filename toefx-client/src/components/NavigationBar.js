@@ -16,7 +16,7 @@ class NavigationBar extends Component {
     */
     render() {
         var loginSignup, logo, loggedInNav;
-        var pagesWithNavbar = ["/", "/login", "/signup", "/upload", "/user/resetPassword"];
+        var pagesWithNavbar = ["/", "/login", "/signup", "/upload", "/user/resetPassword", "/forgotpassword"];
        
         //Show Dashboard and Log Out if user is logged in
         if (this.props.auth.isAuth) {

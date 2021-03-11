@@ -158,6 +158,9 @@ export default class Login extends Component {
                             </Form>
                         </Col>
                     </Row>
+                    <div style={{marginTop: "3%"}}>
+                        <a href="/forgotpassword">Forgot Password?</a>
+                    </div>
                 </Container>
             </div>
 

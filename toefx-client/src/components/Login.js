@@ -204,6 +204,9 @@ export default class Login extends Component {
                             </Form>
                         </Col>
                     </Row>
+                    <div className="mt-3">
+                        <a href="/forgotpassword">Forgot Password?</a>
+                    </div>
                 </Container>
             </div>
 

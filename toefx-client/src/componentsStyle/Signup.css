@@ -1,32 +1,12 @@
-#SignupTitle{
-    font-family: 'Balsamiq Sans', cursive
-}
-#SignupJoinMessage{
-    font-family: 'Pangolin', cursive;
-    color: orange;
-}
-.signup-form {
-    margin: auto;
-    text-align: left;
-    width: 100%;
-    font-family: 'Nunito', sans-serif;
-}
+/*CSS for the Sign-Up Page*/
 
-.signup-error {
-    height: 30px;
-    margin-top: 20px;
-}
-
-.signup-error-input {
-    background-color: pink !important;
-}
-
-#SignUpContainer{
+#signup-form-container { /*Uses id instead of class*/
     position: relative;
     margin-left: 15%;
     width: 35%;
 }
-.healthcareIcone{
+
+.signup-picture {
     margin-top: 10%;
     width: 45%;
     height: 45%;
@@ -34,23 +14,77 @@
     margin-right: 10%;
 }
 
-/* MOBILE DESIGN */
-.signup-formMobile{
+.signup-form {
     margin: auto;
     text-align: left;
-    width: 40vh;
-    font-family: 'Nunito', sans-serif;
+    width: 100%;
 }
-#SignUpContainerMobile{
-    margin-left: 7vw;
-    width: 85vw;
+
+.signup-form-title {
+    font-family: 'Balsamiq Sans', cursive
 }
-#PasswordCheckMark{
-    width: 3%;
+
+.signup-form-title-mobile {
+    text-align: left;
+    margin-left: 5%;
 }
-.ConfirmPasswordInput{
-    margin-top: -2%;
+
+.signup-form-join-message {
+    font-family: 'Pangolin', cursive;
+    color: orange;
 }
-#StrongPassword{
+
+.signup-error {
+    height: 30px;
+}
+
+.error-text {
+    color: var(--error-text);
+}
+
+.signup-error-input {
+    background-color: var(--error-input) !important;
+}
+
+.password-check-mark {
+    height: 1rem;
+}
+
+.strong-password-desc {
     margin-bottom: -2%;
+}
+
+.react-date-picker__wrapper {
+    border: none !important; /*Removes default*/
+}
+
+.pointer {
+    cursor: pointer;
+}
+
+.signup-button {
+    width: 100%;
+}
+
+/*CSS specifically for mobile and split screen*/
+
+#signup-form-container-mobile { /*Uses id instead of class*/
+    width: 100%;
+}
+
+.signup-form-mobile {
+    margin: auto;
+    text-align: left;
+    width: 90%;
+}
+
+.signup-form-buttons {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 150px;
+}
+
+.signup-form-login-redirect {
+    text-align: center;
 }

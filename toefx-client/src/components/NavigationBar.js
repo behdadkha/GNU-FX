@@ -4,87 +4,110 @@
 
 import React, {Component} from "react";
 import {Navbar, Nav} from "react-bootstrap";
+import {isMobile} from "react-device-detect";
 import {connect} from "react-redux";
 
+import {DoesPageHaveNavBar} from "../Utils";
 import store from "../Redux/store";
 import {LogOutUser} from "../Redux/Actions/authAction";
 import "../componentsStyle/Navbar.css";
 
 class NavigationBar extends Component {
     /*
+        Prints the list of links visible in the navigation bar for a given page.
+    */
+    getMenuLinks() {
+        var menuLinks;
+
+        //Show special options if user is logged in
+        if (this.props.auth.isAuth) {
+            menuLinks =
+                <Nav className="NavbarFont">
+                    {
+                        //Only show dashboard link on specific pages
+                        (window.location.pathname !== "/user" && !isMobile) &&
+                        <Nav.Link href="/user">
+                            {isMobile ? "Home" : "Dashboard"}
+                        </Nav.Link>
+                    }
+                    {
+                        //Only show upload link on specific pages
+                        (window.location.pathname !== "/upload") &&
+                        <Nav.Link href="/upload">
+                            Upload
+                        </Nav.Link>
+                    }
+                    {
+                        //Only show account link on specific pages
+                        (window.location.pathname !== "/user/myAccount") &&
+                        <Nav.Link href="/user/myAccount">
+                            My Account
+                        </Nav.Link>
+                    }
+                    <Nav.Link test-id="logOut" href="/" onClick={() => store.dispatch(LogOutUser())}>
+                        Log Out
+                    </Nav.Link>
+                </Nav>
+        }
+        else { //User is not logged in
+            if (window.location.pathname === "/") {
+                //On the home page show both Login and Sign Up
+                menuLinks =
+                    <Nav>
+                        <Nav.Link href="/login">Login</Nav.Link>
+                        <Nav.Link href="/signup">Sign Up</Nav.Link>
+                    </Nav>;
+            }
+            else if (window.location.pathname === "/login") {
+                //On the login page show Sign Up
+                menuLinks =
+                    <Nav>
+                        <Nav.Link href="/signup">Sign Up</Nav.Link>
+                    </Nav>;
+            }
+            else if (window.location.pathname === "/signup") {
+                //On the signup page show Log In
+                menuLinks =
+                    <Nav>
+                        <Nav.Link href="/login">Log In</Nav.Link>
+                    </Nav>;
+            }
+            else {
+                //Probably unused
+                menuLinks =
+                    <Nav>
+                        <Nav.Link href="/login">Log In</Nav.Link>
+                        <Nav.Link href="/signup">Sign Up</Nav.Link>
+                    </Nav>;
+            }
+        }
+
+        return menuLinks;
+    }
+
+    /*
         Prints the navigation bar to the top of the screen.
     */
     render() {
-        var loginSignup, logo, loggedInNav;
-        var pagesWithNavbar = ["/", "/login", "/signup", "/upload", "/user/resetPassword"];
-       
-        //Show Dashboard and Log Out if user is logged in
-        if (this.props.auth.isAuth) {
-            loginSignup =
-            <Nav className="NavbarFont">
-                <Nav.Link test-id="logOut" onClick={() => {store.dispatch(LogOutUser()); window.location.href = "/";}}>
-                    Log Out
-                </Nav.Link>
-                {(window.location.pathname !== "/user" && window.location.pathname !== "/login") &&
-                <Nav.Link href="/user">
-                    Dashboard
-                </Nav.Link>}
-            </Nav>
-        }
-        else { //User is not logged in
-            if (window.location.pathname !== "/login" && window.location.pathname !== "/signup") {
-                //On the home page show both Login and Sign Up
-                loginSignup =
-                <Nav>
-                    <Nav.Link href="/signup">Sign Up</Nav.Link>
-                    <Nav.Link href="/login">Login</Nav.Link>
-                </Nav>;
-            }
-            else if (window.location.pathname === "/login") {
-                //On the login page only show Sign Up
-                loginSignup = <Nav>
-                    <Nav.Link href="/signup">Sign Up</Nav.Link>
-                </Nav>;
-            }
-            else if (window.location.pathname === "/signup") {
-                //On the signup page only show Login
-                loginSignup = <Nav>
-                    <Nav.Link href="/login">Login</Nav.Link>
-                </Nav>;
-            }
-        }
+        var navBarClass = "NavbarFont p-3" + (!isMobile ? " bg-white mb-3 shadow-sm rounded" : "");
+        var menuLinks = this.getMenuLinks();
+        var homeLink = isMobile && this.props.auth.isAuth ? "/user" : isMobile ? "login" : "/"; //Mobile logged in redirects to image page, otherwise mobile redirects to login page
 
-        logo = "";
-        loggedInNav = "";
-        if (window.location.pathname !== "/user") {
-            //Only show the ToeFX logo on the home page
-            logo =
-            <Navbar.Brand href="https://www.toefx.com/">
-                ToeFX
-            </Navbar.Brand>;
-
-            //Only show special logged in options on the home page
-            loggedInNav =
-            <Nav className="mr-auto">
-                <Nav.Link href="/">Home</Nav.Link>
-            </Nav>;
-        }
-        
         return (
             <div>
                 {
-                    pagesWithNavbar.includes(window.location.pathname) ? //Navbar on this page
-                        <Navbar bg="light" expand="md" className="shadow-sm p-3 mb-5 bg-white rounded NavbarFont">
-                            {/* Potentially show ToeFX logo */}
-                            {logo}
+                    DoesPageHaveNavBar() ? //Navbar on this page
+                        <Navbar bg="light" expand="md" className={navBarClass}>
+                            {/* Link to home page or dashboard on mobile*/}
+                            <Navbar.Brand href={homeLink}>
+                                Home
+                            </Navbar.Brand>
 
                             {/* Actual nav bar */}
                             <Navbar.Toggle aria-controls="basic-navbar-nav" />
                             <Navbar.Collapse id="basic-navbar-nav">
-                                {loggedInNav}
-
                                 <Nav className="ml-auto">
-                                    {loginSignup}
+                                    {menuLinks}
                                 </Nav>
                             </Navbar.Collapse>
                         </Navbar>

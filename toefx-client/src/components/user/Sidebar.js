@@ -43,6 +43,7 @@ class Sidebar extends Component {
                             <Nav.Link test-id="mobile-logOut" onClick={() => {
                                 store.dispatch(LogOutUser());
                                 this.props.history.push("/");
+                                window.location.reload(); //Update nav bar
                             }}>Log Out</Nav.Link>
                         </Nav>
                     </Navbar.Collapse>
@@ -92,7 +93,8 @@ class Sidebar extends Component {
                         <Row className={itemClass}>
                             <span test-id="logOut" id="logOut" onClick={() => {
                                 store.dispatch(LogOutUser());
-                                window.location.href = "/";
+                                this.props.history.push('/');
+                                window.location.reload(); //Update nav bar
                             }}>
                                 <img src={logoutIcon} alt="Log-Out-Icon" className={iconClass}></img>
                                 <h6 className={navLinkClass}>Log Out</h6>

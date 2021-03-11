@@ -13,6 +13,10 @@ import '../../componentsStyle/ResetPassword.css';
 import store from '../../Redux/store';
 import { LogOutUser } from '../../Redux/Actions/authAction';
 
+import CheckMark from "../../icons/checkmark.png";
+import CrossMark from "../../icons/crossmark.png";
+import {IsPasswordLengthStrong, DoesPasswordHaveUpperandLowerCase,
+    DoesPasswordHaveNumber, IsGoodPassword} from "../../Utils";
 export default class ResetPassword extends Component {
     /*
         Sets base data for the page.
@@ -77,6 +81,11 @@ export default class ResetPassword extends Component {
                 emptyFieldError: false,
             });
         }
+        else if (!IsGoodPassword(this.state.newPassword1)){
+            this.setState({
+                errorMsg: "New password is not strong enough"
+            });
+        }
         else {
         
             //Try to reset the password
@@ -125,6 +134,7 @@ export default class ResetPassword extends Component {
         Prints the reset password page.
     */
     render() {
+        var checkMarkClass = "password-check-mark";
         var errorText = this.getErrorText();
         return (
             <div className="reset-password-container">
@@ -159,11 +169,44 @@ export default class ResetPassword extends Component {
                                               placeholder=""
                                               value={this.state.newPassword1}
                                               onChange={(e) =>
-                                                this.setState({newPassword1: e.target.value})
+                                                this.setState({newPassword1: e.target.value, errorMsg: ""})
                                               }
                                               className = {(this.state.emptyFieldError && this.state.newPassword1 === "") 
                                                 || this.state.passwordMismatchError ? "signup-error-input" : ""}
                                 />
+                                {/* Confirmations of good password */}
+                                <Form.Label className="strong-password-desc">
+                                    <Form.Text className="text-muted">
+                                        {
+                                            IsPasswordLengthStrong(this.state.newPassword1)
+                                            ? <img src={CheckMark} className={checkMarkClass} alt="OK"/>
+                                            : <img src={CrossMark} className={checkMarkClass} alt="NO"/>
+                                        }
+                                        {" Password must be at least 8 characters long."} {/*Writing it in a string keeps the space at the front*/}
+                                    </Form.Text>
+                                </Form.Label>
+                                <br></br>
+                                <Form.Label className="strong-password-desc">
+                                    <Form.Text className="text-muted">
+                                        {
+                                            DoesPasswordHaveUpperandLowerCase(this.state.newPassword1)
+                                            ? <img src={CheckMark} className={checkMarkClass} alt="OK"/>
+                                            : <img src={CrossMark} className={checkMarkClass} alt="NO"/>
+                                        }
+                                        {" Password has uppercase (A-Z) and lowercase (a-z) characters."}
+                                    </Form.Text>
+                                </Form.Label>
+                                <br></br>
+                                <Form.Label >
+                                    <Form.Text className="text-muted">
+                                        {
+                                            DoesPasswordHaveNumber(this.state.newPassword1)
+                                            ? <img src={CheckMark} className={checkMarkClass} alt="OK"/>
+                                            : <img src={CrossMark} className={checkMarkClass} alt="NO"/>
+                                        }
+                                        {" Password must contain a number (0-9)."}
+                                    </Form.Text>
+                                </Form.Label>
                             </Form.Group>
     
                             <Form.Group controlId="formBasicPassword" className="reset-password-form-input-spacing">
@@ -179,11 +222,11 @@ export default class ResetPassword extends Component {
                                 />
                             </Form.Group>
 
-                            <Button variant="primary" type="submit">
+                            <Button variant="primary" type="submit" className="ResetSubmitBtn">
                                 Submit
                             </Button>
                         </Form>
-                        <h6>{this.state.errorMsg}</h6>
+                        <h6 className="errMsg">{this.state.errorMsg}</h6>
                     </div>
                 </div>
             </div>

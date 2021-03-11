@@ -3,11 +3,16 @@
   --button-color: rgb(36, 166, 154);
   --button-hover-color: rgb(30, 138, 128);
   --highlight-color: rgb(36, 166, 154);
+  --darkest-theme-color: rgb(24, 109, 101);
+  --error-text: red;
+  --error-input: pink;
 }
 
-.navBar {
-  padding-left: 10%;
-  padding-right: 10%;
+@media (min-width: 1000px) { /*Width >= 1000px*/
+    .navBar {
+        padding-left: 10%;
+        padding-right: 10%;
+    }
 }
 
 .btn-primary {

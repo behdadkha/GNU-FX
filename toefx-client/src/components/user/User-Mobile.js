@@ -8,7 +8,6 @@ import { connect } from "react-redux";
 import { GetFootSymbolByActive, GetToeSymbolImage, GetImageURLByName, LEFT_FOOT_ID, RIGHT_FOOT_ID, TOE_COUNT } from "../../Utils";
 import store from "../../Redux/store";
 import { getAndSaveImages, getAndSaveToeData } from "../../Redux/Actions/setFootAction";
-import Sidebar from './Sidebar';
 
 import '../../componentsStyle/User-Mobile.css';
 
@@ -87,6 +86,14 @@ class User extends Component {
         this.setState({
             selectedToe: toeId,
         });
+    }
+
+    /*
+        Redirects the user to the upload page.
+    */
+    gotoUploadPage() {
+        this.props.history.push("/upload");
+        window.location.reload(); //Refreshes the nav bar
     }
 
     /*
@@ -225,7 +232,6 @@ class User extends Component {
         {
             return (
                 <div>
-                    <Sidebar {...this.props} className="mobile-header"/>
                     <h4 className="dashboard-loading">Loading...</h4>
                 </div>
             );
@@ -233,7 +239,6 @@ class User extends Component {
 
         return (
             <div>
-                <Sidebar {...this.props} className="mobile-header"/>
                 <Container className="mobile-image-page-container">
                     {/* Buttons to change which foot is being viewed */}
                     <Row className="mobile-image-button-row">
@@ -257,7 +262,7 @@ class User extends Component {
                     </Row>
 
                     <Row className="mobile-image-upload-button-row">
-                        <Button onClick={() => this.props.history.push("/upload")} className="mobile-image-upload-button">
+                        <Button onClick={() => this.gotoUploadPage()} className="mobile-image-upload-button">
                             Upload New Toes
                         </Button>
                     </Row>

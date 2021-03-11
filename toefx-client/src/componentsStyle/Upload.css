@@ -22,7 +22,7 @@
     margin-top: 1%;
 }
 
-.diagnosisImg {
+.uploadedImg-desktop {
     width : 400px;
 }
 
@@ -30,9 +30,13 @@
     margin: auto;
 }
 
+.image_div {
+    padding-left: 1%;
+}
+
 .decomposeImage {
-    width: 150px;
-    height: 100px;
+    width: 250px;
+    height: 150px;
     border: 1px solid gray;
     margin: auto;
     border-radius: 5px;
@@ -56,7 +60,7 @@
 }
 
 .keepDiscardSpan {
-    padding-left: 22px;
+    padding-left: 16px;
 }
 
 #discardBtn {
@@ -69,7 +73,7 @@
 }
 
 .saveBtn {
-    margin: 10px 0 0 55px;
+    margin: 10px 30px 0 0px;
     width: 100px;
 }
 
@@ -105,4 +109,28 @@
     width: 25px;
     border-radius: 50%;
     background-color: black;
+}
+
+.returnToDashBoard_text{
+    margin: auto;
+}
+
+.savedText {
+    position: relative;
+    font-size: 20px;
+    text-align: center;
+    
+}
+.savedText_div {
+    padding-top: 60px;
+}
+
+.decompose_keepDiscard_desktop {
+    width: 100px;
+}
+
+.toeButtons_desktop {
+    display: inline-block;
+    width: 200px;
+    padding-right: 15%;
 }

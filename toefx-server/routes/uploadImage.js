@@ -126,7 +126,7 @@ function moveImageToTempFolder(image, imageName) {
 */
 function GetImageExtension(image) {
     var partsOfImageName = image.name.split(".");
-    var extension = partsOfImageName[partsOfImageName.length - 1];
+    var extension = (partsOfImageName.length > 1) ? partsOfImageName[partsOfImageName.length - 1] : "jpg";
     return extension;
 }
 
@@ -251,7 +251,7 @@ uploadImage.route('/deleteImage').delete(async (req, res) => {
     returns: The reponse being an object {msg: uploaded} for success.
 */
 uploadImage.route('/loggedin').post(async (req, res) => {
-
+    
     try {
         if (req.files.file === undefined) { return res.status(400).json({ msg: "Oops, can't read the image" }) }
 
@@ -278,6 +278,7 @@ uploadImage.route('/loggedin').post(async (req, res) => {
     catch {
         return res.status(400).json({ msg: "Invalid token" });
     }
+    
 
 
 })

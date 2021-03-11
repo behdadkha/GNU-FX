@@ -5,9 +5,6 @@
 import React, { Component } from "react";
 import { Container, Row, Col, Dropdown, Button } from "react-bootstrap";
 import { connect } from "react-redux";
-//import Axios from "axios";
-
-//import { config } from "../../config";
 import { GetFootSymbolByActive, GetToeSymbolImage, GetImageURLByName, LEFT_FOOT_ID, RIGHT_FOOT_ID, TOE_COUNT } from "../../Utils";
 import store from "../../Redux/store";
 import { getAndSaveImages, getAndSaveToeData } from "../../Redux/Actions/setFootAction";

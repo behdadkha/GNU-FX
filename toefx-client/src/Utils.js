@@ -9,6 +9,10 @@ import LeftFootSymbol from './icons/leftfootlogo.png';
 import RightFootSymbol from './icons/rightfootlogo.png';
 import LeftFootUnshadedSymbol from './icons/LeftFootHollow.png';
 import RightFootUnshadedSymbol from './icons/RightFootHollow.png';
+
+import LeftFootUnshadedSymbol_half from './icons/LeftFootHollowHalf.png';
+import RightFootUnshadedSymbol_half from './icons/RightFootHollowHalf.png';
+
 import LeftFootToe0 from './icons/toes/LeftFootToe0.png';
 import LeftFootToe1 from './icons/toes/LeftFootToe1.png';
 import LeftFootToe2 from './icons/toes/LeftFootToe2.png';
@@ -66,12 +70,17 @@ export function GetFootSymbolImage(footId) {
 /*
     Gets an image of an unshaded foot symbol (not filled in).
     param footId: 0 for left foot, 1 for right foot.
+    param halfImage: if true returns the above half of the image used for the camera overlay
     returns: An image of a foot symbol.
 */
-export function GetUnshadedFootSymbolImage(footId) {
+export function GetUnshadedFootSymbolImage(footId, halfImage=false) {
+    
+    //left foot
     if (footId === LEFT_FOOT_ID)
-        return LeftFootUnshadedSymbol;
+        if (halfImage) return LeftFootUnshadedSymbol_half; else return LeftFootUnshadedSymbol;
 
+    //right foot
+    if (halfImage) return RightFootUnshadedSymbol_half;
     return RightFootUnshadedSymbol;
 }
 
@@ -81,7 +90,7 @@ export function GetUnshadedFootSymbolImage(footId) {
     returns: An image of a foot symbol.
 */
 export function GetFootSymbolByActive(footId, activeFootId) {
-    if (footId == activeFootId) //This foot is selected
+    if (footId === activeFootId) //This foot is selected
         return GetFootSymbolImage(footId); //Return the shaded in image
     else
         return GetUnshadedFootSymbolImage(footId);

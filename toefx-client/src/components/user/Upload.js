@@ -7,11 +7,17 @@ import { Button, Container, Col, Row } from "react-bootstrap";
 import { connect } from "react-redux";
 import axios from "axios";
 import { config } from "../../config";
+import { isMobile } from "react-device-detect";
 
-import "../../componentsStyle/Upload.css";
-import { TOE_COUNT, LEFT_FOOT_ID, RIGHT_FOOT_ID } from "../../Utils";
+import "../../componentsStyle/Upload.css"
+import "../../componentsStyle/Upload-Mobile.css"
+import { TOE_COUNT, LEFT_FOOT_ID, RIGHT_FOOT_ID, GetFootSymbolByActive, GetUnshadedFootSymbolImage } from "../../Utils";
 import leftFootLogo from '../../icons/leftfootlogo.png';
 import rightFootLogo from '../../icons/rightfootlogo.png';
+
+
+import Camera from './Camera.js';
+
 
 const gPossibleFileTypes = ["image/x-png", "image/png", "image/bmp", "image/jpeg"];
 
@@ -33,7 +39,7 @@ class Upload extends Component {
             uploaded: false, //No file is uploaded to start
             files: [], //Currently uploaded files
             diagnosis: [], //List of {image: 0, text:""}
-            decomposedImages: [], //the decomposed images from the uploaded foot image {name: imageName, url:"blob", cords: [x,y] keepClicked: false, saved: false}
+            decomposedImages: [], //the decomposed images from the uploaded foot image {name: imageName, url:"blob", cords: [x,y] keepClicked: false, saved: false, selectedToeId}
             uploadProgress: 0, //Percentage of upload of image completed
             tempfileName: "", //Helper with processing image
             foot: "", //The foot name the image is for. Sent to /uploadimage endpoint
@@ -45,8 +51,7 @@ class Upload extends Component {
             calculatingFungalCoverage: false, //User clicks on the save button and the loading message "Calculating fungal coverage" is displayed
             showUploadButton: true,
             alreadySelectedToes: [false, false, false, false, false], //to keep track of the selected toes, to prevent the user from saving multiple toenils as one toe.
-            cirleX: 0,
-            cirleY: 0
+            cameraOpen: false
         };
 
         this.validateImage = this.validateImage.bind(this); //Save for later use
@@ -78,7 +83,7 @@ class Upload extends Component {
                 imagesToDelete.push(imageName);
             }
         }
-        
+
         //requesting to delete the images
         if (imagesToDelete.length > 0)
             await axios.delete(`${config.dev_server}/upload/deleteImage?images=${imagesToDelete}`)
@@ -102,14 +107,14 @@ class Upload extends Component {
         Helps with back button functionality on page load.
     */
     componentDidMount() {
-        if (!this.props.auth.isAuth){
+        if (!this.props.auth.isAuth) {
             this.props.history.push("/Login");
             return;
         }
         window.onpopstate = this.onBackButtonEvent.bind(this);
         //making sure the unsaves images get deleted
         window.addEventListener('beforeunload', (() => this.remove_Unsaved_Images(this.state.decomposedImages)), false);
-        
+
     }
 
     componentWillUnmount() {
@@ -174,28 +179,28 @@ class Upload extends Component {
 
     */
     async getImage(imageName, cords, color) {
-        let imageInfo = {}
         await axios.get(`${config.dev_server}/getImage?imageName=${imageName}`, { responseType: "blob" })
             .then((image) => {
                 this.setState(
-                    { 
-                    decomposedImages: 
-                        [...this.state.decomposedImages, 
-                            { 
-                                name: imageName, 
+                    {
+                        decomposedImages:
+                            [...this.state.decomposedImages,
+                            {
+                                name: imageName,
                                 url: URL.createObjectURL(image.data),
-                                cord: cords, 
+                                cord: cords,
                                 color: color,
-                                keepClicked: false, 
-                                saved: false 
+                                keepClicked: false,
+                                saved: false,
+                                selectedToeId: -1
                             }
-                        ] 
-                        });
-                    }
-                );
+                            ]
+                    });
+            }
+            );
         let temp = this.state.decomposedImages;
-        if (temp.length > 1)      
-            temp.sort((a,b) => a.cord[0] - b.cord[0])
+        if (temp.length > 1)
+            temp.sort((a, b) => a.cord[0] - b.cord[0])
         this.setState({
             decomposeImage: temp
         })
@@ -206,7 +211,7 @@ class Upload extends Component {
                 temp
             ]
         })*/
-                
+
     }
     /*
         initiates nail decompose(extracts nails from the uploaded foot image)
@@ -220,20 +225,20 @@ class Upload extends Component {
             .then(async res => {
 
                 //Format: res.data.imagesInfo[{name: "", cord: []}]
-                res.data.imagesInfo.map(({name, cord, color}) => this.getImage(name, cord, color))
+                res.data.imagesInfo.map(({ name, cord, color }) => this.getImage(name, cord, color))
 
                 let colorImage = "";
                 await axios.get(`${config.dev_server}/getImage?imageName=${res.data.CLRImage}`, { responseType: "blob" })
-                .then((image) => {
-                    colorImage = URL.createObjectURL(image.data);
-                });
+                    .then((image) => {
+                        colorImage = URL.createObjectURL(image.data);
+                    });
 
                 let tempFiles = this.state.files;
                 tempFiles[0].text = "Please Choose the toe nails you would like to save";
                 tempFiles[0].url = colorImage;
-                this.setState({ 
+                this.setState({
                     files: tempFiles
-                 })
+                })
             })
             .catch((error) => this.printFileValidationErrorToConsole(error));
     }
@@ -253,12 +258,12 @@ class Upload extends Component {
         Processes the requested upload of an image by the user.
         param e: The upload event.
     */
-    async handleUpload(e) {
+    async handleUpload(imageObject, imageName = "default.jpg") {
 
         //hide the upload button
         this.setState({ showUploadButton: false });
 
-        let file = e.target.files[0];
+        let file = imageObject;
 
         if (gPossibleFileTypes.findIndex(item => item === file.type) === -1) {
             //Invalid file type
@@ -273,14 +278,14 @@ class Upload extends Component {
         this.setState({
             files: [
                 ...this.state.files, //Append new image onto end of old file list
-                { url: URL.createObjectURL(file), name: file.name, valid: false, text: 'Processing your image...' },
+                { url: URL.createObjectURL(file), name: imageName, valid: false, text: 'Processing your image...' },
             ],
             uploaded: true,
-            input: file.name,
+            input: imageName,
         });
         //Now that the file has been confirmed, upload it to the database -- THIS SHOULD COME AFTER VALIDATION!!!
         const formData = new FormData(); //formData contains the image to be uploaded
-        formData.append("file", e.target.files[0]);
+        formData.append("file", file);
         formData.append("foot", this.state.selectedFootId);
         formData.append("toe", this.state.selectedToeId);
 
@@ -298,6 +303,13 @@ class Upload extends Component {
 
             });
         }
+
+    }
+
+    handleOpenCamera_mobile() {
+        console.log("here");
+        //hide the upload button and open camera
+        this.setState({ showUploadButton: false, cameraOpen: true });
 
     }
 
@@ -350,15 +362,15 @@ class Upload extends Component {
             var tempDecomposedImages = this.state.decomposedImages;
             this.setState({
                 selectedFootId: footId,//selected  ---> the rest is for reseting the page
-                input: "Upload", 
-                uploaded: false, 
-                files: [], 
-                diagnosis: [], 
-                decomposedImages: [], 
+                input: "Upload",
+                uploaded: false,
+                files: [],
+                diagnosis: [],
+                decomposedImages: [],
                 uploadProgress: 0,
-                tempfileName: "", 
+                tempfileName: "",
                 foot: "",
-                toe: "", 
+                toe: "",
                 selectedToeId: -1,
                 showChooseFootAndToeError: false,
                 invalidFileTypeError: false,
@@ -442,23 +454,24 @@ class Upload extends Component {
         in the fact that they control their state differently. They do use shared CSS,
         however, to avoid code duplication.
         param toeId: The toe the button is for.
+        param active: Make the button darker if active is true
+        param decomposeImageIndex: the button are getting printed for this image, need this to set the selectedToeId
     */
-    printToeButton(toeId) {
+    printToeButton(toeId, active, decomposeImageIndex) {
         var defaultToeButtonClass = "uploadToes" + toeId;
         var activeToeButtonClass = defaultToeButtonClass + " active-toe-button"; //When the toe's data is being shown on the chart
-        //let names = ["Big", "Index", "Middle", "4th", "Little"]
 
-        /*return (
-            <button key={toeId} onClick={this.setToe.bind(this, toeId)}
-                    className={(this.state.selectedToeId === toeId ? activeToeButtonClass : defaultToeButtonClass)}>
-                {GetToeName(toeId)}
-            </button><h6>{names[toeId]}</h6>
-        );*/
+
         var isDisabled = this.state.alreadySelectedToes[toeId];
-        var buttonClassName = ((this.state.selectedToeId === toeId && !isDisabled) ? activeToeButtonClass : defaultToeButtonClass)
+        var buttonClassName = (active ? activeToeButtonClass : defaultToeButtonClass)
         return (
             <div key={toeId} style={{ display: "inline" }} className={`divToe${toeId}`}>
-                <button onClick={this.setToe.bind(this, toeId)}
+                <button onClick={
+                    () => {
+                        this.setToe(toeId)
+                        this.setDecomposeImage_toeId(toeId, decomposeImageIndex)
+                    }
+                }
                     className={buttonClassName}
                     disabled={isDisabled}
                 >
@@ -468,31 +481,81 @@ class Upload extends Component {
     }
 
     /*
+        sets the selectedToeId of the decomposedImage with index decomposeImageIndex to the toeId
+        param toeId: the value to set the selectedToeId to
+        param decomposeImageIndex: the index for the target decomposedImage
+    */
+    setDecomposeImage_toeId (toeId, decomposeImageIndex) {
+        var temp = this.state.decomposedImages;
+        temp[decomposeImageIndex].selectedToeId = toeId;
+        this.setState({decomposedImages: temp})
+    }
+
+    /*
         Adds buttons to the page where user can select toes.
     */
-    printToeButtons() {
+    printToeButtons(decomposeImageIndex) {
         var toeOrder = [];
         for (let i = 0; i < TOE_COUNT; ++i)
             toeOrder.push(i); //Initial view in order of ids (based on right foot)
 
         if (this.state.selectedFootId === LEFT_FOOT_ID)
             toeOrder.reverse(); //Toes go in opposite order on left foot
-
+    
+        
         return (
             <span className="toolbar">
                 {
-                    toeOrder.map((toeId) => this.printToeButton(toeId))
+                    toeOrder.map((toeId) => this.printToeButton(toeId, this.is_decomposedImage_selectedToeId_true(toeId, decomposeImageIndex), decomposeImageIndex))
                 }
             </span>
         );
     }
 
     /*
+        returns true if the decomposedImage[decomposeImageIndex].selectedToeId == toeid
+        to see which toeId is selected, in order to make it active
+    */
+    is_decomposedImage_selectedToeId_true(toeId, decomposeImageIndex) {
+        return toeId === this.state.decomposedImages[decomposeImageIndex].selectedToeId;
+    }
+
+    /*  
+        prints the upload button for mobile view
+        shows camera and different design
+    */
+    printUploadButton_mobile(buttonClassName) {
+        return (
+            <Row>
+                <Col>
+                    <div className="centred-text-with-margin-above">
+                        <div>
+                            {/* Label must be used instead of Button because of the input field required */}
+                            <label className={buttonClassName}
+                                htmlFor={!this.isParamNotSet() ? "inputGroupFile01" : ''}
+                                onClick={this.isParamNotSet() ? () =>
+                                    this.setState({ showChooseFootAndToeError: true })
+                                    : () => {
+                                        this.handleOpenCamera_mobile();
+                                        this.setState({ showChooseFootAndToeError: false })
+                                    }
+
+                                }
+                            >
+                                Open Camera
+                        </label>
+                        </div>
+                    </div>
+                </Col>
+            </Row>
+        )
+    }
+    /*
         Displays the upload button
         param buttonClassName: className for the upload Button.
         returns the jsx code for the upload button
     */
-    printUploadButton(buttonClassName) {
+    printUploadButton_desktop(buttonClassName) {
         return (
             <Row>
                 <Col>
@@ -505,7 +568,7 @@ class Upload extends Component {
                                 id="inputGroupFile01"
                                 aria-describedby="inputGroupFileAddon01"
                                 accept="image/x-png,image/png,image/jpeg,image/bmp"
-                                onChange={this.handleUpload.bind(this)}
+                                onChange={e => this.handleUpload(e.target.files[0], e.target.files[0].name)}
                             />
 
                             <label className={buttonClassName}
@@ -517,7 +580,7 @@ class Upload extends Component {
                                 }
                             >
                                 Upload
-                                    </label>
+                            </label>
                         </div>
                     </div>
                 </Col>
@@ -541,9 +604,149 @@ class Upload extends Component {
 
                 var tempSelectedToes = this.state.alreadySelectedToes;
                 tempSelectedToes[toeId] = true;
-                this.setState({alreadySelectedToes : tempSelectedToes});
+                this.setState({ alreadySelectedToes: tempSelectedToes });
             })
             .catch((error) => console.log(error));
+    }
+
+    printFootSelection_mobile() {
+        var leftFootImage = GetFootSymbolByActive(LEFT_FOOT_ID, this.state.selectedFoot);
+        var rightFootImage = GetFootSymbolByActive(RIGHT_FOOT_ID, this.state.selectedFoot);
+        var defaultFootButtonClass = "foot-button";
+        var activeFootButtonClass = defaultFootButtonClass + " active-toe-button";
+        return (
+            <div className="feet-buttons">
+                <button onClick={this.setFoot.bind(this, LEFT_FOOT_ID)}
+                    className={(this.state.selectedFootId === LEFT_FOOT_ID ? activeFootButtonClass : defaultFootButtonClass)}>
+                    <img src={leftFootImage} className="footlogMobile" alt="left foot logo" />
+                </button>
+
+                <button onClick={this.setFoot.bind(this, RIGHT_FOOT_ID)}
+                    className={(this.state.selectedFootId === RIGHT_FOOT_ID ? activeFootButtonClass : defaultFootButtonClass)}>
+                    <img src={rightFootImage} className="footlogMobile" alt="right food logo" />
+                </button>
+
+            </div>
+        )
+    }
+
+    printFootSelection_desktop() {
+        var defaultFootButtonClass = "graph-foot-button";
+        var activeFootButtonClass = defaultFootButtonClass + " active-toe-button";
+        return (
+            <div className="graph-feet-buttons">
+                <button onClick={this.setFoot.bind(this, LEFT_FOOT_ID)}
+                    className={(this.state.selectedFootId === LEFT_FOOT_ID ? activeFootButtonClass : defaultFootButtonClass)}>
+                    <img src={leftFootLogo} className="footlogo" alt="left foot logo" />
+                </button>
+
+                <button onClick={this.setFoot.bind(this, RIGHT_FOOT_ID)}
+                    className={(this.state.selectedFootId === RIGHT_FOOT_ID ? activeFootButtonClass : defaultFootButtonClass)}>
+                    <img src={rightFootLogo} className="footlogo" alt="right food logo" />
+                </button>
+            </div>
+        )
+    }
+
+    printDecomposedImage_desktop(name, url, color, keepClicked, saved, index) {
+        return (
+            <Col key={name} className="decomposeImageCol" style={{ border: `5px solid rgb(${color})` }}>
+                <Row>
+                    <img className="decomposeImage" src={url} alt="nail"></img>
+                </Row>
+                <Row noGutters={true} className="saveDiscardRow">
+                    {
+                        saved === true
+                            ?
+                            <h6>Saved</h6>
+                            :
+                            keepClicked === true
+                                ?
+                                this.state.calculatingFungalCoverage
+                                    ?
+                                    "Please wait while we calculate your fungal coverage..."
+                                    :
+                                    this.printDecompose_toeSelection(name, index)
+                                :
+                                <Row>
+                                    <span className="keepDiscardSpan">
+                                        <Button id="discardBtn" onClick={() => this.decomposedImagesRemove(index)}>Discard</Button>
+                                        <Button id="keepBtn" onClick={() => this.setImage_KeepClicked_ToTrue(index)}>Keep</Button>
+                                    </span>
+                                </Row>
+                    }
+                </Row>
+
+            </Col>
+        )
+
+    }
+
+    printDecompose_toeSelection(name, decomposeImageIndex) {
+        var saveBtnClassName = (isMobile) ? "saveBtn_mobile" : "saveBtn";
+        var toeButtons = (isMobile) ? "toeButtons_mobile" : "toeButtons_desktop";
+        return (
+            <div style={{display: "inline"}}>
+                <div>
+                    <h6 className="select_the_toe_TEXT">Select The Toe:</h6>
+                </div>
+                <div className={toeButtons}>
+                    {
+                        this.printToeButtons(decomposeImageIndex)
+                    }
+                </div>
+                <div>
+                    <Button className={saveBtnClassName}
+                        onClick={
+                            this.handleSave.bind(this, this.state.selectedFootId, this.state.selectedToeId, name, decomposeImageIndex)
+                        }
+                    >Save</Button>
+                </div>
+            </div>
+        );
+    }
+
+
+    
+    print_keep_discard_mobile(index) {
+        return (
+            <div className="decompose_keepDiscard_mobile">
+                <Button className="discardBtn_mobile" onClick={() => this.setImage_KeepClicked_ToTrue(index)}>Keep</Button>
+                <Button className="keepBtn_mobile" onClick={() => this.decomposedImagesRemove(index)}>Discard</Button>
+            </div>
+        );
+    }
+    printDecomposedImage_mobile(name, url, color, keepClicked, saved, index) {
+
+        return (
+            <div key={index} className="decomposedRow_mobile" style={{border: `2px solid rgb(${color})`}}>
+                <div className="decomposed_Img_Div_mobile">
+                    <img src={url} className="decomposeImage_mobile" alt={name}></img>
+                </div>
+                
+                {
+                    saved
+                        ?
+                        <div>
+                        <div className="savedText_div">
+                            <h6 className="savedText">Saved</h6>
+                        </div>
+                        </div>
+                        :
+                        keepClicked
+                            ?
+                            this.state.calculatingFungalCoverage
+                                ?
+                                "Please wait while we calculate your fungal coverage..."
+                                : 
+                                this.printDecompose_toeSelection(name, index)
+                            :
+                            this.print_keep_discard_mobile(index)
+                }
+
+            </div>
+        )
+
     }
 
     /*
@@ -551,10 +754,10 @@ class Upload extends Component {
     */
     render() {
         var error;
-        var defaultFootButtonClass = "graph-foot-button";
-        var activeFootButtonClass = defaultFootButtonClass + " active-toe-button";
+
         var buttonClassName = "btn-primary upload-image-button";
         var uploadProgress = this.state.uploadProgress === 0 ? "" : this.state.uploadProgress;
+        var imageClassName = (isMobile) ? "uploadedImg-mobile" : "uploadedImg-desktop";
 
         if (this.isParamNotSet()) //Either foot or toe isn't selected
         {
@@ -566,16 +769,25 @@ class Upload extends Component {
         else if (this.state.invalidFileTypeError)
             error = "Invalid file type. Please upload an IMAGE file."
 
-        let tops = this.state.cirleY + 100;
-        let lefts = this.state.cirleX;
-        console.log(tops, lefts);
-        let cirlceStyle = {position:"absolute", top: tops+"px", left: lefts+"px"};
-        
+
+        /* for testing purposes
+        // to see how the decomposed images look like without sending any picture to the server
+        if (this.state.decomposedImages.length === 0) {
+            this.setState({
+                decomposedImages: [
+                    {name: "1.PNG", url:thumb, color: [255,0,0], cords: [20,30], keepClicked: false, saved: false},
+                    {name: "2.PNG", url:index, color: [255,255,0], cords: [40,10], keepClicked: false, saved: false}
+                ]
+            })
+        }*/
+
         return (
             <Container>
                 <h3 className="diagnosis-question">Which foot is the image for?</h3>
 
-                {/* Buttons to change which foot is being viewed */}
+                { (isMobile) ? this.printFootSelection_mobile() : this.printFootSelection_desktop()}
+
+                {/* Buttons to change which foot is being viewed 
                 <div className="graph-feet-buttons">
                     <button onClick={this.setFoot.bind(this, LEFT_FOOT_ID)}
                         className={(this.state.selectedFootId === LEFT_FOOT_ID ? activeFootButtonClass : defaultFootButtonClass)}>
@@ -586,7 +798,7 @@ class Upload extends Component {
                         className={(this.state.selectedFootId === RIGHT_FOOT_ID ? activeFootButtonClass : defaultFootButtonClass)}>
                         <img src={rightFootLogo} className="footlogo" alt="right food logo" />
                     </button>
-                </div>
+                </div>*/}
 
                 <br></br>
                 <br></br>
@@ -596,13 +808,13 @@ class Upload extends Component {
 
                 {/*<ToeButtons setToe={this.setToe.bind(this)}></ToeButtons>*/}
 
-                {/* Upload Button */}
+                {/* Upload Section */}
                 {
                     this.state.showUploadButton
                         ?
-                        this.printUploadButton(buttonClassName)
+                        (isMobile) ? this.printUploadButton_mobile(buttonClassName) : this.printUploadButton_desktop(buttonClassName)
                         :
-                        ""
+                        this.state.cameraOpen ? <div> <Camera overLayImage={GetUnshadedFootSymbolImage(this.state.selectedFootId, true)} onCaptured={(blob) => { this.setState({ cameraOpen: false }); this.handleUpload(blob); }} />  </div> : ""
                 }
 
 
@@ -611,17 +823,15 @@ class Upload extends Component {
                     <h5>{uploadProgress}</h5>
                     <h5>{error}</h5>
                 </Row>
-                    
+
                 {/* List of Uploaded Images*/}
                 <Row>
                     {this.state.files.map((source, index) => (
                         <Col key={`col-${index}`}>
                             {/* Image */}
-                            <Row>
-                                <Col>
-                                    <img key={index} src={source.url} className="diagnosisImg" alt="uploaded" />
-                                </Col>
-                            </Row>
+                            <div className="image_div">
+                                <img key={index} src={source.url} className={imageClassName} alt="uploaded" />
+                            </div>
 
                             {/* Image Name & Diagnose Button */}
                             <Row>
@@ -662,50 +872,20 @@ class Upload extends Component {
                         </Col>
                     ))}
                 </Row>
+                {/* decomposed images */}
                 <Row className="decomposeImageRow">
                     {
-                        this.state.decomposedImages.map(({ name, url, color, keepClicked, saved }, index) =>
-                            <Col key={name} className="decomposeImageCol" style={{backgroundColor: `rgb(${color})`}}>
-                                <Row>
-                                    <img className="decomposeImage" src={url} alt="nail"></img>
-                                </Row>
-                                <Row noGutters={true} className="saveDiscardRow">
-                                    {
-                                        saved === true
-                                            ?
-                                            <h6>Saved</h6>
-                                            :
-                                            keepClicked === true
-                                                ?
-                                                this.state.calculatingFungalCoverage ? "Please wait while we calculate your fungal coverage..." :
-                                                    <Row>
-                                                        <h6>Select The Toe:</h6>
-                                                        {
-                                                            this.printToeButtons()
-                                                        }
-                                                        <Row>
-                                                            <Button className="saveBtn"
-                                                                onClick={
-                                                                    this.handleSave.bind(this, this.state.selectedFootId, this.state.selectedToeId, name, index)
-                                                                }
-                                                            >
-                                                                Save
-                                                        </Button>
-                                                        </Row>
-                                                    </Row>
-                                                :
-                                                <Row>
-                                                    <span className="keepDiscardSpan">
-                                                        <Button id="discardBtn" onClick={this.decomposedImagesRemove.bind(this, index)}>Discard</Button>
-                                                        <Button id="keepBtn" onClick={this.setImage_KeepClicked_ToTrue.bind(this, index)}>Keep</Button>
-                                                    </span>
-                                                </Row>
-                                    }
-                                </Row>
-
-                            </Col>
+                        (isMobile) 
+                        ? 
+                        this.state.decomposedImages.map(
+                            ({ name, url, color, keepClicked, saved, selectedToeId }, index) => this.printDecomposedImage_mobile(name, url, color, keepClicked, saved, index ) 
+                        )
+                        :
+                        this.state.decomposedImages.map(
+                            ({ name, url, color, keepClicked, saved, selectedToeId }, index) => this.printDecomposedImage_desktop(name, url, color, keepClicked, saved, index) 
                         )
                     }
+                     
 
                 </Row>
 
@@ -713,7 +893,7 @@ class Upload extends Component {
                     {
                         this.state.decomposedImages.length > 0
                             ?
-                            <h5>When you are done, click on the Dashbard button located in the top right corner to go back to the dashboard.</h5>
+                            <h5 className="returnToDashBoard_text">Return to <a href="/user">Dashboard</a></h5>
                             :
                             ""
                     }

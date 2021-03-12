@@ -66,6 +66,10 @@
     width: 100%;
 }
 
+.signup-successMessage{
+    margin-top: 5%;
+}
+
 /*CSS specifically for mobile and split screen*/
 
 #signup-form-container-mobile { /*Uses id instead of class*/

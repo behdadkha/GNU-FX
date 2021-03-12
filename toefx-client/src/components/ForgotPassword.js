@@ -72,7 +72,7 @@ export default class ForgotPassword extends Component {
 
             return;
         }
-
+        console.log(response.data.msg)
         if (response.data.msg !== "")
             this.setState({
                 loadingMessage: "",

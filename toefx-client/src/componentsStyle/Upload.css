@@ -134,3 +134,34 @@
     width: 200px;
     padding-right: 15%;
 }
+
+.upload_looksGood_btn {
+    margin-top: 5%;
+    width: 45%;
+    margin-bottom: 30%;
+}
+
+.upload_GoBack_btn {
+    margin-top: 5%;
+    margin-left: 2%;
+    width: 45%;
+    margin-bottom: 30%;
+}
+
+@media (min-width: 500px) {
+    .upload_looksGood_btn {
+        width: 30%;
+    }
+    .upload_GoBack_btn { 
+        width: 30%;
+    }
+}
+.happyEmoji {
+    width: 20%;
+    margin-left: 6%;
+}
+
+.sadEmoji {
+    width: 20%;
+    margin-left: 10%;
+}

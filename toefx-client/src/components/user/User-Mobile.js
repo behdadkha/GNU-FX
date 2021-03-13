@@ -36,7 +36,7 @@ class User extends Component {
         try {
             //Redirect to login page if user not logged in
             if (!this.props.auth.isAuth) {
-                this.props.history.push("/login");
+                window.location.href = "/login";
                 return;
             }
 
@@ -92,7 +92,7 @@ class User extends Component {
         Redirects the user to the upload page.
     */
     gotoUploadPage() {
-        this.props.history.push("/upload");
+        window.location.href = "/upload";
         window.location.reload(); //Refreshes the nav bar
     }
 

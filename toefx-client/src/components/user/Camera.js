@@ -43,6 +43,7 @@ export default function Camera({ overLayImage, onCaptured }) {
         videoRef.current.play();
     }
     function handleCapture() {
+        canvasRef.current.style.border = "6px solid gray";
         const context = canvasRef.current.getContext("2d");
         setCuptureTrue(true);
         context.drawImage(

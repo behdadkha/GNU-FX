@@ -20,6 +20,7 @@ import User from "./components/user/User";
 import UserMobile from "./components/user/User-Mobile";
 import Component404 from "./components/Component404";
 import ForgotPasswordReDirEmail from './components/ForgotPasswordReDirEmail';
+import EmailVerificationReDirEmail from './components/EmailVerificationReDirEmail';
 import store from "./Redux/store";
 import { LogOutUser, SetCurrentUser } from "./Redux/Actions/authAction";
 
@@ -81,6 +82,7 @@ function App() {
                             <Route path="/user/myAccount" component={MyAccount} exact />
                             <Route path="/user/resetPassword" component={ResetPassword} exact />
                             <Route path="/forgotpassword/*" component={ForgotPasswordReDirEmail} exact/>
+                            <Route path="/emailverification/*" component={EmailVerificationReDirEmail} exact/>
                             <Route component={Component404} />
                         </Switch>
                     </div>

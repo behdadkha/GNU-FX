@@ -57,8 +57,7 @@ class Signup extends Component {
     */
     componentDidMount() {
         if (this.props.auth.isAuth) {
-            this.props.history.push("/user");
-            window.location.reload(); //Helps fix navbar
+            window.location.href = "/user";
         }
     }
 
@@ -111,7 +110,6 @@ class Signup extends Component {
             setTimeout(() => {
                 //Redirect to login page
                 this.props.history.push('/login');
-                window.location.reload(); //Update nav bar
             }, 11000);
 
 
@@ -301,7 +299,7 @@ class Signup extends Component {
                                             <div className="signup-form-login-redirect">
                                                 <span>
                                                     {"I have an account, "}
-                                                    <Button onClick={() => this.props.history.push("/login")}>
+                                                    <Button onClick={() => window.location.href = "/login"}>
                                                         Login
                                                     </Button>
                                                 </span>

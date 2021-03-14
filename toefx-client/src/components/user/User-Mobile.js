@@ -93,7 +93,6 @@ class User extends Component {
     */
     gotoUploadPage() {
         window.location.href = "/upload";
-        window.location.reload(); //Refreshes the nav bar
     }
 
     /*

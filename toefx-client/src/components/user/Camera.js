@@ -59,7 +59,7 @@ export default function Camera({ overLayImage, onCaptured }) {
             <video className="vidoeFeed" ref={videoRef} onCanPlay={handleCanPlay} autoPlay playsInline muted></video>
             <div className="overLay_div_relative">
                 <div className="overLay_div_absolute">
-                    <img className="overLay" src={overLayImage}></img>
+                    <img className="overLay" src={overLayImage} alt="overlay"></img>
                 </div>
             </div>
 
@@ -72,10 +72,8 @@ export default function Camera({ overLayImage, onCaptured }) {
                 )}
             </div>
             <div>
-
                 <canvas className="imageCanvas" width="1080px" height="600px" ref={canvasRef}></canvas>
             </div>
-
         </div>
     )
 }

@@ -28,8 +28,7 @@ class Sidebar extends Component {
                 <Navbar bg="light" expand="lg" variant="light" className="mobile-navbar">
                     <Navbar.Brand test-id="mobile-dashboard"
                         onClick={() => {
-                            this.props.history.push('/user');
-                            window.location.reload();
+                            window.location.href = "/user";
                         }}
                     >
                         Home
@@ -38,12 +37,10 @@ class Sidebar extends Component {
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav"> {/* Hamburger menu */}
                         <Nav className="mr-auto">
-                            {/*<Nav.Link test-id="mobile-treatmentSchedule" onClick={() => this.props.history.push("/user/schedule") }>Treatment Schedule</Nav.Link>*/}
-                            <Nav.Link test-id="mobile-myAccount" onClick={() => this.props.history.push("/user/myAccount")}>My Account</Nav.Link>
+                            <Nav.Link test-id="mobile-myAccount" onClick={() => window.location.href = "/user/myAccount"}>My Account</Nav.Link>
                             <Nav.Link test-id="mobile-logOut" onClick={() => {
                                 store.dispatch(LogOutUser());
-                                this.props.history.push("/");
-                                window.location.reload(); //Update nav bar
+                                window.location.href = "/";
                             }}>Log Out</Nav.Link>
                         </Nav>
                     </Navbar.Collapse>
@@ -57,8 +54,7 @@ class Sidebar extends Component {
                     <div>
                         <Button id="uploadBtn" className="uploadButton"
                             onClick={() => {
-                                this.props.history.push('/upload');
-                                window.location.reload();
+                                window.location.href = "/upload";
                             }}
                         >+ Upload Image</Button>
                     </div>
@@ -67,7 +63,7 @@ class Sidebar extends Component {
                     <Container className="main-sidebar-options">
                         {/* Dashboard */}
                         <Row test-id="dashboardRow" className={window.location.pathname === "/user" ? activeItemClass : itemClass}>
-                            <span test-id="dashboard" onClick={() => this.props.history.push("/user")}>
+                            <span test-id="dashboard" onClick={() => window.location.href = "/user"}>
                                 <img src={dashboardIcon} alt="Dashboard-Icon" className={iconClass}></img>
                                 <h6 className={navLinkClass}>Dashboard</h6>
                             </span>
@@ -83,7 +79,7 @@ class Sidebar extends Component {
 
                         {/* My Account */}
                         <Row test-id="myAccountRow" className={window.location.pathname === "/user/myAccount" ? activeItemClass : itemClass}>
-                            <span test-id="myAccount" onClick={() => this.props.history.push("/user/myAccount")}>
+                            <span test-id="myAccount" onClick={() => window.location.href = "/user/myAccount"}>
                                 <img src={myAccountIcon} alt="Account-Icon" className={iconClass}></img>
                                 <h6 className={navLinkClass}>My Account</h6>
                             </span>
@@ -93,8 +89,7 @@ class Sidebar extends Component {
                         <Row className={itemClass}>
                             <span test-id="logOut" id="logOut" onClick={() => {
                                 store.dispatch(LogOutUser());
-                                this.props.history.push('/');
-                                window.location.reload(); //Update nav bar
+                                window.location.href = "/";
                             }}>
                                 <img src={logoutIcon} alt="Log-Out-Icon" className={iconClass}></img>
                                 <h6 className={navLinkClass}>Log Out</h6>

@@ -48,8 +48,7 @@ class Login extends Component {
     componentDidMount() {
         if (this.props.auth.isAuth)
         {
-            this.props.history.push("/user");
-            window.location.reload(); //Helps fix navbar
+            window.location.href = "/user";
         }
     }
 
@@ -121,10 +120,8 @@ class Login extends Component {
             store.dispatch(getAndSaveToeData());
 
             //Redirect to User page
-            this.props.history.push('/user');
+            window.location.href = "/user";
 
-            //By reloading the page, the true path becomes /user and the header bar disappears
-            window.location.reload();
         }
         else {
             this.setState({
@@ -218,7 +215,7 @@ class Login extends Component {
                                             <div className = "login-form-signup-redirect">
                                                 <span>
                                                     {"I'm a new user, "}
-                                                    <Button onClick={() => this.props.history.push("/signup")}>
+                                                    <Button onClick={() => window.location.href = "/signup"}>
                                                         Sign Up
                                                     </Button>
                                                 </span>

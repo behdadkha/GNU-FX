@@ -69,8 +69,14 @@
 }
 
 .uploadedImg-mobile {
-    margin-right: 2%;
-    width: 90vw;
+    margin-top: 6%;
+    margin-bottom: 10%;
+    width: 70vw;
+}
+@media (min-width: 1000px) {
+    .uploadedImg-mobile {
+        width: 50vw;
+    }
 }
 
 .decomposedRow_mobile {

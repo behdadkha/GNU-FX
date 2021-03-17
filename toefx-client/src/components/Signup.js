@@ -10,13 +10,10 @@ import {connect} from "react-redux";
 import Axios from 'axios';
 
 import {config} from "../config";
-import {IsValidEmail, IsPasswordLengthStrong, DoesPasswordHaveUpperandLowerCase,
-        DoesPasswordHaveNumber, IsGoodPassword} from "../Utils";
+import {IsValidEmail, IsGoodPassword, GetGoodPasswordConfirmations} from "../Utils";
 
 import "../componentsStyle/Signup.css";
 import healthydrawing from "../icons/MedicalCare.svg";
-import CheckMark from "../icons/checkmark.png";
-import CrossMark from "../icons/crossmark.png"
 
 //Error messages displayed to the user
 const gErrorMessages = {
@@ -30,6 +27,7 @@ const gErrorMessages = {
 }
 
 //TODO: Error handling for when there's no internet connection.
+
 
 class Signup extends Component {
     /*
@@ -151,7 +149,6 @@ class Signup extends Component {
         var inputErrorClass = "signup-error-input"; //Used to colour boxes with mistakes in pink
         var signUpError = this.getErrorText();
         var showPicture = !isMobile && window.innerWidth >= 1000;
-        var checkMarkClass = "password-check-mark";
 
         return (
             <div>
@@ -205,38 +202,7 @@ class Signup extends Component {
                                     />
 
                                     {/* Confirmations of good password */}
-                                    <Form.Label className="strong-password-desc">
-                                        <Form.Text className="text-muted">
-                                            {
-                                                IsPasswordLengthStrong(this.state.password)
-                                                ? <img src={CheckMark} className={checkMarkClass} alt="OK"/>
-                                                : <img src={CrossMark} className={checkMarkClass} alt="NO"/>
-                                            }
-                                           {" Password must be at least 8 characters long."} {/*Writing it in a string keeps the space at the front*/}
-                                        </Form.Text>
-                                    </Form.Label>
-                                    <br></br>
-                                    <Form.Label className="strong-password-desc">
-                                        <Form.Text className="text-muted">
-                                            {
-                                                DoesPasswordHaveUpperandLowerCase(this.state.password)
-                                                ? <img src={CheckMark} className={checkMarkClass} alt="OK"/>
-                                                : <img src={CrossMark} className={checkMarkClass} alt="NO"/>
-                                            }
-                                            {" Password must contain uppercase (A-Z) and lowercase (a-z) characters."}
-                                        </Form.Text>
-                                    </Form.Label>
-                                    <br></br>
-                                    <Form.Label >
-                                        <Form.Text className="text-muted">
-                                            {
-                                                DoesPasswordHaveNumber(this.state.password)
-                                                ? <img src={CheckMark} className={checkMarkClass} alt="OK"/>
-                                                : <img src={CrossMark} className={checkMarkClass} alt="NO"/>
-                                            }
-                                            {" Password must contain a number (0-9)."}
-                                        </Form.Text>
-                                    </Form.Label>
+                                    {GetGoodPasswordConfirmations(this.state.password)}
                                 </Form.Group>
 
                                 {/* Confirm Password Input */}
@@ -247,9 +213,8 @@ class Signup extends Component {
                                         placeholder="Example123"
                                         autoComplete="new-password"
                                         value={this.state.confirmedPassword}
-                                        onChange={(e) => this.setState({confirmedPassword: e.target.value})
-                                        }
-                                        className={(this.state.errorMessage === "BLANK_FIELD" && this.state.password === "")
+                                        onChange={(e) => this.setState({confirmedPassword: e.target.value})}
+                                        className={(this.state.errorMessage === "BLANK_FIELD" && this.state.confirmedPassword === "")
                                             || this.state.errorMessage === "INVALID_PASSWORD"
                                             || this.state.errorMessage === "PASSWORD_MISMATCH" ? inputErrorClass : ""}
                                     />

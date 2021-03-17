@@ -2,11 +2,11 @@
     Class for the form user's can use to sign up for the site.
 */
 
-import React, { Component } from "react";
-import { Container, Row, Col, Form, Button } from "react-bootstrap";
+import React, {Component} from "react";
+import {Container, Row, Col, Form, Button} from "react-bootstrap";
 import DatePicker from 'react-date-picker';
-import { isMobile } from 'react-device-detect';
-import { connect } from "react-redux";
+import {isMobile} from 'react-device-detect';
+import {connect} from "react-redux";
 import Axios from 'axios';
 
 import {config} from "../config";

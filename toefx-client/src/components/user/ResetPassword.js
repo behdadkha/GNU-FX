@@ -5,6 +5,7 @@
 import React, {Component} from 'react'
 import {Container, Row, Col, Form, Button} from "react-bootstrap";
 import {isMobile} from 'react-device-detect';
+import {connect} from "react-redux";
 import Axios from 'axios';
 
 import {config} from "../../config";
@@ -29,7 +30,7 @@ const gErrorMessages = {
 }
 
 
-export default class ResetPassword extends Component {
+class ResetPassword extends Component {
     /*
         Sets base data for the page.
     */
@@ -43,6 +44,15 @@ export default class ResetPassword extends Component {
             errorMsg: "", //Error message type if any
             successMessage: "" //Message to be displayed to user after successful password change
         };
+    }
+
+    /*
+        Redirects the user to the login page if they're not logged in.
+    */
+    componentDidMount() {
+        //if user is not logged in, go to the login page
+        if (!this.props.auth.isAuth)
+            window.location.href = "/login";
     }
 
     /*
@@ -225,3 +235,9 @@ export default class ResetPassword extends Component {
         );
     }
 }
+
+const mapStateToProps = (state) => ({
+    auth: state.auth,
+});
+
+export default connect(mapStateToProps)(ResetPassword);

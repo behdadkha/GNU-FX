@@ -11,9 +11,14 @@ import { isMobile } from "react-device-detect";
 
 import "../../componentsStyle/Upload.css"
 import "../../componentsStyle/Upload-Mobile.css"
-import { TOE_COUNT, LEFT_FOOT_ID, RIGHT_FOOT_ID, GetFootSymbolByActive, GetUnshadedFootSymbolImage } from "../../Utils";
+import { TOE_COUNT, LEFT_FOOT_ID, RIGHT_FOOT_ID, GetFootSymbolByActive, GetUnshadedFootSymbolImage, getImage } from "../../Utils";
 import leftFootLogo from '../../icons/leftfootlogo.png';
 import rightFootLogo from '../../icons/rightfootlogo.png';
+import cameraIcon from '../../icons/cameraIcon.png';
+import galleryIcon from '../../icons/galleryIcon.png';
+import rotateRight_icon from '../../icons/rotateRight_icon.png';
+import rotateLeft_icon from '../../icons/rotateLeft_icon.png';
+
 
 
 import Camera from './Camera.js';
@@ -37,7 +42,7 @@ class Upload extends Component {
         this.state = {
             input: "Upload", //The name of the file uploaded
             uploaded: false, //No file is uploaded to start
-            files: [], //Currently uploaded files
+            files: [], //Currently uploaded files {imageObject: ,url: ,valid:false, text:""}
             diagnosis: [], //List of {image: 0, text:""}
             decomposedImages: [], //the decomposed images from the uploaded foot image {name: imageName, url:"blob", cords: [x,y] keepClicked: false, saved: false, selectedToeId}
             uploadProgress: 0, //Percentage of upload of image completed
@@ -51,9 +56,10 @@ class Upload extends Component {
             calculatingFungalCoverage: false, //User clicks on the save button and the loading message "Calculating fungal coverage" is displayed
             showUploadButton: true,
             alreadySelectedToes: [false, false, false, false, false], //to keep track of the selected toes, to prevent the user from saving multiple toenils as one toe.
-            cameraOpen: false
+            cameraOpen: false, //to see if the camera is still open or not
+            showUplodConfirmation: false, // if true shows two button for either accepting the image for upload or discarding it 
         };
-
+        this.uploadedImgRef = React.createRef();// reference to the uploaded image, used for rotating the image
         this.validateImage = this.validateImage.bind(this); //Save for later use
     }
 
@@ -79,7 +85,7 @@ class Upload extends Component {
 
             //user did not save the image
             if (decomposedImages[i].saved === false) {
-                let imageName = decomposedImages[i].name;
+                let imageName = decomposedImages[i].imageName;
                 imagesToDelete.push(imageName);
             }
         }
@@ -108,13 +114,12 @@ class Upload extends Component {
     */
     componentDidMount() {
         if (!this.props.auth.isAuth) {
-            this.props.history.push("/Login");
+            window.location.href = "/Login";
             return;
         }
         window.onpopstate = this.onBackButtonEvent.bind(this);
         //making sure the unsaves images get deleted
         window.addEventListener('beforeunload', (() => this.remove_Unsaved_Images(this.state.decomposedImages)), false);
-
     }
 
     componentWillUnmount() {
@@ -176,43 +181,38 @@ class Upload extends Component {
     }
 
     /*
-
+        recieves the image from the server and returns it 
     */
-    async getImage(imageName, cords, color) {
+    /*async getImage(imageName) {
         await axios.get(`${config.dev_server}/getImage?imageName=${imageName}`, { responseType: "blob" })
             .then((image) => {
-                this.setState(
-                    {
-                        decomposedImages:
-                            [...this.state.decomposedImages,
-                            {
-                                name: imageName,
-                                url: URL.createObjectURL(image.data),
-                                cord: cords,
-                                color: color,
-                                keepClicked: false,
-                                saved: false,
-                                selectedToeId: -1
-                            }
-                            ]
-                    });
-            }
-            );
+                return {
+                    name: imageName,
+                    url: URL.createObjectURL(image.data),
+                    keepClicked: false,
+                    saved: false,
+                    selectedToeId: -1
+                }
+            });
+
+    }*/
+
+    /*
+        sorts the decomposed images based on the cordinates(from left to right) taken from the original image
+    */
+    order_decomposedImages_leftToRight() {
+        
         let temp = this.state.decomposedImages;
-        if (temp.length > 1)
+        
+        if (temp.length > 1) {
             temp.sort((a, b) => a.cord[0] - b.cord[0])
-        this.setState({
-            decomposeImage: temp
-        })
-        /*this.setState({
-            decomposedImages:
-            [
-                ...this.state.decomposedImages,
-                temp
-            ]
-        })*/
+            this.setState({
+                decomposeImage: temp
+            })
+        }
 
     }
+
     /*
         initiates nail decompose(extracts nails from the uploaded foot image)
         fills the decomposedImages state variable with the recieved data from the server
@@ -223,22 +223,59 @@ class Upload extends Component {
 
         await axios.get(`${config.dev_server}/upload/decompose`)
             .then(async res => {
+                //res has data: {imagesInfo: [{name: "", cord: [x,y], color: [r,g,b]}], CLRImage: "name_CLR.png"}
 
-                //Format: res.data.imagesInfo[{name: "", cord: []}]
-                res.data.imagesInfo.map(({ name, cord, color }) => this.getImage(name, cord, color))
+                if (res.data.imagesInfo.length === 0) {
+                    var tempFile = this.state.files[0];
+                    tempFile.text = "Could not find any Toe nail. Click on either toe to restart."
+                    this.setState({ files: [tempFile] })
+                    return;
+                }
 
-                let colorImage = "";
+                //Format: res.data.imagesInfo[{name: "", cord: [x,y], color: [r,g,b]}]
+                var images = [];
+                var promises = res.data.imagesInfo.map(async ({ name, cord, color }) => {
+                    var imageObj = await getImage(name);
+                    //add the additional info to the imageobj
+                    imageObj["cord"] = cord;
+                    imageObj["color"] = color;
+                    imageObj["keepClicked"] = false;
+                    imageObj["saved"] = false;
+                    imageObj["selectedToeId"] = -1;
+                    images.push(imageObj);
+                });
+
+                //wait for the map to finish
+                Promise.all(promises).then(() => {
+                    //set the state and orders the images
+                    this.setState(
+                        { decomposedImages: images },
+                        () => {
+                            //call the order function right after the state is set to order the images
+                            this.order_decomposedImages_leftToRight();
+                        }
+                    )
+                });
+                
+
+                //get the new image with box around the toes
+                let coloredImage_Blob = "";//new image with boxes around toes
                 await axios.get(`${config.dev_server}/getImage?imageName=${res.data.CLRImage}`, { responseType: "blob" })
                     .then((image) => {
-                        colorImage = URL.createObjectURL(image.data);
+                        coloredImage_Blob = image.data;
                     });
 
                 let tempFiles = this.state.files;
                 tempFiles[0].text = "Please Choose the toe nails you would like to save";
-                tempFiles[0].url = colorImage;
+                tempFiles[0].imageObject = coloredImage_Blob;
+                tempFiles[0].url = URL.createObjectURL(coloredImage_Blob);
+                
                 this.setState({
                     files: tempFiles
-                })
+                }, () => {
+                    this.drawImageOnCanvas_fromImgObj(coloredImage_Blob, false)  // draw the image, after the files variable is saved
+                }
+                )
             })
             .catch((error) => this.printFileValidationErrorToConsole(error));
     }
@@ -258,31 +295,17 @@ class Upload extends Component {
         Processes the requested upload of an image by the user.
         param e: The upload event.
     */
-    async handleUpload(imageObject, imageName = "default.jpg") {
+    async handleUpload() {
 
-        //hide the upload button
-        this.setState({ showUploadButton: false });
-
-        let file = imageObject;
-
-        if (gPossibleFileTypes.findIndex(item => item === file.type) === -1) {
-            //Invalid file type
-            this.setState({ invalidFileTypeError: true });
-            return;
-        }
-        else {
-            //Remove the error in case it was there before
-            this.setState({ invalidFileTypeError: false });
-        }
-
+        var file = this.state.files[0];
+        file.text = "Processing your image..."
         this.setState({
-            files: [
-                ...this.state.files, //Append new image onto end of old file list
-                { url: URL.createObjectURL(file), name: imageName, valid: false, text: 'Processing your image...' },
-            ],
-            uploaded: true,
-            input: imageName,
+            showUplodConfirmation: false,
+            files: [file]
         });
+
+        file = file.imageObject;
+
         //Now that the file has been confirmed, upload it to the database -- THIS SHOULD COME AFTER VALIDATION!!!
         const formData = new FormData(); //formData contains the image to be uploaded
         formData.append("file", file);
@@ -307,10 +330,16 @@ class Upload extends Component {
     }
 
     handleOpenCamera_mobile() {
-        console.log("here");
         //hide the upload button and open camera
         this.setState({ showUploadButton: false, cameraOpen: true });
 
+    }
+    /*
+        The "go back" button is clicked to discard the image
+        remove the image and go back to show both options(gallery and camera)
+    */
+    handleGoBack_discardUpload() {
+        this.setState({ showUploadButton: true, files: [] });
     }
 
     /*
@@ -376,7 +405,9 @@ class Upload extends Component {
                 invalidFileTypeError: false,
                 calculatingFungalCoverage: false,
                 showUploadButton: true,
-                alreadySelectedToes: [false, false, false, false, false]
+                alreadySelectedToes: [false, false, false, false, false],
+                cameraOpen: false,
+                showUplodConfirmation: false,
 
             });
             //remove the unsaved images from the server
@@ -485,10 +516,10 @@ class Upload extends Component {
         param toeId: the value to set the selectedToeId to
         param decomposeImageIndex: the index for the target decomposedImage
     */
-    setDecomposeImage_toeId (toeId, decomposeImageIndex) {
+    setDecomposeImage_toeId(toeId, decomposeImageIndex) {
         var temp = this.state.decomposedImages;
         temp[decomposeImageIndex].selectedToeId = toeId;
-        this.setState({decomposedImages: temp})
+        this.setState({ decomposedImages: temp })
     }
 
     /*
@@ -501,8 +532,8 @@ class Upload extends Component {
 
         if (this.state.selectedFootId === LEFT_FOOT_ID)
             toeOrder.reverse(); //Toes go in opposite order on left foot
-    
-        
+
+
         return (
             <span className="toolbar">
                 {
@@ -520,6 +551,78 @@ class Upload extends Component {
         return toeId === this.state.decomposedImages[decomposeImageIndex].selectedToeId;
     }
 
+    /*
+        Draws the image on canvas
+        converts the imageobject to image and draws it on the canvas
+        param imageObject: blob, recieved from the input field, e.target.files[0]
+        param set_width_height: if true, set the canvas width and height
+    */
+    drawImageOnCanvas_fromImgObj(imageObject, set_width_height) {
+        var reader = new FileReader();
+        reader.readAsDataURL(imageObject);
+
+        reader.onload = (e) => {
+            var img = new Image();
+            img.src = e.target.result;
+            img.onload = () => {
+                var ctx = this.uploadedImgRef.current.getContext("2d");
+                //if it is the first time, we need to set the width hand height of canvas based on the image
+                if (set_width_height) {
+                    this.uploadedImgRef.current.width = img.width;
+                    this.uploadedImgRef.current.height = img.height;
+                }
+
+                ctx.drawImage(img, 0, 0);
+                ctx.save();
+            }
+        };
+    }
+
+    /*
+        shows the two buttons for confirming or discarding images
+        checks the input file to be valid
+    */
+    ImageUploadConfirmation(imageObject, imageName = "default.jpg", cameraUsed = false) {
+
+
+        let file = imageObject;
+
+        if (gPossibleFileTypes.findIndex(item => item === file.type) === -1) {
+            //Invalid file type
+            this.setState({ invalidFileTypeError: true });
+            return;
+        }
+        else {
+            //Remove the error in case it was there before
+            this.setState({ invalidFileTypeError: false });
+        }
+
+        //draw the image on canvas
+        //need to convert the imageobject to Image() in order to be able to draw it on canvas
+        this.drawImageOnCanvas_fromImgObj(imageObject, true);
+
+        var newStateItems =
+        {
+            files: [
+                ...this.state.files, //Append new image onto end of old file list
+                { imageObject: imageObject, url: URL.createObjectURL(file), name: imageName, valid: false, text: '' },
+            ],
+            uploaded: true,
+            input: imageName,
+
+            showUploadButton: false, //hide the upload related buttons and show confirmation buttons
+            showUplodConfirmation: true
+        }
+        //if camera is used
+        if (cameraUsed) {
+            newStateItems["cameraOpen"] = false;
+        }
+        this.setState(newStateItems);
+
+        if (cameraUsed)
+            this.handleUpload(); //image taken by camera has already had confirmation, upload it
+    }
+
     /*  
         prints the upload button for mobile view
         shows camera and different design
@@ -529,6 +632,7 @@ class Upload extends Component {
             <Row>
                 <Col>
                     <div className="centred-text-with-margin-above">
+
                         <div>
                             {/* Label must be used instead of Button because of the input field required */}
                             <label className={buttonClassName}
@@ -542,9 +646,32 @@ class Upload extends Component {
 
                                 }
                             >
-                                Open Camera
-                        </label>
+                                Camera
+                                <img className="cameraIcon" src={cameraIcon} alt="camera"></img>
+                            </label>
+
+                            <input
+                                type="file"
+                                className="custom-file-input"
+                                id="inputGroupFile01"
+                                aria-describedby="inputGroupFileAddon01"
+                                accept="image/x-png,image/png,image/jpeg,image/bmp"
+                                //onChange={e => this.handleUpload(e.target.files[0], e.target.files[0].name)}
+                                onChange={e => this.ImageUploadConfirmation(e.target.files[0], e.target.files[0].name, false)}
+
+                            />
                         </div>
+                        <label className={buttonClassName}
+                            htmlFor={!this.isParamNotSet() ? "inputGroupFile01" : ''}
+                            onClick={this.isParamNotSet() ? () =>
+                                this.setState({ showChooseFootAndToeError: true })
+                                : () =>
+                                    this.setState({ showChooseFootAndToeError: false })
+                            }
+                        >
+                            Gallery
+                            <img className="galleryIcon" src={galleryIcon} alt="camera"></img>
+                        </label>
                     </div>
                 </Col>
             </Row>
@@ -568,7 +695,7 @@ class Upload extends Component {
                                 id="inputGroupFile01"
                                 aria-describedby="inputGroupFileAddon01"
                                 accept="image/x-png,image/png,image/jpeg,image/bmp"
-                                onChange={e => this.handleUpload(e.target.files[0], e.target.files[0].name)}
+                                onChange={e => this.ImageUploadConfirmation(e.target.files[0], e.target.files[0].name, false)}
                             />
 
                             <label className={buttonClassName}
@@ -596,13 +723,13 @@ class Upload extends Component {
     async handleSave(footId, toeId, imageName, imageIndex) {
         //showing the loading message
         this.setState({ calculatingFungalCoverage: true });
-
+        console.log(imageName);
         await axios.post(`${config.dev_server}/upload/save`, { foot: footId, toe: toeId, imageName: imageName })
             .then(() => {
                 console.log("saved");
                 this.setImageSavedToTrue(imageIndex);
 
-                var tempSelectedToes = this.state.alreadySelectedToes;
+                var tempSelectedToes = this.state.alreadySelectedToes;//this is so that only one image of a toe can be uploaded at a time
                 tempSelectedToes[toeId] = true;
                 this.setState({ alreadySelectedToes: tempSelectedToes });
             })
@@ -650,10 +777,10 @@ class Upload extends Component {
 
     printDecomposedImage_desktop(name, url, color, keepClicked, saved, index) {
         return (
-            <Col key={name} className="decomposeImageCol" style={{ border: `5px solid rgb(${color})` }}>
-                <Row>
+            <div key={name} className="decomposeImageCol" style={{ border: `5px solid rgb(${color})` }}>
+                <div className="decomposeImage_div">
                     <img className="decomposeImage" src={url} alt="nail"></img>
-                </Row>
+                </div>
                 <Row noGutters={true} className="saveDiscardRow">
                     {
                         saved === true
@@ -677,7 +804,7 @@ class Upload extends Component {
                     }
                 </Row>
 
-            </Col>
+            </div>
         )
 
     }
@@ -686,7 +813,7 @@ class Upload extends Component {
         var saveBtnClassName = (isMobile) ? "saveBtn_mobile" : "saveBtn";
         var toeButtons = (isMobile) ? "toeButtons_mobile" : "toeButtons_desktop";
         return (
-            <div style={{display: "inline"}}>
+            <div style={{ display: "inline" }}>
                 <div>
                     <h6 className="select_the_toe_TEXT">Select The Toe:</h6>
                 </div>
@@ -707,7 +834,7 @@ class Upload extends Component {
     }
 
 
-    
+
     print_keep_discard_mobile(index) {
         return (
             <div className="decompose_keepDiscard_mobile">
@@ -719,18 +846,18 @@ class Upload extends Component {
     printDecomposedImage_mobile(name, url, color, keepClicked, saved, index) {
 
         return (
-            <div key={index} className="decomposedRow_mobile" style={{border: `2px solid rgb(${color})`}}>
+            <div key={index} className="decomposedRow_mobile" style={{ border: `2px solid rgb(${color})` }}>
                 <div className="decomposed_Img_Div_mobile">
                     <img src={url} className="decomposeImage_mobile" alt={name}></img>
                 </div>
-                
+
                 {
                     saved
                         ?
                         <div>
-                        <div className="savedText_div">
-                            <h6 className="savedText">Saved</h6>
-                        </div>
+                            <div className="savedText_div">
+                                <h6 className="savedText">Saved</h6>
+                            </div>
                         </div>
                         :
                         keepClicked
@@ -738,7 +865,7 @@ class Upload extends Component {
                             this.state.calculatingFungalCoverage
                                 ?
                                 "Please wait while we calculate your fungal coverage..."
-                                : 
+                                :
                                 this.printDecompose_toeSelection(name, index)
                             :
                             this.print_keep_discard_mobile(index)
@@ -749,13 +876,34 @@ class Upload extends Component {
 
     }
 
+    /* 
+        rotates the image on canvas 90 degrees
+        param left: boolean, if true rotates the image 90deg to the left, otherwise rotates 90deg right
+    */
+    rotateImage(left) {
+        var angle = (left) ? +90 : -90;
+
+        var canvas = this.uploadedImgRef.current;
+        var ctx = canvas.getContext("2d");
+
+        //rotate the canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.translate(canvas.width / 2, canvas.height / 2);//translate to center
+        ctx.rotate((Math.PI / 180) * angle); //need to convert from degrees into radian
+        ctx.translate(-canvas.width / 2, -canvas.height / 2);
+
+        //draw the image
+        this.drawImageOnCanvas_fromImgObj(this.state.files[0].imageObject, false);
+
+    }
+
     /*
         Prints the upload image page.
     */
     render() {
         var error;
-
-        var buttonClassName = "btn-primary upload-image-button";
+        var buttonClassName = "btn-primary";
+        if (isMobile) buttonClassName += " upload-image-button_mobile"; else buttonClassName += " upload-image-button";
         var uploadProgress = this.state.uploadProgress === 0 ? "" : this.state.uploadProgress;
         var imageClassName = (isMobile) ? "uploadedImg-mobile" : "uploadedImg-desktop";
 
@@ -775,8 +923,11 @@ class Upload extends Component {
         if (this.state.decomposedImages.length === 0) {
             this.setState({
                 decomposedImages: [
-                    {name: "1.PNG", url:thumb, color: [255,0,0], cords: [20,30], keepClicked: false, saved: false},
-                    {name: "2.PNG", url:index, color: [255,255,0], cords: [40,10], keepClicked: false, saved: false}
+                    {name: "1.PNG", url:galleryIcon, color: [255,0,0], cords: [20,30], keepClicked: false, saved: false},
+                    {name: "2.PNG", url:rotateLeft_icon, color: [255,255,0], cords: [40,10], keepClicked: false, saved: false},
+                    {name: "2.PNG", url:rotateLeft_icon, color: [255,255,0], cords: [40,10], keepClicked: false, saved: false},
+                    {name: "2.PNG", url:rotateLeft_icon, color: [255,255,0], cords: [40,10], keepClicked: false, saved: false},
+                    {name: "2.PNG", url:rotateLeft_icon, color: [255,255,0], cords: [40,10], keepClicked: false, saved: false}
                 ]
             })
         }*/
@@ -786,19 +937,6 @@ class Upload extends Component {
                 <h3 className="diagnosis-question">Which foot is the image for?</h3>
 
                 { (isMobile) ? this.printFootSelection_mobile() : this.printFootSelection_desktop()}
-
-                {/* Buttons to change which foot is being viewed 
-                <div className="graph-feet-buttons">
-                    <button onClick={this.setFoot.bind(this, LEFT_FOOT_ID)}
-                        className={(this.state.selectedFootId === LEFT_FOOT_ID ? activeFootButtonClass : defaultFootButtonClass)}>
-                        <img src={leftFootLogo} className="footlogo" alt="left foot logo" />
-                    </button>
-
-                    <button onClick={this.setFoot.bind(this, RIGHT_FOOT_ID)}
-                        className={(this.state.selectedFootId === RIGHT_FOOT_ID ? activeFootButtonClass : defaultFootButtonClass)}>
-                        <img src={rightFootLogo} className="footlogo" alt="right food logo" />
-                    </button>
-                </div>*/}
 
                 <br></br>
                 <br></br>
@@ -814,7 +952,7 @@ class Upload extends Component {
                         ?
                         (isMobile) ? this.printUploadButton_mobile(buttonClassName) : this.printUploadButton_desktop(buttonClassName)
                         :
-                        this.state.cameraOpen ? <div> <Camera overLayImage={GetUnshadedFootSymbolImage(this.state.selectedFootId, true)} onCaptured={(blob) => { this.setState({ cameraOpen: false }); this.handleUpload(blob); }} />  </div> : ""
+                        this.state.cameraOpen ? <div> <Camera overLayImage={GetUnshadedFootSymbolImage(this.state.selectedFootId, true)} onCaptured={(blob) => this.ImageUploadConfirmation(blob, "default.jpg", true)} />  </div> : ""
                 }
 
 
@@ -830,10 +968,18 @@ class Upload extends Component {
                         <Col key={`col-${index}`}>
                             {/* Image */}
                             <div className="image_div">
-                                <img key={index} src={source.url} className={imageClassName} alt="uploaded" />
+                                {/* Had to change the <img> to <canvas> because if the user rotates the image, the .toBlob on canvas gives us the image at the rotated degree */}
+                                {/*<img ref={this.uploadedImgRef} key={index} src={source.url} className={imageClassName} alt="file" />*/}
+                                <canvas ref={this.uploadedImgRef} key={index} className={imageClassName} width="1080px" height="800px"></canvas>
                             </div>
+                            {this.state.showUplodConfirmation && // only show the image rotation when the user is confirming the image
+                                <div className="rotateImg_div">
+                                    <img className="roateLeft_icon" src={rotateRight_icon} alt="Rotate left" onClick={() => this.rotateImage(true)}></img>
+                                    <img className="roateRight_icon" src={rotateLeft_icon} alt="Rotate right" onClick={() => this.rotateImage(false)}></img>
+                                </div>
+                            }
 
-                            {/* Image Name & Diagnose Button */}
+                            {/* Image status */}
                             <Row>
                                 <Col>
                                     <div id="uploadStatusText">{source.text}</div>
@@ -843,6 +989,31 @@ class Upload extends Component {
                                         Diagnose
                                     </Button>
                                     */}
+                                    {this.state.showUplodConfirmation
+                                        ?
+                                        <div>
+                                            <Button className="upload_looksGood_btn" onClick={() => {
+                                                //updating the files with the new rotated image before upload
+                                                var tempFile = this.state.files[0];
+                                                this.uploadedImgRef.current.toBlob((blob) => {
+                                                    tempFile.imageObject = blob;
+                                                    this.setState({ files: [tempFile] },
+                                                        this.handleUpload)
+                                                });
+
+
+                                            }
+                                            }>
+                                                Looks Good <span role="img" aria-label="happy emoji">😀</span>
+                                            </Button>
+                                            <Button className="upload_GoBack_btn" onClick={() => this.handleGoBack_discardUpload()}>
+                                                Go back <span role="img" aria-label="sad emoji">☹️</span>
+                                            </Button>
+                                        </div>
+                                        :
+                                        ""
+                                    }
+
                                 </Col>
                             </Row>
 
@@ -873,21 +1044,21 @@ class Upload extends Component {
                     ))}
                 </Row>
                 {/* decomposed images */}
-                <Row className="decomposeImageRow">
+                <div className="decomposeImageRow">
                     {
-                        (isMobile) 
-                        ? 
-                        this.state.decomposedImages.map(
-                            ({ name, url, color, keepClicked, saved, selectedToeId }, index) => this.printDecomposedImage_mobile(name, url, color, keepClicked, saved, index ) 
-                        )
-                        :
-                        this.state.decomposedImages.map(
-                            ({ name, url, color, keepClicked, saved, selectedToeId }, index) => this.printDecomposedImage_desktop(name, url, color, keepClicked, saved, index) 
-                        )
+                        (isMobile)
+                            ?
+                            this.state.decomposedImages.map(
+                                ({ imageName, url, color, keepClicked, saved, selectedToeId }, index) => this.printDecomposedImage_mobile(imageName, url, color, keepClicked, saved, index)
+                            )
+                            :
+                            this.state.decomposedImages.map(
+                                ({ imageName, url, color, keepClicked, saved, selectedToeId }, index) => this.printDecomposedImage_desktop(imageName, url, color, keepClicked, saved, index)
+                            )
                     }
-                     
 
-                </Row>
+
+                </div>
 
                 <Row>
                     {

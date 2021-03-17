@@ -2,11 +2,11 @@
     Class for the form user's can use to sign up for the site.
 */
 
-import React, {Component} from "react";
-import {Container, Row, Col, Form, Button} from "react-bootstrap";
+import React, { Component } from "react";
+import { Container, Row, Col, Form, Button } from "react-bootstrap";
 import DatePicker from 'react-date-picker';
-import {isMobile} from 'react-device-detect';
-import {connect} from "react-redux";
+import { isMobile } from 'react-device-detect';
+import { connect } from "react-redux";
 import Axios from 'axios';
 
 import {config} from "../config";
@@ -19,9 +19,9 @@ import healthydrawing from "../icons/MedicalCare.svg";
 const gErrorMessages = {
     "": "",
     "BLANK_FIELD": "Please fill in all fields.",
-    "PASSWORD_MISMATCH": "Please make sure passwords match.", 
+    "PASSWORD_MISMATCH": "Please make sure passwords match.",
     "INVALID_EMAIL": "Please enter a valid email address.",
-    "INVALID_PASSWORD": "Please enter a valid password.", 
+    "INVALID_PASSWORD": "Please enter a valid password.",
     "NO_SERVER_CONNECTION": "Could not connect to server.",
     "ACCOUNT_EXISTS": "That email is already in use.\nPlease choose another.",
 }
@@ -44,6 +44,7 @@ class Signup extends Component {
             age: "", //User's age input
             errorMessage: "", //The type of error message to display (if any)
             birthday: "",
+            successMessage: ""
         };
     }
 
@@ -51,10 +52,8 @@ class Signup extends Component {
         Redirects the user to the dashboard if they're already logged in.
     */
     componentDidMount() {
-        if (this.props.auth.isAuth)
-        {
-            this.props.history.push("/user");
-            window.location.reload(); //Helps fix navbar
+        if (this.props.auth.isAuth) {
+            window.location.href = "/user";
         }
     }
 
@@ -66,22 +65,22 @@ class Signup extends Component {
         e.preventDefault(); //Prevents page reload on form submission
 
         if (this.isAnyFieldLeftBlank()) {
-            this.setState({errorMessage: "BLANK_FIELD"});
+            this.setState({ errorMessage: "BLANK_FIELD" });
             return; //A field was left blank so don't finalize sign up
         }
 
         if (this.passwordMismatch()) {
-            this.setState({errorMessage: "PASSWORD_MISMATCH"});
+            this.setState({ errorMessage: "PASSWORD_MISMATCH" });
             return; //User's password and confirm password field don't match
         }
 
         if (!IsValidEmail(this.state.email)) {
-            this.setState({errorMessage: "INVALID_EMAIL"});
+            this.setState({ errorMessage: "INVALID_EMAIL" });
             return; //User didn't enter a proper email
         }
 
         if (!IsGoodPassword(this.state.password)) {
-            this.setState({errorMessage: "INVALID_PASSWORD"})
+            this.setState({ errorMessage: "INVALID_PASSWORD" })
             return; //User didn't enter proper passwords
         }
 
@@ -97,19 +96,22 @@ class Signup extends Component {
             })
         }
         catch (response) { //No internet connection
-            this.setState({errorMessage: "ACCOUNT_EXISTS"});
+            this.setState({ errorMessage: "ACCOUNT_EXISTS" });
             return;
         }
 
         //Process response from server
         if (response.status === 200) { //Sign-up was a success
-            //Redirect to login page
-            this.props.history.push('/login');
-            window.location.reload(); //Update nav bar
+            this.setState({ successMessage: "A verification email has been sent to your email address. Redirecting to the login page." })
+            setTimeout(() => {
+                //Redirect to login page
+                this.props.history.push('/login');
+            }, 11000);
+
 
         }
         else { //Account already exists
-            this.setState({errorMessage: "ACCOUNT_EXISTS"});
+            this.setState({ errorMessage: "ACCOUNT_EXISTS" });
         }
     }
 
@@ -155,7 +157,7 @@ class Signup extends Component {
                 {showPicture ? <img src={healthydrawing} className="signup-picture" alt="" /> : ""}
 
                 <Container className={"p-3" + (!isMobile ? " mb-1 bg-white shadow rounded" : " mb-3")}
-                           id={"signup-form-container" + (!showPicture ? "-mobile" : "")}
+                    id={"signup-form-container" + (!showPicture ? "-mobile" : "")}
                 >
                     <h3 className={titleClass}>Create Account,</h3>
                     <h5 className={titleClass}>Join us to <span className="signup-form-join-message">show off your toenails!</span></h5>
@@ -177,10 +179,10 @@ class Signup extends Component {
                                         placeholder="example@gmail.com"
                                         autoComplete="email"
                                         value={this.state.email}
-                                        onChange={(e) => this.setState({email: e.target.value.trim()})}
+                                        onChange={(e) => this.setState({ email: e.target.value.trim() })}
                                         className={(this.state.errorMessage === "BLANK_FIELD" && this.state.email === "")
-                                                 || this.state.errorMessage === "INVALID_EMAIL"
-                                                 || this.state.errorMessage === "ACCOUNT_EXISTS" ? inputErrorClass : ""}
+                                            || this.state.errorMessage === "INVALID_EMAIL"
+                                            || this.state.errorMessage === "ACCOUNT_EXISTS" ? inputErrorClass : ""}
                                     />
                                     <Form.Text className="text-muted">
                                         Your email is secure in our hands.
@@ -195,10 +197,10 @@ class Signup extends Component {
                                         placeholder="Example123"
                                         autoComplete="new-password"
                                         value={this.state.password}
-                                        onChange={(e) => {this.setState({password: e.target.value})}}
+                                        onChange={(e) => { this.setState({ password: e.target.value }) }}
                                         className={(this.state.errorMessage === "BLANK_FIELD" && this.state.password === "")
-                                                 || this.state.errorMessage === "INVALID_PASSWORD"
-                                                 || this.state.errorMessage === "PASSWORD_MISMATCH" ? inputErrorClass : ""}
+                                            || this.state.errorMessage === "INVALID_PASSWORD"
+                                            || this.state.errorMessage === "PASSWORD_MISMATCH" ? inputErrorClass : ""}
                                     />
 
                                     {/* Confirmations of good password */}
@@ -228,7 +230,7 @@ class Signup extends Component {
                                         placeholder="Bob Smith"
                                         autoComplete="name"
                                         value={this.state.name}
-                                        onChange={(e) => this.setState({name: e.target.value})}
+                                        onChange={(e) => this.setState({ name: e.target.value })}
                                         className={(this.state.errorMessage === "BLANK_FIELD" && this.state.name === "") ? inputErrorClass : ""}
                                     />
                                 </Form.Group>
@@ -238,14 +240,14 @@ class Signup extends Component {
                                     <Form.Label>Birthday</Form.Label>
                                     <br></br>
                                     <DatePicker className={"form-control pointer "
-                                                          + ((this.state.errorMessage === "BLANK_FIELD" && this.state.birthday === "") ? inputErrorClass : "")}
-                                                selected={this.state.birthday}
-                                                value={this.state.birthday}
-                                                onChange={(date) => this.setState({birthday: date})}
-                                                dateFormat="MMMM d, yyyy"
-                                                maxDate={new Date()}
-                                                calendarIcon={null}
-                                                clearIcon={null}/>
+                                        + ((this.state.errorMessage === "BLANK_FIELD" && this.state.birthday === "") ? inputErrorClass : "")}
+                                        selected={this.state.birthday}
+                                        value={this.state.birthday}
+                                        onChange={(date) => this.setState({ birthday: date })}
+                                        dateFormat="MMMM d, yyyy"
+                                        maxDate={new Date()}
+                                        calendarIcon={null}
+                                        clearIcon={null} />
                                 </Form.Group>
 
                                 {/* Sign Up Button */}
@@ -257,17 +259,18 @@ class Signup extends Component {
                                     {/* Sign Up link on mobile */}
                                     {
                                         isMobile ?
-                                            <div className = "signup-form-login-redirect">
+                                            <div className="signup-form-login-redirect">
                                                 <span>
                                                     {"I have an account, "}
-                                                    <Button onClick={() => this.props.history.push("/login")}>
+                                                    <Button onClick={() => window.location.href = "/login"}>
                                                         Login
                                                     </Button>
                                                 </span>
                                             </div>
-                                        : ""
+                                            : ""
                                     }
                                 </div>
+                                {this.state.successMessage === "" ? "" : <h5 className="signup-successMessage">{this.state.successMessage}</h5>}
                             </Form>
                         </Col>
                     </Row>

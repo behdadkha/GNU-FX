@@ -51,9 +51,8 @@ class FirstPage extends Component {
             if (this.props.auth.isAuth) //User is logged in
                 this.props.history.push("/user"); //Go to image view
             else
-                this.props.history.push("/login"); //Go to login screen
+                window.location.href = "/login"; //Go to login screen
 
-            window.location.reload(); //Helps fix navbar
         }
     }
 
@@ -61,14 +60,14 @@ class FirstPage extends Component {
         Reroutes the user to the Log In page and reloads the dashboard.
     */
     gotoLoginPage() {
-        this.props.history.push("/login");
+        window.location.href = "/login";
     }
 
     /*
         Reroutes the user to the Sign Up page and reloads the dashboard.
     */
     gotoSignUpPage() {
-        this.props.history.push("/signup");
+        window.location.href = "/signup";
     }
 
     /*

@@ -42,7 +42,7 @@ class MyAccount extends Component {
     async componentDidMount() {
         //Redirect to login page if user not logged in
         if (!this.props.auth.isAuth)
-            this.props.history.push("/login");
+            window.location.href = "/login";
 
         //Redux data gets erased after a refresh, so if the data is gone we need to get it again
         if (this.props.foot !== undefined && this.props.foot.images.length === 0) {

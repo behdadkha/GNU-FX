@@ -49,7 +49,7 @@ class User extends Component {
         try {
 
             if (!this.props.auth.isAuth) {
-                this.props.history.push("/login");
+                window.location.href = "/login";
                 return
             }
             //Redux data gets erased after a refresh, so if the data is gone we need to get it again

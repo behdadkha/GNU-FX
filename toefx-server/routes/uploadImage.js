@@ -251,7 +251,7 @@ uploadImage.route('/deleteImage').delete(async (req, res) => {
     returns: The reponse being an object {msg: uploaded} for success.
 */
 uploadImage.route('/loggedin').post(async (req, res) => {
-    
+
     try {
         if (req.files.file === undefined) { return res.status(400).json({ msg: "Oops, can't read the image" }) }
 

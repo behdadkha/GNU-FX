@@ -20,6 +20,7 @@ import LeftFootToe1 from './icons/toes/LeftFootToe1.png';
 import LeftFootToe2 from './icons/toes/LeftFootToe2.png';
 import LeftFootToe3 from './icons/toes/LeftFootToe3.png';
 import LeftFootToe4 from './icons/toes/LeftFootToe4.png';
+import { config } from "./config";
 
 import CheckMark from "./icons/checkmark.png";
 import CrossMark from "./icons/crossmark.png";
@@ -36,7 +37,7 @@ const gToeNames = ["Big Toe", "Index Toe", "Middle Toe", "Fourth Toe", "Little T
 const gToeImages = [LeftFootToe0, LeftFootToe1, LeftFootToe2, LeftFootToe3, LeftFootToe4]
 
 //Pages with the navigation bar at the top when using a desktop computer
-const gDesktopPagesWithoutNavbar = ["/user", "/myaccount"];
+const gDesktopPagesWithoutNavbar = ["/user", "/user/myAccount"];
 
 //Pages without the navigation bar at the top when using a mobile device
 const gMobilePagesWithoutNavbar = ["/", "/login", "/signup"]
@@ -237,13 +238,33 @@ export function IsGoodPassword(password) {
     returns: The url for displaying an HTML image.
 */
 export function GetImageURLByName(imagesArray, name) {
-    console.log(name);
     try {
         return imagesArray.find(({ imageName }) => imageName === name).url;
     }
     catch {
         return undefined;
     }
+}
+
+/*
+    Gets the image from the backend server.
+    param imageName: the name of the image to search for in the server
+    returns a json {name: imageName, url: image url}, the image url can be fed to <img src=>
+*/
+export function getImage(imageName) {
+    return new Promise((resolve, reject) => {
+
+        axios.get(`${config.dev_server}/getImage?imageName=${imageName}`, { responseType: "blob" })
+            .then((image) => {
+                resolve({
+                    imageName: imageName,
+                    url: URL.createObjectURL(image.data),
+                });
+            }).catch(() => {console.log("Couldnt get the image"); resolve({}); });
+    
+    });
+    
+
 }
 
 /*

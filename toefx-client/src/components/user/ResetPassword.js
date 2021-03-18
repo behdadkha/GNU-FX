@@ -14,7 +14,6 @@ import store from '../../Redux/store';
 import {IsGoodPassword, GetGoodPasswordConfirmations} from "../../Utils";
 
 import "../../componentsStyle/ForgotPassword.css"; //Reuse CSS from forgot password page
-import '../../componentsStyle/ResetPassword.css';
 import "../../componentsStyle/Signup.css"; //Reuse CSS from sign up page
 
 //Error messages displayed to the user

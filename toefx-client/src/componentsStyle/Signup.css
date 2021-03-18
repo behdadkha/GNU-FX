@@ -34,6 +34,10 @@
     color: orange;
 }
 
+.signup-success-message {
+    font-size: 1rem;
+}
+
 .signup-error {
     height: 30px;
 }
@@ -64,10 +68,6 @@
 
 .signup-button {
     width: 100%;
-}
-
-.signup-successMessage{
-    margin-top: 5%;
 }
 
 /*CSS specifically for mobile and split screen*/

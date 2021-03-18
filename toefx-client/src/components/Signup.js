@@ -96,22 +96,26 @@ class Signup extends Component {
             })
         }
         catch (response) { //No internet connection
-            this.setState({ errorMessage: "ACCOUNT_EXISTS" });
+            this.setState({errorMessage: "ACCOUNT_EXISTS"});
             return;
         }
 
         //Process response from server
         if (response.status === 200) { //Sign-up was a success
-            this.setState({ successMessage: "A verification email has been sent to your email address. Redirecting to the login page." })
-            setTimeout(() => {
-                //Redirect to login page
-                this.props.history.push('/login');
-            }, 11000);
+            this.setState({
+                errorMessage: "", //Remove old errors
+                successMessage: "Please check your email for a link to confirm your account."
+            })
 
-
+            if (isMobile) {
+                //No navbar is on the mobile sign up page, so redirect the user automatically
+                setTimeout(() => {
+                    window.location.href = "/login"; //Redirect to login page after 5 seconds
+                }, 5000);
+            }
         }
         else { //Account already exists
-            this.setState({ errorMessage: "ACCOUNT_EXISTS" });
+            this.setState({errorMessage: "ACCOUNT_EXISTS"});
         }
     }
 
@@ -159,8 +163,18 @@ class Signup extends Component {
                 <Container className={"p-3" + (!isMobile ? " mb-1 bg-white shadow rounded" : " mb-3")}
                     id={"signup-form-container" + (!showPicture ? "-mobile" : "")}
                 >
-                    <h3 className={titleClass}>Create Account,</h3>
-                    <h5 className={titleClass}>Join us to <span className="signup-form-join-message">show off your toenails!</span></h5>
+                    {
+                        //Display diffferent title after the sign-up was successful
+                        this.state.successMessage !== "" ?
+                            <h3 className={titleClass}>Account created!</h3>
+                        :
+                        <span>
+                            <h3 className={titleClass}>Create Account,</h3>
+                            <h5 className={titleClass}>
+                                Join us to <span className="signup-form-join-message">show off your toenails!</span
+                            ></h5>
+                        </span>
+                    }
 
                     <Row>
                         <Col>
@@ -169,6 +183,13 @@ class Signup extends Component {
                                 <h6 className="error-text">{signUpError}</h6>
                             </div>
 
+                            {
+                            //Only show succress message after the sign up has been completed
+                            this.state.successMessage !== "" ?
+                                <div className="signup-success-message">
+                                    {this.state.successMessage}
+                                </div>
+                            :
                             <Form className={"signup-form" + (!showPicture ? "-mobile" : "")} onSubmit={this.handleSignup.bind(this)}>
 
                                 {/* Email Input */}
@@ -270,8 +291,8 @@ class Signup extends Component {
                                             : ""
                                     }
                                 </div>
-                                {this.state.successMessage === "" ? "" : <h5 className="signup-successMessage">{this.state.successMessage}</h5>}
                             </Form>
+                            }
                         </Col>
                     </Row>
                 </Container>

@@ -86,18 +86,39 @@ class MyAccount extends Component {
     */
     deleteImage(imageName, selectedFootIndex, toeIndex, imageIndex) {
         try {
-        if (selectedFootIndex === 0 || selectedFootIndex === 1)
-            if (toeIndex >= 0 && toeIndex <= 4) {
-        
-                Axios.get(`${config.dev_server}/deleteImage?footIndex=${selectedFootIndex}&toeIndex=${toeIndex}&imageIndex=${imageIndex}&imageName=${imageName}`)
-                    .then(() => {
-                        window.location.reload();
-                    })
-    
-            }
+            if (selectedFootIndex === 0 || selectedFootIndex === 1)
+                if (toeIndex >= 0 && toeIndex <= 4) {
+
+                    Axios.get(`${config.dev_server}/deleteImage?footIndex=${selectedFootIndex}&toeIndex=${toeIndex}&imageIndex=${imageIndex}&imageName=${imageName}`)
+                        .then(() => {
+                            window.location.reload();
+                        })
+
+                }
         } catch {
             console.log("Couldnt complete the request");
         }
+    }
+
+    /*
+        returns true if there exists any image to show
+        param footIndex: 0 if left foot is being searched, 1 for right foot
+    */
+    existsAnyImageforFoot(footIndex) {
+
+        if (this.state.toeData.feet){//data is loaded
+            let toeData = this.state.toeData.feet[footIndex].toes;
+        
+            for (let i = 0; i < toeData.length; i++) {
+                if (toeData[i].images.length !== 0)
+                    return true;
+            }
+        }
+        else
+            return false;
+
+        return false;
+    
     }
 
     /*
@@ -108,6 +129,7 @@ class MyAccount extends Component {
     */
     printUploadedImage(id, toe, selectedFootIndex) {
         //List is ordered by: Image, Toe Name, Fungal Coverage %, Upload Date
+
         return (
             toe.images.map(({ name, date, fungalCoverage }, index) =>
                 <tr key={toe + ' ' + index}>
@@ -169,13 +191,21 @@ class MyAccount extends Component {
                             <th>Delete?</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        {
-                            //Print a list of images with data
-                            this.state.toeData.feet[selectedFootIndex].toes.map((toe, id) => this.printUploadedImage(id, toe, selectedFootIndex))
-
-                        }
-                    </tbody>
+                    {this.existsAnyImageforFoot(selectedFootIndex)
+                    ?
+                        <tbody>
+                            {
+                                //Print a list of images with data
+                                this.state.toeData.feet[selectedFootIndex].toes.map((toe, id) => this.printUploadedImage(id, toe, selectedFootIndex))
+                            }
+                        </tbody>
+                    :
+                        <tbody>
+                            <tr>
+                                <td colSpan="5">There are no images available for the selected foot</td>
+                            </tr>
+                        </tbody>
+                    }
                 </Table>
             </div>;
 
@@ -183,7 +213,7 @@ class MyAccount extends Component {
             <div>
                 {
                     !isMobile && //Only on desktop
-                        <Sidebar {...this.props} />
+                    <Sidebar {...this.props} />
                 }
 
                 <div className="my-account-page">
@@ -191,9 +221,9 @@ class MyAccount extends Component {
                     <div className="my-account-main-container">
                         {
                             !isMobile && //Only on desktop
-                                <div className="welcome-bar">
-                                    <h6 className="welcome">My Account</h6>
-                                </div>
+                            <div className="welcome-bar">
+                                <h6 className="welcome">My Account</h6>
+                            </div>
                         }
 
                         <div className="my-account-sub-container">

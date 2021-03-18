@@ -132,7 +132,7 @@ function GetImageExtension(image) {
 
 /*
     Endpoint: /upload/decompose
-    Using AI/actual/Interface.py, it extracts the toe nails from the uploaded image and saves it in images/userid
+    Using AI/actual/Interface.py, it extracts the toe nails from the uploaded image and saves it in images/"userid"
     returns as the response: the name of the created images
 */
 uploadImage.route('/decompose').get(async (req, res) => {

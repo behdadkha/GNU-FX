@@ -52,8 +52,6 @@ export default function Camera({ overLayImage, onCaptured }) {
             videoRef.current,
             0,0
         );
-        //setIsCanvasEmpty(false);
-        //setIsFlashing(true);
     }
 
     return (

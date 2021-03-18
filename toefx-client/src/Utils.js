@@ -3,7 +3,7 @@
 */
 
 import React from "react";
-import {Form} from "react-bootstrap";
+import {Form, Button} from "react-bootstrap";
 import {isMobile} from "react-device-detect";
 import axios from "axios";
 
@@ -132,6 +132,11 @@ export function GetToeSymbolImage(footId, toeId) {
     return <img src={gToeImages[toeId]} alt={GetToeName(toeId)} style={style}/>;
 }
 
+/*
+    Gets the confirmation symbols that change when the user's password satsifies the criteria.
+    param password: The password the user entered so far.
+    returns: JSX for the symbols.
+*/
 export function GetGoodPasswordConfirmations(password) {
     var checkMarkClass = "password-check-mark";
 
@@ -170,6 +175,32 @@ export function GetGoodPasswordConfirmations(password) {
                 </Form.Text>
             </Form.Label>
         </span>
+    );
+}
+
+/*
+    Gets the buttons used to change the current foot on the desktop application.
+    param thisObj: The "this" from whatever is calling this function.
+    param selectedFootIndex: The current foot to view.
+    returns: JSX for the buttons.
+*/
+export function GetDesktopFeetButtons(thisObj, selectedFootIndex) {
+    var defaultFootButtonClass = "graph-foot-button"; //The general CSS for the feet buttons
+
+    return (
+        <div className="graph-feet-buttons">
+            <Button onClick={thisObj.viewFoot.bind(thisObj, LEFT_FOOT_ID)}
+                className={defaultFootButtonClass}>
+                <img src={GetFootSymbolByActive(LEFT_FOOT_ID, selectedFootIndex)}
+                        className="footlogo" alt="Left Foot"/>
+            </Button>
+
+            <Button onClick={thisObj.viewFoot.bind(thisObj, RIGHT_FOOT_ID)}
+                className={defaultFootButtonClass}>
+                <img src={GetFootSymbolByActive(RIGHT_FOOT_ID, selectedFootIndex)}
+                        className="footlogo" alt="Right Foot"/>
+            </Button>
+        </div>
     );
 }
 

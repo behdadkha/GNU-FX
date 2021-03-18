@@ -11,7 +11,7 @@ import {DoesPageHaveNavBar, SetAuthHeader} from "./Utils";
 import FirstPage from "./components/FirstPage";
 import Login from "./components/Login";
 import Navbar from "./components/NavigationBar";
-import Signup from "./components/Signup";
+import Signup from "./components/SignUp";
 import MyAccount from "./components/user/MyAccount";
 import ResetPassword from "./components/user/ResetPassword";
 import Schedule from "./components/user/Schedule";

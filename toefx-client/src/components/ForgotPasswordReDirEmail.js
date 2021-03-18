@@ -13,7 +13,7 @@ import store from '../Redux/store';
 import {IsValidEmail, IsGoodPassword, GetGoodPasswordConfirmations} from "../Utils";
 
 import "../componentsStyle/ForgotPassword.css";
-import "../componentsStyle/Signup.css"; //Reuse CSS from sign up page
+import "../componentsStyle/SignUp.css"; //Reuse CSS from sign up page
 
 //Error messages displayed to the user
 const gErrorMessages = {

@@ -1,26 +1,22 @@
-/*CSS Relating to the Page */
+/*CSS Relating to the User's Dashboard */
 
-/*html {
-    /*overflow-y: hidden;
-    We can't have a mobile compatible app with this enabled*/
-
-
-.page {
-    display: flex;
+.desktop-dashboard {
+    display: grid;
+    grid-template-areas: "sidebar details";
+    grid-template-columns: 350px auto;
+    overflow-y: hidden;
 }
 
-.main-container {
+.dashboard-main-container {
     background-color: RGB(238, 238, 238);
     height: 100vh;
     width: 100%;
-}
-
-.sub-container {
-    overflow-y: scroll;
+    grid-area: details;
 }
 
 .user-sub-container {
-    height: 92%; /*Largest value found to work - no idea why 100% didn't work */
+    overflow-y: scroll;
+    height: 90%; /*Largest value found to work - no idea why 100% didn't work */
 }
 
 /*CSS Relating to the Welcome Bar */
@@ -113,7 +109,7 @@
 .selected-details-container {
     background-color: white;
     margin: 0px 20px 20px 20px;
-    overflow: scroll;
+    overflow: auto;
     flex-grow: 10; /* Always shove graph over */
 }
 

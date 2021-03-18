@@ -206,15 +206,15 @@ class User extends Component {
 
         if (this.state.dataLoaded) { //The data is ready to be displayed
             return (
-                <div className="page">
+                <div className="desktop-dashboard">
                     <Sidebar {...this.props} />
 
-                    <div className="main-container">
+                    <div className="dashboard-main-container">
                         <div className="welcome-bar">
                             <h6 className="welcome">Dashboard</h6>
                         </div>
 
-                        <div test-id="shownDataUser" className="sub-container user-sub-container">
+                        <div test-id="shownDataUser" className="user-sub-container">
                             {/* Graph */}
                             {
                                 <ApexChart leftFootData={this.state.leftFootData} rightFootData={this.state.rightFootData}
@@ -249,14 +249,14 @@ class User extends Component {
         }
         else { //If data isn't loaded, display "Loading..." to the user
             return (
-                <div>
+                <div className="desktop-dashboard">
                     <Sidebar {...this.props} />
-                    <div className="main-container">
+                    <div className="dashboard-main-container">
                         <div className="welcome-bar">
                             <h6 className="welcome">Dashboard</h6>
                         </div>
 
-                        <div className="sub-container user-sub-container">
+                        <div className="user-sub-container">
                             <h4 test-id="loading" className="dashboard-loading">Loading...</h4>
                         </div>
                     </div>

@@ -4,11 +4,12 @@
 
 import React from "react";
 import ReactApexChart from "react-apexcharts"
-import { Row, Table, Button } from "react-bootstrap";
+import {Row, Table} from "react-bootstrap";
 
-import { GetFootSymbolByActive, GetFootName, GetToeName, LEFT_FOOT_ID, RIGHT_FOOT_ID, TOE_COUNT } from "../../Utils";
+import {GetFootName, GetToeName, GetDesktopFeetButtons,
+        LEFT_FOOT_ID, /*RIGHT_FOOT_ID,*/ TOE_COUNT } from "../../Utils";
 import store from "../../Redux/store";
-import { setSelectedFoot } from "../../Redux/Actions/setFootAction";
+import {setSelectedFoot} from "../../Redux/Actions/setFootAction";
 
 import '../../componentsStyle/ApexChart.css';
 import leftFootCroppedLogo from '../../icons/leftfootCropped.png';
@@ -28,7 +29,7 @@ class ApexChart extends React.Component {
         //Initially data for the left foot is shown, so set up the graph to show it
         this.state = {
             treatmentIndex: 0, //User clicks on a point in the graph, this represents the clicked index
-            showLeftFoot: true, //Start off showing the left foot
+            selectedFootIndex: LEFT_FOOT_ID, //Start off showing the left foot
             shownToes: gInitialToeSelection, //Initially only show certain toes
             showingDetails: this.props.showingDetails, //Viewing details about a specific data point
             series: this.props.leftFootData,
@@ -78,29 +79,40 @@ class ApexChart extends React.Component {
         };
     }
 
+    /*
+        Runs on page load.
+    */
     componentDidMount() {
         this.resetShownToesData();
     }
 
     /*
-        Displays data corresponding to a certain foot on the graph when a foot is selected.
-        param showLeftFoot: If true show data for the left foot, otherwise show data for the right foot
+        Determines if data for the left foot is currently being shown to the user.
+        returns: true if the left foot is being shown, false if the right foot is being shown.
     */
-    viewFoot(showLeftFoot) {
+    isLeftFootShown() {
+        return this.state.selectedFootIndex === LEFT_FOOT_ID;
+    }
+
+    /*
+        Displays data corresponding to a certain foot on the graph when a foot is selected.
+        param selectedFoot: Which foot to show data for.
+    */
+    viewFoot(selectedFoot) {
         var shownToes = gInitialToeSelection; //Show initial toes again when changing feet
 
         this.setState({
             shownToes: shownToes,
-            showLeftFoot: showLeftFoot,
+            selectedFootIndex: selectedFoot,
             showingDetails: false,
             treatmentIndex: 0
         },
             this.resetShownToesData //Call the function when state is changed
         );
-        
+
         //Save the selected foot globally in the redux store
         //Need to know the selected foot to change the bottom cell
-        store.dispatch(setSelectedFoot(showLeftFoot ? LEFT_FOOT_ID : RIGHT_FOOT_ID));
+        store.dispatch(setSelectedFoot(selectedFoot));
     }
 
     /*
@@ -109,9 +121,9 @@ class ApexChart extends React.Component {
     */
     resetShownToesData() {
         var toeData = []; //New toe data to be shown
-        var data = (this.state.showLeftFoot) ? this.props.leftFootData : this.props.rightFootData;
-        var dates = (this.state.showLeftFoot) ? this.props.leftFootDates : this.props.rightFootDates;
-        
+        var data = this.isLeftFootShown() ? this.props.leftFootData : this.props.rightFootData;
+        var dates = this.isLeftFootShown() ? this.props.leftFootDates : this.props.rightFootDates;
+
         for (let i = 0; i < this.state.shownToes.length; ++i) {
             if (this.state.shownToes[i] && data[i]) { //The user wants to see this toe
                 toeData.push(data[i]); //Original data is stored in props
@@ -146,7 +158,7 @@ class ApexChart extends React.Component {
 
         shownToes[num] = true; //Except toe clicked on
 
-        let selectedFoot = (this.state.showLeftFoot) ? this.props.leftFootData : this.props.rightFootData;
+        let selectedFoot = this.isLeftFootShown() ? this.props.leftFootData : this.props.rightFootData;
         let treatmentIndex = selectedFoot[num].data.filter(item => item === null).length; // accounting for the nulls in the data
 
         this.setState({
@@ -221,7 +233,7 @@ class ApexChart extends React.Component {
         for (let i = 0; i < TOE_COUNT; ++i)
             toeOrder.push(i); //Initial view in order of ids (based on right foot)
 
-        if (this.state.showLeftFoot)
+        if (this.isLeftFootShown())
             toeOrder.reverse(); //Toes go in opposite order on left foot
 
         return (
@@ -235,8 +247,8 @@ class ApexChart extends React.Component {
                     toeOrder.map((toeId) => this.printToeButton(toeId))
                 }
             </span>*/
-            <div className={this.state.showLeftFoot ? "leftFootContainer" : "rightFootContainer"}>
-                <img src={this.state.showLeftFoot ? leftFootCroppedLogo : rightFootCroppedLogo} alt="left foot"/>
+            <div className={this.isLeftFootShown() ? "leftFootContainer" : "rightFootContainer"}>
+                <img src={this.isLeftFootShown() ? leftFootCroppedLogo : rightFootCroppedLogo} alt="left foot"/>
                 
                 <button onClick={this.showHideAllToes.bind(this)} className="btnAlltoes"></button>
                 {
@@ -255,13 +267,10 @@ class ApexChart extends React.Component {
         for (let i = 0; i < TOE_COUNT; ++i)
             toeNames.push(GetToeName(i)) //Initial order in based on right foot
 
-        //if (!this.state.showLeftFoot)
-         //   toeNames.reverse(); //Toes go in opposite order on left foot
-
         var isToeNotIncluded = this.state.shownToes[toeNames.findIndex(toeName => toeName === name)];
         var imageIndex = this.state.treatmentIndex - percentage.filter(item => item === null).length; //Need to subtract the number of nulls from the treatment index because images dont have nulls		
         var fungalCoverage = percentage[this.state.treatmentIndex]; //Gets the fungal coverage based on the selected point on the graph
-        console.log(images[imageIndex], toeNames.findIndex(toeName => toeName === name));
+
         return (
             ((images[imageIndex]) && isToeNotIncluded)
                 ?
@@ -284,10 +293,10 @@ class ApexChart extends React.Component {
         it is printed next to the graph.
     */
     printSelectedDateDetails() {
-        var footData = (this.state.showLeftFoot) ? this.props.leftFootData : this.props.rightFootData;
-        var dates = (this.state.showLeftFoot) ? this.props.leftFootDates : this.props.rightFootDates;
+        var footData = (this.isLeftFootShown()) ? this.props.leftFootData : this.props.rightFootData;
+        var dates = (this.isLeftFootShown()) ? this.props.leftFootDates : this.props.rightFootDates;
         var selectedDate = dates[this.state.treatmentIndex];
-        var footName = (this.state.showLeftFoot) ? GetFootName(LEFT_FOOT_ID) : GetFootName(RIGHT_FOOT_ID);
+        var footName = GetFootName(this.state.selectedFootIndex);
 
         return (
             <div className="selected-details-container split-graph">
@@ -318,7 +327,6 @@ class ApexChart extends React.Component {
     */
     render() {
         var dateDetails;
-        var defaultFootButtonClass = "graph-foot-button";
 
         if (this.state.showingDetails) {
             dateDetails = this.printSelectedDateDetails();
@@ -332,20 +340,10 @@ class ApexChart extends React.Component {
         
         return (
             <div>
-                {/* Buttons to change which foot is being viewed */}
-                <div className="graph-feet-buttons">
-                    <Button onClick={this.viewFoot.bind(this, true)}
-                        className={defaultFootButtonClass}>
-                        <img src={GetFootSymbolByActive(LEFT_FOOT_ID, this.state.showLeftFoot ? LEFT_FOOT_ID : RIGHT_FOOT_ID)}
-                             className="footlogo" alt="Left Foot"/>
-                    </Button>
-
-                    <Button onClick={this.viewFoot.bind(this, false)}
-                        className={defaultFootButtonClass}>
-                        <img src={GetFootSymbolByActive(RIGHT_FOOT_ID, this.state.showLeftFoot ? LEFT_FOOT_ID : RIGHT_FOOT_ID)}
-                             className="footlogo" alt="Right Foot"/>
-                    </Button>
-                </div>
+                {
+                    //Buttons for changing which foot to view
+                    GetDesktopFeetButtons(this, this.state.selectedFootIndex)
+                }
 
                 {/*Buttons to filter toes*/}
                 <div lg="5" className="graph-container">

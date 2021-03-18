@@ -1,18 +1,30 @@
 .my-account-page {
-    display: flex;
+    display: grid;
+    grid-template-areas: "sidebar details";
+    grid-template-columns: 350px auto;
+    overflow-y: hidden;
+    height: 100vh;
 }
 
 .my-account-main-container {
     background-color: RGB(238, 238, 238);
     width: 100%;
+    margin: 0px !important;
+    padding: 0px !important;
+    max-width: revert !important;
+    grid-area: details;
+
+    display: flex;
+    flex-flow: column;
+    height: 100%;
 }
 
 .my-account-sub-container {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-around;
-    overflow-y: scroll;
-    height: 92%; /*Largest value found to work - no idea why 100% didn't work */
+    overflow-y: hidden;
+    flex-grow : 1; /*From the flex in my-account-main-container*/
 }
 
 /* For the small details bubble */
@@ -23,14 +35,18 @@
     width: fit-content;
     height: fit-content;
     padding: 20px;
-    margin : 2%;
+    margin : 1%;
+    margin-top: 10px;
     border-radius: 10px; 
 }
 
 .account-details-title {
     text-align: left;
-    font-size: 20px;
-    color: #7471ad;
+    font-family: 'Balsamiq Sans', cursive
+}
+
+.account-details-title-mobile {
+    margin-left: 5%;
 }
 
 .account-details-name {
@@ -39,22 +55,28 @@
     margin-top: 20px;
 }
 
+.account-details-name-mobile {
+    margin: 5%;
+}
+
 .reset-password-button {
     font-size: 20px;
-    width: 200px;
-    height: 100px;
     margin-top: 20px;
 }
 
 /* For the image list */
 
+.TableScrollbar {
+    overflow-y: scroll !important;
+}
+
 .uploaded-image-container {
-    position: relative;
     background-color: white;
-    width: fit-content;
     flex-grow: 10; /* Takes up as much space as possible next to account details */
     padding: 20px;
-    margin : 0%;
+    margin-top: 10px;
+    margin-bottom: 1%;
+    margin-right: 1%;
     border-radius: 10px;
 }
 
@@ -71,12 +93,47 @@
     width: 20%;
 }
 
-.uploaded-image-table-toe-image {
-	width: 100%;
-	max-height: 150px;
+.uploaded-image-table-toe-header {
+    width: 20%;
+}
+
+.uploaded-image-table-coverage-header {
+    width: 25%;
+}
+
+.uploaded-image-table-date-header {
+    width: 20%;
+}
+
+.uploaded-image-table-delete-header {
+    width: 15%;
+}
+
+.uploaded-image-table-toe-image-col {
+	background-size: cover;
+    background-position: center;
+	position: relative;
+	width: 10%;		/* desired width */
+}
+
+.uploaded-image-table-toe-image-col:before {
+	content: "";
+	float: left;
+	padding-top: 100%; 	/* initial ratio of 1:1*/
+}
+
+.uploaded-image-table-col { /*This is all it takes to centre something in a table cell lol*/
+    text-align: center;
+    vertical-align: middle !important;
 }
 
 .delete-image-button {
     margin: auto;
     display: block !important; /* Centre button in cell */
+}
+
+/* CSS Specicially for the mobile view */
+.my-account-main-container-mobile {
+    width: 100%;
+    margin-bottom: 0px !important;
 }

@@ -2,7 +2,7 @@ import Axios from 'axios';
 import React, { Component } from 'react'
 import {Form, Button} from 'react-bootstrap'
 import "../componentsStyle/ForgotPassword.css";
-import "../componentsStyle/Signup.css";
+import "../componentsStyle/SignUp.css";
 import {config} from "../config"
 export default class EmailVerificationReDirEmail extends Component {
     constructor(){

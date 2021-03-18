@@ -2,16 +2,19 @@
     Class for displaying the user's account details and uploaded images.
 */
 
-import React, { Component } from 'react';
-import { Button, Modal, Table } from 'react-bootstrap';
-import { isMobile } from "react-device-detect";
-import { connect } from "react-redux";
+import React, {Component} from 'react';
+import {Container, Button, Table, Modal} from 'react-bootstrap';
+import {isMobile} from "react-device-detect";
+import {connect} from "react-redux";
+import TableScrollbar from 'react-table-scrollbar';
+
 import Axios from 'axios';
 
-import { config } from "../../config";
+import {config} from "../../config";
 import store from '../../Redux/store';
-import { getAndSaveImages, getAndSaveToeData } from '../../Redux/Actions/setFootAction';
-import { GetToeName, GetImageURLByName } from "../../Utils";
+import {getAndSaveImages, getAndSaveToeData} from '../../Redux/Actions/setFootAction';
+import {GetToeSymbolImage, GetDesktopFeetButtons, GetImageURLByName,
+        TOE_COUNT, LEFT_FOOT_ID, RIGHT_FOOT_ID} from "../../Utils";
 import Sidebar from "./Sidebar";
 
 import '../../componentsStyle/MyAccount.css'
@@ -28,12 +31,13 @@ class MyAccount extends Component {
 
         this.state = {
             email: "", //The logged in user's email address
-            age: 0, //The user's age
             imageUrls: [], //User's images
             toeData: [], //Data for user's images
             showLeftFoot: true, //Determine which foot to show images for
             showDeleteConfirmation: false,
-            toDeleteInfo: {} //{imageName, imageIndex in toeData, toeIndex, selectedFootindex }
+            toDeleteInfo: {}, //{imageName, imageIndex in toeData, toeIndex, selectedFootindex }
+            selectedFootIndex: LEFT_FOOT_ID, //Start by showing data for the left foot
+            dataLoaded: false //Used for showing the loading screen until all data are loaded
         };
     }
 
@@ -43,22 +47,25 @@ class MyAccount extends Component {
     */
     async componentDidMount() {
         //Redirect to login page if user not logged in
-        if (!this.props.auth.isAuth)
+        if (!this.props.auth.isAuth) {
             window.location.href = "/login";
+            return;
+        }
 
         //Redux data gets erased after a refresh, so if the data is gone we need to get it again
         if (this.props.foot !== undefined && this.props.foot.images.length === 0) {
             await store.dispatch(getAndSaveImages()); //Load the user's images
             await store.dispatch(getAndSaveToeData()); //Load the user's toe data
         }
+
         //Get the user's info from the server
         let userInfo = (await Axios.get(`${config.dev_server}/user/getUserInfo`)).data;
 
         this.setState({
             imageUrls: this.props.foot.images,
             toeData: this.props.foot.toeData,
+            dataLoaded: true, //Used to indicate whether or not a notification should be displayed to upload images before starting
             email: userInfo.email,
-            age: userInfo.age
         });
     }
 
@@ -71,12 +78,23 @@ class MyAccount extends Component {
 
     /*
         Changes which foot's images the user is viewing.
-        param showLeftFoot: Show left foot images if true, right foot images otherwise.
+        param footIndex: The foot to show images for.
     */
-    viewFoot(showLeftFoot) {
+    viewFoot(footIndex) {
         this.setState({
-            showLeftFoot: showLeftFoot,
+            selectedFootIndex: footIndex,
         });
+    }
+
+    /*
+        Rotates one of the user's uploaded images 90 degrees to the left.
+        param imageName: The name of the image to rotate.
+        param selectedFootIndex: The index of the selected foot to rotate, 0 for left foot and 1 for right foot.
+        param toeIndex: The index of the selected toe to rotate, ranges from 0 to 4
+        param imageIndex: The index of the image to rotate.
+    */
+    rotateImage(imageName, selectedFootIndex, toeIndex, imageIndex) {
+        //TODO
     }
 
     /*
@@ -95,9 +113,9 @@ class MyAccount extends Component {
         var imageIndex = toDeleteInfo.imageIndex;
         var imageName = toDeleteInfo.imageName;
         try {
-            if (selectedFootIndex === 0 || selectedFootIndex === 1)
-                if (toeIndex >= 0 && toeIndex <= 4) {
-
+            if (selectedFootIndex === LEFT_FOOT_ID
+             || selectedFootIndex === RIGHT_FOOT_ID) {
+                if (toeIndex >= 0 && toeIndex < TOE_COUNT) {
                     Axios.get(`${config.dev_server}/deleteImage?footIndex=${selectedFootIndex}&toeIndex=${toeIndex}&imageIndex=${imageIndex}&imageName=${imageName}`)
                         .then(() => {
                             var tempData = this.state.toeData;
@@ -105,10 +123,11 @@ class MyAccount extends Component {
                             this.setState({ toeData: tempData });
                             this.toggleDeleteConfirmation();
                         })
-
                 }
-        } catch {
-            console.log("Couldnt complete the request");
+            }
+        }
+        catch (error) {
+            console.log(`Error deleting image: ${error}`);
         }
     }
 
@@ -150,24 +169,39 @@ class MyAccount extends Component {
     */
     printUploadedImage(toeIndex, toe, includeDelete_btn = true) {
         //List is ordered by: Image, Toe Name, Fungal Coverage %, Upload Date
+        var selectedFootIndex = this.whichFootSelected();
         return (
-            toe.images.map(({ name, date, fungalCoverage }, imageIndex) =>
-                <tr key={toe + ' ' + imageIndex}>
-                    <td><img src={GetImageURLByName(this.state.imageUrls, name)} alt="Loading..."
-                        className="uploaded-image-table-toe-image" /></td>
-                    <td>{GetToeName(toeIndex)}</td>
-                    <td>{fungalCoverage}</td>
-                    <td>{date.split("T")[0]}</td>
-                    {includeDelete_btn &&
-                        <td><Button className="delete-image-button" onClick={() => {
-                            this.setState({
-                                toDeleteInfo: { imageName: name, imageIndex: imageIndex, toeIndex: toeIndex, selectedFootIndex: this.whichFootSelected() },
-                                showDeleteConfirmation: true
-                            });
-                        }}
-                        >Delete</Button>
-                        </td>
-                    }
+            toe.images.map(({name, date, fungalCoverage}, imageIndex) =>
+                <tr key={toe + ' ' + toeIndex}>
+                    <td className="uploaded-image-table-toe-image-col"
+                        style={{backgroundImage: "url('" + GetImageURLByName(this.state.imageUrls, name) + "')"}}>
+                    </td>
+                    <td className="uploaded-image-table-col">
+                        {GetToeSymbolImage(selectedFootIndex, toeIndex)}
+                    </td>
+                    <td className="uploaded-image-table-col">{fungalCoverage}</td>
+                    <td className="uploaded-image-table-col">{date.split("T")[0]}</td>
+                    <td className="uploaded-image-table-col">
+                        <Button className="delete-image-button"
+                                onClick={this.rotateImage.bind(this, name, selectedFootIndex, toeIndex, imageIndex)}>
+                            Rotate
+                        </Button>
+                        <br/>
+                        {!includeDelete_btn ?
+                            <Button className="delete-image-button"
+                                    onClick={() => {
+                                        this.setState({
+                                            toDeleteInfo: { imageName: name, imageIndex: imageIndex, toeIndex: toeIndex, selectedFootIndex: this.whichFootSelected() },
+                                            showDeleteConfirmation: true
+                                        });
+                                    }}
+                            >
+                                Delete
+                            </Button>
+                            :
+                            ""
+                        }
+                    </td>
                 </tr>
             )
         )
@@ -184,96 +218,91 @@ class MyAccount extends Component {
         Displays the account page.
     */
     render() {
-        var imagesAreLoaded = this.state.toeData.feet; //Images have been retrieved from the server
-        var defaultFootButtonClass = "graph-foot-button"; //The general CSS for the feet buttons
-        var activeFootButtonClass = defaultFootButtonClass + " active-toe-button"; //The foot button that's selected
         var selectedFootIndex = this.whichFootSelected();
 
         //Bubble displaying user name, email, and option to reset password
         var accountDetailsBubble =
-            <div className="account-details">
-                <h6 className="account-details-title">Account Details</h6>
-                <h6 className="account-details-name">{this.props.auth.user.name}</h6>
-                <h6 className="account-details-name" >{this.state.email}</h6>
+            <div className={"account-details" + (isMobile ? "-mobile" : "")}>
+                <h3 className={"account-details-title" + (isMobile ? " account-details-title-mobile" : "")}>Account Details</h3>
+                <h6 className={"account-details-name" + (isMobile ? " account-details-name-mobile" : "")}>{this.props.auth.user.name}</h6>
+                <h6 className={"account-details-name" + (isMobile ? " account-details-name-mobile" : "")}>{this.state.email}</h6>
 
                 <Button className="reset-password-button" onClick={this.navigateToResetPasswordPage.bind(this)}>Reset Password</Button>
             </div>;
 
         //Bubble for displaying the images the user uploaded previously
         //Display "Loading..." text while images are being retreived from the server
-        var imageTableBubble = (!imagesAreLoaded)
+        var imageTableBubble =
+            (!this.state.dataLoaded)
             ?
-            <div className="uploaded-image-container"><h4>Loading...</h4></div>
+                <div className="uploaded-image-container"><h4>Loading...</h4></div>
+            : (this.state.toeData.length === 0)
+            ?
+                <div className="uploaded-image-container"><h4>Press "+ Upload Image" to get started.</h4></div>
             :
-            <div className="uploaded-image-container">
-                {/* Buttons for changing which foot to view */}
-                <div className="graph-feet-buttons">
-                    <button onClick={this.viewFoot.bind(this, true)}
-                        className={(this.state.showLeftFoot ? activeFootButtonClass : defaultFootButtonClass)}>
-                        Left Foot
-                    </button>
-
-                    <button onClick={this.viewFoot.bind(this, false)}
-                        className={(!this.state.showLeftFoot ? activeFootButtonClass : defaultFootButtonClass)}>
-                        Right Foot
-                    </button>
-                </div>
-
-                {/* Actual Table */}
-                <Table striped bordered size="md" className="uploaded-image-table">
-                    <thead>
-                        <tr>
-                            <th className="uploaded-image-table-image-header">Image</th>
-                            <th className="uploaded-image-table-SameSize-header">Toe</th>
-                            <th className="uploaded-image-table-SameSize-header">Fungal Coverage (%)</th>
-                            <th className="uploaded-image-table-SameSize-header">Upload Date</th>
-                            <th className="uploaded-image-table-SameSize-header">Delete?</th>
-                        </tr>
-                    </thead>
-                    {this.existsAnyImageforFoot(selectedFootIndex)
-                        ?
-                        <tbody>
-                            {
-                                //Print a list of images with data
-                                this.state.toeData.feet[selectedFootIndex].toes.map((toe, id) => this.printUploadedImage(id, toe, true))
-                            }
-                        </tbody>
-                        :
-                        <tbody>
-                            <tr>
-                                <td colSpan="5">There are no images available for the selected foot</td>
-                            </tr>
-                        </tbody>
+                <div className="uploaded-image-container">
+                    {
+                        /* Buttons for changing which foot to view */
+                        GetDesktopFeetButtons(this, selectedFootIndex)
                     }
-                </Table>
-            </div>;
+
+                    {/* Actual Table */}
+                    <TableScrollbar height="80vh" className="table-scrollbar">
+                        <Table striped bordered size="md" className="uploaded-image-table table-dark">
+                            <thead>
+                                <tr>
+                                    <th className="uploaded-image-table-image-header">Image</th>
+                                    <th className="uploaded-image-table-toe-header">Toe</th>
+                                    <th className="uploaded-image-table-coverage-header">Fungal Coverage (%)</th>
+                                    <th className="uploaded-image-table-date-header">Upload Date</th>
+                                    <th className="uploaded-image-table-delete-header">Edit</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {
+                                    //Print a list of images with data
+                                    this.state.toeData.feet[selectedFootIndex].toes.map((toe, id) =>
+                                        this.printUploadedImage(id, toe, selectedFootIndex), true)
+                                }
+                            </tbody>
+                        </Table>
+                    </TableScrollbar>
+                </div>;
 
         return (
-            <div>
+            <div className={!isMobile ? "my-account-page" : ""}>
                 {
                     !isMobile && //Only on desktop
                     <Sidebar {...this.props} />
                 }
 
-                <div className="my-account-page">
-                    {/* Main part */}
-                    <div className="my-account-main-container">
-                        {
-                            !isMobile && //Only on desktop
+                {/* Main part */}
+                <Container className={"my-account-main-container" + (isMobile ? "-mobile" : "")}>
+                    {
+                        !isMobile && //Only on desktop
                             <div className="welcome-bar">
                                 <h6 className="welcome">My Account</h6>
                             </div>
+                    }
+
+                    <div className={!isMobile ? "my-account-sub-container" : ""}>
+                        {
+                            this.state.dataLoaded ?
+                            <>
+                                {/* Account Details Bubble */}
+                                {accountDetailsBubble}
+
+                                {/* Image Table Bubble */}
+                                {
+                                    !isMobile && //Only on desktop
+                                        imageTableBubble
+                                }
+                            </>
+                            : //Display loading until the page is ready
+                                <h4 test-id="loading" className="dashboard-loading">Loading...</h4>
                         }
-
-                        <div className="my-account-sub-container">
-                            {/* Account Details Bubble */}
-                            {accountDetailsBubble}
-
-                            {/* Image Table Bubble */}
-                            {imageTableBubble}
-                        </div>
                     </div>
-                </div>
+                </Container>
 
                 {/* Delete confirmation modal, only visible if showDeleteConfirmation = true */}
                 <Modal size="lg" show={this.state.showDeleteConfirmation} onHide={this.toggleDeleteConfirmation.bind(this)}>

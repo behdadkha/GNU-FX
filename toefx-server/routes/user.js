@@ -80,46 +80,35 @@ userRoutes.route('/getschedule').get(async (req, res) => {
     Changes the user's password to a new password.
     param req: The request object containing:
         currentPassword: The user's currently saved password. 
-        newPassword1: The new password to replace the old password.
-        newPassword2: The confirmed new password (should be same as newPassword1).
+        newPassword: The new password to replace the old password.
     param res: The object to store and send the result in.
+        errorMsg: The type of error message that should be displayed if any.
 */
 userRoutes.post('/resetPassword', async (req, res) => {
     try {
-        const { currentPassword, newPassword1, newPassword2 } = req.body;
-        if (currentPassword === "" || newPassword1 === "" || newPassword2 === "") { return res.status(400).json({ msg: "All the inputs have to be filled" }) }
-
+        const {currentPassword, newPassword} = req.body;
         var user = (await utils.loadUserObject(req, res)).user;
-        try {
-            if (user) {
-                bcrypt.compare(currentPassword, user.password).then(async (valid) => { //Check if the current password is correct
-                    if (valid) {
-                        if (newPassword1 === newPassword2) { //Password can only be changed if the two new passwords match
-                            //Hash the password
-                            const rounds = 10; //10 rounds of hashing
-                            user.password = await hashPassword(newPassword1, rounds);
 
-                            //Save the new encrypted password for security reasons
-                            user.save().then(() => {
-                                res.status(200).json({ msg: "password changed" });
-                            }).catch(err => console.log(err));
-                        }
-                        else {
-                            return res.status(400).json({ msg: "New passwords don't match" })
-                        }
-                    }
-                    else {
-                        return res.status(400).json({ msg: "Invalid password" });
-                    }
-                });
-            }
-        }
-        catch {
-            return res.status(400).json({ msg: "Invalid password" })
+        if (user) {
+            bcrypt.compare(currentPassword, user.password).then(async (valid) => { //Check if the current password is correct
+                if (valid) {
+                    //Hash the password
+                    const rounds = 10; //10 rounds of hashing
+                    user.password = await hashPassword(newPassword, rounds);
+
+                    //Save the new encrypted password for security reasons
+                    user.save().then(() => {
+                        res.status(200).json({errorMsg: ""}); //No error message means success
+                    }).catch(err => console.log(err));
+                }
+                else {
+                    return res.json({errorMsg: "INVALID_CURRENT_PASSWORD" });
+                }
+            });
         }
     }
     catch {
-        return res.status(400).json({ msg: "Something went wrong" })
+        return res.status(400).json({errorMsg: "UNKNOWN_ERROR"})
     }
 });
 

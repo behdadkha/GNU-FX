@@ -2,23 +2,18 @@
     Class for the form user's can use to sign up for the site.
 */
 
-import React, { Component } from "react";
-import { Container, Row, Col, Form, Button } from "react-bootstrap";
+import React, {Component} from "react";
+import {Container, Row, Col, Form, Button} from "react-bootstrap";
 import DatePicker from 'react-date-picker';
-import { isMobile } from 'react-device-detect';
-import { connect } from "react-redux";
+import {isMobile} from 'react-device-detect';
+import {connect} from "react-redux";
 import Axios from 'axios';
 
-import { config } from "../config";
-import {
-    IsValidEmail, IsPasswordLengthStrong, DoesPasswordHaveUpperandLowerCase,
-    DoesPasswordHaveNumber, IsGoodPassword
-} from "../Utils";
+import {config} from "../config";
+import {IsValidEmail, IsGoodPassword, GetGoodPasswordConfirmations} from "../Utils";
 
 import "../componentsStyle/Signup.css";
 import healthydrawing from "../icons/MedicalCare.svg";
-import CheckMark from "../icons/checkmark.png";
-import CrossMark from "../icons/crossmark.png"
 
 //Error messages displayed to the user
 const gErrorMessages = {
@@ -32,6 +27,7 @@ const gErrorMessages = {
 }
 
 //TODO: Error handling for when there's no internet connection.
+
 
 class Signup extends Component {
     /*
@@ -100,22 +96,26 @@ class Signup extends Component {
             })
         }
         catch (response) { //No internet connection
-            this.setState({ errorMessage: "ACCOUNT_EXISTS" });
+            this.setState({errorMessage: "ACCOUNT_EXISTS"});
             return;
         }
 
         //Process response from server
         if (response.status === 200) { //Sign-up was a success
-            this.setState({ successMessage: "A verification email has been sent to your email address. Redirecting to the login page." })
-            setTimeout(() => {
-                //Redirect to login page
-                this.props.history.push('/login');
-            }, 11000);
+            this.setState({
+                errorMessage: "", //Remove old errors
+                successMessage: "Please check your email for a link to confirm your account."
+            })
 
-
+            if (isMobile) {
+                //No navbar is on the mobile sign up page, so redirect the user automatically
+                setTimeout(() => {
+                    window.location.href = "/login"; //Redirect to login page after 5 seconds
+                }, 5000);
+            }
         }
         else { //Account already exists
-            this.setState({ errorMessage: "ACCOUNT_EXISTS" });
+            this.setState({errorMessage: "ACCOUNT_EXISTS"});
         }
     }
 
@@ -155,7 +155,6 @@ class Signup extends Component {
         var inputErrorClass = "signup-error-input"; //Used to colour boxes with mistakes in pink
         var signUpError = this.getErrorText();
         var showPicture = !isMobile && window.innerWidth >= 1000;
-        var checkMarkClass = "password-check-mark";
 
         return (
             <div>
@@ -164,8 +163,18 @@ class Signup extends Component {
                 <Container className={"p-3" + (!isMobile ? " mb-1 bg-white shadow rounded" : " mb-3")}
                     id={"signup-form-container" + (!showPicture ? "-mobile" : "")}
                 >
-                    <h3 className={titleClass}>Create Account,</h3>
-                    <h5 className={titleClass}>Join us to <span className="signup-form-join-message">show off your toenails!</span></h5>
+                    {
+                        //Display diffferent title after the sign-up was successful
+                        this.state.successMessage !== "" ?
+                            <h3 className={titleClass}>Account created!</h3>
+                        :
+                        <span>
+                            <h3 className={titleClass}>Create Account,</h3>
+                            <h5 className={titleClass}>
+                                Join us to <span className="signup-form-join-message">show off your toenails!</span
+                            ></h5>
+                        </span>
+                    }
 
                     <Row>
                         <Col>
@@ -174,6 +183,13 @@ class Signup extends Component {
                                 <h6 className="error-text">{signUpError}</h6>
                             </div>
 
+                            {
+                            //Only show succress message after the sign up has been completed
+                            this.state.successMessage !== "" ?
+                                <div className="signup-success-message">
+                                    {this.state.successMessage}
+                                </div>
+                            :
                             <Form className={"signup-form" + (!showPicture ? "-mobile" : "")} onSubmit={this.handleSignup.bind(this)}>
 
                                 {/* Email Input */}
@@ -209,38 +225,7 @@ class Signup extends Component {
                                     />
 
                                     {/* Confirmations of good password */}
-                                    <Form.Label className="strong-password-desc">
-                                        <Form.Text className="text-muted">
-                                            {
-                                                IsPasswordLengthStrong(this.state.password)
-                                                    ? <img src={CheckMark} className={checkMarkClass} alt="OK" />
-                                                    : <img src={CrossMark} className={checkMarkClass} alt="NO" />
-                                            }
-                                            {" Password must be at least 8 characters long."} {/*Writing it in a string keeps the space at the front*/}
-                                        </Form.Text>
-                                    </Form.Label>
-                                    <br></br>
-                                    <Form.Label className="strong-password-desc">
-                                        <Form.Text className="text-muted">
-                                            {
-                                                DoesPasswordHaveUpperandLowerCase(this.state.password)
-                                                    ? <img src={CheckMark} className={checkMarkClass} alt="OK" />
-                                                    : <img src={CrossMark} className={checkMarkClass} alt="NO" />
-                                            }
-                                            {" Password must contain uppercase (A-Z) and lowercase (a-z) characters."}
-                                        </Form.Text>
-                                    </Form.Label>
-                                    <br></br>
-                                    <Form.Label >
-                                        <Form.Text className="text-muted">
-                                            {
-                                                DoesPasswordHaveNumber(this.state.password)
-                                                    ? <img src={CheckMark} className={checkMarkClass} alt="OK" />
-                                                    : <img src={CrossMark} className={checkMarkClass} alt="NO" />
-                                            }
-                                            {" Password must contain a number (0-9)."}
-                                        </Form.Text>
-                                    </Form.Label>
+                                    {GetGoodPasswordConfirmations(this.state.password)}
                                 </Form.Group>
 
                                 {/* Confirm Password Input */}
@@ -251,9 +236,8 @@ class Signup extends Component {
                                         placeholder="Example123"
                                         autoComplete="new-password"
                                         value={this.state.confirmedPassword}
-                                        onChange={(e) => this.setState({ confirmedPassword: e.target.value })
-                                        }
-                                        className={(this.state.errorMessage === "BLANK_FIELD" && this.state.password === "")
+                                        onChange={(e) => this.setState({confirmedPassword: e.target.value})}
+                                        className={(this.state.errorMessage === "BLANK_FIELD" && this.state.confirmedPassword === "")
                                             || this.state.errorMessage === "INVALID_PASSWORD"
                                             || this.state.errorMessage === "PASSWORD_MISMATCH" ? inputErrorClass : ""}
                                     />
@@ -307,8 +291,8 @@ class Signup extends Component {
                                             : ""
                                     }
                                 </div>
-                                {this.state.successMessage === "" ? "" : <h5 className="signup-successMessage">{this.state.successMessage}</h5>}
                             </Form>
+                            }
                         </Col>
                     </Row>
                 </Container>

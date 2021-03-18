@@ -8,11 +8,10 @@ import {isMobile} from 'react-device-detect';
 import Axios from "axios";
 
 import {config} from "../config";
-import {IsValidEmail, IsPasswordLengthStrong, DoesPasswordHaveUpperandLowerCase,
-        DoesPasswordHaveNumber, IsGoodPassword} from "../Utils";
+import {LogOutUser} from '../Redux/Actions/authAction';
+import store from '../Redux/store';
+import {IsValidEmail, IsGoodPassword, GetGoodPasswordConfirmations} from "../Utils";
 
-import CheckMark from "../icons/checkmark.png";
-import CrossMark from "../icons/crossmark.png";
 import "../componentsStyle/ForgotPassword.css";
 import "../componentsStyle/Signup.css"; //Reuse CSS from sign up page
 
@@ -52,6 +51,7 @@ export default class ForgotPasswordReDirEmail extends Component {
         var path = window.location.pathname;
         path = path.split("/forgotpassword/")[1];
         this.setState({emailFromUrl: path.trim()});
+        store.dispatch(LogOutUser()); //Log out a user if one was already logged in
     }
 
     /*
@@ -85,7 +85,7 @@ export default class ForgotPasswordReDirEmail extends Component {
         let response;
 
         try {
-                response = await Axios.post(`${config.dev_server}/forgotpassword/checkEmails`, {
+            response = await Axios.post(`${config.dev_server}/forgotpassword/checkEmails`, {
                 emailFromURL: this.state.emailFromUrl,
                 emailInput: this.state.email,
                 password: this.state.password,
@@ -102,9 +102,11 @@ export default class ForgotPasswordReDirEmail extends Component {
             successMessage: response.data.errorMsg === "" ? "Your password was reset! You will be returned to the login page shortly." :  "",
         });
 
-        setTimeout(function () {
-            window.location.href = "/login"; //Redirect to login page after 4 seconds
-        }, 4000)
+        if (response.data.errorMsg === "") { //Password reset was success
+            setTimeout(function () {
+                window.location.href = "/login"; //Redirect to login page after 4 seconds
+            }, 4000)
+        } 
     }
 
     /*
@@ -139,7 +141,6 @@ export default class ForgotPasswordReDirEmail extends Component {
     render() {
         var titleClass = "signup-form-title" + (isMobile ? " signup-form-title-mobile" : "");
         var inputErrorClass = "signup-error-input"; //Used to colour boxes with mistakes in pink
-        var checkMarkClass = "password-check-mark";
 
         return (
             <Container className={"p-3" + (!isMobile ? " mb-1 bg-white shadow rounded" : " mb-3")}
@@ -155,6 +156,7 @@ export default class ForgotPasswordReDirEmail extends Component {
                         </div>
 
                         {
+                            //Only show succress message after the password has been reset
                             this.state.successMessage !== "" ?
                                 <div className="forgot-password-confirmation-text">
                                     {this.state.successMessage}
@@ -191,38 +193,7 @@ export default class ForgotPasswordReDirEmail extends Component {
                                 />
 
                                 {/* Confirmations of good password */}
-                                <Form.Label className="strong-password-desc">
-                                    <Form.Text className="text-muted">
-                                        {
-                                            IsPasswordLengthStrong(this.state.password)
-                                            ? <img src={CheckMark} className={checkMarkClass} alt="OK"/>
-                                            : <img src={CrossMark} className={checkMarkClass} alt="NO"/>
-                                        }
-                                        {" Password must be at least 8 characters long."} {/*Writing it in a string keeps the space at the front*/}
-                                    </Form.Text>
-                                </Form.Label>
-                                <br></br>
-                                <Form.Label className="strong-password-desc">
-                                    <Form.Text className="text-muted">
-                                        {
-                                            DoesPasswordHaveUpperandLowerCase(this.state.password)
-                                            ? <img src={CheckMark} className={checkMarkClass} alt="OK"/>
-                                            : <img src={CrossMark} className={checkMarkClass} alt="NO"/>
-                                        }
-                                        {" Password must contain uppercase (A-Z) and lowercase (a-z) characters."}
-                                    </Form.Text>
-                                </Form.Label>
-                                <br></br>
-                                <Form.Label >
-                                    <Form.Text className="text-muted">
-                                        {
-                                            DoesPasswordHaveNumber(this.state.password)
-                                            ? <img src={CheckMark} className={checkMarkClass} alt="OK"/>
-                                            : <img src={CrossMark} className={checkMarkClass} alt="NO"/>
-                                        }
-                                        {" Password must contain a number (0-9)."}
-                                    </Form.Text>
-                                </Form.Label>
+                                {GetGoodPasswordConfirmations(this.state.password)}
                             </Form.Group>
 
                             {/* Confirm Password Input */}
@@ -233,9 +204,8 @@ export default class ForgotPasswordReDirEmail extends Component {
                                     placeholder="Example123"
                                     autoComplete="new-password"
                                     value={this.state.confirmPassword}
-                                    onChange={(e) => this.setState({confirmPassword: e.target.value})
-                                    }
-                                    className={(this.state.errorMessage === "BLANK_FIELD" && this.state.password === "")
+                                    onChange={(e) => this.setState({confirmPassword: e.target.value})}
+                                    className={(this.state.errorMessage === "BLANK_FIELD" && this.state.confirmPassword === "")
                                         || this.state.errorMessage === "INVALID_PASSWORD"
                                         || this.state.errorMessage === "PASSWORD_MISMATCH" ? inputErrorClass : ""}
                                 />

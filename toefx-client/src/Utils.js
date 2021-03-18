@@ -3,6 +3,7 @@
 */
 
 import React from "react";
+import {Form} from "react-bootstrap";
 import {isMobile} from "react-device-detect";
 import axios from "axios";
 
@@ -20,6 +21,9 @@ import LeftFootToe2 from './icons/toes/LeftFootToe2.png';
 import LeftFootToe3 from './icons/toes/LeftFootToe3.png';
 import LeftFootToe4 from './icons/toes/LeftFootToe4.png';
 import { config } from "./config";
+
+import CheckMark from "./icons/checkmark.png";
+import CrossMark from "./icons/crossmark.png";
 
 //Self-commenting Ids for feet
 export const LEFT_FOOT_ID = 0;
@@ -126,6 +130,47 @@ export function GetToeSymbolImage(footId, toeId) {
         style = {transform: "scaleX(-1)"}; //Flip horizontally
 
     return <img src={gToeImages[toeId]} alt={GetToeName(toeId)} style={style}/>;
+}
+
+export function GetGoodPasswordConfirmations(password) {
+    var checkMarkClass = "password-check-mark";
+
+    return (
+        <span>
+            <Form.Label className="strong-password-desc">
+                <Form.Text className="text-muted">
+                    {
+                        IsPasswordLengthStrong(password)
+                        ? <img src={CheckMark} className={checkMarkClass} alt="OK"/>
+                        : <img src={CrossMark} className={checkMarkClass} alt="NO"/>
+                    }
+                    {" Password must be at least 8 characters long."} {/*Writing it in a string keeps the space at the front*/}
+                </Form.Text>
+            </Form.Label>
+            <br></br>
+            <Form.Label className="strong-password-desc">
+                <Form.Text className="text-muted">
+                    {
+                        DoesPasswordHaveUpperandLowerCase(password)
+                        ? <img src={CheckMark} className={checkMarkClass} alt="OK"/>
+                        : <img src={CrossMark} className={checkMarkClass} alt="NO"/>
+                    }
+                    {" Password must contain uppercase (A-Z) and lowercase (a-z) characters."}
+                </Form.Text>
+            </Form.Label>
+            <br></br>
+            <Form.Label >
+                <Form.Text className="text-muted">
+                    {
+                        DoesPasswordHaveNumber(password)
+                        ? <img src={CheckMark} className={checkMarkClass} alt="OK"/>
+                        : <img src={CrossMark} className={checkMarkClass} alt="NO"/>
+                    }
+                    {" Password must contain a number (0-9)."}
+                </Form.Text>
+            </Form.Label>
+        </span>
+    );
 }
 
 /*

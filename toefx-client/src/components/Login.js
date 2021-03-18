@@ -6,6 +6,7 @@ import React, {Component} from "react";
 import {Col, Row, Container, Form, Button} from "react-bootstrap";
 import {isMobile} from "react-device-detect";
 import {connect} from "react-redux";
+import {StatusCode} from 'status-code-enum'
 import Axios from 'axios';
 
 import jwt_decode from "jwt-decode";
@@ -21,10 +22,12 @@ import "../componentsStyle/Login.css";
 //Error messages displayed to the user
 const gErrorMessages = {
     "": "",
-    "INVALID_EMAIL": "Invalid email address.",
-    "INVALID_PASSWORD": "Invalid password.", 
+    "INVALID_EMAIL": "No account with that email was found.",
+    "INVALID_PASSWORD": "That password isn't possible.", 
     "NO_SERVER_CONNECTION": "Couldn't connect to server.",
     "INVALID_CREDENTIALS": "Incorrect email or password.",
+    "UNVERIFIED_ACCOUNT": "Check your email for a link to verify your account.",
+    "UNKNOWN_ERROR": "An unknown error has occured."
 }
 
 
@@ -65,10 +68,9 @@ class Login extends Component {
             return; //Don't log in
         }
 
-        //Check if user entered bad email
+        //Check if user entered a bad email
         if (!IsValidEmail(this.state.email)) {
             this.setState({
-                email: "",
                 errorMessage: "INVALID_EMAIL",
             });
 
@@ -78,7 +80,7 @@ class Login extends Component {
         //Check if user entered bad password
         if (!IsValidInput(this.state.password)) {
             this.setState({
-                password: "",
+                password: "", //Wipe the password since the user can't see what they entered anyway
                 errorMessage: "INVALID_PASSWORD",
             });
 
@@ -94,19 +96,19 @@ class Login extends Component {
                 password: this.state.password
             })
         }
-        catch (res) {
+        catch (response) {
             this.setState({
-                errorMessage: "INVALID_CREDENTIALS",
+                errorMessage: response.response.data.errorMsg,
             });
 
             return;
         }
 
         //Process response from server
-        if (response.status === 200 && response.data) { //The login was a success
+        if (response.status === StatusCode.SuccessAccepted && response.data) { //The login was a success
             let body = response.data;
 
-            const { token } = body; //Extract the token from the response
+            const {token} = body; //Extract the token from the response
             localStorage.setItem("jwt", token); //Save the token in localstorage
 
             SetAuthHeader(token); //Set the token to header for feature requests

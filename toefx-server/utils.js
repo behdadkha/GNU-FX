@@ -7,7 +7,7 @@ const {exec} = require('child_process');
 const userSchema = require('./database/userSchema');
 const toeDataSchema = require('./database/toe-dataSchema');
 const config = require('./config');
-
+const nodemailer = require("nodemailer");
 
 /*
     Finds a user object in the database based on a userId.
@@ -95,6 +95,35 @@ function runCommand(command) {
         });
     });
 }
+/*
+    Sends an email
+    param email: To: email
+    param subject: email subject
+    param body: email content
+*/
+function sendEmail(email, subject, body){
+    var smtpTransport = nodemailer.createTransport({
+        service: "Gmail",
+        auth: {
+            user: config.dev_email,
+            pass: config.dev_epass
+        }
+    });
+
+    var mailOption = {
+        from: config.dev_email,
+        to: email,
+        subject: subject,
+        text: body
+    }
+    
+    //process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0; //Needed for testing
+    smtpTransport.sendMail(mailOption, (err, resp) => {
+        if (err) {
+            console.log(err);
+        }
+    })
+}
 
 //An empty data structure used when a new user is created
 var emptyFeet = [
@@ -123,3 +152,4 @@ module.exports.loadUserObject = loadUserObject;
 module.exports.runCommand = runCommand;
 module.exports.getToeData = getToeData;
 module.exports.emptyFeet = emptyFeet;
+module.exports.sendEmail = sendEmail;

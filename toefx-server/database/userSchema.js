@@ -36,6 +36,10 @@ const userSchema = new schema({
     schedule: {
         type: Array,
         required : false
+    },
+    emailverified:{
+        type: Boolean,
+        required : false
     }
 
 });

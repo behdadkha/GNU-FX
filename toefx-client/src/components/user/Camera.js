@@ -38,12 +38,14 @@ export default function Camera({ overLayImage, onCaptured }) {
     if (mediaStream && videoRef.current && !videoRef.current.srcObject) {
         videoRef.current.srcObject = mediaStream;
     }
-    function handleCanPlay() {
+    function handleCamPlay() {
         setIsVideoPlaying(true);
         videoRef.current.play();
     }
     function handleCapture() {
         canvasRef.current.style.border = "6px solid gray";
+        canvasRef.current.width = videoRef.current.videoWidth;
+        canvasRef.current.height = videoRef.current.videoHeight;
         const context = canvasRef.current.getContext("2d");
         setCuptureTrue(true);
         context.drawImage(
@@ -56,7 +58,7 @@ export default function Camera({ overLayImage, onCaptured }) {
 
     return (
         <div>
-            <video className="vidoeFeed" ref={videoRef} onCanPlay={handleCanPlay} autoPlay playsInline muted></video>
+            <video className="vidoeFeed" ref={videoRef} onCanPlay={handleCamPlay} autoPlay playsInline muted></video>
             <div className="overLay_div_relative">
                 <div className="overLay_div_absolute">
                     <img className="overLay" src={overLayImage} alt="overlay"></img>
@@ -72,7 +74,7 @@ export default function Camera({ overLayImage, onCaptured }) {
                 )}
             </div>
             <div>
-                <canvas className="imageCanvas" width="1080px" height="600px" ref={canvasRef}></canvas>
+                <canvas className="imageCanvas" ref={canvasRef}></canvas>
             </div>
         </div>
     )

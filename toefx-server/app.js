@@ -3,8 +3,8 @@ const app = express();
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const fileUpload = require('express-fileupload');
-const { stderr } = require('process');
-const { MongoClient } = require('mongodb');
+const {stderr} = require('process');
+const {MongoClient} = require('mongodb');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const config = require('./config');
@@ -14,6 +14,7 @@ const imageValidationRoutes = require('./routes/ImageValidation');
 const diagnoseRouter = require('./routes/diagnose');
 const userRoutes = require('./routes/user');
 const forgotpasswordRoutes = require('./routes/ForgotPassword');
+const {StatusCode} = require('status-code-enum')
 
 app.use(cors());
 app.use(fileUpload());
@@ -119,38 +120,52 @@ function createSignedToken(payload, key, expiresIn) {
     Body Param password: user's password in text.  
 */
 app.post('/login', (req, res) => {
-    const { email, password } = req.body;
-    if(email === "" || password === ""){return res.status(400).json({msg: "Required input is empty"});}
+    const {email, password} = req.body;
+
+    if (email === "" || password === "")
+        return res.status(StatusCode.ClientErrorBadRequest)
+            .json({errorMsg: "BLANK_FIELD"});
+
     //searching for the provided email in the database
     try {
-        userSchema.findOne({ email: email }).then(user => {
-            if (user && user.emailverified) {
+        userSchema.findOne({email: email}).then(user => {
+            if (user) {
                 bcrypt.compare(password, user.password).then(async (valid) => {
                     if (valid) {
-                        const payload = {
-                            id: user.id,
-                            name: user.name
-                        };
-
-                        var token = await createSignedToken(payload, config.secretKey, "1 day");
-                        res.json({
-                            success: true,
-                            token: "Bearer " + token
-                        });
+                        if (user.emailverified) {
+                            const payload = {
+                                id: user.id,
+                                name: user.name
+                            };
+    
+                            var token = await createSignedToken(payload, config.secretKey, "1 day");
+                            res.status(StatusCode.SuccessAccepted).json({
+                                success: true,
+                                token: "Bearer " + token
+                            });
+                        }
+                        else {
+                            sendVerificationEmail(user.name, email); //Send verification email again
+                            return res.status(StatusCode.ClientErrorLocked)
+                                .json({errorMsg: "UNVERIFIED_ACCOUNT"});
+                        }
                     }
                     else {
-                        return res.status(400).json(undefined);
+                        return res.status(StatusCode.ClientErrorUnauthorized)
+                            .json({errorMsg: "INVALID_CREDENTIALS"});
                     }
                 });
-
             }
-            else { //the email address is not found
-                res.status(400).json(undefined);
+            else { //The email address is not found
+                res.status(StatusCode.ClientErrorNotFound)
+                    .json({errorMsg: "INVALID_EMAIL"});
             }
         });
     }
     catch {
         console.log("Login failed");
+        res.status(StatusCode.ClientErrorBadRequest)
+            .json({errorMsg: "UNKNOWN_ERROR"});
     }
 });
 
@@ -190,10 +205,10 @@ function hashedURL(email) {
 }
 
 async function sendVerificationEmail(name, email){
-    const urlTobeSent = await hashedURL(email)
-    const subject = "Email Verification"
-    const body = `${name},\n\nPlease click on the link below to verify your email address. If you have not created an account, simply ignore this email.\n\n${urlTobeSent}\n\nThank you,\n\nToeFX Team`
-    utils.sendEmail(email, subject, body)
+    const urlTobeSent = await hashedURL(email);
+    const subject = "Email Verification";
+    const body = `${name},\n\nPlease click on the link below to verify your email address. If you have not created an account, simply ignore this email.\n\n${urlTobeSent}\n\nThank you,\n\nToeFX Team`;
+    utils.sendEmail(email, subject, body);
 }
 
 /*
@@ -210,17 +225,17 @@ app.post('/signup', (req, res) => {
     const inputValidMsg = checkInput(name, email, password, birthday);
 
     if (inputValidMsg !== "NOERROR") {
-        return res.status(400).json({ msg: inputValidMsg });
+        return res.status(StatusCode.ClientErrorBadRequest).json({ msg: inputValidMsg });
     }
     if(!validateEmail(email)){
-        return res.status(400).json({ msg: "invalid email address" });
+        return res.status(StatusCode.ClientErrorBadRequest).json({ msg: "invalid email address" });
     }
 
     try {
         userSchema.findOne({ email: email }).then(async (user) => {
             //the email address already exists
             if (user) {
-                return res.status(400).json({ msg: "Account already exists" });
+                return res.status(StatusCode.ClientErrorBadRequest).json({ msg: "Account already exists" });
             }
             else {
                 try {
@@ -229,13 +244,13 @@ app.post('/signup', (req, res) => {
                     //creating a new image folder for the user
                     createImageFolder(user.id).then(() => {
                         createEmptyToeEntery(user.id).then(() => {
-                            res.status(200).json({});
+                            res.status(StatusCode.SuccessOK).json({});
                         });
                     })
                     sendVerificationEmail(name, email);
                 }
                 catch {
-                    res.status(400).json();
+                    res.status(StatusCode.ClientErrorBadRequest).json();
                 }
             }
         });
@@ -288,16 +303,16 @@ app.get('/getImage', async (req, res) => {
         var user = userObject.user;
         var userId = userObject.id;
         let imageName = req.query.imageName;
-        if (imageName === undefined){return res.status(400).json({msg: "ImageName should be specified"})}
+        if (imageName === undefined){return res.status(StatusCode.ClientErrorBadRequest).json({msg: "ImageName should be specified"})}
         //if the specified images is actually owned by the the user
         if (await user.images.includes(imageName))
             res.sendFile(`${__dirname}/images/${userId}/${imageName}`);
         else
-            res.status(400).json({ msg: "Invalid request" });
+            res.status(StatusCode.ClientErrorBadRequest).json({ msg: "Invalid request" });
     }
     catch (e) {
         //console.log(e)
-        res.status(400).json({ msg: "Invalid token , tried to get an image" });
+        res.status(StatusCode.ClientErrorBadRequest).json({ msg: "Invalid token , tried to get an image" });
     }
 });
 
@@ -316,7 +331,7 @@ app.get('/deleteImage', async (req, res) => {
         var userId = userObject.id;
 
         if(req.query.footIndex === undefined || req.query.toeIndex === undefined || req.query.imageIndex === undefined || req.query.imageName === undefined){
-            return res.status(400).json({msg: "4 query params are undefined"});
+            return res.status(StatusCode.ClientErrorBadRequest).json({msg: "4 query params are undefined"});
         }
 
         const footIndex = req.query.footIndex;
@@ -330,11 +345,11 @@ app.get('/deleteImage', async (req, res) => {
             try {
                 toeData.feet[footIndex].toes[toeIndex].images.splice(imageIndex, 1);
             } catch {
-                return res.status(400).json({ msg: "specified toe or foot does not exist" });
+                return res.status(StatusCode.ClientErrorBadRequest).json({ msg: "specified toe or foot does not exist" });
             }
         }
         else {
-            return res.status(400).json({ msg: "not found" });
+            return res.status(StatusCode.ClientErrorBadRequest).json({ msg: "not found" });
         }
 
         //deleting the toe image from the user collection
@@ -350,10 +365,10 @@ app.get('/deleteImage', async (req, res) => {
         toeData.save();
         user.save();
 
-        return res.status(200).json({msg: "Image deleted successfully"});
+        return res.status(StatusCode.SuccessOK).json({msg: "Image deleted successfully"});
     }
     catch {
-        return res.status(400).json({msg: "Something happened when tried to delete an image (might be an invalid token)"})
+        return res.status(StatusCode.ClientErrorBadRequest).json({msg: "Something happened when tried to delete an image (might be an invalid token)"})
     }
 });
 
@@ -372,12 +387,12 @@ app.get('/getToe', async (req, res) => {
             if (data) {
                 return res.json(data);
             } else {
-                return res.status(400).json({ msg: "Data not found" });
+                return res.status(StatusCode.ClientErrorBadRequest).json({ msg: "Data not found" });
             }
         });
     }
     catch (e) {
-        return res.status(400).json({msg: "Invalid user token"})
+        return res.status(StatusCode.ClientErrorBadRequest).json({msg: "Invalid user token"})
     }
 });
 
@@ -391,7 +406,7 @@ app.get('/getImageNames', async (req, res) => {
         return res.send(user.images)
     }
     catch {
-        return res.status(400).json({msg: "Something happened when tried to get user's image names"});
+        return res.status(StatusCode.ClientErrorBadRequest).json({msg: "Something happened when tried to get user's image names"});
     }
 });
 

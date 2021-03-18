@@ -3,7 +3,7 @@
 */
 
 import React, { Component } from 'react';
-import { Button, Table } from 'react-bootstrap';
+import { Button, Modal, Table } from 'react-bootstrap';
 import { isMobile } from "react-device-detect";
 import { connect } from "react-redux";
 import Axios from 'axios';
@@ -31,7 +31,9 @@ class MyAccount extends Component {
             age: 0, //The user's age
             imageUrls: [], //User's images
             toeData: [], //Data for user's images
-            showLeftFoot: true //Determine which foot to show images for
+            showLeftFoot: true, //Determine which foot to show images for
+            showDeleteConfirmation: false,
+            toDeleteInfo: {} //{imageName, imageIndex in toeData, toeIndex, selectedFootindex }
         };
     }
 
@@ -79,19 +81,29 @@ class MyAccount extends Component {
 
     /*
         Deletes one of the user's uploaded image.
-        param imageName: The name of the image to delete.
+        param imageName: The name of the image to delete. backend uses the imagename to delete the image from the user.images array
         param selectedFootIndex: The index of the selected foot to delete, 0 for left foot and 1 for right foot.
-        param toeIndex: The index of the selected toe to delete, ranges from 0 to 4
-        param imageIndex: The index of the image to delete.
+        param toeIndex: The index of the selected toe to delete, ranges from 0 to 4,
+        param imageIndex: The index of the image to delete. need to know which image of the selected toe to delete. toe: {images [1.png, 2.png]} 
     */
-    deleteImage(imageName, selectedFootIndex, toeIndex, imageIndex) {
+    deleteImage() {
+        //imageName, selectedFootIndex, toeIndex, imageIndex
+        var toDeleteInfo = this.state.toDeleteInfo;
+
+        var selectedFootIndex = toDeleteInfo.selectedFootIndex;
+        var toeIndex = toDeleteInfo.toeIndex;
+        var imageIndex = toDeleteInfo.imageIndex;
+        var imageName = toDeleteInfo.imageName;
         try {
             if (selectedFootIndex === 0 || selectedFootIndex === 1)
                 if (toeIndex >= 0 && toeIndex <= 4) {
 
                     Axios.get(`${config.dev_server}/deleteImage?footIndex=${selectedFootIndex}&toeIndex=${toeIndex}&imageIndex=${imageIndex}&imageName=${imageName}`)
                         .then(() => {
-                            window.location.reload();
+                            var tempData = this.state.toeData;
+                            tempData.feet[selectedFootIndex].toes[toeIndex].images.splice(imageIndex, 1);
+                            this.setState({ toeData: tempData });
+                            this.toggleDeleteConfirmation();
                         })
 
                 }
@@ -106,9 +118,9 @@ class MyAccount extends Component {
     */
     existsAnyImageforFoot(footIndex) {
 
-        if (this.state.toeData.feet){//data is loaded
+        if (this.state.toeData.feet) {//data is loaded
             let toeData = this.state.toeData.feet[footIndex].toes;
-        
+
             for (let i = 0; i < toeData.length; i++) {
                 if (toeData[i].images.length !== 0)
                     return true;
@@ -118,30 +130,54 @@ class MyAccount extends Component {
             return false;
 
         return false;
-    
+
+    }
+
+    /*
+        toggles the showDeleteConfirmation to show or hide the confirmation modal
+    */
+    toggleDeleteConfirmation() {
+        this.setState({
+            showDeleteConfirmation: !this.state.showDeleteConfirmation
+        });
     }
 
     /*
         Prints one of the user's uploaded images in the image list.
-        param id: The toe id to be removed.
+        param toeIndex: The toe toeIndex to be removed.
         param toe: The toe the image is for.
-        param selectedFootIndex: which foot the image is for.
+        param includeDelete_btn: if true, it includes the delete button. We dont need to show the delete button in the delete confirmation modal.
     */
-    printUploadedImage(id, toe, selectedFootIndex) {
+    printUploadedImage(toeIndex, toe, includeDelete_btn = true) {
         //List is ordered by: Image, Toe Name, Fungal Coverage %, Upload Date
-
         return (
-            toe.images.map(({ name, date, fungalCoverage }, index) =>
-                <tr key={toe + ' ' + index}>
+            toe.images.map(({ name, date, fungalCoverage }, imageIndex) =>
+                <tr key={toe + ' ' + imageIndex}>
                     <td><img src={GetImageURLByName(this.state.imageUrls, name)} alt="Loading..."
                         className="uploaded-image-table-toe-image" /></td>
-                    <td>{GetToeName(id)}</td>
+                    <td>{GetToeName(toeIndex)}</td>
                     <td>{fungalCoverage}</td>
                     <td>{date.split("T")[0]}</td>
-                    <td><Button className="delete-image-button" onClick={this.deleteImage.bind(this, name, selectedFootIndex, id, index)}>Delete</Button></td>
+                    {includeDelete_btn &&
+                        <td><Button className="delete-image-button" onClick={() => {
+                            this.setState({
+                                toDeleteInfo: { imageName: name, imageIndex: imageIndex, toeIndex: toeIndex, selectedFootIndex: this.whichFootSelected() },
+                                showDeleteConfirmation: true
+                            });
+                        }}
+                        >Delete</Button>
+                        </td>
+                    }
                 </tr>
             )
         )
+    }
+
+    /*
+        returns 0 if the left foot is selected, 1 if the right foot is selected
+    */
+    whichFootSelected() {
+        return (this.state.showLeftFoot) ? 0 : 1;
     }
 
     /*
@@ -151,7 +187,7 @@ class MyAccount extends Component {
         var imagesAreLoaded = this.state.toeData.feet; //Images have been retrieved from the server
         var defaultFootButtonClass = "graph-foot-button"; //The general CSS for the feet buttons
         var activeFootButtonClass = defaultFootButtonClass + " active-toe-button"; //The foot button that's selected
-        var selectedFootIndex = (this.state.showLeftFoot) ? 0 : 1; //0 -> left foot, 1 -> right foot
+        var selectedFootIndex = this.whichFootSelected();
 
         //Bubble displaying user name, email, and option to reset password
         var accountDetailsBubble =
@@ -165,8 +201,11 @@ class MyAccount extends Component {
 
         //Bubble for displaying the images the user uploaded previously
         //Display "Loading..." text while images are being retreived from the server
-        var imageTableBubble = (!imagesAreLoaded) ? <div className="uploaded-image-container"><h4>Loading...</h4></div>
-            : <div className="uploaded-image-container">
+        var imageTableBubble = (!imagesAreLoaded)
+            ?
+            <div className="uploaded-image-container"><h4>Loading...</h4></div>
+            :
+            <div className="uploaded-image-container">
                 {/* Buttons for changing which foot to view */}
                 <div className="graph-feet-buttons">
                     <button onClick={this.viewFoot.bind(this, true)}
@@ -185,21 +224,21 @@ class MyAccount extends Component {
                     <thead>
                         <tr>
                             <th className="uploaded-image-table-image-header">Image</th>
-                            <th>Toe</th>
-                            <th>Fungal Coverage (%)</th>
-                            <th>Upload Date</th>
-                            <th>Delete?</th>
+                            <th className="uploaded-image-table-SameSize-header">Toe</th>
+                            <th className="uploaded-image-table-SameSize-header">Fungal Coverage (%)</th>
+                            <th className="uploaded-image-table-SameSize-header">Upload Date</th>
+                            <th className="uploaded-image-table-SameSize-header">Delete?</th>
                         </tr>
                     </thead>
                     {this.existsAnyImageforFoot(selectedFootIndex)
-                    ?
+                        ?
                         <tbody>
                             {
                                 //Print a list of images with data
-                                this.state.toeData.feet[selectedFootIndex].toes.map((toe, id) => this.printUploadedImage(id, toe, selectedFootIndex))
+                                this.state.toeData.feet[selectedFootIndex].toes.map((toe, id) => this.printUploadedImage(id, toe, true))
                             }
                         </tbody>
-                    :
+                        :
                         <tbody>
                             <tr>
                                 <td colSpan="5">There are no images available for the selected foot</td>
@@ -235,6 +274,43 @@ class MyAccount extends Component {
                         </div>
                     </div>
                 </div>
+
+                {/* Delete confirmation modal, only visible if showDeleteConfirmation = true */}
+                <Modal size="lg" show={this.state.showDeleteConfirmation} onHide={this.toggleDeleteConfirmation.bind(this)}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Are you sure you want to delete the following cell?</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+
+                        <Table striped bordered size="md" className="uploaded-image-table">
+                            <thead>
+                                <tr>
+                                    <th className="uploaded-image-table-image-header">Image</th>
+                                    <th className="uploaded-image-table-SameSize-header">Toe</th>
+                                    <th className="uploaded-image-table-SameSize-header">Fungal Coverage (%)</th>
+                                    <th className="uploaded-image-table-SameSize-header">Upload Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {(this.state.toeData.feet !== undefined && this.state.toDeleteInfo.selectedFootIndex !== undefined)  &&
+                                    this.printUploadedImage(this.state.toDeleteInfo.toeIndex, this.state.toeData.feet[this.state.toDeleteInfo.selectedFootIndex].toes[this.state.toDeleteInfo.toeIndex], false)
+                                }
+                            </tbody>
+                        </Table>
+
+                    </Modal.Body>
+
+                    <Modal.Footer>
+
+                        <Button variant="secondary" onClick={() => this.toggleDeleteConfirmation()}>
+                            Close
+                        </Button>
+                        <Button variant="danger" onClick={() => this.deleteImage()}>
+                            Yes
+                        </Button>
+
+                    </Modal.Footer>
+                </Modal>
             </div>
         )
     }

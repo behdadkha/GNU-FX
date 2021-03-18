@@ -18,22 +18,22 @@ const config = require('../config');
     param toeIndex: 0 to 4 referring to the toes.["Big Toe", "Index Toe", "Middle Toe", "Fourth Toe", "Little Toe"]
     param imageName: The name of the image to be saved in DB. Must be the saved as the image's actual name.
 */
-function SaveToeData(userId, date, footIndex, toeIndex, imageName, res = undefined) {
+function SaveToeData(userId, date, footIndex, toeIndex, imageName, fungalCoverage, res = undefined) {
     return new Promise((resolve, reject) => {
         try {
             //Find the user's images in the database and add to them
             //User slot is automatically created on sign-up
             toeData.findOne({ userID: userId }, async (err, item) => {
                 if (item) {
-                    var imagePath = path.resolve(`images/${userId}/${imageName}`)
-                    var pythonFile = path.resolve('AI/actual/Interface.py');
-                    let fungalCoverage = await utils.runCommand(`python ${pythonFile} COVERAGE ${imagePath}`);
-                    fungalCoverage = JSON.parse(fungalCoverage).data[0]
+                    //var imagePath = path.resolve(`images/${userId}/${imageName}`)
+                    //var pythonFile = path.resolve('AI/actual/Interface.py');
+                    //let fungalCoverage = await utils.runCommand(`python ${pythonFile} COVERAGE ${imagePath}`);
+                    //fungalCoverage = JSON.parse(fungalCoverage).data[0]
 
                     item.feet[footIndex].toes[toeIndex].images.push({
                         date: date,
                         name: imageName,
-                        fungalCoverage: fungalCoverage + "%"
+                        fungalCoverage: fungalCoverage
                     })
 
                     item.save();
@@ -147,7 +147,7 @@ uploadImage.route('/decompose').get(async (req, res) => {
     let decomposedNails = await utils.runCommand(`python ${pythonFile} DECOMPOSE ${filePath}`);
     
     decomposedNails = JSON.parse(decomposedNails.split("\n")[1]).data; // need to get rid of the first line "loading nail recognition model..."
-    //image path: decomposedNails[i][0]
+    //image name: decomposedNails[i][0]
     //images cordinates in the original image: decomposedNails[i][1]
     //the color of the box in the original image: decomposedNails[i][2]
     //eg. the index toe is takes from x:20, y:30 of the original image
@@ -159,7 +159,11 @@ uploadImage.route('/decompose').get(async (req, res) => {
     
     let decomposedImages = [];
     for (let i = 0; i < decomposedNails.length; i++) {
-        decomposedImages.push( {name: path.basename(decomposedNails[i][0]), cord: decomposedNails[i][1], color: decomposedNails[i][2] } );
+        let imagePath = path.resolve(`images/${userId}/${decomposedNails[i][0]}`)
+        let fungalCoverage = await utils.runCommand(`python ${pythonFile} COVERAGE ${imagePath}`);
+        fungalCoverage = JSON.parse(fungalCoverage).data[0] + "%";
+
+        decomposedImages.push( {name: path.basename(decomposedNails[i][0]), cord: decomposedNails[i][1], color: decomposedNails[i][2], fungalCoverage: fungalCoverage } );
         //Save the new images under user in the database
         user.images.push(path.basename(decomposedNails[i][0]));
     }
@@ -192,9 +196,10 @@ uploadImage.route('/save').post(async (req, res) => {
     var footIndex = parseInt(req.body.foot)
     var toeIndex = parseInt(req.body.toe);
     var imageName = req.body.imageName;
+    var fungalCoverage = req.body.fungalCoverage;
 
     //Save the data in the database
-    SaveToeData(userId, datetoString, footIndex, toeIndex, imageName, res).then(() => {
+    SaveToeData(userId, datetoString, footIndex, toeIndex, imageName, fungalCoverage, res).then(() => {
         res.json({ msg: "successful" });
     });
 
@@ -214,6 +219,7 @@ uploadImage.route('/deleteImage').delete(async (req, res) => {
         var user = userObject.user;
         var userId = userObject.id;
         
+        console.log(req.query.images);
         let imageNames = req.query.images.split(",");
         if( imageNames.length <= 0) 
             return res.status(400).json({ msg: "could not delete the images" });

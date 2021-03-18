@@ -56,6 +56,7 @@
     padding: 20px;
     margin : 0%;
     border-radius: 10px;
+    max-width: 70%;
 }
 
 .uploaded-image-table {
@@ -68,8 +69,13 @@
 }
 
 .uploaded-image-table-image-header {
-    width: 20%;
+    width: 10%;
 }
+
+.uploaded-image-table-SameSize-header {
+    width: 10%;
+}
+
 
 .uploaded-image-table-toe-image {
 	width: 100%;

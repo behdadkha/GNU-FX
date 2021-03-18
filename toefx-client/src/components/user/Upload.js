@@ -223,7 +223,7 @@ class Upload extends Component {
 
         await axios.get(`${config.dev_server}/upload/decompose`)
             .then(async res => {
-                //res has data: {imagesInfo: [{name: "", cord: [x,y], color: [r,g,b]}], CLRImage: "name_CLR.png"}
+                //res has data: {imagesInfo: [{name: "", cord: [x,y], color: [r,g,b]}], CLRImage: "name_CLR.png", fungalCoverage: "0%"}
 
                 if (res.data.imagesInfo.length === 0) {
                     var tempFile = this.state.files[0];
@@ -234,7 +234,7 @@ class Upload extends Component {
 
                 //Format: res.data.imagesInfo[{name: "", cord: [x,y], color: [r,g,b]}]
                 var images = [];
-                var promises = res.data.imagesInfo.map(async ({ name, cord, color }) => {
+                var promises = res.data.imagesInfo.map(async ({ name, cord, color, fungalCoverage }) => {
                     var imageObj = await getImage(name);
                     //add the additional info to the imageobj
                     imageObj["cord"] = cord;
@@ -242,12 +242,14 @@ class Upload extends Component {
                     imageObj["keepClicked"] = false;
                     imageObj["saved"] = false;
                     imageObj["selectedToeId"] = -1;
+                    imageObj["fungalCoverage"] = fungalCoverage;
                     images.push(imageObj);
                 });
 
                 //wait for the map to finish
                 Promise.all(promises).then(() => {
                     //set the state and orders the images
+                    console.log(images)
                     this.setState(
                         { decomposedImages: images },
                         () => {
@@ -273,7 +275,9 @@ class Upload extends Component {
                 this.setState({
                     files: tempFiles
                 }, () => {
-                    this.drawImageOnCanvas_fromImgObj(coloredImage_Blob, false)  // draw the image, after the files variable is saved
+                    var canvas = this.uploadedImgRef.current;
+                    canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);//clear the canvas
+                    this.drawImageOnCanvas_fromImgObj(coloredImage_Blob, true)  // draw the image, after the files variable is saved
                 }
                 )
             })
@@ -429,12 +433,12 @@ class Upload extends Component {
     */
     async decomposedImagesRemove(index) {
         let tempImages = this.state.decomposedImages;
-        let imageName = tempImages[index].name;
+        let imageName = tempImages[index].imageName;
 
         if (index > -1) {
             tempImages.splice(index, 1);
         }
-
+        console.log(imageName)
         await axios.delete(`${config.dev_server}/upload/deleteImage?images=${imageName}`)
             .then(res => {
                 console.log("removed");
@@ -720,17 +724,16 @@ class Upload extends Component {
 
         param imageIndex: images's index in the decomposedImages array
     */
-    async handleSave(footId, toeId, imageName, imageIndex) {
-        //showing the loading message
-        this.setState({ calculatingFungalCoverage: true });
-        console.log(imageName);
-        await axios.post(`${config.dev_server}/upload/save`, { foot: footId, toe: toeId, imageName: imageName })
+    async handleSave(footId, imageObj, imageIndex) {
+
+        console.log(imageObj.imageName);
+        await axios.post(`${config.dev_server}/upload/save`, { foot: footId, toe: imageObj.selectedToeId, imageName: imageObj.imageName, fungalCoverage: imageObj.fungalCoverage })
             .then(() => {
                 console.log("saved");
                 this.setImageSavedToTrue(imageIndex);
 
                 var tempSelectedToes = this.state.alreadySelectedToes;//this is so that only one image of a toe can be uploaded at a time
-                tempSelectedToes[toeId] = true;
+                tempSelectedToes[imageObj.selectedToeId] = true;
                 this.setState({ alreadySelectedToes: tempSelectedToes });
             })
             .catch((error) => console.log(error));
@@ -775,25 +778,25 @@ class Upload extends Component {
         )
     }
 
-    printDecomposedImage_desktop(name, url, color, keepClicked, saved, index) {
+    printDecomposedImage_desktop(imageObj, index) {
         return (
-            <div key={name} className="decomposeImageCol" style={{ border: `5px solid rgb(${color})` }}>
+            <div key={imageObj.imageName} className="decomposeImageCol" style={{ border: `5px solid rgb(${imageObj.color})` }}>
                 <div className="decomposeImage_div">
-                    <img className="decomposeImage" src={url} alt="nail"></img>
+                    <img className="decomposeImage" src={imageObj.url} alt="nail"></img>
                 </div>
                 <Row noGutters={true} className="saveDiscardRow">
                     {
-                        saved === true
+                        imageObj.saved === true
                             ?
                             <h6>Saved</h6>
                             :
-                            keepClicked === true
+                            imageObj.keepClicked === true
                                 ?
                                 this.state.calculatingFungalCoverage
                                     ?
                                     "Please wait while we calculate your fungal coverage..."
                                     :
-                                    this.printDecompose_toeSelection(name, index)
+                                    this.printDecompose_toeSelection(imageObj, index)
                                 :
                                 <Row>
                                     <span className="keepDiscardSpan">
@@ -809,7 +812,7 @@ class Upload extends Component {
 
     }
 
-    printDecompose_toeSelection(name, decomposeImageIndex) {
+    printDecompose_toeSelection(imageObj, decomposeImageIndex) {
         var saveBtnClassName = (isMobile) ? "saveBtn_mobile" : "saveBtn";
         var toeButtons = (isMobile) ? "toeButtons_mobile" : "toeButtons_desktop";
         return (
@@ -825,7 +828,7 @@ class Upload extends Component {
                 <div>
                     <Button className={saveBtnClassName}
                         onClick={
-                            this.handleSave.bind(this, this.state.selectedFootId, this.state.selectedToeId, name, decomposeImageIndex)
+                            this.handleSave.bind(this, this.state.selectedFootId, imageObj, decomposeImageIndex)
                         }
                     >Save</Button>
                 </div>
@@ -843,16 +846,16 @@ class Upload extends Component {
             </div>
         );
     }
-    printDecomposedImage_mobile(name, url, color, keepClicked, saved, index) {
+    printDecomposedImage_mobile(imageObj, index) {
 
         return (
-            <div key={index} className="decomposedRow_mobile" style={{ border: `2px solid rgb(${color})` }}>
+            <div key={index} className="decomposedRow_mobile" style={{ border: `2px solid rgb(${imageObj.color})` }}>
                 <div className="decomposed_Img_Div_mobile">
-                    <img src={url} className="decomposeImage_mobile" alt={name}></img>
+                    <img src={imageObj.url} className="decomposeImage_mobile" alt={imageObj.imageName}></img>
                 </div>
 
                 {
-                    saved
+                    imageObj.saved
                         ?
                         <div>
                             <div className="savedText_div">
@@ -860,13 +863,13 @@ class Upload extends Component {
                             </div>
                         </div>
                         :
-                        keepClicked
+                        imageObj.keepClicked
                             ?
                             this.state.calculatingFungalCoverage
                                 ?
                                 "Please wait while we calculate your fungal coverage..."
                                 :
-                                this.printDecompose_toeSelection(name, index)
+                                this.printDecompose_toeSelection(imageObj, index)
                             :
                             this.print_keep_discard_mobile(index)
                 }
@@ -970,7 +973,7 @@ class Upload extends Component {
                             <div className="image_div">
                                 {/* Had to change the <img> to <canvas> because if the user rotates the image, the .toBlob on canvas gives us the image at the rotated degree */}
                                 {/*<img ref={this.uploadedImgRef} key={index} src={source.url} className={imageClassName} alt="file" />*/}
-                                <canvas ref={this.uploadedImgRef} key={index} className={imageClassName} width="1080px" height="800px"></canvas>
+                                <canvas ref={this.uploadedImgRef} key={index} className={imageClassName}></canvas>
                             </div>
                             {this.state.showUplodConfirmation && // only show the image rotation when the user is confirming the image
                                 <div className="rotateImg_div">
@@ -1049,11 +1052,13 @@ class Upload extends Component {
                         (isMobile)
                             ?
                             this.state.decomposedImages.map(
-                                ({ imageName, url, color, keepClicked, saved, selectedToeId }, index) => this.printDecomposedImage_mobile(imageName, url, color, keepClicked, saved, index)
+                                //({ imageName, url, color, keepClicked, saved, selectedToeId }, index) => this.printDecomposedImage_mobile(imageName, url, color, keepClicked, saved,index)
+                                (imageObj, index) => this.printDecomposedImage_mobile(imageObj, index)
                             )
                             :
                             this.state.decomposedImages.map(
-                                ({ imageName, url, color, keepClicked, saved, selectedToeId }, index) => this.printDecomposedImage_desktop(imageName, url, color, keepClicked, saved, index)
+                                //({ imageName, url, color, keepClicked, saved, selectedToeId }, index) => this.printDecomposedImage_desktop(imageName, url, color, keepClicked, saved, index)
+                                (imageObj, index) => this.printDecomposedImage_desktop(imageObj, index)
                             )
                     }
 

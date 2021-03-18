@@ -124,7 +124,7 @@ app.post('/login', (req, res) => {
     //searching for the provided email in the database
     try {
         userSchema.findOne({ email: email }).then(user => {
-            if (user) {
+            if (user && user.emailverified) {
                 bcrypt.compare(password, user.password).then(async (valid) => {
                     if (valid) {
                         const payload = {
@@ -176,6 +176,26 @@ function validateEmail(email){
     return re.test(String(email).toLowerCase());
 }
 
+function hashedURL(email) {
+    return new Promise((Resolve, Reject) => {
+        const rounds = 10
+        bcrypt.genSalt(rounds, (err, salt) => {
+            bcrypt.hash(email, salt, (err, hash) => {
+                // e.g url: http://localhost:3000/emailverification/hashedemailaddress
+                Resolve(`http://localhost:3000/emailverification/${hash}`)
+            });
+        });
+    });
+
+}
+
+async function sendVerificationEmail(name, email){
+    const urlTobeSent = await hashedURL(email)
+    const subject = "Email Verification"
+    const body = `${name},\n\nPlease click on the link below to verify your email address. If you have not created an account, simply ignore this email.\n\n${urlTobeSent}\n\nThank you,\n\nToeFX Team`
+    utils.sendEmail(email, subject, body)
+}
+
 /*
     signup endpoint.
     Creates a new user and an image folder for the new user. 
@@ -212,6 +232,7 @@ app.post('/signup', (req, res) => {
                             res.status(200).json({});
                         });
                     })
+                    sendVerificationEmail(name, email);
                 }
                 catch {
                     res.status(400).json();
@@ -221,6 +242,37 @@ app.post('/signup', (req, res) => {
     }
     catch {
         console.log("not able to finish the signup process");
+    }
+});
+
+function checkEmails(hashedEmail, textEmail) {
+    return new Promise((Resolve, Reject) => {
+        bcrypt.compare(textEmail, hashedEmail, (err, result) => {
+            if (result)
+                Resolve("VALID_EMAIL")
+            else
+                Resolve("INVALID_EMAIL")
+        })
+    });
+}
+app.post('/emailverification', async (req,res) => {
+    const email = req.body.email
+    const hashedEmail = req.body.emailFromUrl
+    const isEmailValid = await checkEmails(hashedEmail, email)
+    if (isEmailValid === "VALID_EMAIL"){
+        userSchema.findOne({ email: email }).then(async (user) => {
+            if(user){
+                user.emailverified = true
+                user.save()
+                return res.json({msg: ""})// it was successful
+            }
+            else{
+                return res.json({msg: "Email address does exist in the database"})
+            }
+        })
+    }
+    else{
+        return res.json({msg: "Email address is not valid"})
     }
 });
 

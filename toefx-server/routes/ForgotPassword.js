@@ -1,5 +1,5 @@
 /*
-    Functions for validating whether or not an image is of a toe.
+    Routes for sending email to reset password.
 */
 
 const express = require('express');
@@ -29,31 +29,10 @@ forgotPasswordRoutes.route('').post((req, res) => {
         else {
             const email = req.body.email
             var urlTobeSent = await hashedURL(email)
-            var smtpTransport = nodemailer.createTransport({
-                service: "Gmail",
-                auth: {
-                    user: "toefxdevteam@gmail.com",
-                    pass: "Toefxdevteam123"
-                }
-            });
-
-            var mailOption = {
-                from: "toefxdevteam@gmail.com",
-                to: req.body.email,
-                subject: "ToeFX Password Recovery",
-                text: `${user.name},\n\nPlease click on the link below to reset your password. If you have not requested to reset your password, simply ignore this email.\n\n${urlTobeSent}\n\nThank you,\n\nToeFX Team`
-            }
-            
-            //process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0; //Needed for testing
-            smtpTransport.sendMail(mailOption, (err, resp) => {
-                if (err) {
-                    console.log(err);
-                    return res.json({ msg: "UNKNOWN_ERROR" })
-                }
-                else {
-                    return res.json({ msg: "" }) //Indication of success is no error message being returned
-                }
-            })
+            const subject = "ToeFX Password Recovery";
+            const text = `${user.name},\n\nPlease click on the link below to reset your password. If you have not requested to reset your password, simply ignore this email.\n\n${urlTobeSent}\n\nThank you,\n\nToeFX Team`
+            utils.sendEmail(email, subject, text)
+            return res.json({msg: ""})
         }
     })
 })

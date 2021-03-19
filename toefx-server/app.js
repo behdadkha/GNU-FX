@@ -3,8 +3,8 @@ const app = express();
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const fileUpload = require('express-fileupload');
-const {stderr} = require('process');
-const {MongoClient} = require('mongodb');
+const { stderr } = require('process');
+const { MongoClient } = require('mongodb');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const config = require('./config');
@@ -14,7 +14,7 @@ const imageValidationRoutes = require('./routes/ImageValidation');
 const diagnoseRouter = require('./routes/diagnose');
 const userRoutes = require('./routes/user');
 const forgotpasswordRoutes = require('./routes/ForgotPassword');
-const {StatusCode} = require('status-code-enum')
+const { StatusCode } = require('status-code-enum')
 
 app.use(cors());
 app.use(fileUpload());
@@ -30,6 +30,7 @@ const mongoose = require('mongoose');
 */
 const userSchema = require("./database/userSchema");
 const toe_dataSchema = require("./database/toe-dataSchema");
+const verificationLinks = require('./database/verificationLinks');
 
 //database Connection
 (async () => {
@@ -120,15 +121,15 @@ function createSignedToken(payload, key, expiresIn) {
     Body Param password: user's password in text.  
 */
 app.post('/login', (req, res) => {
-    const {email, password} = req.body;
+    const { email, password } = req.body;
 
     if (email === "" || password === "")
         return res.status(StatusCode.ClientErrorBadRequest)
-            .json({errorMsg: "BLANK_FIELD"});
+            .json({ errorMsg: "BLANK_FIELD" });
 
     //searching for the provided email in the database
     try {
-        userSchema.findOne({email: email}).then(user => {
+        userSchema.findOne({ email: email }).then(user => {
             if (user) {
                 bcrypt.compare(password, user.password).then(async (valid) => {
                     if (valid) {
@@ -137,7 +138,7 @@ app.post('/login', (req, res) => {
                                 id: user.id,
                                 name: user.name
                             };
-    
+
                             var token = await createSignedToken(payload, config.secretKey, "1 day");
                             res.status(StatusCode.SuccessAccepted).json({
                                 success: true,
@@ -147,25 +148,25 @@ app.post('/login', (req, res) => {
                         else {
                             sendVerificationEmail(user.name, email); //Send verification email again
                             return res.status(StatusCode.ClientErrorLocked)
-                                .json({errorMsg: "UNVERIFIED_ACCOUNT"});
+                                .json({ errorMsg: "UNVERIFIED_ACCOUNT" });
                         }
                     }
                     else {
                         return res.status(StatusCode.ClientErrorUnauthorized)
-                            .json({errorMsg: "INVALID_CREDENTIALS"});
+                            .json({ errorMsg: "INVALID_CREDENTIALS" });
                     }
                 });
             }
             else { //The email address is not found
                 res.status(StatusCode.ClientErrorNotFound)
-                    .json({errorMsg: "INVALID_EMAIL"});
+                    .json({ errorMsg: "INVALID_EMAIL" });
             }
         });
     }
     catch {
         console.log("Login failed");
         res.status(StatusCode.ClientErrorBadRequest)
-            .json({errorMsg: "UNKNOWN_ERROR"});
+            .json({ errorMsg: "UNKNOWN_ERROR" });
     }
 });
 
@@ -186,7 +187,7 @@ function checkInput(name, email, password, birthday) {
     }
 }
 
-function validateEmail(email){
+function validateEmail(email) {
     const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(String(email).toLowerCase());
 }
@@ -204,10 +205,16 @@ function hashedURL(email) {
 
 }
 
-async function sendVerificationEmail(name, email){
+async function sendVerificationEmail(name, email) {
     const urlTobeSent = await hashedURL(email);
     const subject = "Email Verification";
     const body = `${name},\n\nPlease click on the link below to verify your email address. If you have not created an account, simply ignore this email.\n\n${urlTobeSent}\n\nThank you,\n\nToeFX Team`;
+
+    //Add the url to the database(verificationLink schema)
+    var verification = new verificationLinks({ email: email, link: urlTobeSent })
+    verification.save();
+
+    //send email
     utils.sendEmail(email, subject, body);
 }
 
@@ -227,7 +234,7 @@ app.post('/signup', (req, res) => {
     if (inputValidMsg !== "NOERROR") {
         return res.status(StatusCode.ClientErrorBadRequest).json({ msg: inputValidMsg });
     }
-    if(!validateEmail(email)){
+    if (!validateEmail(email)) {
         return res.status(StatusCode.ClientErrorBadRequest).json({ msg: "invalid email address" });
     }
 
@@ -247,6 +254,7 @@ app.post('/signup', (req, res) => {
                             res.status(StatusCode.SuccessOK).json({});
                         });
                     })
+
                     sendVerificationEmail(name, email);
                 }
                 catch {
@@ -260,35 +268,27 @@ app.post('/signup', (req, res) => {
     }
 });
 
-function checkEmails(hashedEmail, textEmail) {
-    return new Promise((Resolve, Reject) => {
-        bcrypt.compare(textEmail, hashedEmail, (err, result) => {
-            if (result)
-                Resolve("VALID_EMAIL")
-            else
-                Resolve("INVALID_EMAIL")
-        })
-    });
-}
-app.post('/emailverification', async (req,res) => {
-    const email = req.body.email
-    const hashedEmail = req.body.emailFromUrl
-    const isEmailValid = await checkEmails(hashedEmail, email)
-    if (isEmailValid === "VALID_EMAIL"){
-        userSchema.findOne({ email: email }).then(async (user) => {
-            if(user){
-                user.emailverified = true
-                user.save()
-                return res.json({msg: ""})// it was successful
-            }
-            else{
-                return res.json({msg: "Email address does exist in the database"})
-            }
-        })
-    }
-    else{
-        return res.json({msg: "Email address is not valid"})
-    }
+app.post('/emailverification', async (req, res) => {
+    const url = req.body.url
+    // IMPORTANT: It finds the link and deletes it if it was successful.
+    verificationLinks.findOneAndDelete({ link: url }).then((VLINK) => {
+        if(VLINK){
+            userSchema.findOne({ email: VLINK.email }).then(async (user) => {
+                if (user) {
+                    user.emailverified = true
+                    user.save()
+
+                    return res.json({ msg: "" })// it was successful
+                }
+                else {
+                    return res.json({ msg: "Email address does exist in the database" })
+                }
+            })
+        }
+        else{
+            return res.json({msg: "Verification link is not valid"})
+        }
+    })
 });
 
 /*
@@ -303,7 +303,7 @@ app.get('/getImage', async (req, res) => {
         var user = userObject.user;
         var userId = userObject.id;
         let imageName = req.query.imageName;
-        if (imageName === undefined){return res.status(StatusCode.ClientErrorBadRequest).json({msg: "ImageName should be specified"})}
+        if (imageName === undefined) { return res.status(StatusCode.ClientErrorBadRequest).json({ msg: "ImageName should be specified" }) }
         //if the specified images is actually owned by the the user
         if (await user.images.includes(imageName))
             res.sendFile(`${__dirname}/images/${userId}/${imageName}`);
@@ -330,8 +330,8 @@ app.get('/deleteImage', async (req, res) => {
         var user = userObject.user;
         var userId = userObject.id;
 
-        if(req.query.footIndex === undefined || req.query.toeIndex === undefined || req.query.imageIndex === undefined || req.query.imageName === undefined){
-            return res.status(StatusCode.ClientErrorBadRequest).json({msg: "4 query params are undefined"});
+        if (req.query.footIndex === undefined || req.query.toeIndex === undefined || req.query.imageIndex === undefined || req.query.imageName === undefined) {
+            return res.status(StatusCode.ClientErrorBadRequest).json({ msg: "4 query params are undefined" });
         }
 
         const footIndex = req.query.footIndex;
@@ -365,10 +365,10 @@ app.get('/deleteImage', async (req, res) => {
         toeData.save();
         user.save();
 
-        return res.status(StatusCode.SuccessOK).json({msg: "Image deleted successfully"});
+        return res.status(StatusCode.SuccessOK).json({ msg: "Image deleted successfully" });
     }
     catch {
-        return res.status(StatusCode.ClientErrorBadRequest).json({msg: "Something happened when tried to delete an image (might be an invalid token)"})
+        return res.status(StatusCode.ClientErrorBadRequest).json({ msg: "Something happened when tried to delete an image (might be an invalid token)" })
     }
 });
 
@@ -392,7 +392,7 @@ app.get('/getToe', async (req, res) => {
         });
     }
     catch (e) {
-        return res.status(StatusCode.ClientErrorBadRequest).json({msg: "Invalid user token"})
+        return res.status(StatusCode.ClientErrorBadRequest).json({ msg: "Invalid user token" })
     }
 });
 
@@ -406,7 +406,7 @@ app.get('/getImageNames', async (req, res) => {
         return res.send(user.images)
     }
     catch {
-        return res.status(StatusCode.ClientErrorBadRequest).json({msg: "Something happened when tried to get user's image names"});
+        return res.status(StatusCode.ClientErrorBadRequest).json({ msg: "Something happened when tried to get user's image names" });
     }
 });
 

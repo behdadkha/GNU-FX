@@ -12,7 +12,7 @@ import Axios from 'axios';
 import {config} from "../config";
 import {IsValidEmail, IsGoodPassword, GetGoodPasswordConfirmations} from "../Utils";
 
-import "../componentsStyle/SignUp.css";
+import "../componentsStyle/Signup.css";
 import healthydrawing from "../icons/MedicalCare.svg";
 
 //Error messages displayed to the user

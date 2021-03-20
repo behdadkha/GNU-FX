@@ -257,3 +257,9 @@
 #activetoe{
   background-color: red;
 }
+.ToeButtonsFont{
+  font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+  color: red;
+  font-size: 90%;
+  margin-top: 1%;
+}

@@ -112,6 +112,24 @@ userRoutes.post('/resetPassword', async (req, res) => {
     }
 });
 
+/*
+    Endpoint: user/saveRotation
+    used for replacing the old image with a new rotated image, from the myAccount page
+    param file: the new image
+    body param imageName: name of the image to be replaced
+*/
+userRoutes.post('/saveRotation', async (req, res) => {
+    if (req.files.file === undefined || req.body.imageName === undefined) { return res.status(400).json({ msg: "Oops, can't read the image" }) }
+
+    var user = (await utils.loadUserObject(req, res)).user;
+    var imageName = req.body.imageName;
+
+    //replace the old image with the new rotated one
+    utils.moveImageToUserImages(req.files.file, user.id, imageName, res).then(() => {
+        return res.send({ msg: "saved" })
+    }).catch(() => res.status(500).send({ msg: "Error occured" }));
+});
+
 // For testing purposes(not implemented in the react app yet)
 // Delets a user from the db.
 userRoutes.delete('/delete', async (req, res) => {

@@ -2,22 +2,27 @@
     Class for displaying the user's account details and uploaded images.
 */
 
-import React, {Component} from 'react';
-import {Container, Button, Table, Modal} from 'react-bootstrap';
-import {isMobile} from "react-device-detect";
-import {connect} from "react-redux";
+import React, { Component } from 'react';
+import { Container, Button, Table, Modal } from 'react-bootstrap';
+import { isMobile } from "react-device-detect";
+import { connect } from "react-redux";
 import TableScrollbar from 'react-table-scrollbar';
 
 import Axios from 'axios';
 
-import {config} from "../../config";
+import { config } from "../../config";
 import store from '../../Redux/store';
-import {getAndSaveImages, getAndSaveToeData} from '../../Redux/Actions/setFootAction';
-import {GetToeSymbolImage, GetDesktopFeetButtons, GetImageURLByName,
-        TOE_COUNT, LEFT_FOOT_ID, RIGHT_FOOT_ID} from "../../Utils";
+import { getAndSaveImages, getAndSaveToeData } from '../../Redux/Actions/setFootAction';
+import {
+    GetToeSymbolImage, GetImageURLByName,
+    TOE_COUNT, LEFT_FOOT_ID, RIGHT_FOOT_ID
+} from "../../Utils";
 import Sidebar from "./Sidebar";
 
 import '../../componentsStyle/MyAccount.css'
+import '../../componentsStyle/MyAccount-Mobile.css'
+import FeetButtons from './FeetButtons';
+import axios from 'axios';
 
 //TODO: Delete button should delete the image with confirmation before and after delete
 
@@ -35,10 +40,15 @@ class MyAccount extends Component {
             toeData: [], //Data for user's images
             showLeftFoot: true, //Determine which foot to show images for
             showDeleteConfirmation: false,
+            showRotateModal: false,
+            toRotateInfo: {},
             toDeleteInfo: {}, //{imageName, imageIndex in toeData, toeIndex, selectedFootindex }
             selectedFootIndex: LEFT_FOOT_ID, //Start by showing data for the left foot
-            dataLoaded: false //Used for showing the loading screen until all data are loaded
+            dataLoaded: false, //Used for showing the loading screen until all data are loaded
+            rotation_save_status: "" // to show the saving... message after rotation
         };
+
+        this.canvasRef = React.createRef();
     }
 
     /*
@@ -93,8 +103,95 @@ class MyAccount extends Component {
         param toeIndex: The index of the selected toe to rotate, ranges from 0 to 4
         param imageIndex: The index of the image to rotate.
     */
-    rotateImage(imageName, selectedFootIndex, toeIndex, imageIndex) {
-        //TODO
+    async prepareRotateImage(imageName) {
+
+        let imageURL = await GetImageURLByName(this.state.imageUrls, imageName);
+
+        this.setState({
+            toRotateInfo: { imageName: imageName, imageURL: imageURL },
+            showRotateModal: true
+        });
+
+        this.drawImageOnCanvas_fromImgObj(imageURL, true);
+    }
+
+    /*
+        sends a request to the backend to save the image
+
+        param imageIndex: images's index in the decomposedImages array
+    */
+    handleSave(imageName) {
+
+        this.setState({ rotation_save_status: "saving..." })
+
+        this.canvasRef.current.toBlob(async (blob) => {
+
+            const formData = new FormData(); //formData contains the image to be uploaded
+            formData.append("file", blob);
+            formData.append("imageName", imageName);
+
+            await axios.post(`${config.dev_server}/user/saveRotation`, formData)
+                .then(async (msg) => {
+                    if (msg.data.msg === "saved") {
+                        await store.dispatch(getAndSaveImages()); //Load the user's images
+                        this.setState({
+                            imageUrls: this.props.foot.images,
+                            rotation_save_status: ""
+                        });
+                        this.toggle_showRotateModal();
+                    }
+                    else {
+                        console.log("unable to rotate");
+                    }
+                })
+                .catch((error) => console.log(error));
+
+        });
+
+    }
+
+    /*
+        Draws the image on canvas
+        converts the imageobject to image and draws it on the canvas
+        param imageObject: blob, recieved from the input field, e.target.files[0]
+        param set_width_height: if true, set the canvas width and height
+    */
+    drawImageOnCanvas_fromImgObj(imageURL, set_width_height) {
+        var img = new Image();
+        img.src = imageURL;
+        img.onload = () => {
+            var ctx = this.canvasRef.current.getContext("2d");
+
+            //if it is the first time, we need to set the width hand height of canvas based on the image
+            if (set_width_height) {
+                this.canvasRef.current.width = img.width;
+                this.canvasRef.current.height = img.height;
+            }
+
+            ctx.drawImage(img, 0, 0);
+            ctx.save();
+        }
+    }
+
+    /* 
+        rotates the image on canvas 90 degrees
+        param left: boolean, if true rotates the image 90deg to the left, otherwise rotates 90deg right
+    */
+    rotateImage(left) {
+        var angle = (left) ? +90 : -90;
+
+        var canvas = this.canvasRef.current;
+        var ctx = canvas.getContext("2d");
+
+        //rotate the canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.translate(canvas.width / 2, canvas.height / 2);//translate to center
+        ctx.rotate((Math.PI / 180) * angle); //need to convert from degrees into radian
+        ctx.translate(-canvas.width / 2, -canvas.height / 2);
+
+        //draw the image
+        this.drawImageOnCanvas_fromImgObj(this.state.toRotateInfo.imageURL, false);
+
     }
 
     /*
@@ -114,7 +211,7 @@ class MyAccount extends Component {
         var imageName = toDeleteInfo.imageName;
         try {
             if (selectedFootIndex === LEFT_FOOT_ID
-             || selectedFootIndex === RIGHT_FOOT_ID) {
+                || selectedFootIndex === RIGHT_FOOT_ID) {
                 if (toeIndex >= 0 && toeIndex < TOE_COUNT) {
                     Axios.get(`${config.dev_server}/deleteImage?footIndex=${selectedFootIndex}&toeIndex=${toeIndex}&imageIndex=${imageIndex}&imageName=${imageName}`)
                         .then(() => {
@@ -161,47 +258,60 @@ class MyAccount extends Component {
         });
     }
 
+    /*  
+        toggles the showRotateModal to show or hide the image rotation modal
+    */
+    toggle_showRotateModal() {
+        this.setState({
+            showRotateModal: !this.state.showRotateModal
+        });
+    }
+
     /*
         Prints one of the user's uploaded images in the image list.
         param toeIndex: The toe toeIndex to be removed.
         param toe: The toe the image is for.
         param includeDelete_btn: if true, it includes the delete button. We dont need to show the delete button in the delete confirmation modal.
     */
-    printUploadedImage(toeIndex, toe, includeDelete_btn = true) {
+    printUploadedImage(toeIndex, toe, includeEdit_btns = true) {
         //List is ordered by: Image, Toe Name, Fungal Coverage %, Upload Date
-        var selectedFootIndex = this.whichFootSelected();
+        var table_col_classname = !isMobile ? "uploaded-image-table-col" : "uploaded-image-table-col-mobile"
         return (
-            toe.images.map(({name, date, fungalCoverage}, imageIndex) =>
+            toe.images.map(({ name, date, fungalCoverage }, imageIndex) =>
                 <tr key={toe + ' ' + toeIndex}>
-                    <td className="uploaded-image-table-toe-image-col"
-                        style={{backgroundImage: "url('" + GetImageURLByName(this.state.imageUrls, name) + "')"}}>
+                    <td className={!isMobile ? "uploaded-image-table-toe-image-col" : "uploaded-image-table-toe-image-col"}
+                        style={{ backgroundImage: "url('" + GetImageURLByName(this.state.imageUrls, name) + "')" }}>
                     </td>
-                    <td className="uploaded-image-table-col">
-                        {GetToeSymbolImage(selectedFootIndex, toeIndex)}
+                    <td className={table_col_classname}>
+                        {GetToeSymbolImage(this.state.selectedFootIndex, toeIndex)}
                     </td>
-                    <td className="uploaded-image-table-col">{fungalCoverage}</td>
-                    <td className="uploaded-image-table-col">{date.split("T")[0]}</td>
-                    <td className="uploaded-image-table-col">
-                        <Button className="delete-image-button"
-                                onClick={this.rotateImage.bind(this, name, selectedFootIndex, toeIndex, imageIndex)}>
-                            Rotate
-                        </Button>
-                        <br/>
-                        {!includeDelete_btn ?
+                    <td className={table_col_classname}>{fungalCoverage}</td>
+                    <td className={table_col_classname}>{date.split("T")[0]}</td>
+
+
+
+                    {includeEdit_btns ?
+                        <td className={table_col_classname}>
                             <Button className="delete-image-button"
-                                    onClick={() => {
-                                        this.setState({
-                                            toDeleteInfo: { imageName: name, imageIndex: imageIndex, toeIndex: toeIndex, selectedFootIndex: this.whichFootSelected() },
-                                            showDeleteConfirmation: true
-                                        });
-                                    }}
+                                onClick={this.prepareRotateImage.bind(this, name)}>
+                                Rotate
+                                </Button>
+                            <br />
+                            <Button className="delete-image-button"
+                                onClick={() => {
+                                    this.setState({
+                                        toDeleteInfo: { imageName: name, imageIndex: imageIndex, toeIndex: toeIndex, selectedFootIndex: this.state.selectedFootIndex },
+                                        showDeleteConfirmation: true
+                                    });
+                                }}
                             >
                                 Delete
-                            </Button>
-                            :
-                            ""
-                        }
-                    </td>
+                                </Button>
+                        </td>
+                        :
+                        ""
+                    }
+
                 </tr>
             )
         )
@@ -218,14 +328,13 @@ class MyAccount extends Component {
         Displays the account page.
     */
     render() {
-        var selectedFootIndex = this.whichFootSelected();
 
         //Bubble displaying user name, email, and option to reset password
         var accountDetailsBubble =
             <div className={"account-details" + (isMobile ? "-mobile" : "")}>
                 <h3 className={"account-details-title" + (isMobile ? " account-details-title-mobile" : "")}>Account Details</h3>
-                <h6 className={"account-details-name" + (isMobile ? " account-details-name-mobile" : "")}>{this.props.auth.user.name}</h6>
-                <h6 className={"account-details-name" + (isMobile ? " account-details-name-mobile" : "")}>{this.state.email}</h6>
+                <h6 className={"account-details-name" + (isMobile ? " account-details-name-mobile" : "")}><label className="infoLabel">Name: </label>{this.props.auth.user.name}</h6>
+                <h6 className={"account-details-name" + (isMobile ? " account-details-name-mobile" : "")}><label className="infoLabel">Email: </label>{this.state.email}</h6>
 
                 <Button className="reset-password-button" onClick={this.navigateToResetPasswordPage.bind(this)}>Reset Password</Button>
             </div>;
@@ -234,40 +343,42 @@ class MyAccount extends Component {
         //Display "Loading..." text while images are being retreived from the server
         var imageTableBubble =
             (!this.state.dataLoaded)
-            ?
-                <div className="uploaded-image-container"><h4>Loading...</h4></div>
-            : (this.state.toeData.length === 0)
-            ?
-                <div className="uploaded-image-container"><h4>Press "+ Upload Image" to get started.</h4></div>
-            :
-                <div className="uploaded-image-container">
-                    {
-                        /* Buttons for changing which foot to view */
-                        GetDesktopFeetButtons(this, selectedFootIndex)
-                    }
+                ?
+                <div className={!isMobile ? "uploaded-image-container" : "uploaded-image-container-mobile"}><h4>Loading...</h4></div>
+                : (this.state.toeData.length === 0)
+                    ?
+                    <div className={!isMobile ? "uploaded-image-container" : "uploaded-image-container-mobile"}><h4>Press "+ Upload Image" to get started.</h4></div>
+                    :
+                    <div className={!isMobile ? "uploaded-image-container" : "uploaded-image-container-mobile"}>
+                        {
+                            /* Buttons for changing which foot to view */
+                            //GetDesktopFeetButtons(this, selectedFootIndex)
+                            <FeetButtons onFootSelect={(footId) => this.viewFoot(footId)} selectedFootIndex={this.state.selectedFootIndex} />
+                        }
 
-                    {/* Actual Table */}
-                    <TableScrollbar height="80vh" className="table-scrollbar">
-                        <Table striped bordered size="md" className="uploaded-image-table table-dark">
-                            <thead>
-                                <tr>
-                                    <th className="uploaded-image-table-image-header">Image</th>
-                                    <th className="uploaded-image-table-toe-header">Toe</th>
-                                    <th className="uploaded-image-table-coverage-header">Fungal Coverage (%)</th>
-                                    <th className="uploaded-image-table-date-header">Upload Date</th>
-                                    <th className="uploaded-image-table-delete-header">Edit</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {
-                                    //Print a list of images with data
-                                    this.state.toeData.feet[selectedFootIndex].toes.map((toe, id) =>
-                                        this.printUploadedImage(id, toe, selectedFootIndex), true)
-                                }
-                            </tbody>
-                        </Table>
-                    </TableScrollbar>
-                </div>;
+                        {/* Actual Table */}
+                        <TableScrollbar height="80vh" className="table-scrollbar">
+                            <Table striped bordered className="uploaded-image-table table-dark">
+                                <thead>
+                                    <tr>
+                                        <th className="uploaded-image-table-image-header">Image</th>
+                                        <th className="uploaded-image-table-toe-header">Toe</th>
+                                        <th className="uploaded-image-table-coverage-header">Fungal Coverage (%)</th>
+                                        <th className="uploaded-image-table-date-header">Upload Date</th>
+                                        <th className="uploaded-image-table-delete-header" >Edit</th>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {
+                                        //Print a list of images with data
+                                        this.state.toeData.feet[this.state.selectedFootIndex].toes.map((toe, id) =>
+                                            this.printUploadedImage(id, toe, true))
+                                    }
+                                </tbody>
+                            </Table>
+                        </TableScrollbar>
+                    </div>;
 
         return (
             <div className={!isMobile ? "my-account-page" : ""}>
@@ -280,25 +391,24 @@ class MyAccount extends Component {
                 <Container className={"my-account-main-container" + (isMobile ? "-mobile" : "")}>
                     {
                         !isMobile && //Only on desktop
-                            <div className="welcome-bar">
-                                <h6 className="welcome">My Account</h6>
-                            </div>
+                        <div className="welcome-bar">
+                            <h6 className="welcome">My Account</h6>
+                        </div>
                     }
 
                     <div className={!isMobile ? "my-account-sub-container" : ""}>
                         {
                             this.state.dataLoaded ?
-                            <>
-                                {/* Account Details Bubble */}
-                                {accountDetailsBubble}
+                                <>
+                                    {/* Account Details Bubble */}
+                                    {accountDetailsBubble}
 
-                                {/* Image Table Bubble */}
-                                {
-                                    !isMobile && //Only on desktop
+                                    {/* Image Table Bubble */}
+                                    {
                                         imageTableBubble
-                                }
-                            </>
-                            : //Display loading until the page is ready
+                                    }
+                                </>
+                                : //Display loading until the page is ready
                                 <h4 test-id="loading" className="dashboard-loading">Loading...</h4>
                         }
                     </div>
@@ -311,7 +421,7 @@ class MyAccount extends Component {
                     </Modal.Header>
                     <Modal.Body>
 
-                        <Table striped bordered size="md" className="uploaded-image-table">
+                        <Table striped bordered size="md" className="uploaded-image-table table-dark">
                             <thead>
                                 <tr>
                                     <th className="uploaded-image-table-image-header">Image</th>
@@ -321,7 +431,7 @@ class MyAccount extends Component {
                                 </tr>
                             </thead>
                             <tbody>
-                                {(this.state.toeData.feet !== undefined && this.state.toDeleteInfo.selectedFootIndex !== undefined)  &&
+                                {(this.state.toeData.feet !== undefined && this.state.toDeleteInfo.selectedFootIndex !== undefined) &&
                                     this.printUploadedImage(this.state.toDeleteInfo.toeIndex, this.state.toeData.feet[this.state.toDeleteInfo.selectedFootIndex].toes[this.state.toDeleteInfo.toeIndex], false)
                                 }
                             </tbody>
@@ -337,6 +447,44 @@ class MyAccount extends Component {
                         <Button variant="danger" onClick={() => this.deleteImage()}>
                             Yes
                         </Button>
+
+                    </Modal.Footer>
+                </Modal>
+
+
+                {/* Modal for image rotation, only visible if showRotateModal = true */}
+                <Modal size="lg" show={this.state.showRotateModal} onHide={this.toggle_showRotateModal.bind(this)}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Image Rotation</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+
+                        <div>
+                            {/*src={GetImageURLByName(this.state.imageUrls, this.state.toRotateInfo.imageName)}*/}
+                            <canvas ref={this.canvasRef} className="rotation_img" ></canvas>
+                            <div className="rotateBtns_div_myAccount">
+                                <Button className="leftRotateBtn_myAccount" onClick={this.rotateImage.bind(this, true)}>Left</Button>
+                                <Button className="rightRotateBtn_myAccount" onClick={this.rotateImage.bind(this, false)}>Right</Button>
+                            </div>
+                        </div>
+
+                    </Modal.Body>
+
+                    <Modal.Footer>
+
+                        <Button variant="secondary" onClick={() => this.toggle_showRotateModal()}>
+                            Close
+                        </Button>
+                        {
+                            this.state.rotation_save_status === ""
+                                ?
+                                <Button variant="danger" onClick={() => this.handleSave(this.state.toRotateInfo.imageName)}>
+                                    Save
+                                </Button>
+                                :
+                                this.state.rotation_save_status
+                        }
+
 
                     </Modal.Footer>
                 </Modal>

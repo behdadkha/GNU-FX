@@ -147,9 +147,46 @@ var emptyFeet = [
     }
 ];
 
+
+/*
+    Moves the uploaded image to the user's folder in /images
+    param image: The image file.
+    param userId: The user's id. Also same as the folder name (/images/$userId).
+    param imageName: The name of the image to moved.
+    returns A promise. Resolved if image is successfully saved.
+*/
+function moveImageToUserImages(image, userId, imageName) {
+    return new Promise((resolve, reject) => {
+        try {
+            image.mv(`./images/${userId}/${imageName}`, (err) => { //The move image command
+                if (err) {
+                    PrintImageMovementError(err);
+                    reject();
+                }
+                else {
+                    resolve();
+                }
+            });
+        }
+        catch (e) {
+            PrintImageMovementError(e);
+        }
+    });
+}
+
+/*
+    Prints an error message upon a failed image move.
+    param error: The error to be printed.
+*/
+function PrintImageMovementError(error) {
+    console.log("Error while attempting to move the image:");
+    console.log(error);
+}
+
 //Exports
 module.exports.loadUserObject = loadUserObject;
 module.exports.runCommand = runCommand;
 module.exports.getToeData = getToeData;
 module.exports.emptyFeet = emptyFeet;
 module.exports.sendEmail = sendEmail;
+module.exports.moveImageToUserImages = moveImageToUserImages;

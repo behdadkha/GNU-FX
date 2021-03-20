@@ -54,40 +54,9 @@ function SaveToeData(userId, date, footIndex, toeIndex, imageName, fungalCoverag
 
 }
 
-/*
-    Prints an error message upon a failed image move.
-    param error: The error to be printed.
-*/
-function PrintImageMovementError(error) {
-    console.log("Error while attempting to move the image:");
-    console.log(error);
-}
 
-/*
-    Moves the uploaded image to the user's folder in /images
-    param image: The image file.
-    param userId: The user's id. Also same as the folder name (/images/$userId).
-    param imageName: The name of the image to moved.
-    returns A promise. Resolved if image is successfully saved.
-*/
-function moveImageToUserImages(image, userId, imageName) {
-    return new Promise((resolve, reject) => {
-        try {
-            image.mv(`./images/${userId}/${imageName}`, (err) => { //The move image command
-                if (err) {
-                    PrintImageMovementError(err);
-                    reject();
-                }
-                else {
-                    resolve();
-                }
-            });
-        }
-        catch (e) {
-            PrintImageMovementError(e);
-        }
-    });
-}
+
+
 
 /*
     Creates folder /tempImages and stores the uploaded image.
@@ -105,7 +74,7 @@ function moveImageToTempFolder(image, imageName) {
 
             image.mv(`./tempImages/${imageName}`, (err) => { //The move image command
                 if (err) {
-                    PrintImageMovementError(error);
+                    utils.PrintImageMovementError(error);
                     reject();
                 }
                 else {
@@ -114,7 +83,7 @@ function moveImageToTempFolder(image, imageName) {
             });
         }
         catch (e) {
-            PrintImageMovementError(e);
+            utils.PrintImageMovementError(e);
         }
     });
 }
@@ -277,7 +246,7 @@ uploadImage.route('/loggedin').post(async (req, res) => {
         user.save()
 
         //Move it to the database
-        moveImageToUserImages(image, userId, imageName, res).then(() => {
+        utils.moveImageToUserImages(image, userId, imageName, res).then(() => {
             return res.send({ msg: "uploaded" })
         }).catch(() => res.status(500).send({ msg: "Error occured" }));
     }

@@ -6,7 +6,7 @@ import React from "react";
 import ReactApexChart from "react-apexcharts"
 import {Row, Table} from "react-bootstrap";
 
-import {GetFootName, GetToeName, GetDesktopFeetButtons,
+import {GetFootName, GetToeName,
         LEFT_FOOT_ID, /*RIGHT_FOOT_ID,*/ TOE_COUNT } from "../../Utils";
 import store from "../../Redux/store";
 import {setSelectedFoot} from "../../Redux/Actions/setFootAction";
@@ -14,6 +14,7 @@ import {setSelectedFoot} from "../../Redux/Actions/setFootAction";
 import '../../componentsStyle/ApexChart.css';
 import leftFootCroppedLogo from '../../icons/leftfootCropped.png';
 import rightFootCroppedLogo from '../../icons/rightfootCropped.png';
+import FeetButtons from "./FeetButtons";
 //BUG: Clicking on bottom labels changes graph view but not selected buttons
 
 const gInitialToeSelection = [true, true, false, false, false]; //Only first two toes start off shown (client request)
@@ -342,7 +343,8 @@ class ApexChart extends React.Component {
             <div>
                 {
                     //Buttons for changing which foot to view
-                    GetDesktopFeetButtons(this, this.state.selectedFootIndex)
+                    //GetDesktopFeetButtons(this, this.state.selectedFootIndex)
+                    <FeetButtons onFootSelect={(footId) => this.viewFoot(footId)} selectedFootIndex={this.state.selectedFootIndex}/>
                 }
 
                 {/*Buttons to filter toes*/}

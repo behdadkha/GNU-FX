@@ -1,6 +1,9 @@
 .footlogo{
   width: 10%;
 }
+.footlogo-mobile{
+  width: 25%;
+}
 
 .leftFootContainer {
   position: relative;

@@ -40,23 +40,20 @@
     border-radius: 10px; 
 }
 
+.infoLabel {
+    display: block;
+    font-size: medium;
+    font-family: 'Balsamiq Sans', cursive
+}
 .account-details-title {
     text-align: left;
     font-family: 'Balsamiq Sans', cursive
-}
-
-.account-details-title-mobile {
-    margin-left: 5%;
 }
 
 .account-details-name {
     font-size: 20px;
     text-align: left;
     margin-top: 20px;
-}
-
-.account-details-name-mobile {
-    margin: 5%;
 }
 
 .reset-password-button {
@@ -78,7 +75,7 @@
     margin-bottom: 1%;
     margin-right: 1%;
     border-radius: 10px;
-    max-width: 70%;
+    
 }
 
 .uploaded-image-table {
@@ -91,7 +88,7 @@
 }
 
 .uploaded-image-table-image-header {
-    width: 10%;
+    width: 13%;
 }
 
 .uploaded-image-table-toe-header {
@@ -133,8 +130,34 @@
     display: block !important; /* Centre button in cell */
 }
 
-/* CSS Specicially for the mobile view */
-.my-account-main-container-mobile {
-    width: 100%;
-    margin-bottom: 0px !important;
+.rotation_img {
+    display: block;
+    width: 30%;
+    margin: auto;
+    border-radius: 5px;
 }
+
+.rotateBtns_div_myAccount {
+    text-align: center;
+    margin-top: 2%;
+}
+
+.leftRotateBtn_myAccount {
+    background-color: RGB(36, 166, 154) !important; 
+    border-color: RGB(36, 166, 154) !important;
+    margin-right: 10%;
+}
+.leftRotateBtn_myAccount:hover {
+    background-color: RGB(30, 138, 128) !important;
+}
+.rightRotateBtn_myAccount {
+    background-color: RGB(36, 166, 154) !important;
+    border-color: RGB(36, 166, 154) !important;
+}
+
+.rightRotateBtn_myAccount:hover {
+    background-color: RGB(30, 138, 128) !important;
+}
+
+
+

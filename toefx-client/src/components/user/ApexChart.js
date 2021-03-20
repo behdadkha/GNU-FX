@@ -4,12 +4,14 @@
 
 import React from "react";
 import ReactApexChart from "react-apexcharts"
-import {Row, Table} from "react-bootstrap";
+import { Row, Table } from "react-bootstrap";
 
-import {GetFootName, GetToeName, GetDesktopFeetButtons,
-        LEFT_FOOT_ID, /*RIGHT_FOOT_ID,*/ TOE_COUNT } from "../../Utils";
+import {
+    GetFootName, GetToeName, GetDesktopFeetButtons,
+    LEFT_FOOT_ID, /*RIGHT_FOOT_ID,*/ TOE_COUNT
+} from "../../Utils";
 import store from "../../Redux/store";
-import {setSelectedFoot} from "../../Redux/Actions/setFootAction";
+import { setSelectedFoot } from "../../Redux/Actions/setFootAction";
 
 import '../../componentsStyle/ApexChart.css';
 import leftFootCroppedLogo from '../../icons/leftfootCropped.png';
@@ -47,7 +49,7 @@ class ApexChart extends React.Component {
                     }
                 },
                 dataLabels: {
-                    enabled: false
+                    enabled: true
                 },
                 stroke: {
                     curve: "straight"
@@ -74,7 +76,21 @@ class ApexChart extends React.Component {
                 },
                 markers: {
                     size: 5
-                }
+                },
+                fill: {
+                    type: 'gradient',
+                    gradient: {
+                      shade: 'dark',
+                      type: "vertical",
+                      shadeIntensity: 0.3,
+                      gradientToColors: undefined, // optional, if not defined - uses the shades of same color in series
+                      inverseColors: true,
+                      opacityFrom: 1,
+                      opacityTo: 1,
+                      stops: [0, 50, 100],
+                      colorStops: []
+                    }
+                  }
             },
         };
     }
@@ -130,19 +146,19 @@ class ApexChart extends React.Component {
             }
             else {
                 //Push blank entries so graph stays the same colour for each toe
-                toeData.push({name: "", data: []});
+                toeData.push({ name: "", data: [] });
             }
         }
-        
+
         this.setState({
             series: toeData,
             options: {
                 ...this.state.options,
                 xaxis: {
-                  ...this.state.options.xaxis,
-                  categories: dates
+                    ...this.state.options.xaxis,
+                    categories: dates
                 }
-              }
+            }
         });
     }
 
@@ -248,8 +264,8 @@ class ApexChart extends React.Component {
                 }
             </span>*/
             <div className={this.isLeftFootShown() ? "leftFootContainer" : "rightFootContainer"}>
-                <img src={this.isLeftFootShown() ? leftFootCroppedLogo : rightFootCroppedLogo} alt="left foot"/>
-                
+                <img src={this.isLeftFootShown() ? leftFootCroppedLogo : rightFootCroppedLogo} alt="left foot" />
+
                 <button onClick={this.showHideAllToes.bind(this)} className="btnAlltoes"></button>
                 {
                     toeOrder.map((toeId) => this.printToeButton(toeId))
@@ -337,7 +353,7 @@ class ApexChart extends React.Component {
                     <h6>Click on a point to view details!</h6>
                 </div>
         }
-        
+
         return (
             <div>
                 {
@@ -348,8 +364,8 @@ class ApexChart extends React.Component {
                 {/*Buttons to filter toes*/}
                 <div lg="5" className="graph-container">
 
-                    <div className="graph-sub-container">
-                        <div className="graph-chart">
+                    <div className="graph-sub-container shadow p-3 mb-5 bg-white rounded">
+                        <div className="graph-chart shadow bg-white rounded">
                             {/*The actual chart itself*/}
                             <ReactApexChart options={this.state.options} series={this.state.series} type="area" height="300px" />
                         </div>
@@ -358,6 +374,7 @@ class ApexChart extends React.Component {
                         {dateDetails}
                     </div>
                     {this.printToeButtons()}
+                    <h6 className="ToeButtonsFont">Red toes are selected</h6>
                 </div>
             </div>
         );

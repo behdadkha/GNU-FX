@@ -272,21 +272,21 @@ app.post('/emailverification', async (req, res) => {
     const url = req.body.url
     // IMPORTANT: It finds the link and deletes it if it was successful.
     verificationLinks.findOneAndDelete({ link: url }).then((VLINK) => {
-        if(VLINK){
+        if(VLINK) {
             userSchema.findOne({ email: VLINK.email }).then(async (user) => {
                 if (user) {
                     user.emailverified = true
                     user.save()
 
-                    return res.json({ msg: "" })// it was successful
+                    return res.json({errorMsg: ""}) //It was successful
                 }
                 else {
-                    return res.json({ msg: "Email address does exist in the database" })
+                    return res.json({errorMsg: "The email address does not exist in the database."})
                 }
             })
         }
-        else{
-            return res.json({msg: "Verification link is not valid"})
+        else {
+            return res.json({errorMsg: "The account verification link is invalid or has already been used."})
         }
     })
 });

@@ -1,3 +1,5 @@
+/*For the entire page*/
+
 .my-account-page {
     display: grid;
     grid-template-areas: "sidebar details";
@@ -19,6 +21,11 @@
     height: 100%;
 }
 
+.my-account-main-container-mobile {
+    width: 100%;
+    margin-bottom: 0px !important;
+}
+
 .my-account-sub-container {
     display: flex;
     flex-wrap: wrap;
@@ -28,6 +35,7 @@
 }
 
 /* For the small details bubble */
+
 .account-details {
     position: relative;
     background-color: white;
@@ -40,13 +48,24 @@
     border-radius: 10px; 
 }
 
-.infoLabel {
-    display: block;
-    font-size: medium;
-    font-family: 'Balsamiq Sans', cursive
+.account-details-mobile{
+    margin: 10px;
+    padding: 10px 0 20px 0;
+    border-radius: 10px;
 }
+
 .account-details-title {
     text-align: left;
+    font-family: 'Balsamiq Sans', cursive
+}
+
+.account-details-title-mobile {
+    margin-left: 5%;
+}
+
+.account-details-info-label {
+    display: block;
+    font-size: medium;
     font-family: 'Balsamiq Sans', cursive
 }
 
@@ -54,6 +73,10 @@
     font-size: 20px;
     text-align: left;
     margin-top: 20px;
+}
+
+.account-details-name-mobile {
+    margin: 5%;
 }
 
 .reset-password-button {
@@ -130,34 +153,25 @@
     display: block !important; /* Centre button in cell */
 }
 
-.rotation_img {
+/* For the rotation popup */
+
+.my-account-rotation-image {
     display: block;
     width: 30%;
-    margin: auto;
     border-radius: 5px;
 }
 
-.rotateBtns_div_myAccount {
+.my-account-rotation-buttons-container {
     text-align: center;
-    margin-top: 2%;
+    display: flex;
+    justify-content: space-evenly;
 }
 
-.leftRotateBtn_myAccount {
-    background-color: RGB(36, 166, 154) !important; 
-    border-color: RGB(36, 166, 154) !important;
-    margin-right: 10%;
-}
-.leftRotateBtn_myAccount:hover {
-    background-color: RGB(30, 138, 128) !important;
-}
-.rightRotateBtn_myAccount {
-    background-color: RGB(36, 166, 154) !important;
-    border-color: RGB(36, 166, 154) !important;
+.my-account-rotation-button {
+    padding: 0px !important;
 }
 
-.rightRotateBtn_myAccount:hover {
-    background-color: RGB(30, 138, 128) !important;
+.my-account-rotation-button-logo {
+    height: auto;
+    width: 50%;
 }
-
-
-

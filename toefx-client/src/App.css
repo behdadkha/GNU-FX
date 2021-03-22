@@ -1,11 +1,14 @@
+:root {
+    --button-color: rgb(36, 166, 154);
+    --button-hover-color: rgb(30, 138, 128);
+    --highlight-color: rgb(36, 166, 154);
+    --darkest-theme-color: rgb(24, 109, 101);
+    --error-text: red;
+    --error-input: pink;
+}
+
 .App {
   text-align: center;
-  --button-color: RGB(36, 166, 154);
-  --button-hover-color: RGB(30, 138, 128);
-  --highlight-color: RGB(36, 166, 154);
-  --darkest-theme-color: RGB(24, 109, 101);
-  --error-text: red;
-  --error-input: pink;
 }
 
 @media (min-width: 1000px) { /*Width >= 1000px*/

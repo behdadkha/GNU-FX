@@ -12,7 +12,8 @@ import Axios from 'axios';
 import {config} from "../../config";
 import store from '../../Redux/store';
 import {getAndSaveImages, getAndSaveToeData} from '../../Redux/Actions/setFootAction';
-import {GetToeSymbolImage, GetImageURLByName, TOE_COUNT, LEFT_FOOT_ID, RIGHT_FOOT_ID} from "../../Utils";
+import {GetToeSymbolImage, GetImageURLByName, RotateImage90Degrees,
+        TOE_COUNT, LEFT_FOOT_ID, RIGHT_FOOT_ID} from "../../Utils";
 import Sidebar from "./Sidebar";
 
 import '../../componentsStyle/MyAccount.css'
@@ -150,15 +151,8 @@ class MyAccount extends Component {
         param left: If true, rotates the image 90 degrees to the left, otherwise 90 degrees to the right.
     */
     rotateImage(left) {
-        var angle = (left) ? -90 : +90;
-        var canvas = this.canvasRef.current;
-        var ctx = canvas.getContext("2d");
-
         //Rotate the canvas
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.translate(canvas.width / 2, canvas.height / 2); //Translate to center
-        ctx.rotate((Math.PI / 180) * angle); //Need to convert from degrees into radians
-        ctx.translate(-canvas.width / 2, -canvas.height / 2);
+        RotateImage90Degrees(this.canvasRef.current, left);
 
         //Draw the new image
         this.drawImageOnCanvasFromImgUrl(this.state.toRotateInfo.imageURL, false);
@@ -214,11 +208,13 @@ class MyAccount extends Component {
                 if (toeIndex >= 0 && toeIndex < TOE_COUNT) {
                     Axios.get(`${config.dev_server}/deleteImage?footIndex=${selectedFootIndex}&toeIndex=${toeIndex}&imageIndex=${imageIndex}&imageName=${imageName}`)
                         .then(() => {
+                            //Hide the delete confirmation modal - MUST BE FIRST!
+                            this.toggleDeleteConfirmation();
+
                             //Remove the image just deleted from the state
                             var tempData = this.state.toeData;
                             tempData.feet[selectedFootIndex].toes[toeIndex].images.splice(imageIndex, 1);
                             this.setState({toeData: tempData});
-                            this.toggleDeleteConfirmation();
                         })
                 }
             }
@@ -230,54 +226,89 @@ class MyAccount extends Component {
 
     /*
         Prints one of the user's uploaded images in the image list.
-        param toeIndex: The toe toeIndex to be removed.
+        param toeIndex: The toe toeIndex to be printed.
         param toe: The toe the image is for.
-        param includeDelete_btn: if true, it includes the delete button. We dont need to show the delete button in the delete confirmation modal.
+        param includeEditButtons: Includes the rotate and delete button if true.
+        param name: The name of the image for finding its URL.
+        param date: The date the image was taken.
+        param fungalCoverage: The fungal coverage percent of the image.
+        param imageIndex: The index of the current toe's images for marking editing.
     */
-    printUploadedImage(toeIndex, toe, includeEditButtons=true) {
+    printUploadedImage(toeIndex, toe, includeEditButtons=true, name, date, fungalCoverage, imageIndex) {
         //List is ordered by: Image, Toe Name, Fungal Coverage %, Upload Date
         var columnClass = "uploaded-image-table-col";
 
         return (
-            toe.images.map(({name, date, fungalCoverage}, imageIndex) =>
-                <tr key={toe + ' ' + toeIndex}>
-                    <td className="uploaded-image-table-toe-image-col"
-                        style={{backgroundImage: "url('" + GetImageURLByName(this.state.imageUrls, name) + "')" }}> {/*Fill the cell with the image*/}
-                    </td>
-                    <td className={columnClass}>
-                        {GetToeSymbolImage(this.state.selectedFootIndex, toeIndex)}
-                    </td>
-                    <td className={columnClass}>{fungalCoverage}</td>
-                    <td className={columnClass}>{date.split("T")[0]}</td>
+            <tr key={toe + ' ' + toeIndex}>
+                <td className="uploaded-image-table-toe-image-col"
+                    style={{backgroundImage: "url('" + GetImageURLByName(this.state.imageUrls, name) + "')" }}> {/*Fill the cell with the image*/}
+                </td>
+                <td className={columnClass}>
+                    {GetToeSymbolImage(this.state.selectedFootIndex, toeIndex)}
+                </td>
+                <td className={columnClass}>{fungalCoverage}</td>
+                <td className={columnClass}>{date.split("T")[0]}</td>
 
-                    {
-                        includeEditButtons
-                        ?
-                            <td className={columnClass}>
-                                <Button className="delete-image-button" onClick={this.prepareRotateImage.bind(this, name)}>
-                                    Rotate
-                                </Button>
-                                <br/>
-                                <Button className="delete-image-button"
-                                    onClick={() => {
-                                        this.setState({
-                                            toDeleteInfo: {
-                                                imageName: name,
-                                                imageIndex: imageIndex, 
-                                                toeIndex: toeIndex,
-                                                selectedFootIndex: this.state.selectedFootIndex 
-                                            },
-                                            showDeleteConfirmation: true
-                                        });
-                                    }}
-                                >
-                                    Delete
-                                </Button>
-                            </td>
-                        :
-                            ""
-                    }
-                </tr>
+                {
+                    includeEditButtons
+                    ?
+                        <td className={columnClass}>
+                            <Button className="delete-image-button" onClick={this.prepareRotateImage.bind(this, name)}>
+                                Rotate
+                            </Button>
+                            <br/>
+                            <Button className="delete-image-button"
+                                onClick={() => {
+                                    this.setState({
+                                        toDeleteInfo: {
+                                            imageName: name,
+                                            imageIndex: imageIndex, 
+                                            toeIndex: toeIndex,
+                                            selectedFootIndex: this.state.selectedFootIndex 
+                                        },
+                                        showDeleteConfirmation: true
+                                    });
+                                }}
+                            >
+                                Delete
+                            </Button>
+                        </td>
+                    :
+                        ""
+                }
+            </tr>
+       );
+   }
+
+    /*
+        Prints the image the user requested to delete in a pop up modal.
+    */
+    printUploadedImageToBeDeleted() {
+        if (this.state.showDeleteConfirmation) { //So the page doesn't crash after deleting an image
+            var toeIndex = this.state.toDeleteInfo.toeIndex;
+            var toe = this.state.toeData.feet[this.state.toDeleteInfo.selectedFootIndex].toes[this.state.toDeleteInfo.toeIndex];
+            var toeImageData = toe.images[this.state.toDeleteInfo.imageIndex];
+
+            return (
+                this.printUploadedImage(toeIndex, toe, false, //No need to show the delete and rotate buttons in the modal
+                                        toeImageData.name, toeImageData.date, toeImageData.fungalCoverage, 0)
+            );
+        }
+
+        return "";
+    }
+
+    /*
+        Prints all of the user's uploaded images for one of their toes in the image list.
+        param toeIndex: The toe toeIndex to be printed.
+        param toe: The toe the images are for.
+        param includeEditButtons: Includes the rotate and delete button if true.
+    */
+    printUploadedImagesForToe(toeIndex, toe, includeEditButtons=true) {
+        return (
+            toe.images.map(({name, date, fungalCoverage}, imageIndex) =>
+                this.printUploadedImage(toeIndex, toe, includeEditButtons,
+                                        name, date, fungalCoverage, imageIndex)
             )
         )
     }
@@ -332,7 +363,7 @@ class MyAccount extends Component {
                                 {
                                     //Print a list of images with data
                                     this.state.toeData.feet[this.state.selectedFootIndex].toes.map((toe, id) =>
-                                        this.printUploadedImage(id, toe, true))
+                                        this.printUploadedImagesForToe(id, toe, true))
                                 }
                             </tbody>
                         </Table>
@@ -360,7 +391,7 @@ class MyAccount extends Component {
                         <tbody>
                             {
                                 (this.state.toeData.feet !== undefined && this.state.toDeleteInfo.selectedFootIndex !== undefined) &&
-                                    this.printUploadedImage(this.state.toDeleteInfo.toeIndex, this.state.toeData.feet[this.state.toDeleteInfo.selectedFootIndex].toes[this.state.toDeleteInfo.toeIndex], false)
+                                    this.printUploadedImageToBeDeleted()
                             }
                         </tbody>
                     </Table>

@@ -258,7 +258,6 @@ export function GetImageURLByName(imagesArray, name) {
 */
 export function getImage(imageName) {
     return new Promise((resolve, reject) => {
-
         axios.get(`${config.dev_server}/getImage?imageName=${imageName}`, { responseType: "blob" })
             .then((image) => {
                 resolve({
@@ -266,10 +265,23 @@ export function getImage(imageName) {
                     url: URL.createObjectURL(image.data),
                 });
             }).catch(() => {console.log("Couldnt get the image"); resolve({}); });
-    
     });
-    
+}
 
+/*
+    Rotates an image on a canvas 90 degrees.
+    param canvas: The canvas the image is on.
+    param left: Rotates -90 degrees if true, 90 degrees otherwise.
+*/
+export function RotateImage90Degrees(canvas, left) {
+    var angle = (left) ? -90 : +90;
+    var ctx = canvas.getContext("2d");
+
+    //Rotate the canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.translate(canvas.width / 2, canvas.height / 2); //Translate to center
+    ctx.rotate((Math.PI / 180) * angle); //Need to convert from degrees into radians
+    ctx.translate(-canvas.width / 2, -canvas.height / 2);
 }
 
 /*

@@ -168,16 +168,16 @@
 }
 .roateLeft_icon {
     width: 5%;
-    float: left;
-    margin: 1% 0 0 15%;
+    float: right;
+    margin: 1% 15% 0 0;
     border: 1px solid gray;
     border-radius: 10px;
     background-color: gray;
 }
 .roateRight_icon {
     width: 5%;
-    float: right;
-    margin: 1% 15% 0 0;
+    float: left;
+    margin: 1% 0 0 15%;
     border: 1px solid gray;
     border-radius: 10px;
     background-color: gray;

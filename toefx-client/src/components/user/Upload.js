@@ -704,7 +704,7 @@ class Upload extends Component {
         return (
             <div key={decomposedImageIndex} className="decomposedRow_mobile" style={{border: `2px solid rgb(${imageObj.color})`}}>
                 <div className="decomposed_Img_Div_mobile">
-                    <img src={imageObj.url} className="decomposeImage_mobile" alt="Loading image..."></img>
+                    <img src={imageObj.url} className="decomposeImage_mobile" alt="Loading..."></img>
                 </div>
 
                 {

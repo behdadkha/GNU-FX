@@ -4,14 +4,17 @@
 
 import React, { Component } from "react";
 import { Button, Container, Col, Row } from "react-bootstrap";
+import { isMobile } from "react-device-detect";
 import { connect } from "react-redux";
 import axios from "axios";
+
 import { config } from "../../config";
-import { isMobile } from "react-device-detect";
 
 import "../../componentsStyle/Upload.css"
 import "../../componentsStyle/Upload-Mobile.css"
-import { TOE_COUNT, LEFT_FOOT_ID, RIGHT_FOOT_ID, GetFootSymbolByActive, GetUnshadedFootSymbolImage, getImage } from "../../Utils";
+import { GetFootSymbolByActive, GetUnshadedFootSymbolImage, getImage,
+         TOE_COUNT, LEFT_FOOT_ID, RIGHT_FOOT_ID } from "../../Utils";
+
 import leftFootLogo from '../../icons/leftfootlogo.png';
 import rightFootLogo from '../../icons/rightfootlogo.png';
 import cameraIcon from '../../icons/cameraIcon.png';
@@ -19,17 +22,10 @@ import galleryIcon from '../../icons/galleryIcon.png';
 import rotateRight_icon from '../../icons/rotateRight_icon.png';
 import rotateLeft_icon from '../../icons/rotateLeft_icon.png';
 
-
-
 import Camera from './Camera.js';
 
-
+//File types allowed for an image upload
 const gPossibleFileTypes = ["image/x-png", "image/png", "image/bmp", "image/jpeg"];
-
-//TODO: Add submit button and confirmation after user uploads image
-//TODO: Image shouldn't be saved to database until it's validated.
-//TODO: Saving a temp file name is bad because what if the user uploads two images and then tries to diagnose the first?
-//TODO: Diagnose button needs to inform user of ongoing diagnosis.
 
 
 class Upload extends Component {
@@ -57,52 +53,39 @@ class Upload extends Component {
             showUploadButton: true,
             alreadySelectedToes: [false, false, false, false, false], //to keep track of the selected toes, to prevent the user from saving multiple toenils as one toe.
             cameraOpen: false, //to see if the camera is still open or not
-            showUplodConfirmation: false, // if true shows two button for either accepting the image for upload or discarding it 
+            showUploadConfirmation: false, // if true shows two button for either accepting the image for upload or discarding it 
         };
-        this.uploadedImgRef = React.createRef();// reference to the uploaded image, used for rotating the image
+
+        this.uploadedImgRef = React.createRef(); //Reference to the uploaded image, used for rotating the image
         this.validateImage = this.validateImage.bind(this); //Save for later use
     }
 
-    //Diagnosis is accessible from the homepage without being required to login
     /*
+        Logs the user out if they're not logged in.
+        Otherwise, helps with the back button functionality.
+    */
     componentDidMount() {
-        //if user is not logged in, go to the login page
-        if (!this.props.auth.isAuth)
-            this.props.history.push("./Login");
+        if (!this.props.auth.isAuth) { //Logged in
+            window.location.href = "/Login";
+            return;
+        }
+    
+        window.onpopstate = this.onBackButtonEvent.bind(this);
+        
+        //Making sure the unsaved images get deleted when leaving the page
+        window.addEventListener('beforeunload', (() => this.removeUnsavedImages(this.state.decomposedImages)), false);
     }
-    */
 
     /*
-        User is leaving this page
-        need to request the backend server to delte the unsaved images
-        cant use this.state.decomposedImages need to pass it as an argument
-        param decomposedImages: this.state.decomposedImages, array of json, format [{name: "", url: "", keepClicked: false, saved: false}]
+        Removes the unsaved image deletion event listener when the user leaves the page.
     */
-    async remove_Unsaved_Images(decomposedImages) {
-
-        let imagesToDelete = [];
-        for (let i = 0; i < decomposedImages.length; i++) {
-
-            //user did not save the image
-            if (decomposedImages[i].saved === false) {
-                let imageName = decomposedImages[i].imageName;
-                imagesToDelete.push(imageName);
-            }
-        }
-
-        //requesting to delete the images
-        if (imagesToDelete.length > 0)
-            await axios.delete(`${config.dev_server}/upload/deleteImage?images=${imagesToDelete}`)
-                .then(() => {
-                    console.log("removed all unsaved images");
-                })
-                .catch((error) => console.log(error));
-
+    componentWillUnmount() {
+        window.removeEventListener('beforeunload', this.removeUnsavedImages, false);
     }
 
     /*
         Handles when the back button is pressed.
-        param e: Back event.
+        param e: Back button event.
     */
     onBackButtonEvent(e) {
         e.preventDefault();
@@ -110,20 +93,28 @@ class Upload extends Component {
     }
 
     /*
-        Helps with back button functionality on page load.
+        Deletes any unsaved decomposed images from the database when the user leaves the page.
+        param decomposedImages: this.state.decomposedImages, array of json, format [{name: "", url: "", keepClicked: false, saved: false}]
     */
-    componentDidMount() {
-        if (!this.props.auth.isAuth) {
-            window.location.href = "/Login";
-            return;
-        }
-        window.onpopstate = this.onBackButtonEvent.bind(this);
-        //making sure the unsaves images get deleted
-        window.addEventListener('beforeunload', (() => this.remove_Unsaved_Images(this.state.decomposedImages)), false);
-    }
+    async removeUnsavedImages(decomposedImages) {
+        //NOTE: this.state.decomposedImages can't be used, it needs to be passed in as an argument
+        let imagesToDelete = [];
 
-    componentWillUnmount() {
-        window.removeEventListener('beforeunload', this.remove_Unsaved_Images, false)
+        for (let i = 0; i < decomposedImages.length; i++) {
+            if (decomposedImages[i].saved === false) { //User did not save the image
+                let imageName = decomposedImages[i].imageName;
+                imagesToDelete.push(imageName); //Set it for deletion to free up space in the database
+            }
+        }
+
+        //Request to delete the images
+        if (imagesToDelete.length > 0) {
+            await axios.delete(`${config.dev_server}/upload/deleteImage?images=${imagesToDelete}`)
+                .then(() => {
+                    console.log("All unsaved images have been removed.");
+                })
+                .catch((error) => console.log(`An error occurred deleting unsaved images: ${error}`));
+        }
     }
 
     /*
@@ -132,7 +123,7 @@ class Upload extends Component {
     */
     processImageValidationResult(res) {
         if (res.data === undefined)
-            return
+            return;
 
         var valid, text;
         var currentImageIndex = this.state.files.length - 1;
@@ -144,21 +135,20 @@ class Upload extends Component {
         if (valid)
             text = "Upload success!"
         else
-            text = "Please upload a valid image of a toe."
+            text = "Please upload an image of a toe."
 
         //Save new validation
         tempFiles[currentImageIndex].valid = valid;
         tempFiles[currentImageIndex].text = text;
-        this.setState({ files: tempFiles });
+        this.setState({files: tempFiles});
     }
 
     /*
-        Prints an error to the console if an error occurred during image validation
+        Prints an error to the console if an error occurred during image validation.
         param error: The error to print.
     */
     printFileValidationErrorToConsole(error) {
-        console.log("Error validating file: ");
-        console.log(error);
+        console.log(`Error validating file: ${error}`);
     }
 
     /*
@@ -166,56 +156,28 @@ class Upload extends Component {
         param file: The file to check.
     */
     validateImage(file) {
-        this.setState({ tempfileName: file }); //Used later if the user decides to run a diagnosis
+        this.setState({tempfileName: file}); //Used later if the user decides to run a diagnosis
 
-        if (this.props.auth.isAuth) { //If the user is logged in, the image is loaded from the database
-            axios.get(`${config.dev_server}/imagevalidation/loggedin`)
-                .then(res => this.processImageValidationResult(res))
-                .catch((error) => this.printFileValidationErrorToConsole(error));
-        }
-        else { //If the user isn't logged in, the file has to be passed in manually
-            axios.post(`${config.dev_server}/imagevalidation/notloggedin`, { myimg: file })
-                .then(res => this.processImageValidationResult(res))
-                .catch((error) => this.printFileValidationErrorToConsole(error));
-        }
+        axios.get(`${config.dev_server}/imagevalidation/loggedin`)
+            .then(res => this.processImageValidationResult(res))
+            .catch((error) => this.printFileValidationErrorToConsole(error));
     }
 
     /*
-        recieves the image from the server and returns it 
+        Sorts the decomposed images based on the cordinates (from left to right) taken from the original image.
     */
-    /*async getImage(imageName) {
-        await axios.get(`${config.dev_server}/getImage?imageName=${imageName}`, { responseType: "blob" })
-            .then((image) => {
-                return {
-                    name: imageName,
-                    url: URL.createObjectURL(image.data),
-                    keepClicked: false,
-                    saved: false,
-                    selectedToeId: -1
-                }
-            });
-
-    }*/
-
-    /*
-        sorts the decomposed images based on the cordinates(from left to right) taken from the original image
-    */
-    order_decomposedImages_leftToRight() {
-        
+    orderDecomposedImagesLeftToRight() {
         let temp = this.state.decomposedImages;
-        
-        if (temp.length > 1) {
-            temp.sort((a, b) => a.cord[0] - b.cord[0])
-            this.setState({
-                decomposeImage: temp
-            })
-        }
 
+        if (temp.length > 1) { //At least two images, otherwise no point in sorting
+            temp.sort((a, b) => a.cord[0] - b.cord[0])
+            this.setState({decomposedImages: temp})
+        }
     }
 
     /*
-        initiates nail decompose(extracts nails from the uploaded foot image)
-        fills the decomposedImages state variable with the recieved data from the server
+        Initiates nail decomposition (extracts nails from the uploaded foot image).
+        Fills the decomposedImages state variable with the recieved data from the server.
     */
     async decomposeImage() {
         //1. request the backend to decompose the image
@@ -223,12 +185,11 @@ class Upload extends Component {
 
         await axios.get(`${config.dev_server}/upload/decompose`)
             .then(async res => {
-                //res has data: {imagesInfo: [{name: "", cord: [x,y], color: [r,g,b]}], CLRImage: "name_CLR.png", fungalCoverage: "0%"}
-
+                //Res has data: {imagesInfo: [{name: "", cord: [x,y], color: [r,g,b]}], CLRImage: "name_CLR.png", fungalCoverage: "0%"}
                 if (res.data.imagesInfo.length === 0) {
                     var tempFile = this.state.files[0];
-                    tempFile.text = "Could not find any Toe nail. Click on either toe to restart."
-                    this.setState({ files: [tempFile] })
+                    tempFile.text = "No nails were found in the image. Click on either toe to restart."
+                    this.setState({files: [tempFile]})
                     return;
                 }
 
@@ -236,50 +197,50 @@ class Upload extends Component {
                 var images = [];
                 var promises = res.data.imagesInfo.map(async ({ name, cord, color, fungalCoverage }) => {
                     var imageObj = await getImage(name);
-                    //add the additional info to the imageobj
+
+                    //Add the additional info to the imageobj
                     imageObj["cord"] = cord;
                     imageObj["color"] = color;
                     imageObj["keepClicked"] = false;
                     imageObj["saved"] = false;
-                    imageObj["selectedToeId"] = -1;
+                    imageObj["selectedToeId"] = -1; //By default not selected
                     imageObj["fungalCoverage"] = fungalCoverage;
                     images.push(imageObj);
                 });
 
-                //wait for the map to finish
+                //Wait for the map to finish and then save the images to the state
                 Promise.all(promises).then(() => {
-                    //set the state and orders the images
-                    console.log(images)
-                    this.setState(
-                        { decomposedImages: images },
-                        () => {
-                            //call the order function right after the state is set to order the images
-                            this.order_decomposedImages_leftToRight();
+                    //console.log(images);
+
+                    //Set the state and order the images
+                    this.setState({
+                        decomposedImages: images
+                    }, () => {
+                            //Call the order function right after the state is set to order the images
+                            this.orderDecomposedImagesLeftToRight();
                         }
                     )
                 });
-                
 
-                //get the new image with box around the toes
-                let coloredImage_Blob = "";//new image with boxes around toes
-                await axios.get(`${config.dev_server}/getImage?imageName=${res.data.CLRImage}`, { responseType: "blob" })
+                //Get the new original with the nails outlines in different colours
+                let originalImageWithNailOutlines = "";
+                await axios.get(`${config.dev_server}/getImage?imageName=${res.data.CLRImage}`, {responseType: "blob"})
                     .then((image) => {
-                        coloredImage_Blob = image.data;
+                        originalImageWithNailOutlines = image.data;
                     });
 
                 let tempFiles = this.state.files;
-                tempFiles[0].text = "Please Choose the toe nails you would like to save";
-                tempFiles[0].imageObject = coloredImage_Blob;
-                tempFiles[0].url = URL.createObjectURL(coloredImage_Blob);
-                
+                tempFiles[0].text = "Choose the nails you would like to save.";
+                tempFiles[0].imageObject = originalImageWithNailOutlines;
+                tempFiles[0].url = URL.createObjectURL(originalImageWithNailOutlines);
+
                 this.setState({
                     files: tempFiles
                 }, () => {
                     var canvas = this.uploadedImgRef.current;
-                    canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);//clear the canvas
-                    this.drawImageOnCanvas_fromImgObj(coloredImage_Blob, true)  // draw the image, after the files variable is saved
-                }
-                )
+                    canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height); //Clear the canvas
+                    this.drawImageOnCanvasFromImgObj(originalImageWithNailOutlines, true)  //Draw the image, after the file's variable is saved
+                });
             })
             .catch((error) => this.printFileValidationErrorToConsole(error));
     }
@@ -289,10 +250,11 @@ class Upload extends Component {
         param progressEvent: An object containing the current state of the upload.
     */
     updateUploadProgress(progressEvent) {
-        if (progressEvent.loaded <= 0 || progressEvent.total <= 0)
-            return
+        if (progressEvent.loaded <= 0 || progressEvent.total <= 0) //Faulty numbers
+            return;
+
         let progress = Math.round((progressEvent.loaded / progressEvent.total) * 100) + "%";
-        this.setState({ uploadProgress: progress });
+        this.setState({uploadProgress: progress});
     }
 
     /*
@@ -300,101 +262,85 @@ class Upload extends Component {
         param e: The upload event.
     */
     async handleUpload() {
-
         var file = this.state.files[0];
-        file.text = "Processing your image..."
+        file.text = "Processing your image, this may take a minute..."
         this.setState({
-            showUplodConfirmation: false,
+            showUploadConfirmation: false,
             files: [file]
         });
 
         file = file.imageObject;
 
-        //Now that the file has been confirmed, upload it to the database -- THIS SHOULD COME AFTER VALIDATION!!!
         const formData = new FormData(); //formData contains the image to be uploaded
         formData.append("file", file);
         formData.append("foot", this.state.selectedFootId);
         formData.append("toe", this.state.selectedToeId);
 
-        if (this.props.auth.isAuth) { //User is logged in
-
-            axios.post(`${config.dev_server}/upload/loggedin`, formData, {
-
-                onUploadProgress: (ProgressEvent) => this.updateUploadProgress(ProgressEvent)
-
-            }).then(() => {
-
-                console.log("Done, now validating the image")
-                this.decomposeImage();
-                //this.validateImage(file);
-
-            });
-        }
-
-    }
-
-    handleOpenCamera_mobile() {
-        //hide the upload button and open camera
-        this.setState({ showUploadButton: false, cameraOpen: true });
-
-    }
-    /*
-        The "go back" button is clicked to discard the image
-        remove the image and go back to show both options(gallery and camera)
-    */
-    handleGoBack_discardUpload() {
-        this.setState({ showUploadButton: true, files: [] });
-    }
-
-    /*
-        Diagnoses one of the user's uploaded images.
-        param index: The index of the file in the system to diagnose (files[index]).
-    */
-    handleDiagnose = async (index) => {
-        var responseText = "";
-
-        //The image name is sent as a query string imageName=
-        if (this.props.auth.isAuth) {
-            if (this.state.files[index] === undefined || this.state.files[index].name === undefined)
-                return;
-
-            let imageName = this.state.files[index].name;
-            await axios.get(`${config.dev_server}/diagnose/loggedin/?imageName=${imageName}`)
-                .then((res) => { responseText = res.data })
-        }
-        else {
-            //tempfilename would have been set earlier
-            let imageName = this.state.tempfileName;
-            if (imageName === "")
-                return
-            await axios.get(`${config.dev_server}/diagnose/notloggedin/?imageName=${imageName}`)
-                .then((res) => { responseText = res.data })
-        }
-
-        this.setState({
-            diagnosis: [
-                ...this.state.diagnosis, //Add the new diagnosis on to the end
-                { image: index, text: responseText, diagnosisButton: true },
-            ],
+        axios.post(`${config.dev_server}/upload/loggedin`, formData, {
+            onUploadProgress: (ProgressEvent) => this.updateUploadProgress(ProgressEvent)
+        }).then(() => {
+            console.log("Done. Now validating the image...")
+            this.decomposeImage(); //Break the uploaded image down into smaller nails
         });
-    };
+    }
 
     /*
-        Checks if the user choose both a foot and toe parameter for their uploaded image.
-        returns: True if the user chose a foot and a toe, false otherwise.
+        Handles when the open camera button is pressed on mobile devices.
     */
-    isParamNotSet() {
+    handleOpenCameraMobile() {
+        //Hide the upload button and open camera
+        this.setState({
+            showUploadButton: false,
+            cameraOpen: true
+        });
+    }
+
+    /*
+        Handles when the "go back" button is clicked to discard an image uploaded.
+    */
+    handleDiscardUpload() {
+        //Remove the image and go back to show both options(gallery and camera)
+        this.setState({
+            showUploadButton: true,
+            files: []
+        });
+    }
+
+    /*
+        Checks if the user choose a foot for their uploaded image.
+        returns: True if the user chose a foot, false otherwise.
+    */
+    isFootNotChosen() {
         return this.state.selectedFootId === -1; //|| this.state.selectedToeId === -1;
+    }
+
+    /*
+        Performs bounds checking on the decomposedImages array.
+        param index: The index to check is within the array bounds.
+        returns: True if the index is within the array bounds, falas otherwise.
+    */
+    isValidDecomposedImageIndex(index) {
+        return index >= 0 && index < this.state.decomposedImages.length;
+    }
+
+    /*
+        Checks if a toe has been chosen for a decomposed image, in order to highlight it as active.
+        returns: true if the decomposedImage[decomposeImageIndex].selectedToeId == toeid
+    */
+    isToeIdSelectedForNailImage(toeId, decomposeImageIndex) {
+        return toeId === this.state.decomposedImages[decomposeImageIndex].selectedToeId;
     }
 
     /*
         Sets the chosen foot in the system to the user's chosen foot and resets the page.
     */
     setFoot(footId) {
-        if (footId === 0 || footId === 1) {
+        if (footId === LEFT_FOOT_ID || footId === RIGHT_FOOT_ID) {
             var tempDecomposedImages = this.state.decomposedImages;
+
+            //This can't be done with a helper function along with the constructor, as the constructor must set the state directly.
             this.setState({
-                selectedFootId: footId,//selected  ---> the rest is for reseting the page
+                selectedFootId: footId, //Selected  ---> the rest is for reseting the page
                 input: "Upload",
                 uploaded: false,
                 files: [],
@@ -411,11 +357,11 @@ class Upload extends Component {
                 showUploadButton: true,
                 alreadySelectedToes: [false, false, false, false, false],
                 cameraOpen: false,
-                showUplodConfirmation: false,
-
+                showUploadConfirmation: false,
             });
-            //remove the unsaved images from the server
-            this.remove_Unsaved_Images(tempDecomposedImages);
+
+            //Remove the unsaved images from the server
+            this.removeUnsavedImages(tempDecomposedImages);
         }
     }
 
@@ -423,46 +369,48 @@ class Upload extends Component {
         Sets the chosen toe in the system to the user's chosen toe.
     */
     setToe(toeId) {
-        if (toeId >= 0 && toeId <= 4)
-            this.setState({ selectedToeId: toeId });
+        if (toeId >= 0 && toeId < TOE_COUNT)
+            this.setState({selectedToeId: toeId});
     }
 
     /*
-        removes the discarded image from decomposedImages
-        param index: array index to be removed
+        Deletes one of the decomposed images that the user chose not to save.
+        param index: Array index to be removed.
     */
-    async decomposedImagesRemove(index) {
+    async removeNailImage(index) {
         let tempImages = this.state.decomposedImages;
         let imageName = tempImages[index].imageName;
 
-        if (index > -1) {
+        if (this.isValidDecomposedImageIndex(index)) { //Bounds checking
             tempImages.splice(index, 1);
-        }
-        console.log(imageName)
-        await axios.delete(`${config.dev_server}/upload/deleteImage?images=${imageName}`)
-            .then(res => {
-                console.log("removed");
-                this.setState({
-                    decomposedImages: tempImages
-                });
-                //refresh the page if the user discarded all the images
-                if (tempImages.length === 0) {
-                    window.location.reload();
-                }
-            })
-            .catch((error) => console.log(error));
 
+            //console.log(imageName)
+            await axios.delete(`${config.dev_server}/upload/deleteImage?images=${imageName}`)
+                .then(res => {
+                    //console.log("removed");
+                    this.setState({
+                        decomposedImages: tempImages
+                    });
+
+                    //Refresh the page if the user discarded all of the images
+                    if (tempImages.length === 0)
+                        window.location.reload();
+                })
+                .catch((error) => console.log(`An error occurred removing an image: ${error}`));
+        }
     }
 
     /*
-        sets the saved value of an specific image inside the decomposedImages state variable to true
-        param index: array index
+        Sets the saved value of an specific image inside the decomposedImages state variable to true.
+        This allows it to be saved to the user's account.
+        param index: Decomposed image index.
     */
     setImageSavedToTrue(index) {
         let tempImages = this.state.decomposedImages;
-        if (index > -1) {
+
+        if (this.isValidDecomposedImageIndex(index))
             tempImages[index].saved = true;
-        }
+
         this.setState({
             decomposedImages: tempImages,
             calculatingFungalCoverage: false,
@@ -470,66 +418,61 @@ class Upload extends Component {
     }
 
     /*
-        sets the keepClicked value of an specific image inside the decomposedImages state variable to true
-        param index: decomposedImages array index
+        Sets the keepClicked value of an specific image inside the decomposedImages state variable to true.
+        param index: Decomposed image index.
     */
-    setImage_KeepClicked_ToTrue(index) {
+    setImageKeepClickedToTrue(index) {
         let tempImages = this.state.decomposedImages;
-        if (index > -1) {
+
+        if (this.isValidDecomposedImageIndex(index))
             tempImages[index].keepClicked = true;
-        }
+
         this.setState({
             decomposedImages: tempImages
         });
     }
 
     /*
+        Sets the selectedToeId of a decomposedImage.
+        param toeId: The value to set the selectedToeId to
+        param decomposeImageIndex: The index of the decomposed images;
+    */
+    setDecomposeImage_toeId(toeId, decomposeImageIndex) {
+        var temp = this.state.decomposedImages;
+        temp[decomposeImageIndex].selectedToeId = toeId;
+        this.setState({decomposedImages: temp})
+    }
+    
+    /*
         Prints one of the buttons the user can press to select a toe.
-        These two functions are similar to the one found in User.js, but they are distinct
-        in the fact that they control their state differently. They do use shared CSS,
-        however, to avoid code duplication.
         param toeId: The toe the button is for.
         param active: Make the button darker if active is true
         param decomposeImageIndex: the button are getting printed for this image, need this to set the selectedToeId
     */
     printToeButton(toeId, active, decomposeImageIndex) {
         var defaultToeButtonClass = "uploadToes" + toeId;
-        var activeToeButtonClass = defaultToeButtonClass + " active-toe-button"; //When the toe's data is being shown on the chart
+        var activeToeButtonClass = defaultToeButtonClass + " active-toe-button"; //When the toe is selected
+        var isDisabled = this.state.alreadySelectedToes[toeId]; //Can't select a toe chosen for another nail already
+        var buttonClassName = active ? activeToeButtonClass : defaultToeButtonClass;
 
-
-        var isDisabled = this.state.alreadySelectedToes[toeId];
-        var buttonClassName = (active ? activeToeButtonClass : defaultToeButtonClass)
         return (
-            <div key={toeId} style={{ display: "inline" }} className={`divToe${toeId}`}>
-                <button onClick={
-                    () => {
+            <div key={toeId} style={{display: "inline"}} className={`divToe${toeId}`}>
+                <button onClick={() => {
                         this.setToe(toeId)
                         this.setDecomposeImage_toeId(toeId, decomposeImageIndex)
-                    }
-                }
+                    }}
                     className={buttonClassName}
                     disabled={isDisabled}
-                >
-                </button>
+                />
+                {/*</button>*/}
             </div>
         );
     }
 
     /*
-        sets the selectedToeId of the decomposedImage with index decomposeImageIndex to the toeId
-        param toeId: the value to set the selectedToeId to
-        param decomposeImageIndex: the index for the target decomposedImage
+        Adds buttons to a nail image where user can select which toe it's for.
     */
-    setDecomposeImage_toeId(toeId, decomposeImageIndex) {
-        var temp = this.state.decomposedImages;
-        temp[decomposeImageIndex].selectedToeId = toeId;
-        this.setState({ decomposedImages: temp })
-    }
-
-    /*
-        Adds buttons to the page where user can select toes.
-    */
-    printToeButtons(decomposeImageIndex) {
+    printToeButtons(decomposedImageIndex) {
         var toeOrder = [];
         for (let i = 0; i < TOE_COUNT; ++i)
             toeOrder.push(i); //Initial view in order of ids (based on right foot)
@@ -537,22 +480,16 @@ class Upload extends Component {
         if (this.state.selectedFootId === LEFT_FOOT_ID)
             toeOrder.reverse(); //Toes go in opposite order on left foot
 
-
         return (
             <span className="toolbar">
                 {
-                    toeOrder.map((toeId) => this.printToeButton(toeId, this.is_decomposedImage_selectedToeId_true(toeId, decomposeImageIndex), decomposeImageIndex))
+                    toeOrder.map((toeId) =>
+                        this.printToeButton(toeId,
+                                            this.isToeIdSelectedForNailImage(toeId, decomposedImageIndex),
+                                            decomposedImageIndex))
                 }
             </span>
         );
-    }
-
-    /*
-        returns true if the decomposedImage[decomposeImageIndex].selectedToeId == toeid
-        to see which toeId is selected, in order to make it active
-    */
-    is_decomposedImage_selectedToeId_true(toeId, decomposeImageIndex) {
-        return toeId === this.state.decomposedImages[decomposeImageIndex].selectedToeId;
     }
 
     /*
@@ -561,7 +498,7 @@ class Upload extends Component {
         param imageObject: blob, recieved from the input field, e.target.files[0]
         param set_width_height: if true, set the canvas width and height
     */
-    drawImageOnCanvas_fromImgObj(imageObject, set_width_height) {
+    drawImageOnCanvasFromImgObj(imageObject, set_width_height) {
         var reader = new FileReader();
         reader.readAsDataURL(imageObject);
 
@@ -603,7 +540,7 @@ class Upload extends Component {
 
         //draw the image on canvas
         //need to convert the imageobject to Image() in order to be able to draw it on canvas
-        this.drawImageOnCanvas_fromImgObj(imageObject, true);
+        this.drawImageOnCanvasFromImgObj(imageObject, true);
 
         var newStateItems =
         {
@@ -615,7 +552,7 @@ class Upload extends Component {
             input: imageName,
 
             showUploadButton: false, //hide the upload related buttons and show confirmation buttons
-            showUplodConfirmation: true
+            showUploadConfirmation: true
         }
         //if camera is used
         if (cameraUsed) {
@@ -640,11 +577,11 @@ class Upload extends Component {
                         <div>
                             {/* Label must be used instead of Button because of the input field required */}
                             <label className={buttonClassName}
-                                htmlFor={!this.isParamNotSet() ? "inputGroupFile01" : ''}
-                                onClick={this.isParamNotSet() ? () =>
+                                htmlFor={!this.isFootNotChosen() ? "inputGroupFile01" : ''}
+                                onClick={this.isFootNotChosen() ? () =>
                                     this.setState({ showChooseFootAndToeError: true })
                                     : () => {
-                                        this.handleOpenCamera_mobile();
+                                        this.handleOpenCameraMobile();
                                         this.setState({ showChooseFootAndToeError: false })
                                     }
 
@@ -666,8 +603,8 @@ class Upload extends Component {
                             />
                         </div>
                         <label className={buttonClassName}
-                            htmlFor={!this.isParamNotSet() ? "inputGroupFile01" : ''}
-                            onClick={this.isParamNotSet() ? () =>
+                            htmlFor={!this.isFootNotChosen() ? "inputGroupFile01" : ''}
+                            onClick={this.isFootNotChosen() ? () =>
                                 this.setState({ showChooseFootAndToeError: true })
                                 : () =>
                                     this.setState({ showChooseFootAndToeError: false })
@@ -703,8 +640,8 @@ class Upload extends Component {
                             />
 
                             <label className={buttonClassName}
-                                htmlFor={!this.isParamNotSet() ? "inputGroupFile01" : ''}
-                                onClick={this.isParamNotSet() ? () =>
+                                htmlFor={!this.isFootNotChosen() ? "inputGroupFile01" : ''}
+                                onClick={this.isFootNotChosen() ? () =>
                                     this.setState({ showChooseFootAndToeError: true })
                                     : () =>
                                         this.setState({ showChooseFootAndToeError: false })
@@ -800,8 +737,8 @@ class Upload extends Component {
                                 :
                                 <Row>
                                     <span className="keepDiscardSpan">
-                                        <Button id="discardBtn" onClick={() => this.decomposedImagesRemove(index)}>Discard</Button>
-                                        <Button id="keepBtn" onClick={() => this.setImage_KeepClicked_ToTrue(index)}>Keep</Button>
+                                        <Button id="discardBtn" onClick={() => this.removeNailImage(index)}>Discard</Button>
+                                        <Button id="keepBtn" onClick={() => this.setImageKeepClickedToTrue(index)}>Keep</Button>
                                     </span>
                                 </Row>
                     }
@@ -841,8 +778,8 @@ class Upload extends Component {
     print_keep_discard_mobile(index) {
         return (
             <div className="decompose_keepDiscard_mobile">
-                <Button className="discardBtn_mobile" onClick={() => this.setImage_KeepClicked_ToTrue(index)}>Keep</Button>
-                <Button className="keepBtn_mobile" onClick={() => this.decomposedImagesRemove(index)}>Discard</Button>
+                <Button className="discardBtn_mobile" onClick={() => this.setImageKeepClickedToTrue(index)}>Keep</Button>
+                <Button className="keepBtn_mobile" onClick={() => this.removeNailImage(index)}>Discard</Button>
             </div>
         );
     }
@@ -896,7 +833,7 @@ class Upload extends Component {
         ctx.translate(-canvas.width / 2, -canvas.height / 2);
 
         //draw the image
-        this.drawImageOnCanvas_fromImgObj(this.state.files[0].imageObject, false);
+        this.drawImageOnCanvasFromImgObj(this.state.files[0].imageObject, false);
 
     }
 
@@ -910,8 +847,7 @@ class Upload extends Component {
         var uploadProgress = this.state.uploadProgress === 0 ? "" : this.state.uploadProgress;
         var imageClassName = (isMobile) ? "uploadedImg-mobile" : "uploadedImg-desktop";
 
-        if (this.isParamNotSet()) //Either foot or toe isn't selected
-        {
+        if (this.isFootNotChosen()) { //Either foot or toe isn't selected
             buttonClassName += " greyed-button" //Highlight button grey so user doesn't think to click it yet
 
             if (this.state.showChooseFootAndToeError) //Only needed if button still isn't clicked
@@ -947,8 +883,6 @@ class Upload extends Component {
                 {/* Buttons to filter toes 
                 <h3 className="diagnosis-question">Which toe is the image for?</h3>*/}
 
-                {/*<ToeButtons setToe={this.setToe.bind(this)}></ToeButtons>*/}
-
                 {/* Upload Section */}
                 {
                     this.state.showUploadButton
@@ -975,7 +909,7 @@ class Upload extends Component {
                                 {/*<img ref={this.uploadedImgRef} key={index} src={source.url} className={imageClassName} alt="file" />*/}
                                 <canvas ref={this.uploadedImgRef} key={index} className={imageClassName}></canvas>
                             </div>
-                            {this.state.showUplodConfirmation && // only show the image rotation when the user is confirming the image
+                            {this.state.showUploadConfirmation && // only show the image rotation when the user is confirming the image
                                 <div className="rotateImg_div">
                                     <img className="roateLeft_icon" src={rotateRight_icon} alt="Rotate left" onClick={() => this.rotateImage(true)}></img>
                                     <img className="roateRight_icon" src={rotateLeft_icon} alt="Rotate right" onClick={() => this.rotateImage(false)}></img>
@@ -986,13 +920,7 @@ class Upload extends Component {
                             <Row>
                                 <Col>
                                     <div id="uploadStatusText">{source.text}</div>
-                                    {/*
-                                    <Button id="diagnoseBtn" onClick={this.handleDiagnose.bind(this, index)}
-                                        disabled={!source.valid}>
-                                        Diagnose
-                                    </Button>
-                                    */}
-                                    {this.state.showUplodConfirmation
+                                    {this.state.showUploadConfirmation
                                         ?
                                         <div>
                                             <Button className="upload_looksGood_btn" onClick={() => {
@@ -1009,7 +937,7 @@ class Upload extends Component {
                                             }>
                                                 Looks Good <span role="img" aria-label="happy emoji">😀</span>
                                             </Button>
-                                            <Button className="upload_GoBack_btn" onClick={() => this.handleGoBack_discardUpload()}>
+                                            <Button className="upload_GoBack_btn" onClick={() => this.handleDiscardUpload()}>
                                                 Go back <span role="img" aria-label="sad emoji">☹️</span>
                                             </Button>
                                         </div>

@@ -3,7 +3,7 @@ const config = require('../config');
 const mongodbConfig = require("./mongodb-config");
 const { MongoClient } = require("mongodb");
 
-const userData = {email: 'demoTEST@gmail.com', password: '123test', name: 'tester', age: '12'};
+const userData = {email: 'demoTEST@gmail.com', password: '123test', name: 'tester', birthday: '12'};
 const request = require("supertest");
 const app = require('../app');
 const userSchema = require("../database/userSchema");
@@ -22,7 +22,7 @@ describe('Signup endpoint', () => {
                 name: "tester2",
                 email: "demoTEST2@gmail.com",
                 password: "123",
-                age: '12',
+                birthday: '12',
 
             });
         expect(res.statusCode).toEqual(200);
@@ -35,7 +35,7 @@ describe('Signup endpoint', () => {
                 name: "",
                 email: "",
                 password: "",
-                age: "",
+                birthday: "",
 
             });
         expect(res.statusCode).toEqual(400);
@@ -50,7 +50,7 @@ describe('Signup endpoint', () => {
                 name: "",
                 email: "demo@gmail.com",
                 password: "123",
-                age: "22",
+                birthday: "22",
 
             });
         expect(res.statusCode).toEqual(400);
@@ -65,7 +65,7 @@ describe('Signup endpoint', () => {
                 name: "bob smith",
                 email: "",
                 password: "123",
-                age: "22",
+                birthday: "22",
 
             });
         expect(res.statusCode).toEqual(400);
@@ -80,7 +80,7 @@ describe('Signup endpoint', () => {
                 name: "Bob smith",
                 email: "demo@gmail.com",
                 password: "",
-                age: "22",
+                birthday: "22",
 
             });
         expect(res.statusCode).toEqual(400);
@@ -95,7 +95,7 @@ describe('Signup endpoint', () => {
                 name: "Bob smith",
                 email: "demo@gmail.com",
                 password: "123",
-                age: "",
+                birthday: "",
 
             });
         expect(res.statusCode).toEqual(400);
@@ -117,7 +117,7 @@ describe('Signup endpoint', () => {
                 name: "Bob Smith",
                 email: "demoTEST@gmail.com",
                 password: "123",
-                age: "22"
+                birthday: "22"
             })
         expect(res.statusCode).toEqual(400);
         expect(res.body.msg).toBe("Account already exists");
@@ -130,7 +130,7 @@ describe('Signup endpoint', () => {
                 name: "Bob Smith",
                 email: "demoTESTgmail.com",
                 password: "123",
-                age: "22"
+                birthday: "22"
             })
         expect(res.statusCode).toEqual(400);
         expect(res.body.msg).toBe("invalid email address");

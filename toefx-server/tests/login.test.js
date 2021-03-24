@@ -14,7 +14,6 @@ describe('Login endpoint', () => {
                 email: "demoTEST@gmail.com",
                 password: "123test"
             });
-        expect(res.statusCode).toEqual(200);
         expect(res.body.success).toBe(true);
     });
 
@@ -26,7 +25,7 @@ describe('Login endpoint', () => {
                 email: "demoT@gmail.com",
                 password: "123"
             });
-        expect(res.statusCode).toEqual(400);
+        expect(res.statusCode).toEqual(404);
         expect(res.body.success).toBeUndefined();
     });
 
@@ -55,7 +54,7 @@ describe('Login endpoint', () => {
                 email: "",
                 password: ""
             });
-        expect(res.body.msg).toEqual("Required input is empty");
+        expect(res.body.errorMsg).toEqual("BLANK_FIELD");
     });
 });
 

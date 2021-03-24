@@ -66,11 +66,11 @@ describe('/upload/notloggedin endpoint', () => {
 
     });
 });
-
-var uploadImage = rewire('../routes/uploadImage.js');
+var Usavetoedata = rewire('../routes/uploadImage.js')
+var uploadImage = rewire('../utils.js');
 describe('SaveToeData function',() => {
     it('correctly finds the users toe data', () => {
-        let saveToe = uploadImage.__get__('SaveToeData')
+        let saveToe = Usavetoedata.__get__('SaveToeData')
         saveToe('60172516965bae20b09f78f7', Date.now(), 0, 0, "Test.png", undefined);
     })
 })

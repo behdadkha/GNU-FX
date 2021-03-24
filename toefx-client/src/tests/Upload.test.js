@@ -72,7 +72,7 @@ describe('Upload.js', () => {
             component.setState({ files: [{ name: "firstImage" }] });
             component.instance().processImageValidationResult({ data: "something else" });
 
-            expect(component.state('files')[0]).toEqual({ name: "firstImage", valid: false, text: "Please upload a valid image of a toe." });
+            expect(component.state('files')[0]).toEqual({ name: "firstImage", valid: false, text: "Please upload an image of a toe." });
         });
 
         it('state variable files has multiple files', () => {
@@ -92,32 +92,10 @@ describe('Upload.js', () => {
         console.log = jest.fn();
         component.instance().printFileValidationErrorToConsole("not quite right");
 
-        expect(console.log).toHaveBeenCalledWith("not quite right");
+        expect(console.log).toHaveBeenCalledWith("Error validating file: not quite right");
     })
 
     describe('validateImage method', () => {
-
-        it('users is not logged in, request should be sent to notloggedin', () => {
-            const store = mockStore({ auth: { isAuth: false } });
-            let component = mount(<Provider store={store}><Upload /></Provider>);
-            component = component.find(Upload).children();
-
-            Axios.post = jest.fn(() => Promise.resolve({ data: "toe" }));
-            component.instance().validateImage("this.png");
-
-            expect(Axios.post).toHaveBeenCalled();
-        });
-
-        it('users is not logged in, server rejects', () => {
-            const store = mockStore({ auth: { isAuth: false } });
-            let component = mount(<Provider store={store}><Upload /></Provider>);
-            component = component.find(Upload).children();
-            Axios.post = jest.fn();
-            Axios.post.mockRejectedValueOnce();
-            component.instance().validateImage("this.png");
-
-            expect(component.instance().validateImage).toThrow();
-        });
 
         it('users is not logged in, request should be sent to notloggedin', () => {
             const store = mockStore({ auth: { isAuth: true } });
@@ -173,116 +151,28 @@ describe('Upload.js', () => {
             const store = mockStore({ auth: { isAuth: true } });
             let component = mount(<Provider store={store}><Upload /></Provider>);
             component = component.find(Upload).children();
+            component.setState({files: [{ target: { files: [{ name: "first file", type: "image/png" }] } }] });
 
             window.URL.createObjectURL = jest.fn();
             Axios.post = jest.fn(() => Promise.resolve());
             jest.spyOn(component.instance(), 'validateImage');
-            await component.instance().handleUpload({ target: { files: [{ name: "first file", type: "image/png" }] } });
+            await component.instance().handleUpload();
 
             expect(Axios.post).toHaveBeenCalled();
         });
 
         it('sends a post request to the server with the correct data, user not logged in', async () => {
-            const store = mockStore({ auth: { isAuth: false } });
+            const store = mockStore({ auth: { isAuth: true } });
             let component = mount(<Provider store={store}><Upload /></Provider>);
             component = component.find(Upload).children();
+            component.setState({files: [{ target: { files: [{ name: "first file", type: "image/png" }] } }] });
 
             window.URL.createObjectURL = jest.fn();
             Axios.post = jest.fn(() => Promise.resolve({ data: { img: "this.png" } }));
             component.instance().validateImage = jest.fn();
-            await component.instance().handleUpload({ target: { files: [{ name: "first file", type: "image/png" }] } });
+            await component.instance().handleUpload();
 
             expect(Axios.post).toHaveBeenCalled();
-            expect(component.instance().validateImage).toHaveBeenCalledWith("this.png");
-        });
-    })
-
-
-    describe('handleDiagnose method', () => {
-
-        it('requests the server to run diagnosis and sets the states (logged in)', async () => {
-
-            const store = mockStore({ auth: { isAuth: true } });
-            let component = mount(<Provider store={store}><Upload /></Provider>);
-            component = component.find(Upload).children();
-
-            component.setState({ files: [{ name: "firstImage" }] });
-            Axios.get = jest.fn(() => Promise.resolve({ data: "toe" }));
-            await component.instance().handleDiagnose(0);
-
-            expect(Axios.get).toHaveBeenCalledWith(`${config.dev_server}/diagnose/loggedin/?imageName=firstImage`);
-            expect(component.state('diagnosis')).toEqual([{ image: 0, text: "toe", diagnosisButton: true }]);
-
-        });
-
-        it('requests the server to run diagnosis and sets the states (not logged in)', async () => {
-
-            const store = mockStore({ auth: { isAuth: false } });
-            let component = mount(<Provider store={store}><Upload /></Provider>);
-            component = component.find(Upload).children();
-
-            component.setState({ tempfileName: "firstImage" });
-            Axios.get = jest.fn(() => Promise.resolve({ data: "toe" }));
-            await component.instance().handleDiagnose(0);
-
-            expect(Axios.get).toHaveBeenCalledWith(`${config.dev_server}/diagnose/notloggedin/?imageName=firstImage`);
-            expect(component.state('diagnosis')).toEqual([{ image: 0, text: "toe", diagnosisButton: true }]);
-
-        });
-
-        it('tempfileName is empty', async () => {
-
-            const store = mockStore({ auth: { isAuth: false } });
-            let component = mount(<Provider store={store}><Upload /></Provider>);
-            component = component.find(Upload).children();
-
-            component.setState({ tempfileName: "" });
-            Axios.get = jest.fn(() => Promise.resolve({ data: "toe" }));
-            await component.instance().handleDiagnose(0);
-
-            expect(Axios.get).toHaveBeenCalledTimes(0);
-
-        });
-
-        it('list index out of range', async () => {
-
-            const store = mockStore({ auth: { isAuth: true } });
-            let component = mount(<Provider store={store}><Upload /></Provider>);
-            component = component.find(Upload).children();
-
-            component.setState({ files: [{ name: "firstImage" }] });
-            Axios.get = jest.fn(() => Promise.resolve({ data: "toe" }));
-            await component.instance().handleDiagnose(10);
-
-            expect(Axios.get).toHaveBeenCalledTimes(0);
-
-        });
-
-    })
-    describe('isParamNotSet method', () => {
-
-        it('correct foot id and toe id given', () => {
-            let component = mount(<Provider store={store}><Upload /></Provider>);
-            component = component.find(Upload).children();
-            component.setState({ selectedFootId: 1, selectedToeId: 2 });
-
-            expect(component.instance().isParamNotSet()).toEqual(false);
-        });
-
-        it('selectedToeId is -1', () => {
-            let component = mount(<Provider store={store}><Upload /></Provider>);
-            component = component.find(Upload).children();
-            component.setState({ selectedFootId: 1, selectedToeId: -1 });
-
-            expect(component.instance().isParamNotSet()).toEqual(false);
-        });
-
-        it('selectedFootId and selectedToeId are -1', () => {
-            let component = mount(<Provider store={store}><Upload /></Provider>);
-            component = component.find(Upload).children();
-            component.setState({ selectedFootId: -1, selectedToeId: -1 });
-
-            expect(component.instance().isParamNotSet()).toEqual(true);
         });
     })
 

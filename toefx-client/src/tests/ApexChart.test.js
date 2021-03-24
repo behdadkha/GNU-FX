@@ -40,40 +40,6 @@ const RightFootData = [
     }
 ]
 const RightFootDates = ['2020-11-02', '2010-11-02', '2010-11-02'];
-describe('viewFoot function ApexChart', () => {
-
-    it('saves the selectedFoot in redux store', () => {
-        store.dispatch = jest.fn();
-        let component = mount(
-            <ApexChart store={store} leftFootData={LeftFootData} rightFootData={RightFootData}
-                leftFootDates={LeftFootDates} rightFootDates={RightFootDates}>
-            </ApexChart>
-        );
-
-        let instance = component.instance();
-        instance.viewFoot(true);
-
-        expect(store.dispatch).toHaveBeenCalledWith({ "payload": 0, "type": "SET_SELECTED_FOOT" })
-    });
-
-    it('saves the selectedFoot in redux store', () => {
-        store.dispatch = jest.fn();
-        let component = mount(
-            <ApexChart store={store} leftFootData={LeftFootData} rightFootData={RightFootData}
-                leftFootDates={LeftFootDates} rightFootDates={RightFootDates}>
-            </ApexChart>
-        );
-
-        let instance = component.instance();
-        instance.viewFoot(true);
-
-        expect(component.state('shownToes')).toEqual([true, true, false, false, false]);
-        expect(component.state('showLeftFoot')).toBe(true);
-        expect(component.state('showingDetails')).toBe(false);
-        expect(component.state('treatmentIndex')).toBe(0);
-    });
-
-})
 
 
 describe('resetShownToesData function ApexChart', () => {
@@ -323,7 +289,7 @@ describe('printToeButtons', () => {
         );
 
         let instance = component.instance();
-        component.setState({shownToes: [true, true, true, true, true], showLeftFoot: false});
+        component.setState({shownToes: [true, true, true, true, true], selectedFootIndex: false});
         const output = instance.printToeButtons();
         
         expect(output.props.className).toEqual('rightFootContainer');

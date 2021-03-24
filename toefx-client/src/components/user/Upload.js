@@ -142,7 +142,6 @@ class Upload extends Component {
                 tempSelectedToes[imageObj.selectedToeId] = true;
                 this.setState({alreadySelectedToes: tempSelectedToes });
 
-                //TODO: Filter toes selected for other images already to remove this toe.
             })
             .catch((error) => console.log(`An error occurred saving an image: ${error}`));
     }
@@ -480,7 +479,8 @@ class Upload extends Component {
         returns: true if the decomposedImage[decomposeImageIndex].selectedToeId == toeid
     */
     isToeIdSelectedForNailImage(toeId, decomposeImageIndex) {
-        return toeId === this.state.decomposedImages[decomposeImageIndex].selectedToeId;
+        if (this.state.decomposedImages[decomposeImageIndex] !== undefined)
+            return toeId === this.state.decomposedImages[decomposeImageIndex].selectedToeId;
     }
 
     /*
@@ -547,9 +547,18 @@ class Upload extends Component {
     */
     setImageKeepClickedToTrue(index) {
         let tempImages = this.state.decomposedImages;
-
-        if (this.isValidDecomposedImageIndex(index))
+        
+        if (this.isValidDecomposedImageIndex(index)){
             tempImages[index].keepClicked = true;
+
+            //reset the other one
+            for (let i = 0; i < tempImages.length; i++) {
+                if (i !== index && tempImages[i].keepClicked)
+                    tempImages[i].keepClicked = false;
+            }
+        }
+                
+        
 
         this.setState({
             decomposedImages: tempImages
@@ -880,7 +889,7 @@ class Upload extends Component {
             error = "Invalid file type. Please upload an IMAGE file."
 
 
-        /* for testing purposes
+        /*for testing purposes
         // to see how the decomposed images look like without sending any picture to the server
         if (this.state.decomposedImages.length === 0) {
             this.setState({

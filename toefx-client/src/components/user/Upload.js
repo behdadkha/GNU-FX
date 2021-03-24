@@ -194,7 +194,7 @@ class Upload extends Component {
         //1. request the backend to decompose the image
         //2. change the upload msg text
 
-        await axios.get(`${config.dev_server}/upload/decompose`)
+        await axios.get(`${config.dev_server}/upload/decompose`,{headers: {'Access-Control-Allow-Origin': '*'}})
             .then(async res => {
                 //Res has data: {imagesInfo: [{name: "", cord: [x,y], color: [r,g,b]}], CLRImage: "name_CLR.png", fungalCoverage: "0%"}
                 if (res.data.imagesInfo.length === 0) {
@@ -672,7 +672,7 @@ class Upload extends Component {
         return (
             <div key={imageObj.imageName} className="decomposeImageCol" style={{border: `5px solid rgb(${imageObj.color})`}}>
                 <div className="decomposeImage_div">
-                    <img className="decomposeImage" src={imageObj.url} alt="Loading image..."></img>
+                    <img className="decomposeImage" src={imageObj.url} alt="Loading..."></img>
                 </div>
 
                 <Row noGutters={true} className="saveDiscardRow">
@@ -704,7 +704,7 @@ class Upload extends Component {
         return (
             <div key={decomposedImageIndex} className="decomposedRow_mobile" style={{border: `2px solid rgb(${imageObj.color})`}}>
                 <div className="decomposed_Img_Div_mobile">
-                    <img src={imageObj.url} className="decomposeImage_mobile" alt="Loading image..."></img>
+                    <img src={imageObj.url} className="decomposeImage_mobile" alt="Loading..."></img>
                 </div>
 
                 {

@@ -13,6 +13,8 @@ import { compose } from 'redux';
 const middlewares = [thunk];
 const mockStore = configureMockStore(middlewares);
 
+import {config} from '../config'
+
 
 
 describe("Side bar Bar UI", () => {
@@ -39,7 +41,7 @@ describe("Side bar Bar UI", () => {
         jest.spyOn(authAction, 'LogOutUser');
         component.find('[test-id="logOut"]').first().simulate('click');
         expect(authAction.LogOutUser).toHaveBeenCalled();
-        expect(window.location.href).toEqual('http://localhost/');
+        expect(window.location.href).toEqual(`${config.dev_server}`);
     });
 
     it('clicking on Dashboard redirects to /user', () => {

@@ -198,7 +198,7 @@ function hashedURL(email) {
         bcrypt.genSalt(rounds, (err, salt) => {
             bcrypt.hash(email, salt, (err, hash) => {
                 // e.g url: http://localhost:3000/emailverification/hashedemailaddress
-                Resolve(`http://localhost:3000/emailverification/${hash}`)
+                Resolve(`${config.dev_client}/emailverification/${hash}`)
             });
         });
     });

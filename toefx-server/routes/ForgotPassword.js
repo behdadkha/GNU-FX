@@ -6,7 +6,7 @@ const express = require('express');
 const forgotPasswordRoutes = express.Router();
 const utils = require('../utils');
 const userSchema = require('../database/userSchema');
-const { config } = require('../config.js');
+const config = require('../config');
 const bcrypt = require('bcryptjs');
 const nodemailer = require("nodemailer");
 function hashedURL(email) {
@@ -15,7 +15,7 @@ function hashedURL(email) {
         bcrypt.genSalt(rounds, (err, salt) => {
             bcrypt.hash(email, salt, (err, hash) => {
                 // e.g url: http://localhost:3000/hashedemailaddress
-                Resolve(`http://localhost:3000/forgotpassword/${hash}`)
+                Resolve(`${config.dev_client}/forgotpassword/${hash}`)
             });
         });
     });

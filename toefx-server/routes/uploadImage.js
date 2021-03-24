@@ -6,6 +6,8 @@ let toeData = require('../database/toe-dataSchema');
 var fs = require('fs');
 const { resolve } = require('path');
 const config = require('../config');
+var cors = require('cors');
+uploadImage.use(cors())
 
 //TODO: Saving new image as last in array could cause bugs and overwrite old images after deletion.
 

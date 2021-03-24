@@ -250,7 +250,6 @@ class ApexChart extends React.Component {
 
         if (this.isLeftFootShown())
             toeOrder.reverse(); //Toes go in opposite order on left foot
-
         return (
             //Old toe selection
             /*<span className="toolbar">

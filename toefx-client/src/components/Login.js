@@ -106,13 +106,14 @@ class Login extends Component {
 
         //Process response from server
         if (response.status === StatusCode.SuccessAccepted && response.data) { //The login was a success
+            
             let body = response.data;
 
             const {token} = body; //Extract the token from the response
             localStorage.setItem("jwt", token); //Save the token in localstorage
-
+            
             SetAuthHeader(token); //Set the token to header for feature requests
-
+            
             store.dispatch(SetCurrentUser(jwt_decode(token)));//Add the user data(decoded) to the store 
 
             //Load all of the user's images from the server
@@ -121,9 +122,9 @@ class Login extends Component {
             //Load all of the user's toe data from the server like fungal coverage
             store.dispatch(getAndSaveToeData());
 
+            
             //Redirect to User page
             window.location.href = "/user";
-
         }
         else {
             this.setState({

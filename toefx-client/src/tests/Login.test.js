@@ -10,6 +10,8 @@ import store from '../Redux/store'
 import * as footAction from '../Redux/Actions/setFootAction.js';
 import {config} from "../config";
 import Axios from 'axios';
+import { Provider } from 'react-redux';
+import { SetCurrentUser } from '../Redux/Actions/authAction';
 
 const middlewares = [thunk];
 const mockStore = configureMockStore(middlewares);
@@ -48,18 +50,17 @@ describe("login states work", () => {
 
 describe("handleLoginPatient works correctly", () => {
 
-    let component
-    let mockedHistory
-    let instance
+    let component, mockedHistory, instance, store
 
     beforeEach(() => {
-        Axios.post = jest.fn(() => Promise.resolve({status: 200, data: { success: true, token: "Bearer asdf"}}));
+        Axios.post = jest.fn(() => Promise.resolve({status: 202, data: { success: true, token: "Bearer asdf"}}));
         Axios.get = jest.fn(() => Promise.resolve({data: []}));
-        mockedHistory = {push: jest.fn()}
-        component = shallow(<Login history={mockedHistory}/>);
-        component.setState({email: email, password: password});
-        instance = component.instance()
-        window.location.reload = jest.fn();
+        store = mockStore({ auth: { isAuth: true, user: { name: "tester" } } });
+        store.dispatch = jest.fn();
+        component = mount(<Provider store={store}><Login history={mockedHistory}/></Provider>);
+        component = component.find(Login).children()
+        instance = component.instance();
+        window.location.href = jest.fn();
         
     });
     
@@ -67,20 +68,19 @@ describe("handleLoginPatient works correctly", () => {
     it("calls the api for login", async () => {
 
         
+        instance.setState({email: email, password: password});
+
         await instance.handleLoginPatient({preventDefault: () => {}});
         
-        expect(Axios.post).toHaveBeenCalledWith(`${config.dev_server}/login`, {email: email, password: password})
-        expect(Axios.get).toHaveBeenCalled();
-        expect(window.location.reload).toHaveBeenCalled();
-        expect(mockedHistory.push).toHaveBeenCalled();
+        expect(Axios.post).toHaveBeenCalledWith(`${config.dev_server}/login`, {email: email, password: password});
+        expect(window.location.href).toEqual("http://localhost/")
 
     });
 
     it("redirects to the user page /user", async() => {
 
+        instance.setState({email: email, password: password});
         await instance.handleLoginPatient({preventDefault: () => {}}); 
-
-        expect(mockedHistory.push).toHaveBeenCalledWith('/user');
 
     });
 
@@ -89,7 +89,7 @@ describe("handleLoginPatient works correctly", () => {
         Axios.post = jest.fn(() => Promise.resolve({status: 404, data: { success: false, token: "Bearer asdf"}}));
         await instance.handleLoginPatient({preventDefault: () => {}});
 
-        expect(component.state('invalidUser')).toEqual(true);
+        expect(component.state('errorMessage')).toEqual("INVALID_CREDENTIALS");
 
     });
 
@@ -98,7 +98,7 @@ describe("handleLoginPatient works correctly", () => {
         Axios.post.mockRejectedValueOnce();
         await instance.handleLoginPatient({preventDefault: () => {}});
 
-        expect(component.state('invalidUser')).toEqual(true);
+        expect(component.state('errorMessage')).toEqual("INVALID_CREDENTIALS");
 
     });
 
@@ -108,31 +108,13 @@ describe("handleLoginPatient works correctly", () => {
         Axios.post = jest.fn(() => Promise.resolve({status: 200}));
         await instance.handleLoginPatient({preventDefault: () => {}});
         
-        expect(component.state('invalidUser')).toEqual(true);
-
-    });
-
-    it("calls the store.dispatch 3 times", async() => {
-
-        store.dispatch = jest.fn();
-        footAction.getAndSaveImages = jest.fn();
-        footAction.getAndSaveToeData = jest.fn();
-
-        await instance.handleLoginPatient({preventDefault: () => {}});
-
-        expect(store.dispatch).toHaveBeenCalledTimes(3);
-        //one time to set the user
-        expect(store.dispatch).toHaveBeenCalledWith({"payload": {"id": "0000", "name": "auto tester"}, "type": "SET_CURRENT_USER"});
-        //one time to get images
-        expect(footAction.getAndSaveImages).toHaveBeenCalledTimes(1);
-        //one time to get the toe data
-        expect(footAction.getAndSaveToeData).toHaveBeenCalledTimes(1);
+        expect(component.state('errorMessage')).toEqual("INVALID_CREDENTIALS");
 
     });
 
     it("handles empty email and password states", async() => {
 
-        component.setState({email: "", password: ""}); 
+        instance.setState({email: "", password: ""}); 
         await instance.handleLoginPatient({preventDefault: () => {}});
         
         expect(component.state('email')).toEqual("");
@@ -143,7 +125,7 @@ describe("handleLoginPatient works correctly", () => {
 
     it("handles empty email and password states", async() => {
 
-        component.setState({email: "", password: ""});
+        instance.setState({email: "", password: ""});
         await instance.handleLoginPatient({preventDefault: () => {}});
         
         expect(component.state('email')).toEqual("");
@@ -154,7 +136,7 @@ describe("handleLoginPatient works correctly", () => {
 
     it("can handle if email state is empty", async() => {
 
-        component.setState({email: "", password: "123"});
+        instance.setState({email: "", password: "123"});
         await instance.handleLoginPatient({preventDefault: () => {}});
         
         expect(component.state('email')).toEqual("");
@@ -165,7 +147,7 @@ describe("handleLoginPatient works correctly", () => {
 
     it("can handle if password state is empty", async() => {
 
-        component.setState({email: "some@gmail.com", password: ""});
+        instance.setState({email: "some@gmail.com", password: ""});
         await instance.handleLoginPatient({preventDefault: () => {}});
         
         expect(component.state('email')).toEqual("some@gmail.com");
@@ -176,26 +158,29 @@ describe("handleLoginPatient works correctly", () => {
 
     it("does not accept invalid email format", async() => {
 
-        component.setState({email: "s</ome%gmail.com", password: "123"});
+        instance.setState({email: "s</ome%gmail.com", password: "123"});
         await instance.handleLoginPatient({preventDefault: () => {}});
         
-        expect(component.state('email')).toEqual("");
-        expect(component.state('password')).toEqual("123");
+        expect(component.state('errorMessage')).toEqual("INVALID_EMAIL");
         expect(Axios.post).toHaveBeenCalledTimes(0);// post request is not called
         
     });
 
 });
 
-describe('testing the Login UI functionalities', () => {
+describe.only('testing the Login UI functionalities', () => {
 
-    let component, submit_button, emailField, passwordField
+    let component, instance, submit_button, emailField, passwordField
 
     beforeEach(() => {
 
-        component = mount(<Login history={{push: jest.fn()}}/>);
+        store = mockStore({ auth: { isAuth: true, user: { name: "tester" } } });
+        store.dispatch = jest.fn();
+        component = mount(<Provider store={store}><Login history={mockedHistory}/></Provider>);
+        component = component.find(Login).children()
+        instance = component.instance();
         submit_button = component.find('Button');
-        emailField = component.find('[type="email"]').first();
+        emailField = component.find('[type="email"]');
         passwordField = component.find('[type="password"]').first();
 
     });
@@ -257,7 +242,7 @@ describe('testing the Login UI functionalities', () => {
     it("shows 'Please enter valid credentials.' if the server doesnt find the user", async() => {
 
         Axios.post = jest.fn(() => Promise.resolve({status: 404}));
-        component.setState({email: "fake@gmail.com", password: "123"});
+        instance.setState({email: "fake@gmail.com", password: "123"});
 
         await component.find('Form').simulate('submit');
 

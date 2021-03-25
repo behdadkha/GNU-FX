@@ -130,7 +130,8 @@ class FungalCoverage:
             flatList = predictions[1].flatten(0).tolist()
             percentNail = flatList.count(CLASS_VALUES["Nail"]) / len(flatList)  # Percent of image that's a nail
             percentFungus = flatList.count(CLASS_VALUES["Fungus"]) / len(flatList)  # Percent of image that's infected
-            coverage = (percentFungus / percentNail) * 100  # Turn into actual percentage
+            percentNail += percentFungus  # The fungal area is part of the nail too
+            coverage = round((percentFungus / percentNail) * 100, 2)  # Turn into actual percentage - 2 decimal points
 
         return round(coverage, 1)  # Round to single decimal place
 
@@ -147,4 +148,4 @@ class FungalCoverage:
         elif type(coverageAmount) != float:
             return False  # Always return False if bad input
 
-        return coverageAmount > 0.0
+        return coverageAmount >= 1  # 1 % error rate

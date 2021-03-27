@@ -7,11 +7,13 @@ import tensorflow as tf
 import numpy as np
 import os
 
+#TODO: Test cases for SaveNailColours
+
 # Load a pre-trained model downloaded from https://github.com/ManWingloeng/nailtracking
 # It is used instead of an image rotation model.
 RECOGNITION_MODEL_PATH = os.path.dirname(os.path.realpath(__file__)) + "/models/NailRecognitionModel.pb"
 RECOGNITION_MODEL_MIN_CONFIDENCE = 0.6
-RECOGNITION_MODEL_COORD_ADJUSTMENT = 0.01  # Take 1% more of image on each side
+RECOGNITION_MODEL_COORD_ADJUSTMENT = 0.03  # Take 3% more of image on each side
 
 # Colours for marking for nails located in an image
 NAIL_BORDER_COLOURS = [(255, 0, 0),    # Red
@@ -199,11 +201,11 @@ class NailRecognition:
         markedImage = cv2.imread(originalPath, 1)
         for i, image in enumerate(nailBounds):
             startX, startY, finalX, finalY = nailBounds[i]
+            colour = NAIL_BORDER_COLOURS[min(i, len(NAIL_BORDER_COLOURS) - 1)]  # Do bounds checking in case of more than 5 nails in an image
 
-            reversedColour = NAIL_BORDER_COLOURS[i][::-1]  # CV2 reads the colours (b, g, r) instead of (r, g, b)
+            reversedColour = colour[::-1]  # CV2 reads the colours (b, g, r) instead of (r, g, b)
             markedImage = cv2.rectangle(markedImage, (startX, startY), (finalX, finalY), reversedColour, 10)
-            colours.append(NAIL_BORDER_COLOURS[i])
+            colours.append(colour)
 
         cv2.imwrite(savePath, markedImage)
         return colours
-

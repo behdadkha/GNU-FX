@@ -100,6 +100,62 @@ function GetImageExtension(image) {
     var extension = (partsOfImageName.length > 1) ? partsOfImageName[partsOfImageName.length - 1] : "jpg";
     return extension;
 }
+/*
+    Extends the heroku request timeout (fix for h12)
+*/
+const extendTimeoutMiddleware = (req, res, next) => {
+    const space = ' ';
+    let isFinished = false;
+    let isDataSent = false;
+  
+    // Only extend the timeout for API requests
+    if (!req.url.includes('/decompose')) {
+      next();
+      return;
+    }
+  
+    res.once('finish', () => {
+      isFinished = true;
+    });
+  
+    res.once('end', () => {
+      isFinished = true;
+    });
+  
+    res.once('close', () => {
+      isFinished = true;
+    });
+  
+    res.on('data', (data) => {
+      // Look for something other than our blank space to indicate that real
+      // data is now being sent back to the client.
+      if (data !== space) {
+        isDataSent = true;
+      }
+    });
+  
+    const waitAndSend = () => {
+      setTimeout(() => {
+        // If the response hasn't finished and hasn't sent any data back....
+        if (!isFinished && !isDataSent) {
+          // Need to write the status code/headers if they haven't been sent yet.
+          if (!res.headersSent) {
+            res.writeHead(202);
+          }
+          console.log("in here")
+          res.write(space);
+  
+          // Wait another 15 seconds
+          waitAndSend();
+        }
+      }, 15000);
+    };
+  
+    waitAndSend();
+    next();
+  };
+
+uploadImage.use(extendTimeoutMiddleware)
 
 /*
     Endpoint: /upload/decompose
@@ -107,16 +163,17 @@ function GetImageExtension(image) {
     returns as the response: the name of the created images
 */
 uploadImage.route('/decompose').get(async (req, res) => {
+    res.setHeader('Content-Type', 'application/json')
     var userObject = await utils.loadUserObject(req, res);
     var user = userObject.user;
     var userId = userObject.id;
-
     let imageName = user.images[user.images.length - 1];
-
     var filePath = path.resolve(`images/${userId}/${imageName}`)
     var pythonFile = path.resolve('AI/actual/Interface.py');
-    let decomposedNails = await utils.runCommand(`python ${pythonFile} DECOMPOSE ${filePath}`);
+
+    let decomposedNails = await utils.runCommand(`python ${pythonFile} DECOMPOSE ${filePath}`)
     
+    console.log(decomposedNails)
     decomposedNails = JSON.parse(decomposedNails.split("\n")[1]).data; // need to get rid of the first line "loading nail recognition model..."
     //image name: decomposedNails[i][0]
     //images cordinates in the original image: decomposedNails[i][1]
@@ -127,24 +184,24 @@ uploadImage.route('/decompose').get(async (req, res) => {
     //adding the new created image that has boxes around toes to the user's images
     let newCLRImageName = imageName.split(".")[0] + "_CLR.png";
     user.images.push(newCLRImageName)
-    
+
     let decomposedImages = [];
     for (let i = 0; i < decomposedNails.length; i++) {
         let imagePath = path.resolve(`images/${userId}/${decomposedNails[i][0]}`)
         let fungalCoverage = await utils.runCommand(`python ${pythonFile} COVERAGE ${imagePath}`);
         fungalCoverage = JSON.parse(fungalCoverage).data[0] + "%";
 
-        decomposedImages.push( {name: path.basename(decomposedNails[i][0]), cord: decomposedNails[i][1], color: decomposedNails[i][2], fungalCoverage: fungalCoverage } );
+        decomposedImages.push({ name: path.basename(decomposedNails[i][0]), cord: decomposedNails[i][1], color: decomposedNails[i][2], fungalCoverage: fungalCoverage });
         //Save the new images under user in the database
         user.images.push(path.basename(decomposedNails[i][0]));
     }
-    
+
 
     //need to sort from left to right
-    decomposedImages.sort((a,b) => a.cord[0] - b.cord[0])
+    decomposedImages.sort((a, b) => a.cord[0] - b.cord[0])
     console.log(decomposedImages);
     user.save();
-    res.json({ imagesInfo: decomposedImages, CLRImage: newCLRImageName });
+    res.end(JSON.stringify({ imagesInfo: decomposedImages, CLRImage: newCLRImageName }));
 
 });
 

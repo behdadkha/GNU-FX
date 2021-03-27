@@ -802,8 +802,11 @@ class Upload extends Component {
                                         }
                                 }
                             >
-                                Take Picture
-                                <img className="cameraIcon" src={cameraIcon} alt=""></img>
+                                <div>
+                                    <h5 className="takePicture_text">Take Picture</h5>
+                                    <img className="cameraIcon" src={cameraIcon} alt=""></img>
+                                </div>
+                                
                             </label>
 
                             <input
@@ -826,8 +829,10 @@ class Upload extends Component {
                                     () => this.setState({showChooseFootAndToeError: false})
                             }
                         >
-                            Choose from Photos
-                            <img className="galleryIcon" src={galleryIcon} alt=""></img>
+                            <div>
+                                <h5 className="chooseFromPhotos_text">Choose from Photos</h5>
+                                <img className="galleryIcon" src={galleryIcon} alt=""></img>
+                            </div>
                         </label>
                     </div>
                 </Col>

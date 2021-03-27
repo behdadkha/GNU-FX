@@ -130,7 +130,8 @@ uploadImage.route('/decompose').get(async (req, res) => {
     
     let decomposedImages = [];
     for (let i = 0; i < decomposedNails.length; i++) {
-        let imagePath = path.resolve(`images/${userId}/${decomposedNails[i][0]}`)
+        //calculate fungal converage for each image
+        let imagePath = path.resolve(`${decomposedNails[i][0]}`)
         let fungalCoverage = await utils.runCommand(`python ${pythonFile} COVERAGE ${imagePath}`);
         fungalCoverage = JSON.parse(fungalCoverage).data[0] + "%";
 

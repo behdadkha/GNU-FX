@@ -40,7 +40,7 @@ const gToeImages = [LeftFootToe0, LeftFootToe1, LeftFootToe2, LeftFootToe3, Left
 const gDesktopPagesWithoutNavbar = ["/user", "/user/myAccount"];
 
 //Pages without the navigation bar at the top when using a mobile device
-const gMobilePagesWithoutNavbar = ["/", "/login", "/signup"]
+const gMobilePagesWithoutNavbar = ["/login", "/signup"]
 
 /*
     Determines if a navigation bar should appear at the top of the page.

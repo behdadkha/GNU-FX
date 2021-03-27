@@ -92,7 +92,6 @@ class NavigationBar extends Component {
         var navBarClass = "NavbarFont p-3" + (!isMobile ? " bg-white mb-3 shadow-sm rounded" : "");
         var menuLinks = this.getMenuLinks();
         var homeLink = isMobile && this.props.auth.isAuth ? "/user" : isMobile ? "login" : "/"; //Mobile logged in redirects to image page, otherwise mobile redirects to login page
-
         return (
             <div>
                 {

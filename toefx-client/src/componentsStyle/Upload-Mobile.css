@@ -18,7 +18,7 @@
     position: relative;
     width: 0;
     height: 0;
-    left: 20%;
+    left: 15%;
 }
 .overLay_div_absolute {
     position: absolute;
@@ -27,7 +27,7 @@
 }
 
 .overLay {
-    width: 50vw;
+    width: 60vw;
 }
 
 .vidoeFeed {
@@ -181,16 +181,28 @@
     }
 }
 
+.takePicture_text {
+    display: inline;
+    float: left;
+    margin-top: 6%;
+}
+
+.chooseFromPhotos_text {
+    display: inline;
+    float: left;
+    margin-top: 5%;
+}
+
 .cameraIcon {
     width: 20%;
-    margin-left: 30%;
+    float: right;
     margin-bottom: 2%;
 }
 
 .galleryIcon {
     width: 20%;
-    margin-left: 30%;
     margin-bottom: 2%;
+    float: right;
 }
 
 .upload-image-button_mobile {
@@ -199,4 +211,10 @@
     padding: 20px 40px;
     border-radius: 10px;
     cursor: pointer;
+}
+
+@media (min-width: 500px) {
+    .upload-image-button_mobile {
+        width: 65%;
+    }
 }

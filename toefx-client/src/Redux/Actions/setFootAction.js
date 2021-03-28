@@ -8,17 +8,14 @@ import { getImage } from "../../Utils";
 */
 async function GetAllImages() {
     let imageUrls = [];
-
     await Axios.get(`${config.dev_server}/getImageNames`)
         .then(async (imageNames) => {
             //Get all the user's images and store them in a data array
             for (let i = 0; i < imageNames.data.length; i++) {
-                /*await Axios.get(`${config.dev_server}/getImage?imageName=${imageNames.data[i]}`, { responseType: "blob" })
-                    .then((image) => {
-                        imageUrls.push({ imageName: imageNames.data[i], url: URL.createObjectURL(image.data) });
-                    }).catch(() => console.log("couldnt get the images"));*/
-                    var imageObj = await getImage(imageNames.data[i]);
-                    imageUrls.push(imageObj);
+                    if (imageNames.data[i].includes("_") && !imageNames.data[i].includes("_CLR")){//dont get the original foot images
+                        var imageObj = await getImage(imageNames.data[i]);
+                        imageUrls.push(imageObj);
+                    }
             }
         });
     return imageUrls;

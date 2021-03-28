@@ -63,7 +63,7 @@ class Sidebar extends Component {
                     <Container className="main-sidebar-options">
                         {/* Dashboard */}
                         <Row test-id="dashboardRow" className={window.location.pathname === "/user" ? activeItemClass : itemClass}>
-                            <span test-id="dashboard" onClick={() => window.location.href = "/user"}>
+                            <span test-id="dashboard" onClick={() => window.location.pathname !== "/user/myAccount" ? window.location.href = "/user" : this.props.history.push("/user")}>
                                 <img src={dashboardIcon} alt="Dashboard-Icon" className={iconClass}></img>
                                 <h6 className={navLinkClass}>Dashboard</h6>
                             </span>
@@ -79,7 +79,7 @@ class Sidebar extends Component {
 
                         {/* My Account */}
                         <Row test-id="myAccountRow" className={window.location.pathname === "/user/myAccount" ? activeItemClass : itemClass}>
-                            <span test-id="myAccount" onClick={() => window.location.href = "/user/myAccount"}>
+                            <span test-id="myAccount" onClick={() => this.props.history.push('/user/myAccount')}> 
                                 <img src={myAccountIcon} alt="Account-Icon" className={iconClass}></img>
                                 <h6 className={navLinkClass}>My Account</h6>
                             </span>

@@ -148,6 +148,7 @@
     vertical-align: middle !important;
 }
 
+
 .delete-image-button {
     margin: auto;
     display: block !important; /* Centre button in cell */
@@ -174,4 +175,35 @@
 .my-account-rotation-button-logo {
     height: auto;
     width: 50%;
+}
+
+
+/* Mobile table */
+.table-div-mobile {
+    overflow-x: auto;
+    overflow-y: scroll !important;
+}
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+    border-radius: 10px;
+    width: 100%;
+    border: 1px solid #bbb;
+    background-color: #343A40;
+    color: white;
+    
+  }
+
+.uploaded-image-table-col-mobile { /*This is all it takes to centre something in a table cell lol*/
+    text-align: center;
+    vertical-align: middle !important;
+    width: 100px;
+    border: 1px solid white;
+    padding-right: 50px;
+    padding-left: 50px;
+}
+
+.img_table {
+    width: 150px;
+    min-height: 100px;
 }

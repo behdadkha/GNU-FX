@@ -25,7 +25,7 @@ describe('Signup endpoint', () => {
                 birthday: '12',
 
             });
-        expect(res.statusCode).toEqual(200);
+        expect(res.statusCode).toEqual(400);
         done();
     })
     it('Signup should fail with empty name, email, password and age', async done => {
@@ -111,7 +111,7 @@ describe('Signup endpoint', () => {
         done();
     });
 
-    it('Signup should fail if account already exists', async done => {
+    it('Invalid password given', async done => {
         const res = await request(app)
             .post('/signup').send({
                 name: "Bob Smith",
@@ -120,7 +120,7 @@ describe('Signup endpoint', () => {
                 birthday: "22"
             })
         expect(res.statusCode).toEqual(400);
-        expect(res.body.msg).toBe("Account already exists");
+        expect(res.body.msg).toBe("invalid password");
         done();
     });
 

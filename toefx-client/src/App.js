@@ -59,6 +59,7 @@ function App() {
         <Provider store={store}>
             <Router>
                     <div className="App">
+                        
                         {
                             //Only show the navigation bar on certain pages so no scrolling is required
                             DoesPageHaveNavBar() ?

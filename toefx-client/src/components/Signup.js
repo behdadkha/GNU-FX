@@ -10,7 +10,7 @@ import {connect} from "react-redux";
 import Axios from 'axios';
 
 import {config} from "../config";
-import {IsValidEmail, IsGoodPassword, GetGoodPasswordConfirmations} from "../Utils";
+import {IsValidEmail, IsGoodPassword, GetGoodPasswordConfirmations, isValidName} from "../Utils";
 
 import "../componentsStyle/SignUp.css";
 import healthydrawing from "../icons/MedicalCare.svg";
@@ -24,6 +24,7 @@ const gErrorMessages = {
     "INVALID_PASSWORD": "Please enter a valid password.",
     "NO_SERVER_CONNECTION": "Could not connect to server.",
     "ACCOUNT_EXISTS": "That email is already in use.\nPlease choose another.",
+    "INVALID_NAME": "Please enter your first name and last name."
 }
 
 //TODO: Error handling for when there's no internet connection.
@@ -62,8 +63,9 @@ class Signup extends Component {
         param e: The sign up submission event.
     */
     handleSignup = async (e) => {
+        
         e.preventDefault(); //Prevents page reload on form submission
-
+        
         if (this.isAnyFieldLeftBlank()) {
             this.setState({ errorMessage: "BLANK_FIELD" });
             return; //A field was left blank so don't finalize sign up
@@ -84,6 +86,10 @@ class Signup extends Component {
             return; //User didn't enter proper passwords
         }
 
+        if (!isValidName(this.state.name)){
+            this.setState({ errorMessage: "INVALID_NAME"})
+            return; //User didn't enter a proper name
+        }
         //Try to sign up the user
         let response;
 
@@ -99,7 +105,7 @@ class Signup extends Component {
             this.setState({errorMessage: "ACCOUNT_EXISTS"});
             return;
         }
-
+        
         //Process response from server
         if (response.status === 200) { //Sign-up was a success
             this.setState({
@@ -252,7 +258,8 @@ class Signup extends Component {
                                         autoComplete="name"
                                         value={this.state.name}
                                         onChange={(e) => this.setState({ name: e.target.value })}
-                                        className={(this.state.errorMessage === "BLANK_FIELD" && this.state.name === "") ? inputErrorClass : ""}
+                                        className={(this.state.errorMessage === "BLANK_FIELD" && this.state.name === "") 
+                                            || this.state.errorMessage === "INVALID_NAME" ? inputErrorClass : ""}
                                     />
                                 </Form.Group>
 

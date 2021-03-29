@@ -192,6 +192,17 @@ function validateEmail(email) {
     return re.test(String(email).toLowerCase());
 }
 
+function isValidName(name) {
+    const re = /^[a-zA-Z]{3,} [a-zA-Z]+$/;
+    return re.test(name);
+}
+
+function isValidPassword(password) {
+    return password.match(/[a-z]+/) && password.match(/[A-Z]+/) &&
+    password.match(/[0-9]+/) &&
+    password.length >= 8;
+}
+
 function hashedURL(email) {
     return new Promise((Resolve, Reject) => {
         const rounds = 10
@@ -238,6 +249,15 @@ app.post('/signup', (req, res) => {
         return res.status(StatusCode.ClientErrorBadRequest).json({ msg: "invalid email address" });
     }
 
+    if (!isValidPassword(password)) {
+        return res.status(StatusCode.ClientErrorBadRequest).json({ msg: "invalid password" });
+    }
+    if (!isValidName(name)) {
+        return res.status(StatusCode.ClientErrorBadRequest).json({ msg: "wrong name format" });
+    }
+
+    
+    
     try {
         userSchema.findOne({ email: email }).then(async (user) => {
             //the email address already exists

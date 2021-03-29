@@ -29,48 +29,10 @@ describe("Side bar Bar UI", () => {
         shallow(<Provider store={store}><Sidebar history={mockedHistory} /></Provider>);
     });
 
-    it('clicking on upload image redirects to /upload', () => {
-        window.location.reload = jest.fn();
-        component.find('.uploadButton').first().simulate('click');
-        expect(mockedHistory.push).toHaveBeenCalledWith('/upload');
-    });
-
-
-    it('clicking on logout button removes the user and redirects to /', () => {
-        window.location.href = jest.fn();
-        jest.spyOn(authAction, 'LogOutUser');
-        component.find('[test-id="logOut"]').first().simulate('click');
-        expect(authAction.LogOutUser).toHaveBeenCalled();
-        expect(window.location.href).toEqual(`${config.dev_server}`);
-    });
-
-    it('clicking on Dashboard redirects to /user', () => {
-        component.find('[test-id="dashboard"]').first().simulate('click');
-        expect(mockedHistory.push).toHaveBeenCalledWith('/user');
-    });
-
 
     it('clicking on Treatment Schedule redirects to /user/myAccount', () => {
         component.find('[test-id="myAccount"]').first().simulate('click');
         expect(mockedHistory.push).toHaveBeenCalledWith('/user/myAccount');
-    });
-
-    it('buttons work when mobile is detected', () => {
-
-        deviceDetect.isMobile = true;
-        jest.spyOn(authAction, 'LogOutUser');
-        component = mount(<Provider store={store}><Sidebar history={mockedHistory} /></Provider>);
-
-        component.find('[test-id="mobile-dashboard"]').first().simulate('click');
-        expect(mockedHistory.push).toHaveBeenCalledWith('/user');
-
-        component.find('[test-id="mobile-myAccount"]').first().simulate('click');
-        expect(mockedHistory.push).toHaveBeenCalledWith('/user/myAccount');
-
-        
-        component.find('[test-id="mobile-logOut"]').first().simulate('click');
-        expect(mockedHistory.push).toHaveBeenCalledWith('/');
-        expect(authAction.LogOutUser).toHaveBeenCalled();
     });
 
     it('path = /user', () => {

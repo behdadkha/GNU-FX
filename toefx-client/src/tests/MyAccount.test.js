@@ -18,7 +18,7 @@ const mockStore = configureMockStore(middlewares);
 describe('MyAccount component', () => {
     
     describe('component initialization', () => {
-
+        
         it('state variables are initialized correctly', () => {
             const mockedHistory = { push: jest.fn() }
             Axios.get = jest.fn(() => Promise.resolve());
@@ -27,10 +27,8 @@ describe('MyAccount component', () => {
             component = component.find(MyAccount).children();
 
             expect(component.state('email')).toBe("");
-            expect(component.state('age')).toBe(0);
             expect(component.state('imageUrls')).toEqual([]);
-            expect(component.state('toeData')).toEqual([]);
-            expect(component.state('showLeftFoot')).toBe(true);
+            expect(component.state('toeData')).toEqual({"feet": [{}, {}]});
         })
 
         it('requests the data from the server', () => {
@@ -64,62 +62,84 @@ describe('MyAccount component', () => {
             const store = mockStore({ auth: { isAuth: true, user: { name: "tester" } } });
             let component = mount(<Provider store={store}><MyAccount history={mockedHistory} /></Provider>);
             component = component.find(MyAccount).children();
-            component.instance().viewFoot(true);
+            component.instance().viewFoot(1);
 
-            expect(component.state('showLeftFoot')).toEqual(true);
+            expect(component.state('selectedFootIndex')).toEqual(1);
         })
 
     })
 
     describe('deleteImage method', () => {
+        
+        let component;
+
         afterEach(() => {
             Axios.get.mockRestore();
         });
-        it('calls Axios with the correct data', () => {
+
+        beforeEach(() => {
             window.location.reload = jest.fn();
             Axios.get = jest.fn(() => Promise.resolve());
             const mockedHistory = { push: jest.fn() }
             const store = mockStore({ auth: { isAuth: true, user: { name: "tester" } } });
-            let component = mount(<Provider store={store}><MyAccount history={mockedHistory} /></Provider>);
+            component = mount(<Provider store={store}><MyAccount history={mockedHistory} /></Provider>);
             component = component.find(MyAccount).children();
-            component.instance().deleteImage("firtImage", 0, 2, 0);
-
-            expect(Axios.get).toHaveBeenCalledWith(`${config.dev_server}/deleteImage?footIndex=${0}&toeIndex=${2}&imageIndex=${0}&imageName=firtImage`);
+            
+        });
+        it('calls Axios with the correct data', () => {
+            component.setState({
+                toDeleteInfo: {
+                    selectedFootIndex: 0,
+                    toeIndex: 2,
+                    imageIndex: 0,
+                    imageName: "firstImage"
+                }
+            })
+            component.instance().deleteImage();
+            expect(Axios.get).toHaveBeenNthCalledWith(2,`${config.dev_server}/deleteImage?footIndex=${0}&toeIndex=${2}&imageIndex=${0}&imageName=firstImage`);
         })
 
         it('selectedFootIndex = 10 out of range', () => {
-            window.location.reload = jest.fn();
-            Axios.get = jest.fn(() => Promise.resolve());
-            const mockedHistory = { push: jest.fn() }
-            const store = mockStore({ auth: { isAuth: true, user: { name: "tester" } } });
-            let component = mount(<Provider store={store}><MyAccount history={mockedHistory} /></Provider>);
-            component = component.find(MyAccount).children();
-            component.instance().deleteImage("firtImage", 0, 10, 0);
-
-            expect(window.location.reload).toHaveBeenCalledTimes(0)
+            component.setState({
+                toDeleteInfo: {
+                    selectedFootIndex: 0,
+                    toeIndex: 10,
+                    imageIndex: 0,
+                    imageName: "firstImage"
+                }
+            })
+            component.instance().deleteImage();
+            expect(component.instance).toThrow();
         })
 
         it('toeIndex = 10 and selectedFootIndex = 9 out of range', () => {
-            window.location.reload = jest.fn();
-            Axios.get = jest.fn(() => Promise.resolve());
-            const mockedHistory = { push: jest.fn() }
-            const store = mockStore({ auth: { isAuth: true, user: { name: "tester" } } });
-            let component = mount(<Provider store={store}><MyAccount history={mockedHistory} /></Provider>);
-            component = component.find(MyAccount).children();
-            component.instance().deleteImage("firtImage", 0, 10, 0);
+            component.setState({
+                toDeleteInfo: {
+                    selectedFootIndex: 9,
+                    toeIndex: 10,
+                    imageIndex: 0,
+                    imageName: "firstImage"
+                }
+            })
 
-            expect(window.location.reload).toHaveBeenCalledTimes(0)
+            component.instance().deleteImage();
+            expect(component.instance).toThrow();
         })
 
-        it('server rejects', () => {
+        it('on server reject', () => {
             window.location.reload = jest.fn();
             Axios.get = jest.fn();
             Axios.get.mockRejectedValueOnce();
-            const mockedHistory = { push: jest.fn() }
-            const store = mockStore({ auth: { isAuth: true, user: { name: "tester" } } });
-            let component = mount(<Provider store={store}><MyAccount history={mockedHistory} /></Provider>);
-            component = component.find(MyAccount).children();
-            component.instance().deleteImage("firtImage", 0, 1, 0);
+            component.setState({
+                toDeleteInfo: {
+                    selectedFootIndex: 9,
+                    toeIndex: 10,
+                    imageIndex: 0,
+                    imageName: "firstImage"
+                }
+            })
+            component.instance().deleteImage();
+            expect(component.instance).toThrow();
             
         })
     })
@@ -134,31 +154,13 @@ describe('MyAccount component', () => {
             let component = mount(<Provider store={store}><MyAccount history={mockedHistory} /></Provider>);
             component = component.find(MyAccount).children();
             jest.spyOn(utils, 'GetImageURLByName');
-            jest.spyOn(utils, 'GetToeName');
+            jest.spyOn(utils, 'GetToeSymbolImage');
             component.setState({imageUrls: [{imageName: "this.png"}]});
-            component.instance().printUploadedImage(1 ,{images: [{name: "this.png", date: "2020-11-20", fungalCoverage: "2%"}]}, 1);
+            component.instance().printUploadedImage(1, true, "imagename", "2020-11-20", "10%",1);
 
 
             expect(utils.GetImageURLByName).toHaveBeenCalled();
-            expect(utils.GetToeName).toHaveBeenCalled();
-        })
-
-        it('invalid date is given', () => {
-            
-            window.location.reload = jest.fn();
-            Axios.get = jest.fn(() => Promise.resolve());
-            const mockedHistory = { push: jest.fn() }
-            const store = mockStore({ auth: { isAuth: true, user: { name: "tester" } } });
-            let component = mount(<Provider store={store}><MyAccount history={mockedHistory} /></Provider>);
-            component = component.find(MyAccount).children();
-            jest.spyOn(utils, 'GetImageURLByName');
-            jest.spyOn(utils, 'GetToeName');
-            component.setState({imageUrls: [{imageName: "this.png"}]});
-            component.instance().printUploadedImage(1 ,{images: [{name: "this.png", date: "2020-11-20TD", fungalCoverage: "2%"}]}, 1);
-
-
-            expect(utils.GetImageURLByName).toHaveBeenCalled();
-            expect(utils.GetToeName).toHaveBeenCalled();
+            expect(utils.GetToeSymbolImage).toHaveBeenCalled();
         })
         
     })

@@ -123,13 +123,6 @@ describe("Testing componentDidMount", () => {
         mockedHistory = { push: jest.fn() }
     });
 
-    it("redirects to the main page if not logged in", () => {
-        const store = mockStore({ auth: { isAuth: false }, foot: { selectedFoot: 0 } })
-        component = mount(<Provider store={store}><User history={mockedHistory} /></Provider>);
-
-        expect(mockedHistory.push).toHaveBeenCalledWith('/login');
-    });
-
     it("should call redux store to get toe data and images if currently dont exist", (done) => {
         //const stores = mockStore({ auth: { isAuth: true }, foot: {selectedFoot: 0, images: [], toeData: []} })
         Axios.get = jest.fn(() => Promise.resolve({data: []}));

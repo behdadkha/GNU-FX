@@ -5,7 +5,7 @@
 import React, {Component} from "react";
 import {Navbar, Nav} from "react-bootstrap";
 import {isMobile} from "react-device-detect";
-import {connect} from "react-redux";
+import {connect} from "react-redux"
 
 import {DoesPageHaveNavBar} from "../Utils";
 import store from "../Redux/store";
@@ -13,6 +13,7 @@ import {LogOutUser} from "../Redux/Actions/authAction";
 import "../componentsStyle/Navbar.css";
 
 class NavigationBar extends Component {
+
     /*
         Prints the list of links visible in the navigation bar for a given page.
     */
@@ -33,7 +34,7 @@ class NavigationBar extends Component {
                     {
                         //Only show upload link on specific pages
                         (window.location.pathname !== "/upload") &&
-                        <Nav.Link href="/upload">
+                        <Nav.Link >
                             Upload
                         </Nav.Link>
                     }

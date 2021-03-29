@@ -197,6 +197,11 @@ export function IsValidEmail(email) {
     return re.test(email);
 }
 
+export function isValidName(name) {
+    const re = /^[a-zA-Z]{3,} [a-zA-Z]+$/;
+    return re.test(name);
+}
+
 /*
     Checks if the user entered a password of required length.
     param password: The password to check.

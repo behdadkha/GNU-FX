@@ -72,41 +72,10 @@ describe("Navigation Bar UI", () => {
             )
         ).toBe(true)
 
-        expect(component.text()).toEqual("ToeFXHomeLog OutDashboard")
+        expect(component.text()).toEqual("HomeDashboardUploadMy AccountLog Out")
 
     });
 
-    it('shows login and sign out when user is not logged in', () => {
-
-        const store = mockStore({ auth: { isAuth: false } })
-        let component = mount(<Provider store={store}><NavigationBar /></Provider>);
-        expect(component.exists("Navbar")).toBe(true);
-        expect(component.contains
-            (
-                <Nav>
-                    <Nav.Link href="/signup">Sign Up</Nav.Link>
-                    <Nav.Link href="/login">Login</Nav.Link>
-                </Nav>
-            )
-        ).toBe(true)
-
-    });
-
-    it('shows login in /signup when not logged in', () => {
-
-        const store = mockStore({ auth: { isAuth: false } })
-        window.location.pathname = "/signup";
-        let component = mount(<Provider store={store}><NavigationBar /></Provider>);
-        expect(component.exists("Navbar")).toBe(true);
-        expect(component.contains
-            (
-                <Nav>
-                    <Nav.Link href="/login">Login</Nav.Link>
-                </Nav>
-            )
-        ).toBe(true)
-
-    });
 
     it('shows signup in /login when not logged in', () => {
 

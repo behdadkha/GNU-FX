@@ -242,12 +242,12 @@ class MyAccount extends Component {
         param fungalCoverage: The fungal coverage percent of the image.
         param imageIndex: The index of the current toe's images for marking editing.
     */
-    printUploadedImage(toeIndex, toe, includeEditButtons = true, name, date, fungalCoverage, imageIndex) {
+    printUploadedImage(toeIndex, includeEditButtons = true, name, date, fungalCoverage, imageIndex) {
         //List is ordered by: Image, Toe Name, Fungal Coverage %, Upload Date
         var columnClass = (!isMobile) ? "uploaded-image-table-col" : "uploaded-image-table-col-mobile";
         var imageColumnClass = (!isMobile) ? "uploaded-image-table-toe-image-col" : "uploaded-image-table-toe-image-col-mobile";
         return (
-            <tr key={toe + ' ' + toeIndex}>
+            <tr key={date + ' ' + toeIndex}>
                 {(!isMobile)
                 ?
                     <td className={imageColumnClass}
@@ -306,7 +306,7 @@ class MyAccount extends Component {
             var toeImageData = toe.images[this.state.toDeleteInfo.imageIndex];
 
             return (
-                this.printUploadedImage(toeIndex, toe, false, //No need to show the delete and rotate buttons in the modal
+                this.printUploadedImage(toeIndex, false, //No need to show the delete and rotate buttons in the modal
                     toeImageData.name, toeImageData.date, toeImageData.fungalCoverage, 0)
             );
         }
@@ -323,7 +323,7 @@ class MyAccount extends Component {
     printUploadedImagesForToe(toeIndex, toe, includeEditButtons = true) {
         return (
             toe.images.map(({ name, date, fungalCoverage }, imageIndex) =>
-                this.printUploadedImage(toeIndex, toe, includeEditButtons,
+                this.printUploadedImage(toeIndex, includeEditButtons,
                     name, date, fungalCoverage, imageIndex)
             )
         )

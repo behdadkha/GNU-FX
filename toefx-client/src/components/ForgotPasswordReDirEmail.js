@@ -35,12 +35,12 @@ export default class ForgotPasswordReDirEmail extends Component {
         super();
 
         this.state = {
-            emailFromUrl: "",
-            email: "",
-            password: "",
-            confirmPassword: "",
-            errorMessage: "",
-            successMessage: "",
+            emailFromUrl: "", //The user's actual email extracted from their recovery link
+            email: "", //The user's input email to make sure they're using their recovery link
+            password: "", //The user's input password
+            confirmPassword: "", //The user's input confirmed password
+            errorMessage: "", //The error message type displayed to the user if any
+            successMessage: "", //The message displayed to the user upon successful password recovery
         };
     }
 

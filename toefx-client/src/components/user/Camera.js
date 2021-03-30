@@ -1,3 +1,7 @@
+/*
+    Class for the mobile image capture.
+*/
+
 import React, { useRef, useEffect, useState } from 'react'
 import { Button } from 'react-bootstrap';
 
@@ -7,7 +11,6 @@ export default function Camera({ overLayImage, onCaptured }) {
     const [captured, setCuptureTrue] = useState(false);
     const videoRef = useRef();
     const canvasRef = useRef();
-
 
     useEffect(() => {
         async function enableVideoStream() {

@@ -16,7 +16,7 @@ import {SetCurrentUser} from "../Redux/Actions/authAction";
 import {getAndSaveImages, getAndSaveToeData} from "../Redux/Actions/setFootAction";
 import {SetAuthHeader, IsValidInput, IsValidEmail} from "../Utils";
 
-import loginImage from '../icons/Login.svg';
+import LoginImage from '../icons/Login.svg';
 import "../componentsStyle/Login.css";
 
 //Error messages displayed to the user
@@ -49,8 +49,7 @@ class Login extends Component {
         Redirects the user to the dashboard if they're already logged in.
     */
     componentDidMount() {
-        if (this.props.auth.isAuth)
-        {
+        if (this.props.auth.isAuth) {
             window.location.href = "/user";
         }
     }
@@ -97,17 +96,17 @@ class Login extends Component {
             })
         }
         catch (response) {
-            if (response.response.response.data !== undefined)
+            if (response.response.data !== undefined) {
                 this.setState({
                     errorMessage: response.response.data.errorMsg,
                 });
+            }
 
             return;
         }
 
         //Process response from server
         if (response.status === StatusCode.SuccessAccepted && response.data) { //The login was a success
-            
             let body = response.data;
 
             const {token} = body; //Extract the token from the response
@@ -122,7 +121,6 @@ class Login extends Component {
 
             //Load all of the user's toe data from the server like fungal coverage
             store.dispatch(getAndSaveToeData());
-
             
             //Redirect to User page
             window.location.href = "/user";
@@ -161,7 +159,7 @@ class Login extends Component {
         return (
             <div>
                 <div className="login-logo-container">
-                    {isMobile? '' : <img src={loginImage} className="login-logo"  alt=""/>} {/*Remove image on mobile*/}
+                    {isMobile? '' : <img src={LoginImage} className="login-logo"  alt=""/>} {/*Remove image on mobile*/}
                 </div>
     
                 <Container className={containerClass} id={"login-container" + (isMobile ? "-mobile" : "")}>

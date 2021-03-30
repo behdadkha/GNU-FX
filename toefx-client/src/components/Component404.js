@@ -4,8 +4,10 @@
 
 import React, {Component} from 'react'
 
-import errorImg from "../icons/error404.png";
+import ErrorImg from "../icons/error404.png";
+
 import "../componentsStyle/Component404.css";
+
 
 export default class Component404 extends Component {
     /*
@@ -15,7 +17,7 @@ export default class Component404 extends Component {
         return (
             <div className="Component404Center">
                 <h1>404 Page not found</h1>
-                <img src={errorImg} className="ErrorImg" alt="404 Error"></img>
+                <img src={ErrorImg} className="ErrorImg" alt="404 Error"></img>
             </div>
         )
     }

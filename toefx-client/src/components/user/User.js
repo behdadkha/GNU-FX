@@ -5,19 +5,16 @@
 import React, { Component } from "react";
 import { Row, Table } from "react-bootstrap";
 import { connect } from "react-redux";
-//import Axios from "axios";
 
-//import { config } from "../../config";
+import ApexChart from './ApexChart';
+import Sidebar from './Sidebar';
 import { GetFootName, GetToeName, GetImageURLByName, LEFT_FOOT_ID, RIGHT_FOOT_ID, TOE_COUNT } from "../../Utils";
 import store from "../../Redux/store";
 import { getAndSaveImages, getAndSaveToeData } from "../../Redux/Actions/setFootAction";
-import ApexChart from './ApexChart';
-import Sidebar from './Sidebar';
 
 import '../../componentsStyle/User.css';
 
-//TODO: Display when user has no images on their account (probably something like "Upload image to get started!")
-//      Should also then change way of determining if no data is loaded yet.
+//TODO: Don't show graph at all when user doesn't have any images uploaded. WOuld look better than what is present currently.
 
 
 class User extends Component {
@@ -52,13 +49,15 @@ class User extends Component {
                 window.location.href = "/login";
                 return
             }
+
             //Redux data gets erased after a refresh, so if the data is gone we need to get it again
             if (this.props.foot.images.length === 0) {
-                try{
+                try {
                     await store.dispatch(getAndSaveImages()); //Load image URLs
                     await store.dispatch(getAndSaveToeData());//Load toe data
-                }catch{
-                    console.log("not working");
+                }
+                catch {
+                    console.log("An error occurred getting the toe data from the server.");
                 }
                 
             }
@@ -69,8 +68,9 @@ class User extends Component {
             },
                 this.organizeDataforGraph //Only call once date is saved to state
             );
-        } catch {
-            console.log("Couldn't get the required data");
+        }
+        catch {
+            console.log("An error occurred getting the toe data from the server.");
         }
     }
 
@@ -101,6 +101,7 @@ class User extends Component {
                     images[toeId].push(imageURL);
                     fungalCoverage[toeId].push(image.fungalCoverage);
                     dates.push(date);
+
                     //Add blank entries to future toes so that lines in the graph can start from their actual date.
                     //ApexChart must take in a single dimension array, so dates have to be stored in order.
                     //Looks like:
@@ -227,6 +228,7 @@ class User extends Component {
                                 <Row className="total-details-title">
                                     {footName} Foot: {dateRange}
                                 </Row>
+
                                 <Table striped bordered size="md" className="total-details-table">
                                     <thead>
                                         <tr>

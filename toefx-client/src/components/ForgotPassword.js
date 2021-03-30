@@ -10,7 +10,8 @@ import Axios from "axios";
 import {config} from "../config";
 import {IsValidEmail} from "../Utils";
 
-import forgotpasswordIcon from "../icons/forgotpassword.svg";
+import ForgotPasswordIcon from "../icons/forgotpassword.svg";
+
 import "../componentsStyle/Login.css"; //Reuse the CSS from the login form
 import "../componentsStyle/ForgotPassword.css";
 
@@ -22,6 +23,7 @@ const gErrorMessages = {
     "UNKNOWN_ERROR": "An unknown error occured."
 }
 
+
 export default class ForgotPassword extends Component {
     /*
         Sets base data for the page.
@@ -30,11 +32,10 @@ export default class ForgotPassword extends Component {
         super();
 
         this.state = {
-            email: "",
-            ValidUser: false,
-            errorMessage: "",
-            successMessage: "",
-            loadingMessage: "",
+            email: "", //The user's input email
+            errorMessage: "", //Error message if the user entered a bad email
+            successMessage: "", //Message displayed when the recovery link has been sent
+            loadingMessage: "", //Message displayed while an email is being sent
         };
     }
 
@@ -72,7 +73,9 @@ export default class ForgotPassword extends Component {
 
             return;
         }
-        console.log(response.data.msg)
+
+        console.log(response.data.msg); //For testing
+
         if (response.data.msg !== "")
             this.setState({
                 loadingMessage: "",
@@ -105,7 +108,7 @@ export default class ForgotPassword extends Component {
         return (
             <div>
                 <div className="login-logo-container">
-                    {isMobile? '' : <img src={forgotpasswordIcon} className="login-logo"  alt=""/>} {/*Remove image on mobile*/}
+                    {isMobile? '' : <img src={ForgotPasswordIcon} className="login-logo"  alt=""/>} {/*Remove image on mobile*/}
                 </div>
 
                 <Container className={containerClass} id={"login-container" + (isMobile ? "-mobile" : "")}>

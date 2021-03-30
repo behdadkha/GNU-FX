@@ -1,6 +1,5 @@
 /*
-    Class for the home page of the app. It is designed to look
-    similar to ToeFX's main website.
+    Class for the home page of the app. It is designed to look similar to ToeFX's main website.
 */
 
 import React, {Component} from "react";
@@ -17,6 +16,7 @@ const gBoxHeadings = [
     "Create Your Storyline",
 ];
 
+//Descriptions in each of the blue boxes on the bottom of the homepage.
 const gBoxDescriptions = [
     <span>
         ToeFX Inc. is a Canadian medical device

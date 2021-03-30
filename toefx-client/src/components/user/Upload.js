@@ -48,7 +48,7 @@ class Upload extends Component {
             selectedToeId: -1, //The index of the toe the user selected
             showChooseFootAndToeError: false, //Helps display and error if either a foot or toe is not chosen
             invalidFileTypeError: false, //Helps display an error if the user tried uploading a non-image file
-            showUploadButton: true,
+            showUploadButton: true, //If false hides the upload button from the user after they already uploaded an image
             alreadySelectedToes: [false, false, false, false, false], //to keep track of the selected toes, to prevent the user from saving multiple toenils as one toe.
             cameraOpen: false, //to see if the camera is still open or not
             showUploadConfirmation: false, // if true shows two button for either accepting the image for upload or discarding it 
@@ -547,7 +547,7 @@ class Upload extends Component {
     */
     setImageKeepClickedToTrue(index) {
         let tempImages = this.state.decomposedImages;
-        
+
         if (this.isValidDecomposedImageIndex(index)){
             tempImages[index].keepClicked = true;
 
@@ -557,8 +557,6 @@ class Upload extends Component {
                     tempImages[i].keepClicked = false;
             }
         }
-                
-        
 
         this.setState({
             decomposedImages: tempImages
@@ -580,7 +578,6 @@ class Upload extends Component {
     /***
         Functions for printing various JSX elements to the page.
     ***/
-
 
     /*
         Prints one of the buttons the user can press to select a toe for a nail image.
@@ -645,8 +642,8 @@ class Upload extends Component {
             View:
 
             Which toe is this?
-            [TOE BUTTONS]
-            Save
+              [TOE BUTTONS]
+                  Save
         */
 
         return (
@@ -894,8 +891,8 @@ class Upload extends Component {
             error = "Invalid file type. Please upload an IMAGE file."
 
 
-        /*for testing purposes
-        // to see how the decomposed images look like without sending any picture to the server
+        /*For testing purposes
+        //To see how the decomposed images look like without sending any picture to the server
         if (this.state.decomposedImages.length === 0) {
             this.setState({
                 decomposedImages: [
@@ -916,9 +913,6 @@ class Upload extends Component {
 
                 <br></br>
                 <br></br>
-
-                {/* Buttons to filter toes 
-                <h3 className="diagnosis-question">Which toe is the image for?</h3>*/}
 
                 {/* Upload Section */}
                 {
@@ -975,7 +969,7 @@ class Upload extends Component {
                                                 Looks Good <span role="img" aria-label="happy emoji">😀</span>
                                             </Button>
                                             <Button className="upload_GoBack_btn" onClick={() => this.handleDiscardUpload()}>
-                                                Go back <span role="img" aria-label="sad emoji">☹️</span>
+                                                Go Back <span role="img" aria-label="sad emoji">☹️</span>
                                             </Button>
                                         </div>
                                         :
@@ -984,7 +978,6 @@ class Upload extends Component {
 
                                 </Col>
                             </Row>
-
 
                             {/* Results of Diagnosis */}
                             <Row>
@@ -1011,7 +1004,8 @@ class Upload extends Component {
                         </Col>
                     ))}
                 </Row>
-                {/* decomposed images */}
+
+                {/* Decomposed Images */}
                 <div className="decomposeImageRow">
                     {
                         (isMobile)
@@ -1026,17 +1020,17 @@ class Upload extends Component {
                                 (imageObj, index) => this.printDecomposedImageDesktop(imageObj, index)
                             )
                     }
-
-
                 </div>
 
                 <Row>
                     {
                         this.state.decomposedImages.length > 0
                             ?
-                            <h5 className="returnToDashBoard_text">Return to <a href="/user">Dashboard</a></h5>
+                                <h5 className="returnToDashBoard_text">
+                                    Return to <a href="/user">Dashboard</a>
+                                </h5>
                             :
-                            ""
+                                ""
                     }
                 </Row>
             </Container>

@@ -14,7 +14,6 @@ import Navbar from "./components/NavigationBar";
 import Signup from "./components/Signup";
 import MyAccount from "./components/user/MyAccount";
 import ResetPassword from "./components/user/ResetPassword";
-import Schedule from "./components/user/Schedule";
 import Upload from "./components/user/Upload";
 import User from "./components/user/User";
 import UserMobile from "./components/user/User-Mobile";
@@ -79,7 +78,6 @@ function App() {
                             <Route path="/user" component={userPath} exact />
                             <Route path="/upload" component={Upload} exact />
                             <Route path="/forgotpassword" component={ForgotPassword} exact />
-                            <Route path="/user/schedule" component={Schedule} exact />
                             <Route path="/user/myAccount" component={MyAccount} exact />
                             <Route path="/user/resetPassword" component={ResetPassword} exact />
                             <Route path="/forgotpassword/*" component={ForgotPasswordReDirEmail} exact/>

@@ -3,8 +3,8 @@
 */
 
 import React, {Component} from 'react'
-import {isMobile} from 'react-device-detect';
 import {Container, Button} from "react-bootstrap";
+import {isMobile} from 'react-device-detect';
 import Axios from 'axios';
 
 import {config} from "../config"
@@ -39,8 +39,7 @@ export default class EmailVerificationReDirEmail extends Component {
             var message = res.data.errorMsg;
             var showLoginButton = true; //Only true when verification is successful
 
-            if (message === "")
-            {
+            if (message === "") {
                 title = "Account Verified";
                 message ="Please continue from the login page.";
                 showLoginButton = true;

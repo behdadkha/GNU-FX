@@ -109,7 +109,6 @@ const extendTimeoutMiddleware = (req, res, next) => {
           if (!res.headersSent) {
             res.writeHead(202);
           }
-          console.log("in here")
           res.write(space);
   
           // Wait another 15 seconds

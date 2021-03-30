@@ -1,3 +1,7 @@
+/*
+    Boilerplate code for starting the server.
+*/
+
 require('dotenv').config({path: __dirname + '/.env'});
 const app = require('./app');
 

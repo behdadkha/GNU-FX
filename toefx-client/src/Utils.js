@@ -203,7 +203,7 @@ export function IsValidEmail(email) {
     param name: The name to check.
     returns: true if the name is valid, false otherwise.
 */
-export function isValidName(name) {
+export function IsValidName(name) {
     const re = /^[a-zA-Z]{3,} [a-zA-Z]+$/;
     return re.test(name);
 }

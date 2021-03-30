@@ -426,8 +426,6 @@ class Upload extends Component {
             if (cameraUsed)
                 this.handleUpload(); //Image taken by camera has already had confirmation, so upload it
         });
-
-        
     }
 
     /*

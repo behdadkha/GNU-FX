@@ -25,7 +25,7 @@ const gErrorMessages = {
     "INVALID_EMAIL": "No account with that email was found.",
     "INVALID_PASSWORD": "That password isn't possible.", 
     "NO_SERVER_CONNECTION": "Couldn't connect to server.",
-    "INVALID_CREDENTIALS": "Incorrect email or password.",
+    "INVALID_CREDENTIALS": "Incorrect password.",
     "UNVERIFIED_ACCOUNT": "Check your email for a link to verify your account.",
     "UNKNOWN_ERROR": "An unknown error has occured."
 }
@@ -95,10 +95,10 @@ class Login extends Component {
                 password: this.state.password
             })
         }
-        catch (response) {
-            if (response.response.data !== undefined) {
+        catch (error) {
+            if (error.response.data !== undefined) {
                 this.setState({
-                    errorMessage: response.response.data.errorMsg,
+                    errorMessage: error.response.data.errorMsg,
                 });
             }
 

@@ -10,7 +10,7 @@ import {connect} from "react-redux";
 import Axios from 'axios';
 
 import {config} from "../config";
-import {IsValidEmail, IsGoodPassword, GetGoodPasswordConfirmations, isValidName} from "../Utils";
+import {IsValidEmail, IsGoodPassword, GetGoodPasswordConfirmations, IsValidName} from "../Utils";
 
 import Healthydrawing from "../icons/MedicalCare.svg";
 
@@ -25,7 +25,8 @@ const gErrorMessages = {
     "INVALID_PASSWORD": "Please enter a valid password.",
     "NO_SERVER_CONNECTION": "Could not connect to server.",
     "ACCOUNT_EXISTS": "That email is already in use.\nPlease choose another.",
-    "INVALID_NAME": "Please enter your first name and last name."
+    "INVALID_NAME": "Please enter your first name and last name.",
+    "UNKNOWN_ERROR": "An unknown error occurred."
 }
 
 //TODO: Error handling for when there's no internet connection.
@@ -85,7 +86,7 @@ class Signup extends Component {
             return; //User didn't enter proper passwords
         }
 
-        if (!isValidName(this.state.name)){
+        if (!IsValidName(this.state.name.trim())){
             this.setState({ errorMessage: "INVALID_NAME"})
             return; //User didn't enter a proper name
         }
@@ -95,14 +96,21 @@ class Signup extends Component {
 
         try {
             response = await Axios.post(`${config.dev_server}/signup`, {
-                name: this.state.name,
+                name: this.state.name.trim(),
                 email: this.state.email.toLowerCase(), //Emails should be interchangeably lowercase and capital
                 password: this.state.password,
                 birthday: this.state.birthday.toJSON().split("T")[0], //Don't include time data
-            })
+            });
         }
-        catch (response) { //No internet connection
-            this.setState({errorMessage: "ACCOUNT_EXISTS"});
+        catch (error) {
+            if (error.response.data !== undefined) {
+                this.setState({
+                    errorMessage: error.response.data.errorMsg,
+                });
+            }
+            else
+                this.setState({errorMessage: "UNKNOWN_ERROR"});
+
             return;
         }
         
@@ -206,7 +214,7 @@ class Signup extends Component {
                                         placeholder="example@gmail.com"
                                         autoComplete="email"
                                         value={this.state.email}
-                                        onChange={(e) => this.setState({ email: e.target.value.trim() })}
+                                        onChange={(e) => this.setState({email: e.target.value.trim()})}
                                         className={(this.state.errorMessage === "BLANK_FIELD" && this.state.email === "")
                                             || this.state.errorMessage === "INVALID_EMAIL"
                                             || this.state.errorMessage === "ACCOUNT_EXISTS" ? inputErrorClass : ""}
@@ -224,7 +232,7 @@ class Signup extends Component {
                                         placeholder="Example123"
                                         autoComplete="new-password"
                                         value={this.state.password}
-                                        onChange={(e) => { this.setState({ password: e.target.value }) }}
+                                        onChange={(e) => {this.setState({password: e.target.value})}}
                                         className={(this.state.errorMessage === "BLANK_FIELD" && this.state.password === "")
                                             || this.state.errorMessage === "INVALID_PASSWORD"
                                             || this.state.errorMessage === "PASSWORD_MISMATCH" ? inputErrorClass : ""}
@@ -257,7 +265,7 @@ class Signup extends Component {
                                         placeholder="Bob Smith"
                                         autoComplete="name"
                                         value={this.state.name}
-                                        onChange={(e) => this.setState({ name: e.target.value })}
+                                        onChange={(e) => this.setState({name: e.target.value.trimLeft()}) /*Only trim off the front*/}
                                         className={(this.state.errorMessage === "BLANK_FIELD" && this.state.name === "") 
                                             || this.state.errorMessage === "INVALID_NAME" ? inputErrorClass : ""}
                                     />
@@ -271,7 +279,7 @@ class Signup extends Component {
                                         + ((this.state.errorMessage === "BLANK_FIELD" && this.state.birthday === "") ? inputErrorClass : "")}
                                         selected={this.state.birthday}
                                         value={this.state.birthday}
-                                        onChange={(date) => this.setState({ birthday: date })}
+                                        onChange={(date) => this.setState({birthday: date})}
                                         dateFormat="MMMM d, yyyy"
                                         maxDate={new Date()}
                                         calendarIcon={null}

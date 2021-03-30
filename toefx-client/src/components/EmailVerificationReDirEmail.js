@@ -11,6 +11,13 @@ import {config} from "../config"
 
 import "../componentsStyle/SignUp.css"; //Reuse CSS from sign up form
 
+//Error messages displayed to the user
+const gErrorMessages = {
+    "": "",
+    "INVALID_EMAIL": "The email address does not exist in the database.",
+    "INVALID_LINK": "The account verification link is invalid or has already been used.",
+}
+
 
 export default class EmailVerificationReDirEmail extends Component {
     /*
@@ -33,7 +40,7 @@ export default class EmailVerificationReDirEmail extends Component {
         var path = window.location.href; //The encrypted link is used to verify the user
 
         Axios.post(`${config.dev_server}/emailverification`, {
-            url : path
+            url: path
         }).then((res) => {
             var title = "Verification Error"; //Invalid unless specified otherwise
             var message = res.data.errorMsg;
@@ -41,13 +48,13 @@ export default class EmailVerificationReDirEmail extends Component {
 
             if (message === "") {
                 title = "Account Verified";
-                message ="Please continue from the login page.";
+                message = "Please continue from the login page.";
                 showLoginButton = true;
             }
 
             this.setState({
                 title: title,
-                message: message,
+                message: gErrorMessages[message],
                 showLoginButton: showLoginButton,
             });
         })

@@ -1,3 +1,7 @@
+/*
+    Various configuration details for the server.
+*/
+
 var os = require("os");
 
 const config = {

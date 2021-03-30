@@ -99,6 +99,25 @@ function hashPassword(password, hashRounds) {
 }
 
 /*
+    Hashes an email into a URL.
+    param email: The email to hash.
+    param route: The route the hashing is for (likely emailverification or forgotpassword).
+    returns: The hashed link as a promise.
+*/
+function hashedURL(email, route) {
+    return new Promise((Resolve, Reject) => {
+        const rounds = 10; //10 rounds of hashing
+
+        bcrypt.genSalt(rounds, (err, salt) => {
+            bcrypt.hash(email, salt, (err, hash) => {
+                //e.g url: http://localhost:3000/emailverification/hashedemailaddress
+                Resolve(`${config.dev_client}/${route}/${hash}`);
+            });
+        });
+    });
+}
+
+/*
     Runs some server command.
     param command: The command to run on the server.
     returns: A promise with the command line output. Resolved if the command is run successfully.
@@ -209,6 +228,7 @@ module.exports.loadUserObject = loadUserObject;
 module.exports.runCommand = runCommand;
 module.exports.getToeData = getToeData;
 module.exports.hashPassword = hashPassword;
+module.exports.hashedURL = hashedURL;
 module.exports.emptyFeet = emptyFeet;
 module.exports.sendEmail = sendEmail;
 module.exports.moveImageToUserImages = moveImageToUserImages;

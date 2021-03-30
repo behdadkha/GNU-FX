@@ -4,6 +4,7 @@
 
 const express = require('express');
 const path = require('path');
+const { StatusCode } = require('status-code-enum');
 const uploadImage = express.Router();
 const utils = require('../utils');
 let toeData = require('../database/toe-dataSchema');
@@ -44,13 +45,13 @@ function SaveToeData(userId, date, footIndex, toeIndex, imageName, fungalCoverag
                 }
                 else {
                     if (res !== undefined) {
-                        return res.status(400).json({ msg: "Oops! user does not exist in the toe database" })
+                        return res.status(StatusCode.ClientErrorBadRequest).json({ msg: "Oops! user does not exist in the toe database" })
                     }
                 }
             });
         }
         catch {
-            return res.status(400).json({ msg: "Something went wrong, couldnt save the toe data" })
+            return res.status(StatusCode.ClientErrorBadRequest).json({ msg: "Something went wrong, couldnt save the toe data" })
         }
     });
 }
@@ -126,6 +127,7 @@ uploadImage.use(extendTimeoutMiddleware)
 /*
     Endpoint: /upload/decompose
     Using AI/actual/Interface.py, it extracts the toe nails from the uploaded image and saves it in images/"userid"
+    body param headers.authorization: The user's token.
     returns as the response: the name of the created images
 */
 uploadImage.route('/decompose').get(async (req, res) => {
@@ -179,6 +181,7 @@ uploadImage.route('/decompose').get(async (req, res) => {
     Endpoint: /upload/save
     Saves an uploaded image with data to the database.
     body param imageName: The name of the image to be saved
+               headers.authorization: The user's token.
                foot: The foot index the image is for, 0 or 1.
                toe: The toe index the image is for, 0 to 4
     param res: The object to store and send the result in.
@@ -190,9 +193,11 @@ uploadImage.route('/save').post(async (req, res) => {
 
     //Prep the data to be saved in the toe-data collection 
     var date = new Date(); //Use the current date as the image's date
-    if (req.body.foot === undefined || req.body.toe === undefined) { return res.status(400).json({ msg: "Foot or toe is undefined" }) }
+    if (req.body.foot === undefined || req.body.toe === undefined)
+        return res.status(StatusCode.ClientErrorBadRequest).json({ msg: "Foot or toe is undefined" });
+    
     var datetoString = date.toString();
-    var footIndex = parseInt(req.body.foot)
+    var footIndex = parseInt(req.body.foot);
     var toeIndex = parseInt(req.body.toe);
     var imageName = req.body.imageName;
     var fungalCoverage = req.body.fungalCoverage;
@@ -207,9 +212,8 @@ uploadImage.route('/save').post(async (req, res) => {
     Endpoint: /upload/deleteImage
     Deletes decomposed images that user decided not to keep.
         Note: this is different from myAccount/delete
-    param req: JSON object with the following member:
-               body: JSON object with the following member:
-                     images: The names of the images to delete.
+    body param headers.authorization: The user's token.
+    body param images: The names of the images to delete.
     param res: The object to store and send the result in.
     returns as the response: A status code along with an insignifcant result message.
 */
@@ -222,7 +226,7 @@ uploadImage.route('/deleteImage').delete(async (req, res) => {
 
         let imageNames = req.query.images.split(",");
         if (imageNames.length <= 0) //No images to actually delete
-            return res.status(400).json({msg: "No images to delete or incorrect image format."});
+            return res.status(StatusCode.ClientErrorBadRequest).json({msg: "No images to delete or incorrect image format."});
 
         for (let i = 0; i < imageNames.length; ++i) {
             let imageName = imageNames[i];
@@ -242,7 +246,7 @@ uploadImage.route('/deleteImage').delete(async (req, res) => {
         res.json({msg: "successful"});
     }
     catch {
-        res.status(400).json({msg: "Error deleting the images."});
+        res.status(StatusCode.ClientErrorBadRequest).json({msg: "Error deleting the images."});
     }
 });
 
@@ -253,15 +257,15 @@ uploadImage.route('/deleteImage').delete(async (req, res) => {
                files: JSON object with the following member:
                     file: The image to upload.
                body: JSON object with the following member:
+                    headers.authorization: The user's token.
                     foot: The foot index the image is for, 0 or 1.
                     toe: The toe index the image is for, 0 to 4.
-    param res: The object to store and send the result in.
-    returns: The reponse being an object {msg: uploaded} for success.
+    returns: In res, the reponse being an object {msg: uploaded} for success.
 */
 uploadImage.route('/loggedin').post(async (req, res) => {
     try {
         if (req.files.file === undefined)
-            return res.status(400).json({msg: "Oops, can't read the image"});
+            return res.status(StatusCode.ClientErrorBadRequest).json({msg: "Oops, can't read the image"});
 
         const image = req.files.file;
         var userObject = await utils.loadUserObject(req, res);
@@ -283,10 +287,10 @@ uploadImage.route('/loggedin').post(async (req, res) => {
         //Move it to the database
         utils.moveImageToUserImages(image, userId, imageName, res).then(() => {
             return res.send({msg: "uploaded"})
-        }).catch(() => res.status(500).send({msg: "Error occured"}));
+        }).catch(() => res.status(StatusCode.ServerErrorInternal).send({msg: "Error occured"}));
     }
     catch {
-        return res.status(400).json({msg: "Invalid token"});
+        return res.status(StatusCode.ClientErrorBadRequest).json({msg: "Invalid token"});
     }
 })
 

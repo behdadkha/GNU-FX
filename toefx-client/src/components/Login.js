@@ -97,7 +97,7 @@ class Login extends Component {
             })
         }
         catch (response) {
-            if (response.response.response.data !== undefined)
+            if (response.data !== undefined)
                 this.setState({
                     errorMessage: response.response.data.errorMsg,
                 });

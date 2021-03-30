@@ -85,6 +85,7 @@
     overflow: hidden;
     margin-left: 3%;
     width: 95%;
+    max-width: 400px;
 }
 @media (min-width: 1000px) {
     .decomposedRow_mobile {
@@ -103,23 +104,11 @@
     float: left;
     width: 150px;
     height: 100%;
+    display: inline;
 }
 
 .decomposeImageRow {
-
-}
-
-
-@media (max-width: 400px) {
-    .decomposed_Img_Div_mobile {
-        display: inline;
-    }
-    .decomposeImageRow {
-        display: inline;
-    }
-    .decomposedRow_mobile {
-        max-width: 400px;
-    }
+    display: inline;
 }
 
 

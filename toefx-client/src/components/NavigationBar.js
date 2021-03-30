@@ -34,7 +34,7 @@ class NavigationBar extends Component {
                     {
                         //Only show upload link on specific pages
                         (window.location.pathname !== "/upload") &&
-                        <Nav.Link >
+                        <Nav.Link href="/upload">
                             Upload
                         </Nav.Link>
                     }

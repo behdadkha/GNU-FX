@@ -30,7 +30,6 @@ describe("Signup states", () => {
         expect(component.state('email')).toEqual("");
         expect(component.state('password')).toEqual("");
         expect(component.state('confirmedPassword')).toEqual("");
-        expect(component.state('age')).toEqual("");
         expect(component.state('errorMessage')).toEqual("");
         expect(component.state('birthday')).toEqual("");
         expect(component.state('successMessage')).toEqual("");

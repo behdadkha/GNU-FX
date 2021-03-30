@@ -422,10 +422,12 @@ class Upload extends Component {
         if (cameraUsed)
             newStateItems["cameraOpen"] = false; //Close the camera
 
-        this.setState(newStateItems);
+        this.setState(newStateItems, () => {
+            if (cameraUsed)
+                this.handleUpload(); //Image taken by camera has already had confirmation, so upload it
+        });
 
-        if (cameraUsed)
-            this.handleUpload(); //Image taken by camera has already had confirmation, so upload it
+        
     }
 
     /*
@@ -883,11 +885,11 @@ class Upload extends Component {
         if (this.state.decomposedImages.length === 0) {
             this.setState({
                 decomposedImages: [
-                    {name: "1.PNG", url:galleryIcon, color: [255,0,0], cords: [20,30], keepClicked: false, saved: false},
-                    {name: "2.PNG", url:rotateLeft_icon, color: [255,255,0], cords: [40,10], keepClicked: false, saved: false},
-                    {name: "2.PNG", url:rotateLeft_icon, color: [255,255,0], cords: [40,10], keepClicked: false, saved: false},
-                    {name: "2.PNG", url:rotateLeft_icon, color: [255,255,0], cords: [40,10], keepClicked: false, saved: false},
-                    {name: "2.PNG", url:rotateLeft_icon, color: [255,255,0], cords: [40,10], keepClicked: false, saved: false}
+                    {name: "1.PNG", url:firstImg, color: [255,0,0], cords: [20,30], keepClicked: false, saved: false},
+                    {name: "2.PNG", url:secondImg, color: [255,255,0], cords: [40,10], keepClicked: false, saved: false},
+                    {name: "3.PNG", url:thirdImg, color: [255,255,0], cords: [40,10], keepClicked: false, saved: false},
+                    {name: "4.PNG", url:fourthImg, color: [255,255,0], cords: [40,10], keepClicked: false, saved: false},
+                  //  {name: "5.PNG", url:firstImg, color: [255,255,0], cords: [40,10], keepClicked: false, saved: false}
                 ]
             })
         }*/

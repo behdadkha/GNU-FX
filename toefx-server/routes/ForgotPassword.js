@@ -8,23 +8,57 @@ const utils = require('../utils');
 const userSchema = require('../database/userSchema');
 const config = require('../config');
 const bcrypt = require('bcryptjs');
-const nodemailer = require("nodemailer");
+
+
+/*
+    Hashes an email for a password recovery link.
+    param email: The user's email.
+    returns: The hashed form of the user's email.
+*/
 function hashedURL(email) {
     return new Promise((Resolve, Reject) => {
-        const rounds = 10
+        const rounds = 10; //Hash for 10 rounds
+
         bcrypt.genSalt(rounds, (err, salt) => {
             bcrypt.hash(email, salt, (err, hash) => {
-                // e.g url: http://localhost:3000/hashedemailaddress
+                //e.g url: http://localhost:3000/hashedemailaddress
                 Resolve(`${config.dev_client}/forgotpassword/${hash}`)
             });
         });
     });
-
 }
+
+/*
+    Checks if the user entered to correct email for the recovery link.
+    param hashedEmail: The email the recovery link was generated for.
+    param textEmail: The email the user entered.
+    returns: A resolution to a promise with whether or not the email was valid.
+*/
+function checkEmails(hashedEmail, textEmail) {
+    return new Promise((Resolve, Reject) => {
+        bcrypt.compare(textEmail, hashedEmail, (err, result) => { //Hash the input email and compare it
+            if (result)
+                Resolve("VALID_EMAIL")
+            else
+                Resolve("INVALID_EMAIL")
+        })
+    });
+}
+
+/*
+    Endpoint: /forgotpassword
+    Sends an email to a user with a link to reset their password.
+    param req: JSON object with the following member:
+               body: JSON object with the following member:
+                     email: The email of the user who requested the password reset.
+          res: The JSON object to send the result in.
+    returns: In res, an object with the following member:
+                msg: An error type if any occurred.
+*/
 forgotPasswordRoutes.route('').post((req, res) => {
-    userSchema.findOne({ email: req.body.email }, async (err, user) => {
+    userSchema.findOne({email: req.body.email }, async (err, user) => {
         if (err || user === null) {
-            return res.json({ msg: "INVALID_EMAIL" })
+            return res.json({msg: "INVALID_EMAIL"})
         }
         else {
             const email = req.body.email
@@ -38,36 +72,16 @@ forgotPasswordRoutes.route('').post((req, res) => {
 })
 
 /*
-    Hashes the given password.
-    Param password: The text that needs to be hashed.
-    Param hashRounds: The number of rounds the hash function should run.
-    returns: A promise with the hash if resolved.
+    Endpoint: /forgotpassword/checkEmails
+    Changes a user's forgotten password after they submitted a request to change it.
+    param req: JSON object with the following member:
+               body: JSON object with the following members:
+                     emailFromURL: The email the recovery link was generated for.
+                     emailInput: The email the user entered.
+                     password: The new password the user entered.
+    returns: In res, an object with the following member:
+                msg: An error type if any occurred.
 */
-function hashPassword(password, hashRounds) {
-    return new Promise((resolve, reject) => {
-        bcrypt.genSalt(hashRounds, (error, salt) => {
-            bcrypt.hash(password, salt, (error, hash) => {
-                if (error)
-                    throw error;
-
-                //Return the hashed password
-                resolve(hash);
-            });
-        });
-    });
-}
-
-function checkEmails(hashedEmail, textEmail) {
-    return new Promise((Resolve, Reject) => {
-        bcrypt.compare(textEmail, hashedEmail, (err, result) => {
-            if (result)
-                Resolve("VALID_EMAIL")
-            else
-                Resolve("INVALID_EMAIL")
-        })
-    });
-}
-
 forgotPasswordRoutes.route('/checkEmails').post( async (req, res) => {
     const response = await checkEmails(req.body.emailFromURL, req.body.emailInput);
     const password = req.body.password;
@@ -82,7 +96,7 @@ forgotPasswordRoutes.route('/checkEmails').post( async (req, res) => {
 
                 //Hash the password
                 const rounds = 10; //10 rounds of hashing
-                user.password = await hashPassword(password, rounds);
+                user.password = await utils.hashPassword(password, rounds);
 
                 //Save the new encrypted password for security reasons
                 user.save().then(() => {

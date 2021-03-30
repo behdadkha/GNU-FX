@@ -32,39 +32,7 @@ describe('/user/getUserInfo endpoint', () => {
     });
 
 });
-/*
-describe('/user/getschedule endpoint', () => {
-    it('Should fail if authorization header is not set', async done => {
-        const res = await request(app).get('/user/getschedule');
-        expect(res.statusCode).toEqual(400);
-        expect(res.body.msg).toBe("An error occurred while attempting to retrieve a user's schedule. Possibly due to an invalid user.");
-        done();
-    });
 
-    it('Should pass if authorization header is set', async done => {
-        const res = await request(app)
-            .get('/user/getschedule')
-            .set('Authorization', TestAuthToken);
-        expect(res.statusCode).toEqual(200);
-        done();
-    });
-
-    it('Should return the user schedule based on the provided token', async done => {
-        const TestComment = "first treatment";
-        const TestDate = "2020-11-01";
-        const TestDoctor = "My Doctor";
-        const res = await request(app)
-            .get('/user/getschedule')
-            .set('Authorization', TestAuthToken);
-        expect(res.statusCode).toEqual(200);
-        expect(res.body[0].comment).toBe(TestComment);
-        expect(res.body[0].date).toBe(TestDate);
-        expect(res.body[0].doctor).toBe(TestDoctor);
-        done();
-    });
-
-});
-*/
 describe('/user/resetPassword endpoint', () => {
     it('Should fail if currentPassword is empty', async done => {
         const res = await request(app)

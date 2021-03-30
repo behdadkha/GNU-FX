@@ -55,17 +55,6 @@ describe('/upload/loggedin endpoint', () => {
     });
 });
 
-
-describe('/upload/notloggedin endpoint', () => {
-
-    it('works', async () => {
-        
-        const res = await request(app).post('/upload/loggedin').send({files: {file: {name: "asdf"}}});
-        expect(res.statusCode).toEqual(400);
-        expect(res.body.msg).toBe("Invalid token");
-
-    });
-});
 var Usavetoedata = rewire('../routes/uploadImage.js')
 var uploadImage = rewire('../utils.js');
 describe('SaveToeData function',() => {

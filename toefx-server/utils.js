@@ -8,6 +8,7 @@ const userSchema = require('./database/userSchema');
 const toeDataSchema = require('./database/toe-dataSchema');
 const config = require('./config');
 const nodemailer = require("nodemailer");
+const bcrypt = require('bcryptjs');
 
 /*
     Finds a user object in the database based on a userId.
@@ -73,6 +74,26 @@ function getToeData(userId) {
                 resolve(data);
             else
                 reject("Data not found");
+        });
+    });
+}
+
+/*
+    Hashes the given password.
+    Param password: The text that needs to be hashed.
+    Param hashRounds: The number of rounds the hash function should run.
+    returns: A promise with the hash if resolved.
+*/
+function hashPassword(password, hashRounds) {
+    return new Promise((resolve, reject) => {
+        bcrypt.genSalt(hashRounds, (error, salt) => {
+            bcrypt.hash(password, salt, (error, hash) => {
+                if (error)
+                    throw error;
+
+                //Return the hashed password
+                resolve(hash);
+            });
         });
     });
 }
@@ -183,10 +204,11 @@ function PrintImageMovementError(error) {
     console.log(error);
 }
 
-//Exports
+//Function Exports
 module.exports.loadUserObject = loadUserObject;
 module.exports.runCommand = runCommand;
 module.exports.getToeData = getToeData;
+module.exports.hashPassword = hashPassword;
 module.exports.emptyFeet = emptyFeet;
 module.exports.sendEmail = sendEmail;
 module.exports.moveImageToUserImages = moveImageToUserImages;

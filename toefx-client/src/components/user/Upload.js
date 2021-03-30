@@ -55,7 +55,6 @@ class Upload extends Component {
         };
 
         this.uploadedImgRef = React.createRef(); //Reference to the uploaded image, used for rotating the image
-        this.validateImage = this.validateImage.bind(this); //Save for later use
     }
 
 
@@ -338,18 +337,6 @@ class Upload extends Component {
     */
     printFileValidationErrorToConsole(error) {
         console.log(`Error validating file: ${error}`);
-    }
-    
-    /*
-        Checks if the image is a valid image of a toe.
-        param file: The file to check.
-    */
-    validateImage(file) {
-        this.setState({tempfileName: file}); //Used later if the user decides to run a diagnosis
-
-        axios.get(`${config.dev_server}/imagevalidation/loggedin`)
-            .then(res => this.processImageValidationResult(res))
-            .catch((error) => this.printFileValidationErrorToConsole(error));
     }
     
     /*

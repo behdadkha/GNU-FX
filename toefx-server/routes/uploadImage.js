@@ -1,3 +1,7 @@
+/*
+    Routes for facilitating image uploads by the user.
+*/
+
 const express = require('express');
 const path = require('path');
 const uploadImage = express.Router();
@@ -18,7 +22,7 @@ uploadImage.use(cors())
     param toeIndex: 0 to 4 referring to the toes.["Big Toe", "Index Toe", "Middle Toe", "Fourth Toe", "Little Toe"]
     param imageName: The name of the image to be saved in DB. Must be the saved as the image's actual name.
 */
-function SaveToeData(userId, date, footIndex, toeIndex, imageName, fungalCoverage, res = undefined) {
+function SaveToeData(userId, date, footIndex, toeIndex, imageName, fungalCoverage, res=undefined) {
     return new Promise((resolve, reject) => {
         try {
             //Find the user's images in the database and add to them
@@ -49,42 +53,6 @@ function SaveToeData(userId, date, footIndex, toeIndex, imageName, fungalCoverag
             return res.status(400).json({ msg: "Something went wrong, couldnt save the toe data" })
         }
     });
-
-
-}
-
-
-
-
-
-/*
-    Creates folder /tempImages and stores the uploaded image.
-    This is only used for user's who are not logged in.
-    Param image: the image file.
-    Param ImageName: the name of the image to move.
-    returns A promise. Resolved if image is successfully saved.
-*/
-function moveImageToTempFolder(image, imageName) {
-    return new Promise((resolve, reject) => {
-        try {
-            //Create a temp folder if it doesnt already exist
-            if (!fs.existsSync('./tempImages'))
-                fs.mkdirSync('./tempImages');
-
-            image.mv(`./tempImages/${imageName}`, (err) => { //The move image command
-                if (err) {
-                    utils.PrintImageMovementError(error);
-                    reject();
-                }
-                else {
-                    resolve();
-                }
-            });
-        }
-        catch (e) {
-            utils.PrintImageMovementError(e);
-        }
-    });
 }
 
 /*
@@ -97,6 +65,7 @@ function GetImageExtension(image) {
     var extension = (partsOfImageName.length > 1) ? partsOfImageName[partsOfImageName.length - 1] : "jpg";
     return extension;
 }
+
 /*
     Extends the heroku request timeout (fix for h12)
 */
@@ -150,7 +119,7 @@ const extendTimeoutMiddleware = (req, res, next) => {
   
     waitAndSend();
     next();
-  };
+};
 
 uploadImage.use(extendTimeoutMiddleware)
 
@@ -195,30 +164,28 @@ uploadImage.route('/decompose').get(async (req, res) => {
             user.images.push(path.basename(decomposedNails[i][0]));
         }
 
-
         //need to sort from left to right
         decomposedImages.sort((a, b) => a.cord[0] - b.cord[0])
         console.log(decomposedImages);
         user.save();
         res.end(JSON.stringify({ imagesInfo: decomposedImages, CLRImage: newCLRImageName }));
     }
-    catch{
+    catch {
         res.end(JSON.stringify({ imagesInfo: [], CLRImage: "" }));
     }
-    
-
 });
 
 /*
     Endpoint: /upload/save
-    body param imageName: the name of the image to be saved
+    Saves an uploaded image with data to the database.
+    body param imageName: The name of the image to be saved
                foot: The foot index the image is for, 0 or 1.
                toe: The toe index the image is for, 0 to 4
+    param res: The object to store and send the result in.
+    returns as the response: A status code along with an insignifcant result message.
 */
 uploadImage.route('/save').post(async (req, res) => {
-
     var userObject = await utils.loadUserObject(req, res);
-    var user = userObject.user;
     var userId = userObject.id;
 
     //Prep the data to be saved in the toe-data collection 
@@ -234,64 +201,67 @@ uploadImage.route('/save').post(async (req, res) => {
     SaveToeData(userId, datetoString, footIndex, toeIndex, imageName, fungalCoverage, res).then(() => {
         res.json({ msg: "successful" });
     });
-
-    
 });
 
 /*
-    note: this is different from myAccount/delete
-    it deletes the decomposed images that user did not keep
-    body param images: the name of the images to delete
+    Endpoint: /upload/deleteImage
+    Deletes decomposed images that user decided not to keep.
+        Note: this is different from myAccount/delete
+    param req: JSON object with the following member:
+               body: JSON object with the following member:
+                     images: The names of the images to delete.
+    param res: The object to store and send the result in.
+    returns as the response: A status code along with an insignifcant result message.
 */
-
 uploadImage.route('/deleteImage').delete(async (req, res) => {
-
     try {
         var userObject = await utils.loadUserObject(req, res);
         var user = userObject.user;
         var userId = userObject.id;
-        
         console.log(req.query.images);
-        let imageNames = req.query.images.split(",");
-        if( imageNames.length <= 0) 
-            return res.status(400).json({ msg: "could not delete the images" });
 
-        for (let i = 0; i < imageNames.length; i++) {
+        let imageNames = req.query.images.split(",");
+        if (imageNames.length <= 0) //No images to actually delete
+            return res.status(400).json({msg: "No images to delete or incorrect image format."});
+
+        for (let i = 0; i < imageNames.length; ++i) {
             let imageName = imageNames[i];
-            //deleting the toe image from the user collection
+            
+            //Delete the toe image from the user's collection
             user.images.splice(user.images.findIndex(name => name == imageName), 1);
 
-            //deleting the toe image from the user images folder
+            //Delete the toe image from the user's images folder
             let command = `rm images/${userId}/${imageName}`
             if (config.hostType.includes("Windows"))
                 command = `del images\\${userId}\\${imageName}`
+
             utils.runCommand(command);
-
         }
-        user.save();
-        res.json({ msg: "successful" });
 
+        user.save();
+        res.json({msg: "successful"});
     }
     catch {
-        res.status(400).json({ msg: "could not delete the images" });
+        res.status(400).json({msg: "Error deleting the images."});
     }
-
 });
 
 /*
     Endpoint: /upload/loggedin
     Saves the uploaded toe image in the database and moves the image to the user's folder in /images.
-    param req: The request object containing:
-        files.file: The image to upload.
-        body.foot: The foot index the image is for, 0 or 1.
-        body.toe: The toe index the image is for, 0 to 4.
+    param req: JSON object with the following members:
+               files: JSON object with the following member:
+                    file: The image to upload.
+               body: JSON object with the following member:
+                    foot: The foot index the image is for, 0 or 1.
+                    toe: The toe index the image is for, 0 to 4.
     param res: The object to store and send the result in.
     returns: The reponse being an object {msg: uploaded} for success.
 */
 uploadImage.route('/loggedin').post(async (req, res) => {
-
     try {
-        if (req.files.file === undefined) { return res.status(400).json({ msg: "Oops, can't read the image" }) }
+        if (req.files.file === undefined)
+            return res.status(400).json({msg: "Oops, can't read the image"});
 
         const image = req.files.file;
         var userObject = await utils.loadUserObject(req, res);
@@ -300,7 +270,9 @@ uploadImage.route('/loggedin').post(async (req, res) => {
         var extension = GetImageExtension(image); //Used in the image name later
 
         //user.imageIndex is used to prevent image overwrite after deletion
-        if (user.imageIndex === undefined) user.imageIndex = user.images.length
+        if (user.imageIndex === undefined)
+            user.imageIndex = user.images.length;
+
         const imageName = user.imageIndex + "." + extension;
 
         //Save the new image under user
@@ -310,43 +282,12 @@ uploadImage.route('/loggedin').post(async (req, res) => {
 
         //Move it to the database
         utils.moveImageToUserImages(image, userId, imageName, res).then(() => {
-            return res.send({ msg: "uploaded" })
-        }).catch(() => res.status(500).send({ msg: "Error occured" }));
+            return res.send({msg: "uploaded"})
+        }).catch(() => res.status(500).send({msg: "Error occured"}));
     }
     catch {
-        return res.status(400).json({ msg: "Invalid token" });
+        return res.status(400).json({msg: "Invalid token"});
     }
-    
-
-
-})
-
-/*
-    Endpoint: /upload/notloggedin
-    Saves the uploaded image to a temp folder when the user is not logged in.
-        Eventually it will delete the image after the fungal coverage percentage is calculated (not implemented yet).
-    param req: The request object containing:
-        files.file: The image to upload.
-    param res: The object to store and send the result in.
-    returns as the response: msg: "uploaded" and img: the name of the saved image
-*/
-uploadImage.route('/notloggedin').post(async (req, res) => {
-
-    const image = req.files.file;
-
-    var extension = GetImageExtension(image);
-    var timeInMs = new Date().getTime()
-
-    //Image name is the time in milisonds and it is going to be stored in the tempImages folder.
-    const imageName = timeInMs + "." + extension;
-
-    //Move it to a temp folder for later
-    moveImageToTempFolder(image, imageName).then(() => {
-        res.send({ msg: "uploaded", img: imageName })
-    }).catch(() => res.status(500).send({ msg: "Error occured" }));
-
 })
 
 module.exports = uploadImage;
-
-

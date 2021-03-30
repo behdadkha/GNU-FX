@@ -1,5 +1,5 @@
 /*
-    Various functions related to getting and setting user data.
+    Routes related to getting and setting user data.
 */
 
 const express = require('express');
@@ -11,27 +11,6 @@ const config = require('../config');
 const utils = require('../utils')
 const userSchema = require("../database/userSchema");
 const toeDataSchema = require('../database/toe-dataSchema');
-
-
-/*
-    Hashes the given password.
-    Param password: The text that needs to be hashed.
-    Param hashRounds: The number of rounds the hash function should run.
-    returns: A promise with the hash if resolved.
-*/
-function hashPassword(password, hashRounds) {
-    return new Promise((resolve, reject) => {
-        bcrypt.genSalt(hashRounds, (error, salt) => {
-            bcrypt.hash(password, salt, (error, hash) => {
-                if (error)
-                    throw error;
-
-                //Return the hashed password
-                resolve(hash);
-            });
-        });
-    });
-}
 
 /*
     Endpoint: /user/getUserInfo
@@ -48,30 +27,10 @@ userRoutes.route('/getUserInfo').get(async (req, res) => {
         var user = (await utils.loadUserObject(req, res)).user;
 
         //Return the data
-        res.json({ email: user.email, age: user.age });
+        res.json({email: user.email, age: user.age});
     }
     catch {
-        res.status(400).json({ msg: "Couldnt get user's info at /getUserInfo." });
-    }
-});
-
-/*
-    Endpoint: /user/getschedule
-    Finds the user in the database and sends their schedule.
-    param req: An object with data about the current user. Stored in req.headers.authorization.
-    param res: The object to store and send the result in.
-    returns: The response being the user's schedule.
-*/
-userRoutes.route('/getschedule').get(async (req, res) => {
-    try {
-        //Get the user
-        var user = (await utils.loadUserObject(req, res)).user;
-
-        //Return the data
-        res.json(user.schedule);
-    }
-    catch (e) {
-        res.status(400).json({ msg: "An error occurred while attempting to retrieve a user's schedule. Possibly due to an invalid user." })
+        res.status(400).json({msg: "Couldnt get user's info at /getUserInfo."});
     }
 });
 
@@ -94,7 +53,7 @@ userRoutes.post('/resetPassword', async (req, res) => {
                 if (valid) {
                     //Hash the password
                     const rounds = 10; //10 rounds of hashing
-                    user.password = await hashPassword(newPassword, rounds);
+                    user.password = await utils.hashPassword(newPassword, rounds);
 
                     //Save the new encrypted password for security reasons
                     user.save().then(() => {
@@ -108,7 +67,7 @@ userRoutes.post('/resetPassword', async (req, res) => {
         }
     }
     catch {
-        return res.status(400).json({errorMsg: "UNKNOWN_ERROR"})
+        return res.status(400).json({errorMsg: "UNKNOWN_ERROR"});
     }
 });
 
@@ -119,38 +78,42 @@ userRoutes.post('/resetPassword', async (req, res) => {
     body param imageName: name of the image to be replaced
 */
 userRoutes.post('/saveRotation', async (req, res) => {
-    if (req.files.file === undefined || req.body.imageName === undefined) { return res.status(400).json({ msg: "Oops, can't read the image" }) }
+    if (req.files.file === undefined || req.body.imageName === undefined)
+        return res.status(400).json({ msg: "Oops, can't read the image" });
 
     var user = (await utils.loadUserObject(req, res)).user;
     var imageName = req.body.imageName;
 
-    //replace the old image with the new rotated one
+    //Replace the old image with the new rotated one
     utils.moveImageToUserImages(req.files.file, user.id, imageName, res).then(() => {
         return res.send({ msg: "saved" })
-    }).catch(() => res.status(500).send({ msg: "Error occured" }));
+    }).catch(() => res.status(500).send({msg: "Error occured"}));
 });
 
-// For testing purposes(not implemented in the react app yet)
-// Delets a user from the db.
+/*
+    Endpoint: user/delete
+    For testing purposes(not implemented in the react app yet)
+    Deletes a user from the db.
+*/
 userRoutes.delete('/delete', async (req, res) => {
     const name = "Validation Test";
-    userSchema.findOneAndDelete({ name: name }, (err, user) => {
+    userSchema.findOneAndDelete({name: name}, (err, user) => {
         if (err) {
             return res.status(400).json({ msg: "Can't delete the user" })
         }
-        toeDataSchema.deleteOne({ userID: user._id }, (err) => {
+        toeDataSchema.deleteOne({userID: user._id}, (err) => {
             if (err) {
-                return res.status(400).json({ msg: "Can't delete the user" })
+                return res.status(400).json({msg: "Can't delete the user"})
             }
         });
+
         let command = `rm -rf images/${user._id}`
         if (config.hostType.includes("Windows"))
             command = `rmdir /s /q images\\${user._id}`
         utils.runCommand(command);
+    
         return res.status(200).json({msg: `User ${user._id} deleted`})
     });
-
-
 });
 
 module.exports = userRoutes;

@@ -91,7 +91,7 @@ class Login extends Component {
 
         try {
             response = await Axios.post(`${config.dev_server}/login`, {
-                email: this.state.email,
+                email: this.state.email.toLowerCase(), //Emails are always saved lowercase
                 password: this.state.password
             })
         }

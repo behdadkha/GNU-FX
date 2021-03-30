@@ -87,7 +87,7 @@ export default class ForgotPasswordReDirEmail extends Component {
         try {
             response = await Axios.post(`${config.dev_server}/forgotpassword/checkEmails`, {
                 emailFromURL: this.state.emailFromUrl,
-                emailInput: this.state.email,
+                emailInput: this.state.email.toLowerCase(), //Emails are always saved lowercase
                 password: this.state.password,
             })
         }

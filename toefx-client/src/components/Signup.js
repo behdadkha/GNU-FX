@@ -96,7 +96,7 @@ class Signup extends Component {
         try {
             response = await Axios.post(`${config.dev_server}/signup`, {
                 name: this.state.name,
-                email: this.state.email,
+                email: this.state.email.toLowerCase(), //Emails should be interchangeably lowercase and capital
                 password: this.state.password,
                 birthday: this.state.birthday.toJSON().split("T")[0], //Don't include time data
             })

@@ -1,3 +1,7 @@
+/*
+    Boilerplate React file needed to run the application.
+*/
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';

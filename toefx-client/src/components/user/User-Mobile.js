@@ -5,9 +5,10 @@
 import React, { Component } from "react";
 import { Container, Row, Col, Dropdown, Button } from "react-bootstrap";
 import { connect } from "react-redux";
-import { GetFootSymbolByActive, GetToeSymbolImage, GetImageURLByName, LEFT_FOOT_ID, RIGHT_FOOT_ID, TOE_COUNT } from "../../Utils";
+
 import store from "../../Redux/store";
 import { getAndSaveImages, getAndSaveToeData } from "../../Redux/Actions/setFootAction";
+import { GetFootSymbolByActive, GetToeSymbolImage, GetImageURLByName, LEFT_FOOT_ID, RIGHT_FOOT_ID, TOE_COUNT } from "../../Utils";
 
 import '../../componentsStyle/User-Mobile.css';
 
@@ -21,7 +22,7 @@ class User extends Component {
 
         this.state = {
             selectedFoot: 0, //0 if the user is viewing the left foot, 1 for right foot
-            selectedToe: 0,
+            selectedToe: 0, //Which toe the user is viewing images for
             toeData: {}, //Data recieved from the server
             imageUrls: [], //List of data like: {imageName: "1.PNG", url : ""}
             dataLoaded: false, //Used for showing the loading screen until all data are loaded

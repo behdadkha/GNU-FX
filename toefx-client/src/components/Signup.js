@@ -12,8 +12,9 @@ import Axios from 'axios';
 import {config} from "../config";
 import {IsValidEmail, IsGoodPassword, GetGoodPasswordConfirmations, isValidName} from "../Utils";
 
+import Healthydrawing from "../icons/MedicalCare.svg";
+
 import "../componentsStyle/SignUp.css";
-import healthydrawing from "../icons/MedicalCare.svg";
 
 //Error messages displayed to the user
 const gErrorMessages = {
@@ -42,10 +43,9 @@ class Signup extends Component {
             email: "", //User's email input
             password: "", //User's password input
             confirmedPassword: "", //User's confirmed password input
-            age: "", //User's age input
+            birthday: "", //User's birthday input
             errorMessage: "", //The type of error message to display (if any)
-            birthday: "",
-            successMessage: ""
+            successMessage: "" //The message displayed upon a successful sign up
         };
     }
 
@@ -63,7 +63,6 @@ class Signup extends Component {
         param e: The sign up submission event.
     */
     handleSignup = async (e) => {
-        
         e.preventDefault(); //Prevents page reload on form submission
         
         if (this.isAnyFieldLeftBlank()) {
@@ -90,13 +89,14 @@ class Signup extends Component {
             this.setState({ errorMessage: "INVALID_NAME"})
             return; //User didn't enter a proper name
         }
+
         //Try to sign up the user
         let response;
 
         try {
             response = await Axios.post(`${config.dev_server}/signup`, {
                 name: this.state.name,
-                email: this.state.email,
+                email: this.state.email.toLowerCase(), //Emails should be interchangeably lowercase and capital
                 password: this.state.password,
                 birthday: this.state.birthday.toJSON().split("T")[0], //Don't include time data
             })
@@ -160,11 +160,11 @@ class Signup extends Component {
         var titleClass = "signup-form-title" + (isMobile ? " signup-form-title-mobile" : "");
         var inputErrorClass = "signup-error-input"; //Used to colour boxes with mistakes in pink
         var signUpError = this.getErrorText();
-        var showPicture = !isMobile && window.innerWidth >= 1000;
+        var showPicture = !isMobile && window.innerWidth >= 1000; //Don't show picture on small screens
 
         return (
             <div>
-                {showPicture ? <img src={healthydrawing} className="signup-picture" alt="" /> : ""}
+                {showPicture ? <img src={Healthydrawing} className="signup-picture" alt="" /> : ""}
 
                 <Container className={"p-3" + (!isMobile ? " mb-1 bg-white shadow rounded" : " mb-3")}
                     id={"signup-form-container" + (!showPicture ? "-mobile" : "")}
@@ -263,7 +263,7 @@ class Signup extends Component {
                                     />
                                 </Form.Group>
 
-                                {/* Age Input */}
+                                {/* Birthday Input */}
                                 <Form.Group controlId="formAge">
                                     <Form.Label>Birthday</Form.Label>
                                     <br></br>

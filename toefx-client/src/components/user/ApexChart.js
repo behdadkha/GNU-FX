@@ -15,6 +15,7 @@ import '../../componentsStyle/ApexChart.css';
 import leftFootCroppedLogo from '../../icons/leftfootCropped.png';
 import rightFootCroppedLogo from '../../icons/rightfootCropped.png';
 import FeetButtons from "./FeetButtons";
+
 //BUG: Clicking on bottom labels changes graph view but not selected buttons
 
 const gInitialToeSelection = [true, true, false, false, false]; //Only first two toes start off shown (client request)
@@ -251,16 +252,6 @@ class ApexChart extends React.Component {
         if (this.isLeftFootShown())
             toeOrder.reverse(); //Toes go in opposite order on left foot
         return (
-            //Old toe selection
-            /*<span className="toolbar">
-                <button onClick={this.showHideAllToes.bind(this)}
-                    className={(this.areAllToesShown() ? activeToeButtonClass : defaultToeButtonClass)}>
-                    ALL
-                </button>
-                {
-                    toeOrder.map((toeId) => this.printToeButton(toeId))
-                }
-            </span>*/
             <div className={this.isLeftFootShown() ? "leftFootContainer" : "rightFootContainer"}>
                 <img src={this.isLeftFootShown() ? leftFootCroppedLogo : rightFootCroppedLogo} alt="left foot" />
 

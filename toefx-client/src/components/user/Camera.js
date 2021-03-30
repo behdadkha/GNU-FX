@@ -1,3 +1,7 @@
+/*
+    Class for the mobile image capture.
+*/
+
 import React, { useRef, useEffect, useState } from 'react'
 import { Button } from 'react-bootstrap';
 

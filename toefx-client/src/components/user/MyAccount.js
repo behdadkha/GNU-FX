@@ -37,8 +37,8 @@ class MyAccount extends Component {
             toeData: { feet: [{}, {}] }, //Data for user's images {id, userID, feet: []}
             selectedFootIndex: LEFT_FOOT_ID, //Start by showing data for the left foot
             dataLoaded: false, //Used for showing the loading screen until all data are loaded
-            showDeleteConfirmation: false,
-            showRotateModal: false,
+            showDeleteConfirmation: false, //True if a pop-up is being shown to confirm the deletion of an image
+            showRotateModal: false, //True if a pop-up is being shown to allow the user to rotate one of their images
             toRotateInfo: {},
             toDeleteInfo: {}, //{imageName, imageIndex in toeData, toeIndex, selectedFootindex}
             rotationSaveStatus: "" // to show the saving... message after rotation
@@ -73,12 +73,6 @@ class MyAccount extends Component {
             toeData: this.props.foot.toeData,
             dataLoaded: true, //Used to indicate whether or not a notification should be displayed to upload images before starting
         });
-
-        /*else {
-            //Get the user's info from the server
-            let userInfo = (await Axios.get(`${config.dev_server}/user/getUserInfo`)).data;
-            this.setState({email: userInfo.email, dataLoaded: true})
-        }*/
     }
 
     /*
@@ -407,6 +401,7 @@ class MyAccount extends Component {
                         </TableScrollbar>
                 }
             </div>;
+
         //Pop up to confirm an image delete
         var deleteConfirmationModal =
             <Modal size="lg" show={this.state.showDeleteConfirmation} onHide={this.toggleDeleteConfirmation.bind(this)}>

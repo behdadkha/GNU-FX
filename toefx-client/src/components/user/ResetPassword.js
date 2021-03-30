@@ -1,5 +1,5 @@
 /*
-    A class for helping the user reset their password.
+    A class for the form the user can fill out to reset their password.
 */
 
 import React, {Component} from 'react'
@@ -158,7 +158,6 @@ class ResetPassword extends Component {
 
                 <Row>
                     <Col>
-                    
                         {/* Error message if needed */}
                         <div className="signup-error">
                             <h6 className="error-text">{this.getErrorText()}</h6>

@@ -7,13 +7,14 @@ import {Navbar, Nav} from "react-bootstrap";
 import {isMobile} from "react-device-detect";
 import {connect} from "react-redux"
 
-import {DoesPageHaveNavBar} from "../Utils";
 import store from "../Redux/store";
 import {LogOutUser} from "../Redux/Actions/authAction";
+import {DoesPageHaveNavBar} from "../Utils";
+
 import "../componentsStyle/Navbar.css";
 
-class NavigationBar extends Component {
 
+class NavigationBar extends Component {
     /*
         Prints the list of links visible in the navigation bar for a given page.
     */
@@ -31,6 +32,7 @@ class NavigationBar extends Component {
                             {isMobile ? "Home" : "Dashboard"}
                         </Nav.Link>
                     }
+
                     {
                         //Only show upload link on specific pages
                         (window.location.pathname !== "/upload") &&
@@ -38,6 +40,7 @@ class NavigationBar extends Component {
                             Upload
                         </Nav.Link>
                     }
+
                     {
                         //Only show account link on specific pages
                         (window.location.pathname !== "/user/myAccount") &&
@@ -45,6 +48,7 @@ class NavigationBar extends Component {
                             My Account
                         </Nav.Link>
                     }
+
                     <Nav.Link test-id="logOut" href="/" onClick={() => store.dispatch(LogOutUser())}>
                         Log Out
                     </Nav.Link>

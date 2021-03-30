@@ -3,31 +3,32 @@
 */
 
 import React from "react";
+import { isMobile } from "react-device-detect";
 import { Provider } from "react-redux";
 import { Route, BrowserRouter as Router, Switch } from "react-router-dom";
 
 import jwt_decode from "jwt-decode";
-import {DoesPageHaveNavBar, SetAuthHeader} from "./Utils";
-import FirstPage from "./components/FirstPage";
-import Login from "./components/Login";
-import Navbar from "./components/NavigationBar";
-import Signup from "./components/Signup";
-import MyAccount from "./components/user/MyAccount";
-import ResetPassword from "./components/user/ResetPassword";
-import Schedule from "./components/user/Schedule";
-import Upload from "./components/user/Upload";
-import User from "./components/user/User";
-import UserMobile from "./components/user/User-Mobile";
-import Component404 from "./components/Component404";
-import ForgotPasswordReDirEmail from './components/ForgotPasswordReDirEmail';
-import EmailVerificationReDirEmail from './components/EmailVerificationReDirEmail';
 import store from "./Redux/store";
 import { LogOutUser, SetCurrentUser } from "./Redux/Actions/authAction";
+import { DoesPageHaveNavBar, SetAuthHeader } from "./Utils";
+
+import FirstPage from "./components/FirstPage";
+import Login from "./components/Login";
+import Signup from "./components/Signup";
+import ForgotPassword from "./components/ForgotPassword";
+import ForgotPasswordReDirEmail from './components/ForgotPasswordReDirEmail';
+import EmailVerificationReDirEmail from './components/EmailVerificationReDirEmail';
+import User from "./components/user/User";
+import UserMobile from "./components/user/User-Mobile";
+import Upload from "./components/user/Upload";
+import MyAccount from "./components/user/MyAccount";
+import ResetPassword from "./components/user/ResetPassword";
+import Navbar from "./components/NavigationBar";
+import Component404 from "./components/Component404";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
-import { isMobile } from "react-device-detect";
-import ForgotPassword from "./components/ForgotPassword";
+
 
 //If the browser has the user's login info,
 //set the data and go to the user's page
@@ -59,7 +60,6 @@ function App() {
         <Provider store={store}>
             <Router>
                     <div className="App">
-                        
                         {
                             //Only show the navigation bar on certain pages so no scrolling is required
                             DoesPageHaveNavBar() ?
@@ -79,7 +79,6 @@ function App() {
                             <Route path="/user" component={userPath} exact />
                             <Route path="/upload" component={Upload} exact />
                             <Route path="/forgotpassword" component={ForgotPassword} exact />
-                            <Route path="/user/schedule" component={Schedule} exact />
                             <Route path="/user/myAccount" component={MyAccount} exact />
                             <Route path="/user/resetPassword" component={ResetPassword} exact />
                             <Route path="/forgotpassword/*" component={ForgotPasswordReDirEmail} exact/>

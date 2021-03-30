@@ -1,5 +1,9 @@
+/*
+    CSS for the entire application.
+*/
+
 :root {
-    --button-color: rgb(36, 166, 154);
+    --button-color: rgb(36, 166, 154); /*Buttons are generally turquoise/green*/
     --button-hover-color: rgb(30, 138, 128);
     --highlight-color: rgb(36, 166, 154);
     --darkest-theme-color: rgb(24, 109, 101);

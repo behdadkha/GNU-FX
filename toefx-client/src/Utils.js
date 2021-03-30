@@ -7,11 +7,12 @@ import {Form} from "react-bootstrap";
 import {isMobile} from "react-device-detect";
 import axios from "axios";
 
+import { config } from "./config";
+
 import LeftFootSymbol from './icons/leftfootlogo.png';
 import RightFootSymbol from './icons/rightfootlogo.png';
 import LeftFootUnshadedSymbol from './icons/LeftFootHollow.png';
 import RightFootUnshadedSymbol from './icons/RightFootHollow.png';
-
 import LeftFootUnshadedSymbol_half from './icons/LeftFootHollowHalf.png';
 import RightFootUnshadedSymbol_half from './icons/RightFootHollowHalf.png';
 
@@ -20,7 +21,6 @@ import LeftFootToe1 from './icons/toes/LeftFootToe1.png';
 import LeftFootToe2 from './icons/toes/LeftFootToe2.png';
 import LeftFootToe3 from './icons/toes/LeftFootToe3.png';
 import LeftFootToe4 from './icons/toes/LeftFootToe4.png';
-import { config } from "./config";
 
 import CheckMark from "./icons/checkmark.png";
 import CrossMark from "./icons/crossmark.png";
@@ -41,6 +41,7 @@ const gDesktopPagesWithoutNavbar = ["/user", "/user/myAccount"];
 
 //Pages without the navigation bar at the top when using a mobile device
 const gMobilePagesWithoutNavbar = ["/login", "/signup"]
+
 
 /*
     Determines if a navigation bar should appear at the top of the page.
@@ -197,6 +198,11 @@ export function IsValidEmail(email) {
     return re.test(email);
 }
 
+/*
+    Checks if a given string is actually possible for a user's name.
+    param name: The name to check.
+    returns: true if the name is valid, false otherwise.
+*/
 export function isValidName(name) {
     const re = /^[a-zA-Z]{3,} [a-zA-Z]+$/;
     return re.test(name);
@@ -291,7 +297,7 @@ export function RotateImage90Degrees(canvas, left) {
 
 /*
     Sets the authentication header.
-    param token: ?
+    param token: Some token for the authentication.
 */
 export function SetAuthHeader(token) {
     if (token)

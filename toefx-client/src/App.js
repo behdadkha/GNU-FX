@@ -1,7 +1,6 @@
 /*
     The main page of the application.
 */
-
 import React from "react";
 import { isMobile } from "react-device-detect";
 import { Provider } from "react-redux";
@@ -11,6 +10,9 @@ import jwt_decode from "jwt-decode";
 import store from "./Redux/store";
 import { LogOutUser, SetCurrentUser } from "./Redux/Actions/authAction";
 import { DoesPageHaveNavBar, SetAuthHeader } from "./Utils";
+
+//This CSS must go above the module imports!
+import "bootstrap/dist/css/bootstrap.min.css";
 
 import FirstPage from "./components/FirstPage";
 import Login from "./components/Login";
@@ -26,7 +28,7 @@ import ResetPassword from "./components/user/ResetPassword";
 import Navbar from "./components/NavigationBar";
 import Component404 from "./components/Component404";
 
-import "bootstrap/dist/css/bootstrap.min.css";
+//This CSS must go below the module imports!
 import "./App.css";
 
 

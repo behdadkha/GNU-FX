@@ -1,3 +1,7 @@
+/*
+    The database schema for user accounts.
+*/
+
 const { json } = require('body-parser');
 const mongoose = require('mongoose');
 
@@ -44,4 +48,4 @@ const userSchema = new schema({
 
 });
 
-module.exports = mongoose.model('user',userSchema, 'users');//users is the collection name
+module.exports = mongoose.model('user',userSchema, 'users'); //users is the collection name

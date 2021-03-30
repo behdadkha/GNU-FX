@@ -1,87 +1,12 @@
+/*
+    The database schema for storing data related to images uploaded by users.
+*/
+
 const { json } = require('body-parser');
 const { ObjectID } = require('mongodb');
 const mongoose = require('mongoose');
 
 const schema = mongoose.Schema;
-
-//toe-data shema
-/*const toe_dataSchema = new schema({
-    userID : {
-        type : ObjectID,
-        required : true
-    },
-    rightFoot : {
-        type : Object,
-        required : false,
-
-        first_toe : [{
-            date: Date,
-            image : String,
-            fungalCoverage : String
-        }],
-
-        second_toe : [{
-            date: Date,
-            image : String,
-            fungalCoverage : String
-        }],
-
-        third_toe : [{
-            date: Date,
-            image : String,
-            fungalCoverage : String
-        }],
-
-        fourth_toe : [{
-            date: Date,
-            image : String,
-            fungalCoverage : String
-        }],
-
-        fifth_toe : [{
-            date: Date,
-            image : String,
-            fungalCoverage : String
-        }],
-
-    },
-    leftFoot : {
-        type : Object,
-        required : false,
-
-        first_toe : [{
-            date: Date,
-            image : String,
-            fungalCoverage : String
-        }],
-
-        second_toe : [{
-            date: Date,
-            image : String,
-            fungalCoverage : String
-        }],
-
-        third_toe : [{
-            date: Date,
-            image : String,
-            fungalCoverage : String
-        }],
-
-        fourth_toe : [{
-            date: Date,
-            image : String,
-            fungalCoverage : String
-        }],
-
-        fifth_toe : [{
-            date: Date,
-            image : String,
-            fungalCoverage : String
-        }],
-
-    }
-
-});*/
 
 const toe_dataSchema = new schema({
     userID : {
@@ -92,7 +17,7 @@ const toe_dataSchema = new schema({
         {
             toes:
             [
-                //an object for each toe
+                //An object for each toe
                 {
                     images:
                     [{
@@ -138,4 +63,4 @@ const toe_dataSchema = new schema({
     ]
 });
 
-module.exports = mongoose.model('toe',toe_dataSchema, 'toe-data');//toe-data is the collection name
+module.exports = mongoose.model('toe',toe_dataSchema, 'toe-data'); //toe-data is the collection name

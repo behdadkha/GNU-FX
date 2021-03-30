@@ -1,15 +1,18 @@
+/*
+    The database schema for verifying users during sign up.
+*/
+
 const { json } = require('body-parser');
 const mongoose = require('mongoose');
 
 const schema = mongoose.Schema;
 
-//verification shema
 const verificationLinks = new schema({
     email: {
         type: String,
         required: false
     },
-    link : {
+    link: {
         type: String,
         required: false
     }

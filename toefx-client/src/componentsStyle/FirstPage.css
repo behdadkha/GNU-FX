@@ -1,4 +1,6 @@
-/*CSS for Desktop View*/
+/*CSS for the home page of the app.*/
+
+/*Desktop View*/
 
 .image {
     margin-top: 2%;
@@ -59,7 +61,7 @@
     background-color: var(--darkest-theme-color);
 }
 
-/*CSS for Mobile View*/
+/*Mobile View*/
 .homepage-mobile-buttons {
     display: flex;
     flex-flow: column wrap;

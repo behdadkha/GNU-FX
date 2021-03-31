@@ -647,7 +647,7 @@ class Upload extends Component {
                     {
                         imageObj.saved //The image save has been finalized
                         ?
-                            <h6 className="text-center w-100">Saved</h6>
+                            <h6 id="save_text" className="text-center w-100">Saved</h6>
                         :
                         imageObj.keepClicked //User has chosen to keep this image
                         ?

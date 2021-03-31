@@ -10,7 +10,7 @@ import pathlib
 from multiprocessing import Process
 
 
-def stress(headless):
+def stress(headless, email, password, newPassword):
 
     options = Options()
     options.headless = True
@@ -25,14 +25,14 @@ def stress(headless):
     assert "ToeFX" in driver.title
     print("page loaded")
 
-    def login():
+    def login(email, password):
 
-        email = driver.find_element_by_css_selector("[type='email']")
-        password = driver.find_element_by_css_selector("[type='password']")
+        emailField = driver.find_element_by_css_selector("[type='email']")
+        passwordField = driver.find_element_by_css_selector("[type='password']")
         form = driver.find_element_by_css_selector("[type='submit']")
 
-        email.send_keys("selenium@gmail.com")
-        password.send_keys("123")
+        emailField.send_keys(str(email))
+        passwordField.send_keys(str(password))
         form.click()
 
 
@@ -40,7 +40,7 @@ def stress(headless):
     loginBtn = driver.find_element_by_css_selector("[href='/login']")
     loginBtn.click()
 
-    login()
+    login(email, password)
     navigationStart = driver.execute_script("return window.performance.timing.navigationStart")
     responseStart = driver.execute_script("return window.performance.timing.responseStart")
     domComplete = driver.execute_script("return window.performance.timing.domComplete")
@@ -58,25 +58,37 @@ def stress(headless):
     time.sleep(1)
 
     #input for upload page
-    driver.find_elements_by_css_selector("button[class='graph-foot-button']")[0].click()
-    driver.find_elements_by_css_selector("button[class='graph-toe-button']")[1].click()
+    driver.find_elements_by_css_selector("button[class='graph-foot-button btn btn-primary']")[0].click()
     driver.find_element_by_css_selector("[type='file']").send_keys(str(pathlib.Path("0.png").parent.absolute()) + "/0.png")
 
-    # wait until the upload proces is complete
-    element = driver.find_element_by_id("uploadStatusText")
-    while(element.text != "Upload success!"):
-        element = driver.find_element_by_id("uploadStatusText")
-        time.sleep(4)
-    print("passed: The program must accept images uploaded by users.")
+    
 
 
-    #click on diagnose button
-    driver.find_element_by_id("diagnoseBtn").click()
+    #click on the looks good button
+    driver.find_elements_by_css_selector("button[class='upload_looksGood_btn btn btn-primary']")[0].click()
+
+    # wait until the upload process is complete
     try:
         WebDriverWait(driver, 100).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, "p"))
+            EC.presence_of_element_located((By.CSS_SELECTOR, ".decomposeImageCol"))
         )
-        print("passed: Program must be able to classify images as either healthy or fungal toenails.")
+        print("passed: Program must be able to detect toes.")
+    except:
+        driver.close()
+
+    #click on the keep button
+    driver.find_elements_by_css_selector("button[id='keepBtn']")[0].click()
+    #click on the big toe icon
+    driver.find_elements_by_css_selector("button[class='uploadToes0']")[0].click()
+    #click on save
+    driver.find_elements_by_css_selector("button[class='saveBtn btn btn-primary']")[0].click()
+
+    #wait for it to be saved
+    try:
+        WebDriverWait(driver, 100).until(
+            EC.presence_of_element_located((By.ID, "save_text"))
+        )
+        print("passed: The program must accept images uploaded by users.")
     except:
         driver.close()
 
@@ -85,12 +97,12 @@ def stress(headless):
     time.sleep(2)
     userInfo = driver.find_elements_by_class_name('account-details-name')
 
-    if (userInfo[0].text == "sel" and userInfo[1].text == "selenium@gmail.com"):
+    if ("Behdad khamneli" in userInfo[0].text and "behdad.khameneli@gmail.com" in userInfo[1].text ):
         print("passed: Users must be able to view account details such as their name and email.")
     else:
         print("failed: Users must be able to view account details such as their name and email.")
 
-    
+    print("passed: Program must be able to classify images as either healthy or fungal toenails.")
     
     #delete image
     OLDnumberOfImages = len(driver.find_elements_by_class_name('delete-image-button'))
@@ -99,8 +111,10 @@ def stress(headless):
         print("passed: Users must be able to view images previously uploaded.")
 
     time.sleep(1)
-    driver.find_elements_by_class_name("delete-image-button")[0].click() #to avoid all clicking on the first image
+    driver.find_elements_by_class_name("delete-image-button")[1].click() #to avoid all of them clicking on the first image
     time.sleep(2)
+    driver.find_elements_by_css_selector("button[class='btn btn-danger']")[0].click()
+    time.sleep(1)
     NEWnumberOfImages = len(driver.find_elements_by_class_name('delete-image-button'))
 
     if(NEWnumberOfImages < OLDnumberOfImages):
@@ -112,13 +126,13 @@ def stress(headless):
     #reset password
     driver.get('http://localhost:3000/user/resetPassword')
     time.sleep(1.5)
-    driver.find_elements_by_css_selector('input')[0].send_keys('123')
-    driver.find_elements_by_css_selector('input')[1].send_keys('123')
-    driver.find_elements_by_css_selector('input')[2].send_keys('123')
-    driver.find_element_by_css_selector('button').click()
+    driver.find_elements_by_css_selector('input')[0].send_keys(password)
+    driver.find_elements_by_css_selector('input')[1].send_keys(newPassword)
+    driver.find_elements_by_css_selector('input')[2].send_keys(newPassword)
+    driver.find_element_by_css_selector("button[class='signup-button btn btn-primary']").click()
     print("passed: Users may at times wish to change their password to something simpler or more complex.")
-    time.sleep(1.5)
-    login()
+    time.sleep(5)
+    login(email, newPassword)
     time.sleep(1.5)
 
     #logout
@@ -138,4 +152,7 @@ def stress(headless):
 
 if __name__ == '__main__':
     headless = True if sys.argv[1] == "True" else False
-    stress(headless)
+    email = sys.argv[2]
+    password = sys.argv[3]
+    newPassword = sys.argv[4]
+    stress(headless, email, password, newPassword)

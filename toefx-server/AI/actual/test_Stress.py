@@ -20,6 +20,10 @@ class TestNailRecognition:
         NailRecognition.LoadModel()
         assert model == NailRecognition.model
 
+    def test_GetNailsFromImage_Stress(self):
+        # Check an image with a bunch of partially revealed hands
+        assert len(NailRecognition.GetNailsFromImage(TEST_IMG_PATH + RECOGNITION_IMG_PATH + "Stress.png")[0]) == 6
+
 
 class TestFungalCoverage:
     def test_LoadModel_Stress(self):

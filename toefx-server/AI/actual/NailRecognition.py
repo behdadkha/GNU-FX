@@ -113,6 +113,7 @@ class NailRecognition:
         if type(image) != np.ndarray:  # Input checking
             return image
 
+        # Credit to Man Wingloeng for the original code (see GitHub repo listed above)
         YCrCb_frame = cv2.cvtColor(image, cv2.COLOR_BGR2YCrCb)
         YCrCb_frame = cv2.GaussianBlur(YCrCb_frame, (3, 3), 0)
         binMask = cv2.inRange(YCrCb_frame, np.array([0, 127, 75]), np.array([255, 177, 130]))

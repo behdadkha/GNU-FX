@@ -13,7 +13,6 @@ RECOGNITION_IMG_PATH = "recognition/"
 COVERAGE_IMG_PATH = "coverage/"
 MODELS_PATH = "AI/actual/models/"
 
-# TODO Test cases for NailRecognition.SaveNailColours
 # TODO Test cases for NailRecognition.GetNailsFromImage that check the bound output
 
 
@@ -136,6 +135,31 @@ class TestNailRecognition:
     def test_SaveNailImages_Unit_9(self):  # Corrupted input
         assert len(NailRecognition.SaveNailImages(np.array([[[[50, 100, 150, 200]]]]),
                                                   TEST_IMG_PATH + RECOGNITION_IMG_PATH + "1.jpg")) == 0
+
+    def test_SaveNailColours_Unit_1(self):
+        originalPath = TEST_IMG_PATH + RECOGNITION_IMG_PATH + "5.jpg"
+        nailImages, imageBoundaries = NailRecognition.GetNailsFromImage(originalPath)
+        imageColours = NailRecognition.SaveNailColours(imageBoundaries, originalPath)
+        assert len(imageColours) == 5
+
+    def test_SaveNailColours_Unit_2(self):
+        originalPath = TEST_IMG_PATH + RECOGNITION_IMG_PATH + "5.jpg"
+        nailImages, imageBoundaries = NailRecognition.GetNailsFromImage(originalPath)
+        NailRecognition.SaveNailColours(imageBoundaries, originalPath)
+
+        testImageWithColours = cv2.imread(TEST_IMG_PATH + RECOGNITION_IMG_PATH + "SaveNailColours_Processed.png")
+        newImageWithColours = cv2.imread(TEST_IMG_PATH + RECOGNITION_IMG_PATH + "5_CLR.png")
+        numEqualElems = np.sum(testImageWithColours == newImageWithColours)  # Make sure both numpy arrays are equal
+        assert numEqualElems == testImageWithColours.size
+
+    def test_SaveNailColours_Unit_3(self):  # Faulty input
+        assert len(NailRecognition.SaveNailColours("", TEST_IMG_PATH + RECOGNITION_IMG_PATH + "5.jpg")) == 0
+
+    def test_SaveNailColours_Unit_4(self):  # Faulty input
+        assert len(NailRecognition.SaveNailColours([], "Not Real Path")) == 0
+
+    def test_SaveNailColours_Unit_5(self):  # Faulty input
+        assert len(NailRecognition.SaveNailColours([], 5)) == 0
 
 
 class TestFungalCoverage:

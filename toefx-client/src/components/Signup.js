@@ -103,9 +103,9 @@ class Signup extends Component {
             });
         }
         catch (error) {
-            if (error.response !== undefined) {
+            if (error !== undefined) {
                 this.setState({
-                    errorMessage: error.response.data.errorMsg,
+                    errorMessage: "Could not complete the sign up process.",
                 });
             }
             else

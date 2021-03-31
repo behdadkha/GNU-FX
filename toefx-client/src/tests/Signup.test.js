@@ -128,7 +128,7 @@ describe("Signup method: handleSignup", () => {
 
         Axios.post.mockRejectedValueOnce();
         await component.instance().handleSignup({preventDefault: () => {}});
-        expect(component.state('errorMessage')).toEqual("ACCOUNT_EXISTS");
+        expect(component.state('errorMessage')).toEqual("UNKNOWN_ERROR");
         
     });
 

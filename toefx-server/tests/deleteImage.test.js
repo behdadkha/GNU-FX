@@ -11,7 +11,7 @@ describe('deleteImage endpoint', () => {
     })
     it('should fail if token is not set', async done => {
         const res = await request(app).get('/deleteImage');
-        expect(res.statusCode).toEqual(400);
+        expect(res.statusCode).toEqual(500);
         expect(res.body.msg).toBe("Something happened when tried to delete an image (might be an invalid token)");
         done();
     });
@@ -21,7 +21,7 @@ describe('deleteImage endpoint', () => {
             .get('/deleteImage')
             .set('Authorization', TestAuthToken)
         expect(res.statusCode).toEqual(400);
-        expect(res.body.msg).toBe("4 query params are undefined");
+        expect(res.body.msg).toBe("Some query param is undefined.");
         done();
     });
 
@@ -36,7 +36,7 @@ describe('deleteImage endpoint', () => {
             .get('/deleteImage/?footIndex=0&toeIndex=0&imageIndex=0&imageName=0.PNG')
             .set('Authorization', TestAuthToken)
         expect(res.statusCode).toEqual(200);
-        expect(res.body.msg).toBe("Image deleted successfully");
+        expect(res.body.msg).toBe("Image deleted successfully.");
         expect(utils.loadUserObject).toHaveBeenCalledTimes(1);
         expect(mockedUserSave).toHaveBeenCalled();
 
@@ -100,7 +100,7 @@ describe('deleteImage endpoint', () => {
             .get('/deleteImage/?footIndex=0&toeIndex=5&imageIndex=1&imageName=0.PNG')
             .set('Authorization', TestAuthToken)
         expect(res.statusCode).toEqual(400);
-        expect(res.body.msg).toBe("specified toe or foot does not exist");
+        expect(res.body.msg).toBe("Specified toe or foot does not exist.");
         done();
     });
 
@@ -109,7 +109,7 @@ describe('deleteImage endpoint', () => {
             .get('/deleteImage/?footIndex=0&toeIndex=-1&imageIndex=1&imageName=0.PNG')
             .set('Authorization', TestAuthToken)
         expect(res.statusCode).toEqual(400);
-        expect(res.body.msg).toBe("specified toe or foot does not exist");
+        expect(res.body.msg).toBe("Specified toe or foot does not exist.");
         done();
     });
 
@@ -118,7 +118,7 @@ describe('deleteImage endpoint', () => {
             .get('/deleteImage/?footIndex=2&toeIndex=0&imageIndex=1&imageName=0.PNG')
             .set('Authorization', TestAuthToken)
         expect(res.statusCode).toEqual(400);
-        expect(res.body.msg).toBe("specified toe or foot does not exist");
+        expect(res.body.msg).toBe("Specified toe or foot does not exist.");
         done();
     });
 
@@ -127,7 +127,7 @@ describe('deleteImage endpoint', () => {
             .get('/deleteImage/?footIndex=-1&toeIndex=0&imageIndex=1&imageName=0.PNG')
             .set('Authorization', TestAuthToken)
         expect(res.statusCode).toEqual(400);
-        expect(res.body.msg).toBe("specified toe or foot does not exist");
+        expect(res.body.msg).toBe("Specified toe or foot does not exist.");
         done();
     });
 

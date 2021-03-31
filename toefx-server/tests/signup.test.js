@@ -39,7 +39,7 @@ describe('Signup endpoint', () => {
 
             });
         expect(res.statusCode).toEqual(400);
-        expect(res.body.msg).toBe("Required input is empty");
+        expect(res.body.errorMsg).toBe("BLANK_FIELD");
         done();
     });
 
@@ -54,7 +54,7 @@ describe('Signup endpoint', () => {
 
             });
         expect(res.statusCode).toEqual(400);
-        expect(res.body.msg).toBe("Required input is empty");
+        expect(res.body.errorMsg).toBe("BLANK_FIELD");
         done();
     });
 
@@ -69,7 +69,7 @@ describe('Signup endpoint', () => {
 
             });
         expect(res.statusCode).toEqual(400);
-        expect(res.body.msg).toBe("Required input is empty");
+        expect(res.body.errorMsg).toBe("BLANK_FIELD");
         done();
     });
 
@@ -84,7 +84,7 @@ describe('Signup endpoint', () => {
 
             });
         expect(res.statusCode).toEqual(400);
-        expect(res.body.msg).toBe("Required input is empty");
+        expect(res.body.errorMsg).toBe("BLANK_FIELD");
         done();
     });
 
@@ -99,7 +99,7 @@ describe('Signup endpoint', () => {
 
             });
         expect(res.statusCode).toEqual(400);
-        expect(res.body.msg).toBe("Required input is empty");
+        expect(res.body.errorMsg).toBe("BLANK_FIELD");
         done();
     });
 
@@ -107,7 +107,7 @@ describe('Signup endpoint', () => {
         const res = await request(app)
             .post('/signup').send({})
         expect(res.statusCode).toEqual(400);
-        expect(res.body.msg).toBe("Required input is undefined");
+        expect(res.body.errorMsg).toBe("BLANK_FIELD");
         done();
     });
 
@@ -120,7 +120,7 @@ describe('Signup endpoint', () => {
                 birthday: "22"
             })
         expect(res.statusCode).toEqual(400);
-        expect(res.body.msg).toBe("invalid password");
+        expect(res.body.errorMsg).toBe("INVALID_PASSWORD");
         done();
     });
 
@@ -133,7 +133,7 @@ describe('Signup endpoint', () => {
                 birthday: "22"
             })
         expect(res.statusCode).toEqual(400);
-        expect(res.body.msg).toBe("invalid email address");
+        expect(res.body.errorMsg).toBe("INVALID_EMAIL");
         done();
     });
     

@@ -15,7 +15,7 @@ describe('getImage endpoint', () => {
     it('should fail if there is no token', async () => {
         const res = await request(app).get('/getImage/?imageName=0.PNG');
         expect(res.statusCode).toEqual(400);
-        expect(res.body.msg).toBe("Invalid token , tried to get an image");
+        expect(res.body.msg).toBe("Invalid token , tried to get an image.");
     });
     it('should fail if image name is not specified in the url query', async () => {
         const res = await request(app)
@@ -38,7 +38,7 @@ describe('getImage endpoint', () => {
             .get('/getImage/?imageName=0.PNG')
             .set('Authorization', TestAuthToken);
         expect(res.statusCode).toEqual(400);
-        expect(res.body.msg).toEqual("Invalid request");
+        expect(res.body.msg).toEqual("Invalid request.");
         utils.loadUserObject.mockClear();
     });
 
@@ -61,7 +61,7 @@ describe('getImageNames endpoint', () => {
         const res = await request(app)
             .get('/getImageNames')
         expect(res.statusCode).toEqual(400);
-        expect(res.body.msg).toBe("Something happened when tried to get user's image names");
+        expect(res.body.msg).toBe("Something happened when tried to get user's image names.");
     });
     
 });

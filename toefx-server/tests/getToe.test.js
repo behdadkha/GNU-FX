@@ -11,7 +11,7 @@ describe('getToe endpoint', () => {
     it('should fail if there is no token', async done => {
         const res = await request(app).get('/getToe');
         expect(res.statusCode).toEqual(400);
-        expect(res.body.msg).toBe("Invalid user token");
+        expect(res.body.msg).toBe("Invalid user token.");
         done();
     });
     it('should return the user toe data if user exists', async done => {

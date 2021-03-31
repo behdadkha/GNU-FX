@@ -43,49 +43,6 @@ describe('Upload.js', () => {
         expect(window.location.reload).toHaveBeenCalled();
     })
 
-    describe('processImageValidationResult method', () => {
-
-        it('correct param is passed', () => {
-            let component = mount(<Provider store={store}><Upload /></Provider>);
-            component = component.find(Upload).children();
-
-            component.setState({ files: [{ name: "firstImage" }] });
-            component.instance().processImageValidationResult({ data: "toe" });
-
-            expect(component.state('files')[0]).toEqual({ name: "firstImage", valid: true, text: "Upload success!" });
-        });
-
-        it('an empty json is passed as the argument', () => {
-            let component = mount(<Provider store={store}><Upload /></Provider>);
-            component = component.find(Upload).children();
-
-            component.setState({ files: [{ name: "firstImage" }] });
-            component.instance().processImageValidationResult({});
-
-            expect(component.state('files')[0]).toEqual({ name: "firstImage" });
-        });
-
-        it('res.data doesnt equal to toe', () => {
-            let component = mount(<Provider store={store}><Upload /></Provider>);
-            component = component.find(Upload).children();
-
-            component.setState({ files: [{ name: "firstImage" }] });
-            component.instance().processImageValidationResult({ data: "something else" });
-
-            expect(component.state('files')[0]).toEqual({ name: "firstImage", valid: false, text: "Please upload an image of a toe." });
-        });
-
-        it('state variable files has multiple files', () => {
-            let component = mount(<Provider store={store}><Upload /></Provider>);
-            component = component.find(Upload).children();
-
-            component.setState({ files: [{ name: "firstImage" }, { name: "secondImage" }] });
-            component.instance().processImageValidationResult({ data: "toe" });
-
-            expect(component.state('files')[1]).toEqual({ name: "secondImage", valid: true, text: "Upload success!" });
-        });
-    })
-
     it('printFileValidationErrorToConsole method', () => {
         let component = mount(<Provider store={store}><Upload /></Provider>);
         component = component.find(Upload).children();
@@ -93,31 +50,6 @@ describe('Upload.js', () => {
         component.instance().printFileValidationErrorToConsole("not quite right");
 
         expect(console.log).toHaveBeenCalledWith("Error validating file: not quite right");
-    })
-
-    describe('validateImage method', () => {
-
-        it('users is not logged in, request should be sent to notloggedin', () => {
-            const store = mockStore({ auth: { isAuth: true } });
-            let component = mount(<Provider store={store}><Upload /></Provider>);
-            component = component.find(Upload).children();
-
-            Axios.get = jest.fn(() => Promise.resolve({ data: "toe" }));
-            component.instance().validateImage("this.png");
-
-            expect(Axios.get).toHaveBeenCalled();
-        });
-
-        it('users is logged in, server rejects', () => {
-            const store = mockStore({ auth: { isAuth: true } });
-            let component = mount(<Provider store={store}><Upload /></Provider>);
-            component = component.find(Upload).children();
-            Axios.get = jest.fn();
-            Axios.get.mockRejectedValueOnce();
-            component.instance().validateImage("this.png");
-
-            expect(component.instance().validateImage).toThrow();
-        });
     })
 
     describe('updateUploadProgress method', () => {
@@ -155,7 +87,6 @@ describe('Upload.js', () => {
 
             window.URL.createObjectURL = jest.fn();
             Axios.post = jest.fn(() => Promise.resolve());
-            jest.spyOn(component.instance(), 'validateImage');
             await component.instance().handleUpload();
 
             expect(Axios.post).toHaveBeenCalled();
@@ -169,7 +100,6 @@ describe('Upload.js', () => {
 
             window.URL.createObjectURL = jest.fn();
             Axios.post = jest.fn(() => Promise.resolve({ data: { img: "this.png" } }));
-            component.instance().validateImage = jest.fn();
             await component.instance().handleUpload();
 
             expect(Axios.post).toHaveBeenCalled();

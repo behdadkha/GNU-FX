@@ -103,7 +103,7 @@ class Signup extends Component {
             });
         }
         catch (error) {
-            if (error.response.data !== undefined) {
+            if (error.response !== undefined) {
                 this.setState({
                     errorMessage: error.response.data.errorMsg,
                 });

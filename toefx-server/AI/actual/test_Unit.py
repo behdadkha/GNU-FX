@@ -13,8 +13,6 @@ RECOGNITION_IMG_PATH = "recognition/"
 COVERAGE_IMG_PATH = "coverage/"
 MODELS_PATH = "AI/actual/models/"
 
-# TODO Test cases for NailRecognition.GetNailsFromImage that check the bound output
-
 
 class TestNailRecognition:
     def test_LoadModel_Unit(self):
@@ -36,13 +34,27 @@ class TestNailRecognition:
     def test_GetNailsFromImage_Unit_5(self):
         assert len(NailRecognition.GetNailsFromImage(TEST_IMG_PATH + RECOGNITION_IMG_PATH + "5.jpg")[0]) == 5
 
-    def test_GetNailsFromImage_Unit_6(self):  # Faulty input
-        assert len(NailRecognition.GetNailsFromImage("Not Real Path")[0]) == 0
+    def test_GetNailsFromImage_Unit_6(self):
+        images, imageBoundaries = NailRecognition.GetNailsFromImage(TEST_IMG_PATH + RECOGNITION_IMG_PATH + "5.jpg")
+        assert len(images) == len(imageBoundaries)
 
-    def test_GetNailsFromImage_Unit_7(self):  # Faulty input
-        assert len(NailRecognition.GetNailsFromImage(87541)[0]) == 0
+    def test_GetNailsFromImage_Unit_7(self):
+        images, imageBoundaries = NailRecognition.GetNailsFromImage(TEST_IMG_PATH + RECOGNITION_IMG_PATH + "5.jpg")
+        assert imageBoundaries == [
+            (116, 66, 183, 140),
+            (175, 89, 239, 163),
+            (243, 138, 306, 203),
+            (75, 138, 158, 195),
+            (214, 114, 276, 182),
+        ]
 
     def test_GetNailsFromImage_Unit_8(self):  # Faulty input
+        assert len(NailRecognition.GetNailsFromImage("Not Real Path")[0]) == 0
+
+    def test_GetNailsFromImage_Unit_9(self):  # Faulty input
+        assert len(NailRecognition.GetNailsFromImage(87541)[0]) == 0
+
+    def test_GetNailsFromImage_Unit_10(self):  # Faulty input
         assert len(NailRecognition.GetNailsFromImage([TEST_IMG_PATH + RECOGNITION_IMG_PATH + "5.jpg"])[0]) == 0
 
     def test_IsolateHand_Unit_1(self):
@@ -163,7 +175,7 @@ class TestNailRecognition:
 
 
 class TestFungalCoverage:
-    # Takes too long to leave for now
+    # Takes too long to leave for basic unit tests
     '''
     def test_TrainModel_Unit(self):
         startTime = datetime.now().timestamp()
@@ -221,10 +233,10 @@ class TestFungalCoverage:
         assert FungalCoverage.model is not None
 
     def test_CalculateCoverage_Unit_1(self):
-        assert FungalCoverage.CalculateCoverage(TEST_IMG_PATH + COVERAGE_IMG_PATH + "0.jpg") <= 1  # Within 1 percent
+        assert FungalCoverage.CalculateCoverage(TEST_IMG_PATH + COVERAGE_IMG_PATH + "0.jpg") <= 1  # None within 1 percent
 
     def test_CalculateCoverage_Unit_2(self):
-        assert abs(FungalCoverage.CalculateCoverage(TEST_IMG_PATH + COVERAGE_IMG_PATH + "1.png") - 38.0) <= 5  # Within 5 percent
+        assert FungalCoverage.CalculateCoverage(TEST_IMG_PATH + COVERAGE_IMG_PATH + "1.png") > 1  # Should detect fungus
 
     def test_CalculateCoverage_Unit_3(self):  # Faulty input
         assert FungalCoverage.CalculateCoverage("Blah") == 0.0

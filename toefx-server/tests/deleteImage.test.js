@@ -12,7 +12,7 @@ describe('deleteImage endpoint', () => {
     it('should fail if token is not set', async done => {
         const res = await request(app).get('/deleteImage');
         expect(res.statusCode).toEqual(500);
-        expect(res.body.msg).toBe("Something happened when tried to delete an image (might be an invalid token)");
+        expect(res.body.msg).toBe("An error occurred when attempting to delete an image (might be an invalid token).");
         done();
     });
 

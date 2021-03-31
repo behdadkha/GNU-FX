@@ -9,8 +9,6 @@ TEST_IMG_PATH = "AI/actual/test/"
 RECOGNITION_IMG_PATH = "recognition/"
 COVERAGE_IMG_PATH = "coverage/"
 
-# Potential future tests: Corrupted images
-
 
 class TestNailRecognition:
     def test_LoadModel_Stress(self):
@@ -20,9 +18,17 @@ class TestNailRecognition:
         NailRecognition.LoadModel()
         assert model == NailRecognition.model
 
-    def test_GetNailsFromImage_Stress(self):
+    def test_GetNailsFromImage_Stress_1(self):
         # Check an image with a bunch of partially revealed hands
-        assert len(NailRecognition.GetNailsFromImage(TEST_IMG_PATH + RECOGNITION_IMG_PATH + "Stress.png")[0]) == 6
+        assert len(NailRecognition.GetNailsFromImage(TEST_IMG_PATH + RECOGNITION_IMG_PATH + "Stress_1.png")[0]) == 6
+
+    def test_GetNailsFromImage_Stress_2(self):
+        # Test corrupted image
+        assert len(NailRecognition.GetNailsFromImage(TEST_IMG_PATH + RECOGNITION_IMG_PATH + "Stress_2.png")[0]) == 0
+
+    def test_SaveNailColours_Stress(self):
+        # Test corrupted image
+        assert len(NailRecognition.SaveNailColours([(116, 66, 183, 140)], TEST_IMG_PATH + RECOGNITION_IMG_PATH + "Stress_2.png")) == 0
 
 
 class TestFungalCoverage:
@@ -33,5 +39,10 @@ class TestFungalCoverage:
         FungalCoverage.LoadModel()
         assert model == FungalCoverage.model
 
-    def test_CalculateCoverage_Stress(self):
-        assert FungalCoverage.CalculateCoverage([TEST_IMG_PATH + RECOGNITION_IMG_PATH + "5.jpg"]) == 0  # Full hand
+    def test_CalculateCoverage_Stress_1(self):
+        # Test full hand
+        assert FungalCoverage.CalculateCoverage([TEST_IMG_PATH + RECOGNITION_IMG_PATH + "5.jpg"]) == 0
+
+    def test_CalculateCoverage_Stress_2(self):
+        # Test corrupted image
+        assert FungalCoverage.CalculateCoverage([TEST_IMG_PATH + RECOGNITION_IMG_PATH + "Stress_2.png"]) == 0

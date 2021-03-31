@@ -50,6 +50,8 @@ class NailRecognition:
         :return: A list of nail images for each nail found in the original image.
         """
 
+        errorReturn = [], []  # What to return if some error occurs
+
         if type(imagePath) == str and os.path.isfile(imagePath):  # Actual image
             NailRecognition.LoadModel()
 
@@ -65,6 +67,9 @@ class NailRecognition:
 
                     # Load the image
                     image = cv2.imread(imagePath, 1)
+                    if image is None:  # Not image file or corrupted image
+                        return errorReturn
+
                     baseImage = image.copy()
                     (height, width) = image.shape[:2]
                     output = []  # A list of nail images
@@ -100,7 +105,7 @@ class NailRecognition:
 
                     return output, boundaryOutput
 
-        return [], []  # No nails if not valid image path or input
+        return errorReturn  # No nails if not valid image path or input
 
     @staticmethod
     def IsolateHand(image: np.ndarray):
@@ -185,6 +190,9 @@ class NailRecognition:
 
         # Add markings to the original image
         markedImage = cv2.imread(originalPath, 1)
+        if markedImage is None:  # Not image file or corrupted image
+            return colours
+
         for i, image in enumerate(nailBounds):
             startX, startY, finalX, finalY = nailBounds[i]
 

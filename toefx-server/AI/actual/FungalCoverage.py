@@ -120,6 +120,9 @@ class FungalCoverage:
             # Open the image
             # For the why, see the comments on https://forums.fast.ai/t/prediction-on-video-input-file/41029/4
             image = cv2.imread(imagePath)
+            if image is None:  # Not image file or corrupted image
+                return coverage
+
             t = torch.tensor(np.ascontiguousarray(np.flip(image, 2)).transpose(2, 0, 1)).float() / 255
             image = Image(t)  # fastai.vision.Image, not PIL.Image
 

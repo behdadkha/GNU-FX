@@ -96,9 +96,9 @@ class Login extends Component {
             })
         }
         catch (error) {
-            if (error.response.data !== undefined) {
+            if (error !== undefined) {
                 this.setState({
-                    errorMessage: error.response.data.errorMsg,
+                    errorMessage: "Could not complete the Log in process."
                 });
             }
 

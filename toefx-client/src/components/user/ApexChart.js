@@ -18,7 +18,7 @@ import FeetButtons from "./FeetButtons";
 
 //BUG: Clicking on bottom labels changes graph view but not selected buttons
 
-const gInitialToeSelection = [true, true, false, false, false]; //Only first two toes start off shown (client request)
+const gInitialToeSelection = [true, false, false, false, false]; //Only first two toes start off shown (client request)
 
 
 class ApexChart extends React.Component {

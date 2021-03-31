@@ -54,10 +54,10 @@ describe('resetShownToesData function ApexChart', () => {
         let instance = component.instance();
         instance.resetShownToesData();
 
-        //shownToes is [true, true, false, false, false] therefore leftFoot indextoe should have two null values
+        //shownToes is [true, false, false, false, false] therefore leftFoot indextoe should have two null values
         const expectedGraphData = [
             { "data": ["30%", "10%"], "images": ["thisURL", "randomImageURL"], "name": "Big Toe" },
-            { "data": [null, null], "images": [], "name": "Index Toe" },
+            { "data": [], "name": ""},
             { "data": [], "name": "" },
             { "data": [], "name": "" },
             { "data": [], "name": "" }
@@ -81,10 +81,10 @@ describe('resetShownToesData function ApexChart', () => {
         let instance = component.instance();
         instance.resetShownToesData();
 
-        //shownToes is [true, true, false, false, false] therefore leftFoot indextoe should have two null values
+        //shownToes is [true, false, false, false, false] therefore leftFoot indextoe should have two null values
         const expectedGraphData = [
             { "data": ["30%", "10%"], "images": ["thisURL", "randomImageURL"], "name": "Big Toe" },
-            { "data": [null, null], "images": [], "name": "Index Toe" },
+            { "data": [], "name": "" },
             { "data": [], "name": "" },
             { "data": [], "name": "" },
             { "data": [], "name": "" }
@@ -150,7 +150,7 @@ describe('showToe', () => {
         let instance = component.instance();
         instance.showToe(10);//index teo
 
-        expect(component.state('shownToes')).toEqual([true, true, false, false, false]);//initial values
+        expect(component.state('shownToes')).toEqual([true, false, false, false, false]);//initial values
         expect(component.state('treatmentIndex')).toEqual(0);
 
     });

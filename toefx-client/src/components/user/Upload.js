@@ -195,10 +195,11 @@ class Upload extends Component {
         await axios.get(`${config.dev_server}/upload/decompose`,{headers: {'Access-Control-Allow-Origin': '*'}})
             .then(async res => {
                 //Res has data: {imagesInfo: [{name: "", cord: [x,y], color: [r,g,b]}], CLRImage: "name_CLR.png", fungalCoverage: "0%"}
-                if (res.data.imagesInfo.length === 0) {
+                
+                if (res.data.imagesInfo.length === 0) { //No nails found in image
                     var tempFile = this.state.files[0];
-                    tempFile.text = "No nails were found in the image. Click on either toe to restart."
-                    this.setState({files: [tempFile]})
+                    tempFile.text = "No nails were found in the image. Click on either toe to restart.";
+                    this.setState({files: [tempFile]}); //Let user know they uploaded an image without nails
                     return;
                 }
 
@@ -303,32 +304,6 @@ class Upload extends Component {
                 ctx.save();
             }
         };
-    }
-
-    /*
-        Updates the properties of the images in memory depending on the result of the image validation.
-        param res: The result of the image validation.
-    */
-    processImageValidationResult(res) {
-        if (res.data === undefined)
-            return;
-
-        var valid, text;
-        var currentImageIndex = this.state.files.length - 1;
-        var tempFiles = this.state.files; //A copy so setState can be used later
-        var response = res.data;
-        response = response.trim();
-        valid = response === "toe";
-
-        if (valid)
-            text = "Upload success!"
-        else
-            text = "Please upload an image of a toe."
-
-        //Save new validation
-        tempFiles[currentImageIndex].valid = valid;
-        tempFiles[currentImageIndex].text = text;
-        this.setState({files: tempFiles});
     }
 
     /*

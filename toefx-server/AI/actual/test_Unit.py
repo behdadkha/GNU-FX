@@ -70,21 +70,6 @@ class TestNailRecognition:
     def test_IsolateHand_Unit_4(self):
         assert NailRecognition.IsolateHand("Faulty") == "Faulty"  # Faulty input
 
-    def test_DoesImageContainNail_Unit_1(self):
-        assert NailRecognition.DoesImageContainNail([np.array([])]) is True
-
-    def test_DoesImageContainNail_Unit_2(self):
-        assert NailRecognition.DoesImageContainNail([]) is False
-
-    def test_DoesImageContainNail_Unit_3(self):  # Faulty input
-        assert NailRecognition.DoesImageContainNail("Hi") is False
-
-    def test_DoesImageContainNail_Unit_4(self):  # Faulty input
-        assert NailRecognition.DoesImageContainNail(55156) is False
-
-    def test_DoesImageContainNail_Unit_5(self):  # Faulty input
-        assert NailRecognition.DoesImageContainNail((np.array([]), np.array([]))) is False
-
     @staticmethod
     def setupSaveNailImagesLargeTest():
         testImagePath = TEST_IMG_PATH + RECOGNITION_IMG_PATH + "SaveNailTest.png"

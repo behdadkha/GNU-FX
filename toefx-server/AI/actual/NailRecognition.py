@@ -126,19 +126,6 @@ class NailRecognition:
         return result
 
     @staticmethod
-    def DoesImageContainNail(nailImages: [np.ndarray]) -> bool:
-        """
-        Checks if there is at least one nail present in an image.
-        :param nailImages: A series of nail images created by GetNailsFromImage.
-        :return: Whether or not any nails were actually found in the original image.
-        """
-
-        if type(nailImages) == list:  # Input checking
-            return len(nailImages) >= 1
-
-        return False  # No nails if not valid input
-
-    @staticmethod
     def SaveNailImages(nailImages: [np.ndarray], originalPath: str) -> [str]:
         """
         Saves a list of cropped nail images to the server. Images are saved in the same location
@@ -160,7 +147,7 @@ class NailRecognition:
         baseSavePath = originalPath
         if "." in originalPath:  # Original image had an extension
             imageNameList = baseSavePath.split(".")
-            baseSavePath = ".".join(imageNameList[:-1])
+            baseSavePath = ".".join(imageNameList[:-1])  # File name minus extension
 
         # Save each image
         for i, image in enumerate(nailImages):

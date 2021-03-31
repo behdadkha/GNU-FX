@@ -12,31 +12,6 @@ COVERAGE_IMG_PATH = "coverage/"
 
 
 class TestNailRecognition:
-    # Tests Functional Requirement: The program must notify the user if the uploaded image is not a valid image.
-    def test_DoesImageContainNail_Acceptance_1(self):
-        nailImages = NailRecognition.GetNailsFromImage(TEST_IMG_PATH + RECOGNITION_IMG_PATH + "1.jpg")[0]
-        assert NailRecognition.DoesImageContainNail(nailImages) is True
-
-    def test_DoesImageContainNail_Acceptance_2(self):
-        nailImages = NailRecognition.GetNailsFromImage(TEST_IMG_PATH + RECOGNITION_IMG_PATH + "2.jpg")[0]
-        assert NailRecognition.DoesImageContainNail(nailImages) is True
-
-    def test_DoesImageContainNail_Acceptance_3(self):
-        nailImages = NailRecognition.GetNailsFromImage(TEST_IMG_PATH + RECOGNITION_IMG_PATH + "3.jpg")[0]
-        assert NailRecognition.DoesImageContainNail(nailImages) is True
-
-    def test_DoesImageContainNail_Acceptance_4(self):
-        nailImages = NailRecognition.GetNailsFromImage(TEST_IMG_PATH + RECOGNITION_IMG_PATH + "4.jpg")[0]
-        assert NailRecognition.DoesImageContainNail(nailImages) is True
-
-    def test_DoesImageContainNail_Acceptance_5(self):
-        nailImages = NailRecognition.GetNailsFromImage(TEST_IMG_PATH + RECOGNITION_IMG_PATH + "5.jpg")[0]
-        assert NailRecognition.DoesImageContainNail(nailImages) is True
-
-    def test_DoesImageContainNail_Acceptance_6(self):
-        noNail = NailRecognition.GetNailsFromImage(TEST_IMG_PATH + RECOGNITION_IMG_PATH + "NoNail.jpg")[0]
-        assert NailRecognition.DoesImageContainNail(noNail) is False
-
     # Tests Functional Requirement:
     @staticmethod
     def setupSaveNailImagesTest():

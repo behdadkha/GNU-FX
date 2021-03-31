@@ -207,36 +207,3 @@ class TestFungalCoverage:
 
     def test_CalculateCoverage_Unit_4(self):  # Faulty input
         assert FungalCoverage.CalculateCoverage(75415) == 0.0
-
-    def test_IsNailInfected_Unit_1(self):
-        assert FungalCoverage.IsNailInfected(0) is False
-
-    def test_IsNailInfected_Unit_2(self):
-        assert FungalCoverage.IsNailInfected(0.0) is False
-
-    def test_IsNailInfected_Unit_3(self):
-        assert FungalCoverage.IsNailInfected(1) is True
-
-    def test_IsNailInfected_Unit_4(self):
-        assert FungalCoverage.IsNailInfected(1.0) is True
-
-    def test_IsNailInfected_Unit_5(self):
-        assert FungalCoverage.IsNailInfected(50) is True
-
-    def test_IsNailInfected_Unit_6(self):
-        assert FungalCoverage.IsNailInfected(50.0) is True
-
-    def test_IsNailInfected_Unit_7(self):
-        assert FungalCoverage.IsNailInfected(float('inf')) is True
-
-    def test_IsNailInfected_Unit_8(self):  # Faulty input
-        assert FungalCoverage.IsNailInfected(float('-inf')) is False
-
-    def test_IsNailInfected_Unit_9(self):  # Faulty input
-        assert FungalCoverage.IsNailInfected("Blah") is False
-
-    def test_IsNailInfected_Unit_10(self):  # Faulty input
-        assert FungalCoverage.IsNailInfected([5]) is False
-
-    def test_IsNailInfected_Unit_11(self):  # Faulty input
-        assert FungalCoverage.IsNailInfected(True) is False

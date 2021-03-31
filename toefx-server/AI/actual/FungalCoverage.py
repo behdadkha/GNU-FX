@@ -134,18 +134,3 @@ class FungalCoverage:
             coverage = round((percentFungus / percentNail) * 100, 2)  # Turn into actual percentage - 2 decimal points
 
         return round(coverage, 1)  # Round to single decimal place
-
-    @staticmethod
-    def IsNailInfected(coverageAmount: float) -> bool:
-        """
-        Determines if a nail is infected based on a given coverage value.
-        :param coverageAmount: The coverage of the nail calculated by FungalCoverage.CalculateCoverage
-        :return: Whether or not the nail is infected based on the given value.
-        """
-
-        if type(coverageAmount) == int:
-            coverageAmount = float(coverageAmount)  # Convert to float if necessary
-        elif type(coverageAmount) != float:
-            return False  # Always return False if bad input
-
-        return coverageAmount >= 1  # 1 % error rate

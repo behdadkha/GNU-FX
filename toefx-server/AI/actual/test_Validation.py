@@ -12,7 +12,12 @@ COVERAGE_IMG_PATH = "coverage/"
 
 
 class TestNailRecognition:
-    # Tests Functional Requirement:
+    # Tests Functional Requirement: The program must be able to isolate the nails in a valid image of a foot.
+    def test_GetNailsFromImage_Acceptance(self):
+        # The image of the foot used to test has four visible nails.
+        assert len(NailRecognition.GetNailsFromImage(TEST_IMG_PATH + RECOGNITION_IMG_PATH + "6.jpg")[0]) == 4
+
+    # Tests Functional Requirement: The program must be able to isolate the nails in a valid image of a foot.
     @staticmethod
     def setupSaveNailImagesTest():
         originalPath = TEST_IMG_PATH + RECOGNITION_IMG_PATH + "5.jpg"
@@ -62,11 +67,7 @@ class TestNailRecognition:
 
 
 class TestFungalCoverage:
-    # Tests Functional Requirement: Program must be able to classify images as either healthy or fungal toenails.
-    def test_IsNailInfected_Acceptance_1(self):
-        coverage = FungalCoverage.CalculateCoverage(TEST_IMG_PATH + COVERAGE_IMG_PATH + "0.jpg")
-        assert FungalCoverage.IsNailInfected(coverage) is False
-
-    def test_IsNailInfected_Acceptance_2(self):
-        coverage = FungalCoverage.CalculateCoverage(TEST_IMG_PATH + COVERAGE_IMG_PATH + "1.png")
-        assert FungalCoverage.IsNailInfected(coverage) is True
+    # Tests Functional Requirement: The program must be able to measure toenail fungus growth on uploaded images.
+    def test_CalculateCoverage(self):
+        # The image in the test is around 38% covered in fungus.
+        assert abs(FungalCoverage.CalculateCoverage(TEST_IMG_PATH + COVERAGE_IMG_PATH + "1.png") - 38.0) <= 5  # Within 5 percent

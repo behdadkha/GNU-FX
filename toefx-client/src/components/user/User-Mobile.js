@@ -163,10 +163,10 @@ class User extends Component {
         param dateString: The date extracted from the database for the image.
     */
     printToeDate(dateString) {
-        var date = new Date(dateString.split("T")[0]);
-        var day = date.getDay()
+        var date = new Date(dateString);
+        var day = date.getDate()
         var month = date.toLocaleString('default', { month: 'long' });
-        var year = date.getFullYear()
+        var year = date.getFullYear();
 
         return (
             <div className="mobile-image-date">

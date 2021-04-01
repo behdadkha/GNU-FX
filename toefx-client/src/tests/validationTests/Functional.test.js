@@ -28,7 +28,7 @@ let allStates =
     age: "22"
 };
 
-describe("Functional: Users must be able to create accounts", () => {
+describe("F-1 Users must be able to create accounts", () => {
     it("Creating account and checking if its created", async () => {
         let mockedHistory = { push: jest.fn() }
         let component = shallow(<Signup history={mockedHistory} />);
@@ -48,7 +48,7 @@ describe("Functional: Users must be able to create accounts", () => {
 
 });
 
-describe("Functional: The program must let the user log into their existing account", () => {
+describe("F-2 The program must let the user log into their existing account", () => {
     let mockedHistory, component;
     let ValidUser;
 
@@ -71,7 +71,7 @@ describe("Functional: The program must let the user log into their existing acco
 
     });
 
-    it("User should be redirected to their dashboard /user", async () => {
+    it("F-3 After logging in, users must be redirected to their dashboard.", async () => {
 
         window.location.reload = jest.fn();
         component.setState({ email: ValidUser.email, password: ValidUser.password });
@@ -90,7 +90,7 @@ describe("Functional: The program must let the user log into their existing acco
         await Axios.delete(`${config.dev_server}/user/delete`)
     })*/
 
-describe("The program must notify the user if the uploaded image is not a valid image", () => {
+describe("F-5 The program must notify the user if the uploaded image is not a valid image", () => {
 
     it('', async () => {
         const ValidUser = { email: "demoTEST@gmail.com", password: "123test" }
@@ -114,7 +114,7 @@ describe("The program must notify the user if the uploaded image is not a valid 
 });
 
 
-describe("Functional(F-11): User should be able to see their treatment schedule", () => {
+describe("F-11 User should be able to see their treatment schedule", () => {
     it("My Account sidebar", async () => {
         
         const ValidUser = { email: "demoTEST@gmail.com", password: "123test" }
@@ -131,7 +131,7 @@ describe("Functional(F-11): User should be able to see their treatment schedule"
 });
 
 
-describe("Performance(p-1): Login time must be less than 30 seconds", () => {
+describe("p-1: Login time must be less than 30 seconds", () => {
     it("User login", async () => {
         let mockedHistory, component;
         let ValidUser;
@@ -158,7 +158,7 @@ describe("Performance(p-1): Login time must be less than 30 seconds", () => {
     });
 });
 
-describe("Performance(p-3): Loading a storyline for viewing should take no more than 20 seconds", () => {
+describe("p-3: Loading a storyline for viewing should take no more than 20 seconds", () => {
     let mockedHistory, component;
     let ValidUser;
     beforeEach(() => {

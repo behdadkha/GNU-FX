@@ -105,7 +105,7 @@ class Signup extends Component {
         catch (error) {
             if (error !== undefined) {
                 this.setState({
-                    errorMessage: "Could not complete the sign up process.",
+                    errorMessage: "UNKNOWN_ERROR"
                 });
             }
             else

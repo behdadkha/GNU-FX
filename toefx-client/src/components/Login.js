@@ -98,10 +98,14 @@ class Login extends Component {
         catch (error) {
             if (error !== undefined) {
                 this.setState({
-                    errorMessage: "Could not complete the Log in process."
+                    errorMessage: "INVALID_CREDENTIALS"
                 });
             }
-
+            else {
+                this.setState({
+                    errorMessage: "INVALID_CREDENTIALS"
+                });
+            }
             return;
         }
 

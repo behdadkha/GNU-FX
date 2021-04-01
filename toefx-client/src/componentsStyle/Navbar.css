@@ -1,5 +1,11 @@
 /*CSS for the navigation bar that appears on top of certain pages.*/
 
-.NavbarFont{
+.navBar {
+    position: sticky;
+    top: 0px;
+    z-index: 100;
+}
+
+.NavbarFont {
     font-size: 100%;
 }

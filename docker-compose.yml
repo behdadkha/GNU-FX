@@ -1,11 +1,15 @@
 version: "3.1"
 services:
-  server:
-    image: toefx-server
+  backend:
+    image: behzadkha/tfximg
+    volumes:
+      - "./toefx-server/images:/toefx-server/images"
     ports:
       - "3001:3001"
   client:
-    image: behdadkha/toefx-client
+    image: behzadkha/tfximgfront
+    links:
+      - "backend"
     ports:
       - "3000:3000"
     stdin_open: true

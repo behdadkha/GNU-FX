@@ -6,9 +6,9 @@ RUN apt-get update \
     && pip3 install pillow \
     && apt-get install -y curl \
     && apt-get install sudo \
-    && pip3 install torch==1.1.0 torchvision==0.3.0 \
+    && pip3 install torch==1.7.1 torchvision==0.8.2 \
     && pip3 install opencv-contrib-python-headless \
-    && pip3 install fastai==1.0.52
+    && pip3 install fastai==1.0.61
 
 #installing nodejs
 RUN curl -sL https://deb.nodesource.com/setup_12.x | bash - \

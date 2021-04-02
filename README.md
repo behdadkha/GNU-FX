@@ -15,7 +15,10 @@ A web application that helps patients detect fungal toe infection, and allows th
 Note: Make sure you have python3 alias set as python. Running `python` should open an interactive CI.
 
 ## Running the Application using docker(recommended):
-**Make sure you have docker installed on your computer.**
+**Make sure you have docker installed on your computer.**\
+**Using docker-compose(easiest):
+In the main directory (where the docker-compose.yml file is) run `docker-compose up` in your terminal. Then open up a web browser and go to `http://localhost:3000/`**\
+or:
 1. Open up a terminal.
 2. Navigate to the `toefx-client` folder.
 3. Install all the required dependencies:<br>

@@ -4,7 +4,7 @@
 A web application that helps patients detect fungal toe infection, and allows them to keep track of their treatment progress.
 
 ## Requirements 
-(Recommended: use the docker file to run the server in toefx-server (In this case, you do not need to install pillow, Tensorflow, FastAI, and OpenCV))
+(Recommended: use the docker file to run the web app (In this case, you do not need to install pillow, Tensorflow, FastAI, and OpenCV))
 * [Nodejs (15.5.1)](https://nodejs.org/en/)
 * [Python3](https://www.python.org/downloads/)
 * Pillow

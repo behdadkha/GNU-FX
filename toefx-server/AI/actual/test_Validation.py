@@ -69,5 +69,5 @@ class TestNailRecognition:
 class TestFungalCoverage:
     # Tests Functional Requirement: The program must be able to measure toenail fungus growth on uploaded images.
     def test_CalculateCoverage(self):
-        # The image in the test is around 38% covered in fungus.
-        assert abs(FungalCoverage.CalculateCoverage(TEST_IMG_PATH + COVERAGE_IMG_PATH + "1.png") - 38.0) <= 5  # Within 5 percent
+        # The image in the test is around 33% covered in fungus.
+        assert abs(FungalCoverage.CalculateCoverage(TEST_IMG_PATH + COVERAGE_IMG_PATH + "1.png") - 33.0) <= 5  # Within 5 percent

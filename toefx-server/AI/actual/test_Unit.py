@@ -233,7 +233,7 @@ class TestFungalCoverage:
         assert FungalCoverage.model is not None
 
     def test_CalculateCoverage_Unit_1(self):
-        assert FungalCoverage.CalculateCoverage(TEST_IMG_PATH + COVERAGE_IMG_PATH + "0.jpg") <= 1  # None within 1 percent
+        assert FungalCoverage.CalculateCoverage(TEST_IMG_PATH + COVERAGE_IMG_PATH + "0.jpg") <= 2  # None within 2 percent
 
     def test_CalculateCoverage_Unit_2(self):
         assert FungalCoverage.CalculateCoverage(TEST_IMG_PATH + COVERAGE_IMG_PATH + "1.png") > 1  # Should detect fungus

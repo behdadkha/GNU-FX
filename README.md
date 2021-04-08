@@ -1,45 +1,51 @@
-**Note: You can use `git checkout 63e8daf31e845c766c115d1eedc64b13894cc935` to get the changes made for the "Testable Artifact" delivarable**
-
 # ToeFX 
 A web application that helps patients detect fungal toe infection, and allows them to keep track of their treatment progress.
 
 ## Requirements 
-(Recommended: use the docker file to run the web app (In this case, you do not need to install pillow, Tensorflow, FastAI, and OpenCV))
+### Core Requirements
 * [Nodejs (15.5.1)](https://nodejs.org/en/)
 * [Python3](https://www.python.org/downloads/)
-* Pillow
-* [Tensorflow](https://www.tensorflow.org/install/pip)
-* [FastAI](https://fastai1.fast.ai/install.html)
-* [OpenCV](https://pypi.org/project/opencv-python/)
-<br><br/>
-Note: Make sure you have python3 alias set as python. Running `python` should open an interactive CI.
 
-## Running the Application using docker(recommended):
-**Make sure you have docker installed on your computer.**\
-**Using docker-compose(easiest):\
-In the main directory (where the docker-compose.yml file is) run `docker-compose up` in your terminal. Then open up a web browser and go to `http://localhost:3000/`**\
-or:
+### Additional Requirements
+If you are using the recommended Docker file to run the web app (see below), you do not need to install these requirements. Otherwise, these requirements can be installed by running ``pip install -r requirements.txt`` in the root. 
+
+**Note**: Make sure you have *python3* alias set as *python*. Running `python` should open an interactive terminal.
+
+## Running the Application using Docker (Recommended):
+**Make sure you have [docker](https://www.docker.com/) installed on your computer.**
+
+### Option 1: Using Docker-Compose (Easiest)
 1. Open up a terminal.
-2. Navigate to the `toefx-client` folder.
+2. Navigate to the root directory (where the *docker-compose.yml* file is).
+3. Run docker compose.<br>`docker-compose up`
+4. Open up a web browser and go to `http://localhost:3000/`.
+
+### Option 2
+1. Open up a terminal.
+2. Navigate to the *toefx-client* directory.
 3. Install all the required dependencies:<br>
 `npm install` 
 4. Start the front-end server.<br>
 `npm start`
-5. Open a new terminal. From the root directory (ToeFX), navigate to the `toefx-server` folder. Run `docker build -t toefxserver .` (notice the "." at the end) then run `docker run -it -v $(pwd)/images:/toefx-server/images -p 3001:3001 toefxserver` <br>
-Note: if you are using powershell put the volume mount in "" like  `"$(pwd)/images:/toefx-server/images"`
-6. Open up a web browser and go to http://localhost:3000/
+5. Open a new terminal. From the root directory (ToeFX), navigate to the *toefx-server* folder. Run<br>
+`docker build -t toefxserver .` (notice the `.` at the end!)<br>
+Then run<br>
+`docker run -it -v $(pwd)/images:/toefx-server/images -p 3001:3001 toefxserver` <br>
+**Note**: if you are using powershell put the volume mount in "" like<br>
+`"$(pwd)/images:/toefx-server/images"`
+6. Open up a web browser and go to http://localhost:3000/.
 
-## Running the Application without docker:
+## Running the Application without Docker:
 **Make sure you have all the requirements installed to be able to run the AI without any errors.**
-**If you are using `pip`, make sure to install [Pytorch](https://pytorch.org/get-started/locally/) along with FastAI.**
-**Note:  make sure running "python" in your terminal opens up an interactive interface. (ie. you can run a python program using "python example.py")** 
+**If you are using `pip`, make sure to install [Pytorch](https://pytorch.org/get-started/locally/) along with FastAI (this will be done automatically if installing from the *py_requirements.txt* file).** \
+**Note: Make sure running `python` in your terminal opens up an interactive interface. (ie. you can run a python program using "python example.py")** 
 1. Open up a terminal.
-2. Navigate to the `toefx-client` folder.
+2. Navigate to the `toefx-client` directory.
 3. Install all the required dependencies:<br>
 `npm install` 
 4. Start the front-end server.<br>
 `npm start`
-5. From the root directory (ToeFX), navigate to the `toefx-server` folder.  
+5. From the root directory (ToeFX), navigate to the *toefx-server* folder.  
 6. Install all the required dependencies.<br>
 `npm install`
 7. Start the back-end server.<br>
@@ -52,9 +58,9 @@ Note: if you are using powershell put the volume mount in "" like  `"$(pwd)/imag
 `pip3 install pillow `<br>
 `apt-get install -y curl `<br>
 `apt-get install sudo \`<br>
-`pip3 install torch==1.1.0 torchvision==0.3.0`<br> 
+`pip3 install torch==1.3.1 torchvision==0.4.2`<br> 
 `pip3 install opencv-contrib-python-headless `<br>
-`pip3 install fastai==1.0.52`<br>
+`pip3 install fastai==1.0.59`<br>
 
 ## Usage
 1. Click on the signup button to create a new account.

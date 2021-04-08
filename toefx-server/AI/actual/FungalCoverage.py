@@ -7,7 +7,6 @@ import cv2
 import numpy as np
 import os
 from fastai.vision import *
-from fastai.callbacks.hooks import *
 
 VALIDATION_DATA_PERCENT = 0.15  # 15% of training set is used for validation
 BATCH_SIZE = 8  # How many images are used per batch of training

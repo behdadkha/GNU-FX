@@ -4,7 +4,7 @@ A web application that helps patients detect fungal toe infection, and allows th
 ## Requirements 
 ### Core Requirements
 * [Nodejs (15.5.1)](https://nodejs.org/en/)
-* [Python3](https://www.python.org/downloads/)
+* [Python3 (3.7.4)](https://www.python.org/downloads/)
 
 ### Additional Requirements
 If you are using the recommended Docker file to run the web app (see below), you do not need to install these requirements. Otherwise, these requirements can be installed by running ``pip install -r requirements.txt`` in the root. 

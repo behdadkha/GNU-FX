@@ -22,7 +22,7 @@ def stress(headless, email, password, newPassword):
     
     driver.get("http://localhost:3000")
 
-    assert "ToeFX" in driver.title
+    assert "gnufx" in driver.title
     print("page loaded")
 
     def login(email, password):

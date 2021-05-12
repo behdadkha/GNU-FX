@@ -14,23 +14,23 @@ jobs:
     - uses: actions/checkout@v1
     - name: npm install client
       run: |
-        cd toefx-client
+        cd gnufx-client
         npm install
     - name: npm install server
       run: |
-        cd toefx-server
+        cd gnufx-server
         npm install
     - name: testing client
       run: |
-        cd toefx-client
+        cd gnufx-client
         npm run unitTest
     - name: testing server
       run: |
-        cd toefx-server
+        cd gnufx-server
         npm run test
         echo "Exited with '$?'"
     - name: npm run build for deployment (later)
       run: |
-        cd toefx-client
+        cd gnufx-client
         npm run build
       

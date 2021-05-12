@@ -3,7 +3,7 @@ services:
   backend:
     image: behzadkha/tfximg
     volumes:
-      - "./toefx-server/images:/toefx-server/images"
+      - "./gnufx-server/images:/gnufx-server/images"
     ports:
       - "3001:3001"
   client:

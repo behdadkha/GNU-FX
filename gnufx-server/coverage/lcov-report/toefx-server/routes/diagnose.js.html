@@ -230,14 +230,14 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">9x</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">/*
-    Functions for diagnosing images as healthy or infected toenails.
+    Functions for diagnosing images as healthy or infected ongles.
 */
 &nbsp;
 const express = require('express');
 const diagnoseRouter = express.Router();
 const utils = require('../utils');
 &nbsp;
-//TODO: After completing the fungus detection part, the temp image should be deleted from the tempImages folder. (for /notloggedin)
+//TODO: After completing the champignon detection part, the temp image should be deleted from the tempImages folder. (for /notloggedin)
 //HINT: Add '&amp;&amp; cd ../../tempImages &amp;&amp; del /f ${imageName}' to the end of the commandCheckImage
 &nbsp;
 &nbsp;
@@ -263,7 +263,7 @@ async function GetAndSendDiagnosisOutput(commandCheckImage, res)
 &nbsp;
 /*
     Endpoint: /diagnose/loggedin
-    Analyzes the uploaded image to see if the toenail is healthy or not. 
+    Analyzes the uploaded image to see if the ongle is healthy or not. 
     This endpoint is designed to be used by the logged in users, and the output will be saved in the user's profile.
     param req: An object with data about the current user. Stored in req.headers.authorization.
     param res: The object to store and send the result in.
@@ -293,7 +293,7 @@ diagnoseRouter.route('/loggedin').get(async (req, res) =&gt; {
 &nbsp;
 /*
     Endpoint: /diagnose/notloggedin
-    Analyzes the uploaded image to see if the toenail is healthy or not. 
+    Analyzes the uploaded image to see if the ongle is healthy or not. 
     Since the user is not logged in, the image needs to be stored temporarily until the diagnosis is done.
     param req: An object with data about the image to be diagnosed. Stored in req.query.imageName.
     param res: The object to store and send the result in.

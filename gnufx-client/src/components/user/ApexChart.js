@@ -63,7 +63,7 @@ class ApexChart extends React.Component {
                     min: 0,
                     max: 100,
                     title: {
-                        text: "Fungual Coverage (%)",
+                        text: "Fongique Coverage (%)",
                         style: "graph-y-axis"
                     }
                 },
@@ -274,7 +274,7 @@ class ApexChart extends React.Component {
 
         var isToeNotIncluded = this.state.shownToes[toeNames.findIndex(toeName => toeName === name)];
         var imageIndex = this.state.treatmentIndex - percentage.filter(item => item === null).length; //Need to subtract the number of nulls from the treatment index because images dont have nulls		
-        var fungalCoverage = percentage[this.state.treatmentIndex]; //Gets the fungal coverage based on the selected point on the graph
+        var fongiqueCoverage = percentage[this.state.treatmentIndex]; //Gets the fongique coverage based on the selected point on the graph
 
         return (
             ((images[imageIndex]) && isToeNotIncluded)
@@ -286,7 +286,7 @@ class ApexChart extends React.Component {
                         />
                     </td>
                     <td>{name}</td>
-                    <td>{fungalCoverage}</td>
+                    <td>{fongiqueCoverage}</td>
                 </tr>
                 :
                 <tr key={id}></tr>
@@ -314,7 +314,7 @@ class ApexChart extends React.Component {
                         <tr>
                             <th>Image</th>
                             <th>Toe Name</th>
-                            <th>Fungal Coverage</th>
+                            <th>fongique Coverage</th>
                         </tr>
                     </thead>
                     <tbody>

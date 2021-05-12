@@ -123,7 +123,7 @@ class Login extends Component {
             //Load all of the user's images from the server
             store.dispatch(getAndSaveImages());
 
-            //Load all of the user's toe data from the server like fungal coverage
+            //Load all of the user's toe data from the server like fongique coverage
             store.dispatch(getAndSaveToeData());
             
             //Redirect to User page

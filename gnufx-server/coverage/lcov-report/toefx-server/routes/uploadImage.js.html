@@ -469,7 +469,7 @@ function SaveToeData(userId, date, footIndex, toeIndex, imageName, res=<span cla
 <span class="cstat-no" title="statement not covered" >            item.feet[footIndex].toes[toeIndex].images.push({</span>
                 date: date,
                 name: imageName,
-                fungalCoverage: '20%' //Temp data for now
+                fongiqueCoverage: '20%' //Temp data for now
             })
 &nbsp;
 <span class="cstat-no" title="statement not covered" >            item.save();</span>
@@ -610,7 +610,7 @@ uploadImage.route('/loggedin').post(async (req, res) =&gt; {
 /*
     Endpoint: /upload/notloggedin
     Saves the uploaded image to a temp folder when the user is not logged in.
-        Eventually it will delete the image after the fungal coverage percentage is calculated (not implemented yet).
+        Eventually it will delete the image after the fongique coverage percentage is calculated (not implemented yet).
     param req: The request object containing:
         files.file: The image to upload.
     param res: The object to store and send the result in.

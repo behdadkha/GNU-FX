@@ -21,7 +21,7 @@ let images = [{ name: "this.png", url: "some" }]
 let toeData = [
     {
         toes: [
-            { images: [{ name: "this.png", date: "2020-11-02", fungalCoverage: "30%" }] },
+            { images: [{ name: "this.png", date: "2020-11-02", fongiqueCoverage: "30%" }] },
             { images: [] },
             { images: [] },
             { images: [] },
@@ -43,8 +43,8 @@ let bigArrayofToeData = {
             toes: [
                 {
                     images: [
-                        { name: "this.png", date: "2020-11-02", fungalCoverage: "30%" },
-                        { name: "random.jpeg", date: "2010-11-02", fungalCoverage: "10%" }
+                        { name: "this.png", date: "2020-11-02", fongiqueCoverage: "30%" },
+                        { name: "random.jpeg", date: "2010-11-02", fongiqueCoverage: "10%" }
                     ]
                 },
                 {
@@ -55,7 +55,7 @@ let bigArrayofToeData = {
                 },
                 {
                     images: [
-                        { name: "forth.jpeg", date: "2010-11-02", fungalCoverage: "10%" }
+                        { name: "forth.jpeg", date: "2010-11-02", fongiqueCoverage: "10%" }
                     ]
                 },
                 {
@@ -78,8 +78,8 @@ let bigArrayofToeData = {
                 },
                 {
                     images: [
-                        { name: "righFoot.png", date: "2020-11-02", fungalCoverage: "30%" },
-                        { name: "secondImage index.jpeg", date: "2010-11-02", fungalCoverage: "10%" }
+                        { name: "righFoot.png", date: "2020-11-02", fongiqueCoverage: "30%" },
+                        { name: "secondImage index.jpeg", date: "2010-11-02", fongiqueCoverage: "10%" }
                     ]
                 },
                 {
@@ -89,7 +89,7 @@ let bigArrayofToeData = {
                 },
                 {
                     images: [
-                        { name: "rightSmall.jpeg", date: "2010-11-02", fungalCoverage: "10%" }
+                        { name: "rightSmall.jpeg", date: "2010-11-02", fongiqueCoverage: "10%" }
                     ]
                 }
             ]
@@ -160,7 +160,7 @@ describe('processServerFeetData function', () => {
             feet: [
                 {
                     toes: [
-                        { images: [{ name: "this.png", date: "2020-11-02", fungalCoverage: "30%" }] },
+                        { images: [{ name: "this.png", date: "2020-11-02", fongiqueCoverage: "30%" }] },
                         { images: [] },
                         { images: [] },
                         { images: [] },
@@ -176,14 +176,14 @@ describe('processServerFeetData function', () => {
         let instance = component.find(User).children().instance();
 
         instance.setState({ toeData: toeData, imageUrls: imageUrls });
-        let { images, dates, fungalCoverage } = instance.processServerFeetData(0);
+        let { images, dates, fongiqueCoverage } = instance.processServerFeetData(0);
 
-        const expectedFungal = [[toeData.feet[0].toes[0].images[0].fungalCoverage], [null], [null], [null], [null]]
+        const expectedfongique = [[toeData.feet[0].toes[0].images[0].fongiqueCoverage], [null], [null], [null], [null]]
         const expectedImages = [[imageUrls[0].url], [], [], [], []]
 
         expect(images).toEqual(expectedImages)
         expect(dates).toEqual([toeData.feet[0].toes[0].images[0].date])
-        expect(fungalCoverage).toEqual(expectedFungal)
+        expect(fongiqueCoverage).toEqual(expectedfongique)
     });
 
     it("can handle state variable toeData and imageUrls are empty", () => {
@@ -191,11 +191,11 @@ describe('processServerFeetData function', () => {
         let instance = component.find(User).children().instance();
 
         instance.setState({ toeData: [], imageUrls: [] });
-        let { images, dates, fungalCoverage } = instance.processServerFeetData(0);
+        let { images, dates, fongiqueCoverage } = instance.processServerFeetData(0);
 
         expect(images).toEqual([[], [], [], [], []])
         expect(dates).toEqual([])
-        expect(fungalCoverage).toEqual([[], [], [], [], []])
+        expect(fongiqueCoverage).toEqual([[], [], [], [], []])
     });
 
     it("is called with footId = 3", () => {
@@ -203,11 +203,11 @@ describe('processServerFeetData function', () => {
         let instance = component.find(User).children().instance();
 
         instance.setState({ toeData: [], imageUrls: [] });
-        let { images, dates, fungalCoverage } = instance.processServerFeetData(3);
+        let { images, dates, fongiqueCoverage } = instance.processServerFeetData(3);
 
         expect(images).toEqual([[], [], [], [], []])
         expect(dates).toEqual([])
-        expect(fungalCoverage).toEqual([[], [], [], [], []])
+        expect(fongiqueCoverage).toEqual([[], [], [], [], []])
     });
 
     describe("nulls are propperly placed in arrays with multiple toe enteries", () => {
@@ -223,14 +223,14 @@ describe('processServerFeetData function', () => {
             let instance = component.find(User).children().instance();
 
             instance.setState({ toeData: toeData, imageUrls: imageUrls });
-            let { images, dates, fungalCoverage } = instance.processServerFeetData(0);
+            let { images, dates, fongiqueCoverage } = instance.processServerFeetData(0);
 
-            const expectedFungal = [["30%", "10%"], [null, null], [null, null], [null, null, "10%"], [null, null, null]]
+            const expectedfongique = [["30%", "10%"], [null, null], [null, null], [null, null, "10%"], [null, null, null]]
             const expectedImages = [["thisURL", "randomImageURL"], [], [], ["forthImageURL"], []]
 
             expect(images).toEqual(expectedImages)
             expect(dates).toEqual(["2020-11-02", "2010-11-02", "2010-11-02"])
-            expect(fungalCoverage).toEqual(expectedFungal)
+            expect(fongiqueCoverage).toEqual(expectedfongique)
         });
 
         it("right foot", () => {
@@ -239,14 +239,14 @@ describe('processServerFeetData function', () => {
             let instance = component.find(User).children().instance();
 
             instance.setState({ toeData: toeData, imageUrls: imageUrls });
-            let { images, dates, fungalCoverage } = instance.processServerFeetData(1);
+            let { images, dates, fongiqueCoverage } = instance.processServerFeetData(1);
 
-            const expectedFungal = [[], [], ["30%", "10%"], [null, null], [null, null, "10%"]]
+            const expectedfongique = [[], [], ["30%", "10%"], [null, null], [null, null, "10%"]]
             const expectedImages = [[], [], ["righFootURL", "secondImageURL"], [], ["rightSmallURL"]]
 
             expect(images).toEqual(expectedImages)
             expect(dates).toEqual(["2020-11-02", "2010-11-02", "2010-11-02"])
-            expect(fungalCoverage).toEqual(expectedFungal)
+            expect(fongiqueCoverage).toEqual(expectedfongique)
         });
 
         it("one of the urls is empty", () => {
@@ -256,14 +256,14 @@ describe('processServerFeetData function', () => {
             let instance = component.find(User).children().instance();
 
             instance.setState({ toeData: toeData, imageUrls: imageUrls });
-            let { images, dates, fungalCoverage } = instance.processServerFeetData(1);
+            let { images, dates, fongiqueCoverage } = instance.processServerFeetData(1);
 
-            const expectedFungal = [[], [], ["30%", "10%"], [null, null], [null, null, "10%"]]
+            const expectedfongique = [[], [], ["30%", "10%"], [null, null], [null, null, "10%"]]
             const expectedImages = [[], [], ["righFootURL", "secondImageURL"], [], [""]]
 
             expect(images).toEqual(expectedImages)
             expect(dates).toEqual(["2020-11-02", "2010-11-02", "2010-11-02"])
-            expect(fungalCoverage).toEqual(expectedFungal)
+            expect(fongiqueCoverage).toEqual(expectedfongique)
             imageUrls[5].url = "rightSmallURL";
         });
     });
@@ -419,7 +419,7 @@ describe('organizeDataforGraph method', () => {
 
 describe('printToeData method', () => {
 
-    it("correctly outputs fungal coverage in format: 20% -> 10% -> ...",() => {
+    it("correctly outputs fongique coverage in format: 20% -> 10% -> ...",() => {
         let mockedHistory = { push: jest.fn() }
         let component = mount(<Provider store={store}><User history={mockedHistory} /></Provider>);
         component = component.find(User).children();

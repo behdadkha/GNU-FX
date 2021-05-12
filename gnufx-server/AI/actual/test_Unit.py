@@ -5,7 +5,7 @@ from datetime import datetime
 from fastai.vision import *
 from pytest import *
 
-from FungalCoverage import *
+from fongiqueCoverage import *
 from NailRecognition import *
 
 TEST_IMG_PATH = "AI/actual/test/"
@@ -174,72 +174,72 @@ class TestNailRecognition:
         assert len(NailRecognition.SaveNailColours([], 5)) == 0
 
 
-class TestFungalCoverage:
+class TestfongiqueCoverage:
     # Takes too long to leave for basic unit tests
     '''
     def test_TrainModel_Unit(self):
         startTime = datetime.now().timestamp()
-        FungalCoverage.TrainModel()
-        modelLastModifiedTime = os.path.getmtime(MODELS_PATH + FUNGAL_COVERAGE_MODEL_NAME + ".pth")
+        fongiqueCoverage.TrainModel()
+        modelLastModifiedTime = os.path.getmtime(MODELS_PATH + fongique_COVERAGE_MODEL_NAME + ".pth")
         assert modelLastModifiedTime > startTime  # Training was success if model was updated
     '''
 
     def test_CreateBaseLearner_Unit(self):
-        learn = FungalCoverage.CreateBaseLearner()
+        learn = fongiqueCoverage.CreateBaseLearner()
         assert type(learn) == Learner
 
     def test_MaskPathFromBaseImagePath_Unit_1(self):
         path = Path("0.png")
-        path = FungalCoverage.MaskPathFromBaseImagePath(path)
+        path = fongiqueCoverage.MaskPathFromBaseImagePath(path)
         path.replace("\\", "/")
         assert path.endswith("mask/0.png")
 
     def test_MaskPathFromBaseImagePath_Unit_2(self):
         path = Path("hi.jpg")
-        path = FungalCoverage.MaskPathFromBaseImagePath(path)
+        path = fongiqueCoverage.MaskPathFromBaseImagePath(path)
         path.replace("\\", "/")
         assert path.endswith("mask/hi.png")
 
     def test_MaskPathFromBaseImagePath_Unit_3(self):
         path = Path(TEST_IMG_PATH + COVERAGE_IMG_PATH + "1.png")
-        path = FungalCoverage.MaskPathFromBaseImagePath(path)
+        path = fongiqueCoverage.MaskPathFromBaseImagePath(path)
         path.replace("\\", "/")
         assert path.endswith("mask/1.png")
 
     def test_MaskPathFromBaseImagePath_Unit_4(self):
         path = 5  # Faulty input
-        assert FungalCoverage.MaskPathFromBaseImagePath(path) == path  # Still original input
+        assert fongiqueCoverage.MaskPathFromBaseImagePath(path) == path  # Still original input
 
     def test_MaskPathFromBaseImagePath_Unit_5(self):
         path = TEST_IMG_PATH + COVERAGE_IMG_PATH + "1.png"  # Faulty input
-        assert FungalCoverage.MaskPathFromBaseImagePath(path) == path  # Still original input
+        assert fongiqueCoverage.MaskPathFromBaseImagePath(path) == path  # Still original input
 
     def test_TrainAccuracy_Unit_1(self):
         inputVal = Tensor([[[[[0, 1, 0, 0]]]]])
         target = Tensor([[[[[0, 1, 0, 0]]]]])
-        assert FungalCoverage.TrainAccuracy(inputVal, target).tolist() == 0
+        assert fongiqueCoverage.TrainAccuracy(inputVal, target).tolist() == 0
 
     def test_TrainAccuracy_Unit_2(self):
-        assert FungalCoverage.TrainAccuracy(5, Tensor()).tolist() == Tensor().tolist()  # Faulty input
+        assert fongiqueCoverage.TrainAccuracy(5, Tensor()).tolist() == Tensor().tolist()  # Faulty input
 
     def test_TrainAccuracy_Unit_3(self):
-        assert FungalCoverage.TrainAccuracy(Tensor(), [5612]).tolist() == Tensor().tolist()  # Faulty input
+        assert fongiqueCoverage.TrainAccuracy(Tensor(), [5612]).tolist() == Tensor().tolist()  # Faulty input
 
     def test_TrainAccuracy_Unit_4(self):
-        assert FungalCoverage.TrainAccuracy("hello", {}).tolist() == Tensor().tolist()  # Faulty input
+        assert fongiqueCoverage.TrainAccuracy("hello", {}).tolist() == Tensor().tolist()  # Faulty input
 
     def test_LoadModel_Unit(self):
-        FungalCoverage.LoadModel()
-        assert FungalCoverage.model is not None
+        fongiqueCoverage.LoadModel()
+        assert fongiqueCoverage.model is not None
 
     def test_CalculateCoverage_Unit_1(self):
-        assert FungalCoverage.CalculateCoverage(TEST_IMG_PATH + COVERAGE_IMG_PATH + "0.jpg") <= 2  # None within 2 percent
+        assert fongiqueCoverage.CalculateCoverage(TEST_IMG_PATH + COVERAGE_IMG_PATH + "0.jpg") <= 2  # None within 2 percent
 
     def test_CalculateCoverage_Unit_2(self):
-        assert FungalCoverage.CalculateCoverage(TEST_IMG_PATH + COVERAGE_IMG_PATH + "1.png") > 1  # Should detect fungus
+        assert fongiqueCoverage.CalculateCoverage(TEST_IMG_PATH + COVERAGE_IMG_PATH + "1.png") > 1  # Should detect champignon
 
     def test_CalculateCoverage_Unit_3(self):  # Faulty input
-        assert FungalCoverage.CalculateCoverage("Blah") == 0.0
+        assert fongiqueCoverage.CalculateCoverage("Blah") == 0.0
 
     def test_CalculateCoverage_Unit_4(self):  # Faulty input
-        assert FungalCoverage.CalculateCoverage(75415) == 0.0
+        assert fongiqueCoverage.CalculateCoverage(75415) == 0.0

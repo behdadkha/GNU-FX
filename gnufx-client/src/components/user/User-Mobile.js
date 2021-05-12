@@ -187,8 +187,8 @@ class User extends Component {
 
             for (let i = toeData.length - 1; i >= 0; --i) { //Go in reverse so newest picture comes first
                 //Coverage is either red or green depending on the condision
-                let infectedText = toeData[i]["fungalCoverage"] === "0%" ? "Healthy" : toeData[i]["fungalCoverage"] + " Infected";
-                let infectedColour = toeData[i]["fungalCoverage"] === "0%" ? "healthy-text" : "infected-text";
+                let infectedText = toeData[i]["fongiqueCoverage"] === "0%" ? "Healthy" : toeData[i]["fongiqueCoverage"] + " Infected";
+                let infectedColour = toeData[i]["fongiqueCoverage"] === "0%" ? "healthy-text" : "infected-text";
 
                 rows.push(
                     <Row className="mobile-image-row">
@@ -206,8 +206,8 @@ class User extends Component {
 
                                 <div className="mobile-coverage-bar">
                                     <div className="infected-bar"
-                                    style={{width: toeData[i]["fungalCoverage"],
-                                            backgroundColor: this.calculateInfectionColour(parseInt(toeData[i]["fungalCoverage"].split("%")[0]))}}
+                                    style={{width: toeData[i]["fongiqueCoverage"],
+                                            backgroundColor: this.calculateInfectionColour(parseInt(toeData[i]["fongiqueCoverage"].split("%")[0]))}}
                                     ></div>
                                 </div>
                             </div>

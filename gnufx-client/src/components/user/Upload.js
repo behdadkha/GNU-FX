@@ -130,7 +130,7 @@ class Upload extends Component {
                 foot: footId,
                 toe: imageObj.selectedToeId,
                 imageName: imageObj.imageName,
-                fungalCoverage: imageObj.fungalCoverage
+                fongiqueCoverage: imageObj.fongiqueCoverage
             })
             .then(() => {
                 console.log(`${imageObj.imageName} has been saved.`);
@@ -194,7 +194,7 @@ class Upload extends Component {
 
         await axios.get(`${config.dev_server}/upload/decompose`,{headers: {'Access-Control-Allow-Origin': '*'}})
             .then(async res => {
-                //Res has data: {imagesInfo: [{name: "", cord: [x,y], color: [r,g,b]}], CLRImage: "name_CLR.png", fungalCoverage: "0%"}
+                //Res has data: {imagesInfo: [{name: "", cord: [x,y], color: [r,g,b]}], CLRImage: "name_CLR.png", fongiqueCoverage: "0%"}
                 
                 if (res.data.imagesInfo.length === 0) { //No nails found in image
                     var tempFile = this.state.files[0];
@@ -205,7 +205,7 @@ class Upload extends Component {
 
                 //Format: res.data.imagesInfo[{name: "", cord: [x,y], color: [r,g,b]}]
                 var images = [];
-                var promises = res.data.imagesInfo.map(async ({ name, cord, color, fungalCoverage }) => {
+                var promises = res.data.imagesInfo.map(async ({ name, cord, color, fongiqueCoverage }) => {
                     var imageObj = await getImage(name);
 
                     //Add the additional info to the imageobj
@@ -214,7 +214,7 @@ class Upload extends Component {
                     imageObj["keepClicked"] = false;
                     imageObj["saved"] = false;
                     imageObj["selectedToeId"] = -1; //By default not selected
-                    imageObj["fungalCoverage"] = fungalCoverage;
+                    imageObj["fongiqueCoverage"] = fongiqueCoverage;
                     images.push(imageObj);
                 });
 

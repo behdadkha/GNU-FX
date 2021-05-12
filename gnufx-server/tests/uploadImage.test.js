@@ -43,7 +43,7 @@ describe('/upload/loggedin endpoint', () => {
         let mockedData = { user: { save: mockedUserSave, images: [{}] }, id: "1" };
         utils.loadUserObject = jest.fn(() => Promise.resolve(mockedData));
         //Mocked toedata to pass the savetoedata and reach the moveImagetoUserImage(so that toe image does not exist in the user folder)
-        toeDataSchema.findOne = jest.fn().mockResolvedValue([{userId: '1',feet : [{toes:[{images:[{date: "2021-01-27",name: "0.PNG",fungalCoverage: "43%"}]},]}]}]);
+        toeDataSchema.findOne = jest.fn().mockResolvedValue([{userId: '1',feet : [{toes:[{images:[{date: "2021-01-27",name: "0.PNG",fongiqueCoverage: "43%"}]},]}]}]);
 
         const res = await request(app)
             .post('/upload/loggedin')

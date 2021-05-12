@@ -80,11 +80,11 @@ class User extends Component {
         returns: Object containing
                     images: An array of URLs to each image
                     dates: Dates each image was uploaded
-                    fungalCoverage: An of fungal coverage in percent of each image
+                    fongiqueCoverage: An of fongique coverage in percent of each image
     */
     processServerFeetData(footId) {
         var images = [[], [], [], [], []]; //One slot for each toe (5 toes)
-        var fungalCoverage = [[], [], [], [], []];
+        var fongiqueCoverage = [[], [], [], [], []];
         var dates = [];
 
         if (this.state.toeData.feet !== undefined && this.state.toeData.feet[footId] !== undefined) { //Error handling
@@ -99,7 +99,7 @@ class User extends Component {
                     let date = image.date.split("T")[0] //Format: 2020-11-21T00:00:00.000Z, split("T")[0] returns the yyyy-mm-dd
 
                     images[toeId].push(imageURL);
-                    fungalCoverage[toeId].push(image.fungalCoverage);
+                    fongiqueCoverage[toeId].push(image.fongiqueCoverage);
                     dates.push(date);
 
                     //Add blank entries to future toes so that lines in the graph can start from their actual date.
@@ -109,7 +109,7 @@ class User extends Component {
                     //Toe 1: [null,   null,   null,   90%,    80%,    70%]
                     //Dates: [Date 1, Date 2, Date 3, Date 1, Date 2, Date 3]
                     for (let j = toeId + 1; j < this.state.toeData.feet[footId].toes.length; ++j)
-                        fungalCoverage[j].push(null);
+                        fongiqueCoverage[j].push(null);
                 }
             }
         }
@@ -117,7 +117,7 @@ class User extends Component {
         return {
             images: images,
             dates: dates,
-            fungalCoverage: fungalCoverage
+            fongiqueCoverage: fongiqueCoverage
         };
     }
 
@@ -127,7 +127,7 @@ class User extends Component {
     */
     organizeDataforGraph() {
         if (this.state.toeData.feet !== undefined && (this.state.leftFootData.length === 0 || this.state.rightFootData.length === 0)) {
-            //Seperate the fungal coverage and images (required for the Apexchart)
+            //Seperate the fongique coverage and images (required for the Apexchart)
             var allLeftFootData = this.processServerFeetData(LEFT_FOOT_ID);
             var allRightFootData = this.processServerFeetData(RIGHT_FOOT_ID);
 
@@ -139,14 +139,14 @@ class User extends Component {
                 leftFootData.push(
                     {
                         name: GetToeName(i),
-                        data: allLeftFootData.fungalCoverage[i],
+                        data: allLeftFootData.fongiqueCoverage[i],
                         images: allLeftFootData.images[i]
                     });
 
                 rightFootData.push(
                     {
                         name: GetToeName(i),
-                        data: allRightFootData.fungalCoverage[i],
+                        data: allRightFootData.fongiqueCoverage[i],
                         images: allRightFootData.images[i]
                     });
             }
@@ -163,29 +163,29 @@ class User extends Component {
 
     /*
         Prints the rows in the bottom table. Each row shows progress over time of
-        fungal percentage increase/decrease.
+        fongique percentage increase/decrease.
         param id: The list id for react.
         param name: The toe's name.
-        param percentageData: The fungal coverage percentages for the toe over time.
+        param percentageData: The fongique coverage percentages for the toe over time.
     */
     printToeData(id, name, percentageData) {
-        var fungalCoverage = "";
+        var fongiqueCoverage = "";
 
         if (percentageData.length === 0) {
-            fungalCoverage = "No Data"
+            fongiqueCoverage = "No Data"
         }
         else {
             //Generates the 20% -> 10% -> 1% format for the bottom table
             for (var i = 0; i < percentageData.length - 1; ++i)
-                fungalCoverage += percentageData[i] + " -> ";
+                fongiqueCoverage += percentageData[i] + " -> ";
 
-            fungalCoverage += percentageData[i];
+            fongiqueCoverage += percentageData[i];
         }
 
         return (
             <tr key={id}>
                 <td className="total-details-left-col">{name}</td>
-                <td>{fungalCoverage}</td>
+                <td>{fongiqueCoverage}</td>
             </tr>
         )
     }
@@ -233,7 +233,7 @@ class User extends Component {
                                     <thead>
                                         <tr>
                                             <th className="total-details-left-col">Toe Name</th>
-                                            <th>Fungal Coverage Change</th>
+                                            <th>fongique Coverage Change</th>
                                         </tr>
                                     </thead>
                                     <tbody>

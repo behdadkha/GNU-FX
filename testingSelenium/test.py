@@ -52,7 +52,7 @@ def stress(headless, email, password, newPassword):
     time.sleep(1)
 
     #dashboard loaded
-    print("passed: F-9 Program must create a storyline using the users’ toenail images during the treatment process.")
+    print("passed: F-9 Program must create a storyline using the users’ ongle images during the treatment process.")
 
     #click on graph points
     uploadBtn = driver.find_elements_by_class_name("btnIndexToe")[0].click()
@@ -110,9 +110,9 @@ def stress(headless, email, password, newPassword):
         print("failed: F-11 Users must be able to view account details such as their name and email.")
 
     if ("%" in driver.page_source):
-        print("passed: F-8 The program must be able to display the fungal coverage percent of images to the user.")
+        print("passed: F-8 The program must be able to display the fongique coverage percent of images to the user.")
     else:
-        print("failed: F-8 The program must be able to display the fungal coverage percent of images to the user.")
+        print("failed: F-8 The program must be able to display the fongique coverage percent of images to the user.")
 
 
     #rotate image

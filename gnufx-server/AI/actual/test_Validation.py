@@ -3,7 +3,7 @@ import numpy as np
 import os
 from pytest import *
 
-from FungalCoverage import *
+from fongiqueCoverage import *
 from NailRecognition import *
 
 TEST_IMG_PATH = "AI/actual/test/"
@@ -66,8 +66,8 @@ class TestNailRecognition:
         assert numEqualElems == newImage4.size
 
 
-class TestFungalCoverage:
-    # Tests Functional Requirement: The program must be able to measure toenail fungus growth on uploaded images.
+class TestfongiqueCoverage:
+    # Tests Functional Requirement: The program must be able to measure ongle champignon growth on uploaded images.
     def test_CalculateCoverage(self):
-        # The image in the test is around 33% covered in fungus.
-        assert abs(FungalCoverage.CalculateCoverage(TEST_IMG_PATH + COVERAGE_IMG_PATH + "1.png") - 33.0) <= 5  # Within 5 percent
+        # The image in the test is around 33% covered in champignon.
+        assert abs(fongiqueCoverage.CalculateCoverage(TEST_IMG_PATH + COVERAGE_IMG_PATH + "1.png") - 33.0) <= 5  # Within 5 percent

@@ -185,7 +185,7 @@ class Signup extends Component {
                         <span>
                             <h3 className={titleClass}>Create Account,</h3>
                             <h5 className={titleClass}>
-                                Join us to <span className="signup-form-join-message">show off your toenails!</span
+                                Join us to <span className="signup-form-join-message">show off your ongles!</span
                             ></h5>
                         </span>
                     }

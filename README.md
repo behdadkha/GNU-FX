@@ -1,5 +1,5 @@
 # gnufx 
-A web application that helps patients detect fungal toe infection, and allows them to keep track of their treatment progress.
+A web application that helps people detect fongique infection, and allows them to keep track of their treatment progress.
 
 ## Requirements 
 ### Core Requirements
@@ -65,7 +65,7 @@ Then run<br>
 ## Usage
 1. Click on the signup button to create a new account.
 2. Use the same email address and password to login.
-3. Now, from the dashboard, click on the "Upload Image" button to upload an image of your foot (make sure your toenails are in the image).
+3. Now, from the dashboard, click on the "Upload Image" button to upload an image of your foot (make sure your ongles are in the image).
 4. Wait for the AI to finish analyzing the image and finding your toes.
 5. Click on `save` or `discard` to save or discard any image.
 6. After successfully uploading images and selecting toes, go back to the dashboard to access your results.

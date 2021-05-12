@@ -23,7 +23,7 @@ const toe_dataSchema = new schema({
                     [{
                         date: Date,
                         name: String,
-                        fungalCoverage: String
+                        fongiqueCoverage: String
                     }]
                 },
                 {
@@ -31,7 +31,7 @@ const toe_dataSchema = new schema({
                     [{
                         date: Date,
                         name: String,
-                        fungalCoverage: String
+                        fongiqueCoverage: String
                     }]
                 },
                 {
@@ -39,7 +39,7 @@ const toe_dataSchema = new schema({
                     [{
                         date: Date,
                         name: String,
-                        fungalCoverage: String
+                        fongiqueCoverage: String
                     }]
                 },
                 {
@@ -47,7 +47,7 @@ const toe_dataSchema = new schema({
                     [{
                         date: Date,
                         name: String,
-                        fungalCoverage: String
+                        fongiqueCoverage: String
                     }]
                 },
                 {
@@ -55,7 +55,7 @@ const toe_dataSchema = new schema({
                     [{
                         date: Date,
                         name: String,
-                        fungalCoverage: String
+                        fongiqueCoverage: String
                     }]
                 }
             ]

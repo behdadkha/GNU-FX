@@ -20,9 +20,9 @@ describe('getToe endpoint', () => {
         utils.loadUserObject = jest.fn(() => Promise.resolve(mockedData));
 
         //mocked toeDataSchema
-        toeDataSchema.findOne = jest.fn().mockResolvedValue([{ userId: '1', feet: [{ toes: [{ images: [{ date: "2021-01-27", name: "0.PNG", fungalCoverage: "43%" }] },] }] }]);
+        toeDataSchema.findOne = jest.fn().mockResolvedValue([{ userId: '1', feet: [{ toes: [{ images: [{ date: "2021-01-27", name: "0.PNG", fongiqueCoverage: "43%" }] },] }] }]);
 
-        const expected = { "feet": [{ "toes": [{ "images": [{ "date": "2021-01-27", "fungalCoverage": "43%", "name": "0.PNG" }] }] }] };
+        const expected = { "feet": [{ "toes": [{ "images": [{ "date": "2021-01-27", "fongiqueCoverage": "43%", "name": "0.PNG" }] }] }] };
         const res = await request(app)
             .get('/getToe')
 

@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 from pytest import *
 
-from FungalCoverage import *
+from fongiqueCoverage import *
 from NailRecognition import *
 
 TEST_IMG_PATH = "AI/actual/test/"
@@ -31,18 +31,18 @@ class TestNailRecognition:
         assert len(NailRecognition.SaveNailColours([(116, 66, 183, 140)], TEST_IMG_PATH + RECOGNITION_IMG_PATH + "Stress_2.png")) == 0
 
 
-class TestFungalCoverage:
+class TestfongiqueCoverage:
     def test_LoadModel_Stress(self):
         # Test model shouldn't be loaded more than once
-        FungalCoverage.LoadModel()
-        model = FungalCoverage.model
-        FungalCoverage.LoadModel()
-        assert model == FungalCoverage.model
+        fongiqueCoverage.LoadModel()
+        model = fongiqueCoverage.model
+        fongiqueCoverage.LoadModel()
+        assert model == fongiqueCoverage.model
 
     def test_CalculateCoverage_Stress_1(self):
         # Test full hand
-        assert FungalCoverage.CalculateCoverage([TEST_IMG_PATH + RECOGNITION_IMG_PATH + "5.jpg"]) == 0
+        assert fongiqueCoverage.CalculateCoverage([TEST_IMG_PATH + RECOGNITION_IMG_PATH + "5.jpg"]) == 0
 
     def test_CalculateCoverage_Stress_2(self):
         # Test corrupted image
-        assert FungalCoverage.CalculateCoverage([TEST_IMG_PATH + RECOGNITION_IMG_PATH + "Stress_2.png"]) == 0
+        assert fongiqueCoverage.CalculateCoverage([TEST_IMG_PATH + RECOGNITION_IMG_PATH + "Stress_2.png"]) == 0

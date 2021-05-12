@@ -19,21 +19,16 @@ const gBoxHeadings = [
 //Descriptions in each of the blue boxes on the bottom of the homepage.
 const gBoxDescriptions = [
     <span>
-        gnufx Inc. is a Canadian medical device
-        company that has created a safe, fast
-        solution for the treatment of toenail
-        fungus (onychomycosis). The solution is
-        based on photodynamic therapy. Visit our
-        online store at www.drtoe.com.
+        gnufx Inc. 
     </span>,
 
     <span>
         With two easy steps, find out if your
-        toenails are infected.
+        Linux is infected.
     </span>,
 
     <span>
-        Take pictures of your toenails during
+        Take pictures of your ongle during
         the course of your treatment and create
         a storyline of your treatment progress.
     </span>

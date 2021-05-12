@@ -23,7 +23,7 @@ uploadImage.use(cors())
     param toeIndex: 0 to 4 referring to the toes.["Big Toe", "Index Toe", "Middle Toe", "Fourth Toe", "Little Toe"]
     param imageName: The name of the image to be saved in DB. Must be the saved as the image's actual name.
 */
-function SaveToeData(userId, date, footIndex, toeIndex, imageName, fungalCoverage, res=undefined) {
+function SaveToeData(userId, date, footIndex, toeIndex, imageName, fongiqueCoverage, res=undefined) {
     return new Promise((resolve, reject) => {
         try {
             //Find the user's images in the database and add to them
@@ -32,12 +32,12 @@ function SaveToeData(userId, date, footIndex, toeIndex, imageName, fungalCoverag
                 if (item) {
                     //var imagePath = path.resolve(`images/${userId}/${imageName}`)
                     //var pythonFile = path.resolve('AI/actual/Interface.py');
-                    //let fungalCoverage = await utils.runCommand(`python ${pythonFile} COVERAGE ${imagePath}`);
-                    //fungalCoverage = JSON.parse(fungalCoverage).data[0]
+                    //let fongiqueCoverage = await utils.runCommand(`python ${pythonFile} COVERAGE ${imagePath}`);
+                    //fongiqueCoverage = JSON.parse(fongiqueCoverage).data[0]
                     item.feet[footIndex].toes[toeIndex].images.push({
                         date: date,
                         name: imageName,
-                        fungalCoverage: fungalCoverage
+                        fongiqueCoverage: fongiqueCoverage
                     })
 
                     item.save();
@@ -155,12 +155,12 @@ uploadImage.route('/decompose').get(async (req, res) => {
 
         let decomposedImages = [];
         for (let i = 0; i < decomposedNails.length; i++) {
-            //calculate fungal converage for each image
+            //calculate fongique converage for each image
             let imagePath = path.resolve(`${decomposedNails[i][0]}`)
-            let fungalCoverage = await utils.runCommand(`python ${pythonFile} COVERAGE ${imagePath}`);
-            fungalCoverage = JSON.parse(fungalCoverage).data[0] + "%";
+            let fongiqueCoverage = await utils.runCommand(`python ${pythonFile} COVERAGE ${imagePath}`);
+            fongiqueCoverage = JSON.parse(fongiqueCoverage).data[0] + "%";
 
-            decomposedImages.push({ name: path.basename(decomposedNails[i][0]), cord: decomposedNails[i][1], color: decomposedNails[i][2], fungalCoverage: fungalCoverage });
+            decomposedImages.push({ name: path.basename(decomposedNails[i][0]), cord: decomposedNails[i][1], color: decomposedNails[i][2], fongiqueCoverage: fongiqueCoverage });
             //Save the new images under user in the database
             user.images.push(path.basename(decomposedNails[i][0]));
         }
@@ -199,10 +199,10 @@ uploadImage.route('/save').post(async (req, res) => {
     var footIndex = parseInt(req.body.foot);
     var toeIndex = parseInt(req.body.toe);
     var imageName = req.body.imageName;
-    var fungalCoverage = req.body.fungalCoverage;
+    var fongiqueCoverage = req.body.fongiqueCoverage;
 
     //Save the data in the database
-    SaveToeData(userId, datetoString, footIndex, toeIndex, imageName, fungalCoverage, res).then(() => {
+    SaveToeData(userId, datetoString, footIndex, toeIndex, imageName, fongiqueCoverage, res).then(() => {
         res.json({ msg: "successful" });
     });
 });

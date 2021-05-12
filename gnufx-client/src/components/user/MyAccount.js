@@ -233,11 +233,11 @@ class MyAccount extends Component {
         param includeEditButtons: Includes the rotate and delete button if true.
         param name: The name of the image for finding its URL.
         param date: The date the image was taken.
-        param fungalCoverage: The fungal coverage percent of the image.
+        param fongiqueCoverage: The fongique coverage percent of the image.
         param imageIndex: The index of the current toe's images for marking editing.
     */
-    printUploadedImage(toeIndex, includeEditButtons = true, name, date, fungalCoverage, imageIndex) {
-        //List is ordered by: Image, Toe Name, Fungal Coverage %, Upload Date
+    printUploadedImage(toeIndex, includeEditButtons = true, name, date, fongiqueCoverage, imageIndex) {
+        //List is ordered by: Image, Toe Name, fongique Coverage %, Upload Date
         var columnClass = (!isMobile) ? "uploaded-image-table-col" : "uploaded-image-table-col-mobile";
         var imageColumnClass = (!isMobile) ? "uploaded-image-table-toe-image-col" : "uploaded-image-table-toe-image-col-mobile";
         return (
@@ -256,7 +256,7 @@ class MyAccount extends Component {
                 <td className={columnClass}>
                     {GetToeSymbolImage(this.state.selectedFootIndex, toeIndex)}
                 </td>
-                <td className={columnClass}>{fungalCoverage}</td>
+                <td className={columnClass}>{fongiqueCoverage}</td>
                 <td className={columnClass}>{date.split("T")[0]}</td>
 
                 {
@@ -301,7 +301,7 @@ class MyAccount extends Component {
 
             return (
                 this.printUploadedImage(toeIndex, false, //No need to show the delete and rotate buttons in the modal
-                    toeImageData.name, toeImageData.date, toeImageData.fungalCoverage, 0)
+                    toeImageData.name, toeImageData.date, toeImageData.fongiqueCoverage, 0)
             );
         }
 
@@ -316,9 +316,9 @@ class MyAccount extends Component {
     */
     printUploadedImagesForToe(toeIndex, toe, includeEditButtons = true) {
         return (
-            toe.images.map(({ name, date, fungalCoverage }, imageIndex) =>
+            toe.images.map(({ name, date, fongiqueCoverage }, imageIndex) =>
                 this.printUploadedImage(toeIndex, includeEditButtons,
-                    name, date, fungalCoverage, imageIndex)
+                    name, date, fongiqueCoverage, imageIndex)
             )
         )
     }
@@ -384,7 +384,7 @@ class MyAccount extends Component {
                                     <tr>
                                         <th className="uploaded-image-table-image-header">Image</th>
                                         <th className="uploaded-image-table-toe-header">Toe</th>
-                                        <th className="uploaded-image-table-coverage-header">Fungal Coverage (%)</th>
+                                        <th className="uploaded-image-table-coverage-header">fongique Coverage (%)</th>
                                         <th className="uploaded-image-table-date-header">Upload Date</th>
                                         <th className="uploaded-image-table-delete-header">Edit</th>
                                     </tr>
@@ -417,7 +417,7 @@ class MyAccount extends Component {
                             <tr>
                                 <th className="uploaded-image-table-image-header">Image</th>
                                 <th className="uploaded-image-table-SameSize-header">Toe</th>
-                                <th className="uploaded-image-table-SameSize-header">Fungal Coverage (%)</th>
+                                <th className="uploaded-image-table-SameSize-header">fongique Coverage (%)</th>
                                 <th className="uploaded-image-table-SameSize-header">Upload Date</th>
                             </tr>
                         </thead>
